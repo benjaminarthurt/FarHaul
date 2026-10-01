@@ -1,6 +1,9 @@
-# Ship Builder (Godot 4 starter)
+# Far Haul
 
-A grid-based spaceship builder. Pick a prefab section, rotate it, and click to snap it onto
+*Build your ship. Haul the freight. Push the frontier.*
+
+Far Haul is a first-person sci-fi freight, ship-building and exploration game. This repo is the
+playable ship-builder prototype: a grid-based spaceship builder. Pick a prefab section, rotate it, and click to snap it onto
 the ship. The ship is stored as plain data, so flight, interior walking and space walks can
 all be built on top of the same thing later. A live panel shows the ship's engineering numbers.
 
@@ -11,6 +14,9 @@ Compatibility renderer, which is the safest choice for integrated GPUs and ARM S
 
 1. Open Godot, click Import, and choose `project.godot` in this folder.
 2. Press F5.
+
+The game opens with a splash screen, a placeholder intro video, and a title screen (Continue, Start or
+New game, Quit). Any key skips the splash and the intro. Set `FARHAUL_SKIP_INTRO=1` to go straight to the title.
 
 ## How to play
 
@@ -111,6 +117,11 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/ship_stats.gd` | Mass, centre of mass, power, heat, thrust, warnings |
 | `scripts/ship_view.gd` | Builds 3D nodes from `ShipData` |
 | `scripts/builder.gd` | Camera, ghost, input, UI |
+| `scripts/boot.gd` | Start-up flow: splash, intro video, title screen, hand-off to the builder |
+| `scripts/brand.gd` | Name, tagline, palette, container codes, button style |
+| `assets/brand/` | Logo, wordmark, icon and boot splash (generated, original) |
+| `assets/video/intro.ogv` | **Placeholder** intro video. Replace it with the real one (Godot only plays Ogg Theora) |
+| `tools/make_brand_assets.py` | Regenerates the brand images and placeholder video (needs Pillow, numpy, ffmpeg) |
 | `tests/test_ship.gd` | Headless tests for the rules and stats |
 
 Run the tests:
@@ -124,6 +135,14 @@ Run the tests:
 Make a scene for a module (a hollow room built in Blender, say), then set `scene` on that
 module's `ModuleDef`. Keep it inside its cell footprint and line its doorways up with the
 sockets. Nothing else needs to change.
+
+## Branding
+
+Brand rules come from `docs/far-haul-concept.md` and `docs/design-reference/art-direction.md`:
+industrial and function-over-form, hazard amber as the single accent, stencilled block lettering and
+container-style codes (`FHCU 882193-4`). Change colours in `scripts/brand.gd` (and the matching
+constants in `tools/make_brand_assets.py`). Everything is drawn from code, so there are no third-party
+fonts or art to license.
 
 ## Docs
 
