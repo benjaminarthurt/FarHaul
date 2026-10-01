@@ -145,12 +145,12 @@ sockets. Nothing else needs to change.
 The game also exports to the web (Compatibility renderer, single-threaded, so it works on plain GitHub Pages).
 `export_presets.cfg` has the Web preset. To publish on every push:
 
-1. Move `tools/web.yml` to `.github/workflows/web.yml`.
+1. Copy `tools/web.yml` to `.github/workflows/web.yml`. It publishes the prebuilt `site/` folder, so GitHub does not need Godot.
 2. In the repo on GitHub: Settings > Pages > Build and deployment > Source: **GitHub Actions**.
 3. Push. The game appears at `https://benjaminarthurt.github.io/FarHaul/` after the workflow finishes.
 
-To build locally: install the 4.4.1 export templates in Godot, then
-`godot --headless --export-release "Web" build/web/index.html` and serve `build/web` with any static web server.
+The web build in `site/` is committed. After changing the game, re-export it before pushing: install the 4.4.1 export templates in Godot, then
+`godot --headless --export-release "Web" site/index.html` and serve `site/` with any static web server.
 Saves live in the browser's own storage, so they stay on that device.
 
 ## Branding
