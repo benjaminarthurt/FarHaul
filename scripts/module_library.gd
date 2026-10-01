@@ -72,7 +72,7 @@ func _add_defaults() -> void:
 	_def(&"shaft", "Ladder shaft", one, Color(0.55, 0.50, 0.28),
 		[_door(o, DIR_U), _door(o, DIR_D), _door(o, DIR_N), _door(o, DIR_S)],
 		{"mass": 1.2, "cost": 3000})
-	_def(&"room_2x2", "Room 2x2", Vector3i(2, 1, 2), Color(0.30, 0.45, 0.40),
+	_def(&"room_2x2", "Crew quarters 2x2", Vector3i(2, 1, 2), Color(0.30, 0.45, 0.40),
 		[
 			_door(Vector3i(0, 0, 0), DIR_N), _door(Vector3i(1, 0, 1), DIR_S),
 			_door(Vector3i(0, 0, 1), DIR_W), _door(Vector3i(1, 0, 0), DIR_E),

@@ -90,6 +90,7 @@ func _build_hollow(root: Node3D) -> void:
 	for c in cells:
 		_add_frame_struts(root, Vector3(c) * ShipGrid.CELL, 0.16, trim_mat, 0.03)
 	_add_details(root)
+	Interiors.dress(self, root)
 	if cargo_slots > 0:
 		_add_crates(root, cells)
 
@@ -99,10 +100,7 @@ func _add_details(root: Node3D) -> void:
 	var h := ShipGrid.CELL * 0.5
 	if airlock:
 		_add_hatch(root)
-	if helm:  # cockpit: a lit canopy on the front wall
-		_add_box(root, Vector3(0, 0.25, -h - 0.02), Vector3(2.0, 0.9, 0.08), _glow(Color(0.45, 0.75, 1.0)))
-		_add_box(root, Vector3(0, -0.5, -h + 0.5), Vector3(1.6, 0.5, 0.7), _mat(color.darkened(0.5), 1.0))  # console
-	elif power > 50.0:  # reactor room: glowing vents on both sides
+	if power > 50.0:  # reactor room: glowing vents on both sides
 		for side in [-1.0, 1.0]:
 			for k in 3:
 				_add_box(root, Vector3(side * (h + 0.02), -0.5 + k * 0.5, 0), Vector3(0.08, 0.18, 1.8), _glow(Color(1.0, 0.5, 0.2)))
@@ -350,6 +348,7 @@ func _build_external(root: Node3D) -> void:
 	else:
 		var inset := Vector3.ONE * 0.4
 		_add_box(root, Vector3(size - Vector3i.ONE) * ShipGrid.CELL * 0.5, Vector3(size) * ShipGrid.CELL - inset, mat)
+	Interiors.dress_external(self, root)
 
 
 ## Twelve edge struts of one cell, centred on `centre`.

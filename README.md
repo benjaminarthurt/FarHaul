@@ -108,6 +108,7 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/ship_grid.gd` | Cell size, rotation maths, cell/world conversion |
 | `scripts/module_socket.gd` | A connection point: cell, direction, kind (door or mount) |
 | `scripts/module_def.gd` | One prefab type: footprint, sockets, stats, placeholder visuals |
+| `scripts/interiors.gd` | Per-module set dressing: cockpit seats and controls, reactor, bunks and galley, lockers, gantry |
 | `scripts/module_library.gd` | The catalogue (13 placeholder modules defined in code) |
 | `scripts/commodity_library.gd` | What can be hauled (placeholder goods and prices) |
 | `scripts/cargo_manifest.gd` | What is aboard, per container: load, unload, capacity, value |
