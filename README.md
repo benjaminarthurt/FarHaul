@@ -140,6 +140,19 @@ Make a scene for a module (a hollow room built in Blender, say), then set `scene
 module's `ModuleDef`. Keep it inside its cell footprint and line its doorways up with the
 sockets. Nothing else needs to change.
 
+## Play in the browser
+
+The game also exports to the web (Compatibility renderer, single-threaded, so it works on plain GitHub Pages).
+`export_presets.cfg` has the Web preset. To publish on every push:
+
+1. Move `tools/web.yml` to `.github/workflows/web.yml`.
+2. In the repo on GitHub: Settings > Pages > Build and deployment > Source: **GitHub Actions**.
+3. Push. The game appears at `https://benjaminarthurt.github.io/FarHaul/` after the workflow finishes.
+
+To build locally: install the 4.4.1 export templates in Godot, then
+`godot --headless --export-release "Web" build/web/index.html` and serve `build/web` with any static web server.
+Saves live in the browser's own storage, so they stay on that device.
+
 ## Branding
 
 Brand rules come from `docs/far-haul-concept.md` and `docs/design-reference/art-direction.md`:

@@ -1,6 +1,6 @@
 .godot/
 *.translation
-export_presets.cfg
 __pycache__/
 *.pyc
 .godot-path.txt
+build/
