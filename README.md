@@ -12,6 +12,10 @@ Compatibility renderer, which is the safest choice for integrated GPUs and ARM S
 
 ## Run it
 
+**Quickest:** double-click `play.bat`. It finds Godot 4, asks once if it can't, and launches the game.
+
+Or from the editor:
+
 1. Open Godot, click Import, and choose `project.godot` in this folder.
 2. Press F5.
 
