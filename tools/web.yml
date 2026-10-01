@@ -1,0 +1,45 @@
+name: Deploy web build
+
+# Builds the game for the browser and publishes it to GitHub Pages on every push to main.
+# One-time setup: repo Settings > Pages > Build and deployment > Source: "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.4.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export Web build
+        run: |
+          mkdir -p build/web
+          godot --headless --import || true
+          godot --headless --export-release "Web" build/web/index.html
+          ls -la build/web
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
