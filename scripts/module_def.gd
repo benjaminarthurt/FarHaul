@@ -9,6 +9,9 @@ extends Resource
 const WALL_T := 0.12
 const DOOR_HALF_W := 0.7  ## doorway is 1.4 m wide
 const DOOR_TOP := 0.7  ## doorway top, measured up from the cell centre (floor is at -1.5)
+const CRATE_COLORS := [  # worn shipping-container paints
+	Color(0.62, 0.27, 0.20), Color(0.20, 0.38, 0.55), Color(0.68, 0.55, 0.20), Color(0.28, 0.45, 0.33),
+]
 const FACES := [
 	Vector3i(1, 0, 0), Vector3i(-1, 0, 0),
 	Vector3i(0, 1, 0), Vector3i(0, -1, 0),
@@ -21,6 +24,7 @@ const FACES := [
 @export var size := Vector3i(1, 1, 1)  ## cells occupied, before rotation
 @export var sockets: Array[ModuleSocket] = []
 @export var color := Color(0.6, 0.65, 0.7)  ## placeholder tint
+@export var group: StringName = &"hull"  ## palette section: hull, cargo or external
 
 @export_group("Engineering")
 @export var pressurized := true  ## walkable hull (true) or external part like a tank or engine (false)
@@ -32,6 +36,9 @@ const FACES := [
 @export var thrust := 0.0  ## kN, pushing the ship along the module's local -Z (forward)
 @export var fuel := 0.0  ## tonnes of propellant held when full
 @export var helm := false  ## true if the ship can be flown from here
+@export var airlock := false  ## true if crew can get in and out of the ship here
+@export var cargo_slots := 0  ## standard containers this module can carry
+@export var cargo_capacity := 0.0  ## tonnes of freight when every slot is full
 
 
 func get_cells() -> Array[Vector3i]:
@@ -66,8 +73,9 @@ func build_visual() -> Node3D:
 
 func _build_hollow(root: Node3D) -> void:
 	var wall_mat := _mat(color, 1.0)
-	var floor_mat := _mat(color.darkened(0.35), 1.0)
-	var ceil_mat := _mat(color.lightened(0.25), 0.3)
+	var floor_mat := _mat(color.darkened(0.55), 1.0)
+	var ceil_mat := _mat(color.darkened(0.2), 0.13)  # see-through so the builder can look inside
+	var trim_mat := _mat(color.lerp(Color(0.50, 0.54, 0.60), 0.8), 1.0)
 	var cells := get_cells()
 	for c in cells:
 		for d in FACES:
@@ -79,14 +87,114 @@ func _build_hollow(root: Node3D) -> void:
 			elif d.y < 0:
 				mat = floor_mat
 			_add_face(root, Vector3(c) * ShipGrid.CELL, d, has_socket_at(c, d), mat)
+	for c in cells:
+		_add_frame_struts(root, Vector3(c) * ShipGrid.CELL, 0.16, trim_mat, 0.03)
+	_add_details(root)
+	if cargo_slots > 0:
+		_add_crates(root, cells)
+
+
+## Small per-module set dressing so hulls don't read as blank boxes.
+func _add_details(root: Node3D) -> void:
+	var h := ShipGrid.CELL * 0.5
+	if airlock:
+		_add_hatch(root)
+	if helm:  # cockpit: a lit canopy on the front wall
+		_add_box(root, Vector3(0, 0.25, -h - 0.02), Vector3(2.0, 0.9, 0.08), _glow(Color(0.45, 0.75, 1.0)))
+		_add_box(root, Vector3(0, -0.5, -h + 0.5), Vector3(1.6, 0.5, 0.7), _mat(color.darkened(0.5), 1.0))  # console
+	elif power > 50.0:  # reactor room: glowing vents on both sides
+		for side in [-1.0, 1.0]:
+			for k in 3:
+				_add_box(root, Vector3(side * (h + 0.02), -0.5 + k * 0.5, 0), Vector3(0.08, 0.18, 1.8), _glow(Color(1.0, 0.5, 0.2)))
+	var hazard := SurfaceTextures.hazard_material()  # warning stripes on every doorway threshold
+	for sk in sockets:
+		if sk.kind != ModuleSocket.DOOR or sk.dir.y != 0:
+			continue
+		var pos := Vector3(sk.cell) * ShipGrid.CELL + Vector3(sk.dir) * (h - 0.25) + Vector3(0, -h + WALL_T + 0.015, 0)
+		var strip := Vector3(1.4, 0.03, 0.3) if sk.dir.z != 0 else Vector3(0.3, 0.03, 1.4)
+		_add_box(root, pos, strip, hazard)
+	if size.x * size.z > 1 and not cargo_slots > 0:  # big room: a lit floor strip
+		_add_box(root, Vector3(0.0, -h + 0.14, 0), Vector3(0.12, 0.04, size.z * ShipGrid.CELL - 1.0), _glow(Color(0.7, 0.9, 1.0)))
+
+
+## Outer airlock hatch on the wall opposite the door: dark leaf, hazard border, lit window, status lamp.
+func _add_hatch(root: Node3D) -> void:
+	var inner := Vector3i(1, 0, 0)
+	for sk in sockets:
+		if sk.kind == ModuleSocket.DOOR and sk.dir.y == 0:
+			inner = sk.dir
+			break
+	var out := -inner
+	var h := ShipGrid.CELL * 0.5
+	var hatch := Node3D.new()
+	hatch.position = Vector3(out) * (h + 0.03) + Vector3(0, -0.15, 0)
+	hatch.rotation.y = atan2(float(out.x), float(out.z))  # local +Z faces outward
+	root.add_child(hatch)
+	var leaf := _mat(color.darkened(0.45), 1.0)
+	var stripes := SurfaceTextures.hazard_material()
+	_add_box(hatch, Vector3.ZERO, Vector3(1.5, 2.0, 0.08), leaf)
+	_add_box(hatch, Vector3(0, 1.07, 0.02), Vector3(1.7, 0.16, 0.1), stripes)
+	_add_box(hatch, Vector3(0, -1.07, 0.02), Vector3(1.7, 0.16, 0.1), stripes)
+	_add_box(hatch, Vector3(0.83, 0, 0.02), Vector3(0.16, 2.3, 0.1), stripes)
+	_add_box(hatch, Vector3(-0.83, 0, 0.02), Vector3(0.16, 2.3, 0.1), stripes)
+	_add_box(hatch, Vector3(0, 0.45, 0.06), Vector3(0.6, 0.4, 0.03), _glow(Color(0.45, 0.8, 1.0)))
+	_add_box(hatch, Vector3(0.45, -0.3, 0.06), Vector3(0.12, 0.12, 0.03), _glow(Color(0.3, 1.0, 0.4)))
+	_add_box(hatch, Vector3(0, -0.3, 0.06), Vector3(0.5, 0.1, 0.03), _mat(color.darkened(0.7), 1.0))  # wheel plate
+
+
+static func _glow(col: Color) -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = col
+	m.emission_enabled = true
+	m.emission = col
+	m.emission_energy_multiplier = 1.3
+	return m
+
+## Containers stacked along both sides of a walkable hold, leaving a 1.4 m aisle between them.
+func _add_crates(root: Node3D, cells: Array[Vector3i]) -> void:
+	var floor_y := -ShipGrid.CELL * 0.5 + WALL_T
+	var crate := Vector3(0.7, 1.4, 1.4)
+	var n := 0
+	for c in cells:
+		for side in [-1.0, 1.0]:
+			var pos := Vector3(c) * ShipGrid.CELL + Vector3(side * 1.03, floor_y + crate.y * 0.5, 0)
+			_add_container(root, pos, crate, CRATE_COLORS[n % CRATE_COLORS.size()], n, floor_y)
+			n += 1
+
+
+## A corrugated shipping container. The root node carries the slot number so a view can show fill.
+func _add_container(root: Node3D, pos: Vector3, box: Vector3, col: Color, slot: int, bottom_y: float) -> void:
+	var node := Node3D.new()
+	node.position = pos
+	node.set_meta("slot", slot)
+	node.set_meta("bottom_y", bottom_y)
+	node.set_meta("height", box.y)
+	node.set_meta("colour", col)
+	node.set_meta("width", box.x)
+	var body := _add_box(node, Vector3.ZERO, box, _mat(col, 1.0))
+	body.set_meta("paint", 1.0)
+	var rib_t := 0.07
+	var count := int(box.z / 0.35)
+	for i in count:  # corrugation bands around the cross-section
+		var z := (float(i) + 0.5) / float(count) * box.z - box.z * 0.5
+		var rib := _add_box(node, Vector3(0, 0, z), Vector3(box.x + 0.05, box.y + 0.05, rib_t), _mat(col, 1.0))
+		rib.set_meta("paint", 0.8)
+	var frame := _mat(Color(0.12, 0.12, 0.14), 1.0)  # corner castings
+	for sx in [-1.0, 1.0]:
+		for sy in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				_add_box(node, Vector3(sx * box.x * 0.5, sy * box.y * 0.5, sz * box.z * 0.5), Vector3(0.1, 0.1, 0.1), frame)
+	root.add_child(node)
 
 
 static func _mat(col: Color, alpha: float) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = Color(col, alpha)
-	m.roughness = 0.9
+	m.roughness = 0.8
 	if alpha < 1.0:
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	else:
+		SurfaceTextures.apply_panel(m)  # riveted plating
 	return m
 
 
@@ -150,21 +258,19 @@ func _build_external(root: Node3D) -> void:
 	var h := ShipGrid.CELL * 0.5
 
 	if shape == &"frame":
-		# Open cube: twelve edge struts.
-		var t := 0.18
-		for a in 3:
-			var b := (a + 1) % 3
-			var c := (a + 2) % 3
-			for sb in [-1, 1]:
-				for sc in [-1, 1]:
-					var strut := Vector3.ZERO
-					strut[a] = ShipGrid.CELL
-					strut[b] = t
-					strut[c] = t
-					var off := Vector3.ZERO
-					off[b] = sb * (h - t * 0.5)
-					off[c] = sc * (h - t * 0.5)
-					_add_box(root, off, strut, mat)
+		_add_frame_struts(root, Vector3.ZERO, 0.22, mat)
+		for sx in [-1.0, 1.0]:  # bolted corner plates
+			for sy in [-1.0, 1.0]:
+				for sz in [-1.0, 1.0]:
+					_add_box(root, Vector3(sx, sy, sz) * (h - 0.12), Vector3(0.36, 0.36, 0.36), dark)
+	elif shape == &"rack":
+		# Open gantry along Z with two containers per cell, side by side.
+		for z in size.z:
+			var centre := Vector3(0, 0, z * ShipGrid.CELL)
+			_add_frame_struts(root, centre, 0.22, mat)
+			for k in 2:
+				_add_container(root, centre + Vector3(-0.6 + 1.2 * k, 0, 0), Vector3(1.0, 2.2, 2.6),
+					CRATE_COLORS[(z * 2 + k) % CRATE_COLORS.size()], z * 2 + k, -1.1)
 	elif shape == &"tank":
 		# Cylinder lying along Z through the middle of the footprint.
 		var cyl := CylinderMesh.new()
@@ -177,9 +283,34 @@ func _build_external(root: Node3D) -> void:
 		mi.rotation_degrees.x = 90.0
 		mi.position = Vector3(0, 0, ShipGrid.CELL * (size.z - 1) * 0.5)
 		root.add_child(mi)
+		var half_len := (ShipGrid.CELL * size.z - 0.4) * 0.5
+		var mid_z := ShipGrid.CELL * (size.z - 1) * 0.5
+		for z in [mid_z - half_len + 0.25, mid_z, mid_z + half_len - 0.25]:
+			var band := CylinderMesh.new()
+			band.top_radius = 1.27
+			band.bottom_radius = 1.27
+			band.height = 0.16
+			band.material = dark
+			var bi := MeshInstance3D.new()
+			bi.mesh = band
+			bi.rotation_degrees.x = 90.0
+			bi.position = Vector3(0, 0, z)
+			root.add_child(bi)
+		for side in [-1.0, 1.0]:  # stencilled name on both sides
+			var label := Label3D.new()
+			label.text = "FUEL"
+			label.font_size = 56
+			label.pixel_size = 0.006
+			label.modulate = Color(0.12, 0.13, 0.16)
+			label.outline_size = 0
+			label.position = Vector3(side * 1.215, 0, mid_z)
+			label.rotation_degrees.y = 90.0 * side
+			root.add_child(label)
 	elif shape == &"radiator":
 		# Flat panel standing off the west face on a short stub.
-		_add_box(root, Vector3(-1.1, 0, 0), Vector3(0.12, 2.6, 2.6), mat)
+		_add_box(root, Vector3(-1.1, 0, 0), Vector3(0.12, 2.6, 2.6), dark)
+		for k in 6:  # cooling fins
+			_add_box(root, Vector3(-1.2, -1.1 + k * 0.44, 0), Vector3(0.16, 0.3, 2.4), mat)
 		_add_box(root, Vector3(-1.3, 0, 0), Vector3(0.3, 0.4, 0.4), dark)
 	elif shape == &"engine":
 		# Mount plate at the front (-Z), nozzle flaring toward the back (+Z).
@@ -194,12 +325,52 @@ func _build_external(root: Node3D) -> void:
 		mi.position = Vector3(0, 0, 0.2)
 		root.add_child(mi)
 		_add_box(root, Vector3(0, 0, -1.25), Vector3(1.4, 1.4, 0.5), dark)
+		var exit_disc := CylinderMesh.new()  # hot throat glowing inside the bell
+		exit_disc.top_radius = 1.0
+		exit_disc.bottom_radius = 1.0
+		exit_disc.height = 0.04
+		exit_disc.material = _glow(Color(1.0, 0.55, 0.2))
+		var di := MeshInstance3D.new()
+		di.mesh = exit_disc
+		di.rotation_degrees.x = 90.0
+		di.position = Vector3(0, 0, 1.2)
+		root.add_child(di)
+		var flame := CylinderMesh.new()  # exhaust plume, only shown while burning
+		flame.top_radius = 0.05
+		flame.bottom_radius = 0.95
+		flame.height = 5.0
+		flame.material = _glow(Color(1.0, 0.7, 0.3))
+		var fi := MeshInstance3D.new()
+		fi.mesh = flame
+		fi.rotation_degrees.x = 90.0
+		fi.position = Vector3(0, 0, 1.4 + 2.5)
+		fi.visible = false
+		fi.set_meta("flame", true)
+		root.add_child(fi)
 	else:
 		var inset := Vector3.ONE * 0.4
 		_add_box(root, Vector3(size - Vector3i.ONE) * ShipGrid.CELL * 0.5, Vector3(size) * ShipGrid.CELL - inset, mat)
 
 
-func _add_box(root: Node3D, pos: Vector3, box_size: Vector3, mat: Material) -> void:
+## Twelve edge struts of one cell, centred on `centre`.
+func _add_frame_struts(root: Node3D, centre: Vector3, t: float, mat: Material, proud := 0.0) -> void:
+	var h := ShipGrid.CELL * 0.5
+	for a in 3:
+		var b := (a + 1) % 3
+		var c := (a + 2) % 3
+		for sb in [-1, 1]:
+			for sc in [-1, 1]:
+				var strut := Vector3.ZERO
+				strut[a] = ShipGrid.CELL
+				strut[b] = t
+				strut[c] = t
+				var off := Vector3.ZERO
+				off[b] = sb * (h - t * 0.5 + proud)
+				off[c] = sc * (h - t * 0.5 + proud)
+				_add_box(root, centre + off, strut, mat)
+
+
+func _add_box(root: Node3D, pos: Vector3, box_size: Vector3, mat: Material) -> MeshInstance3D:
 	var box := BoxMesh.new()
 	box.size = box_size
 	box.material = mat
@@ -207,3 +378,4 @@ func _add_box(root: Node3D, pos: Vector3, box_size: Vector3, mat: Material) -> v
 	mi.mesh = box
 	mi.position = pos
 	root.add_child(mi)
+	return mi

@@ -6,7 +6,11 @@ extends RefCounted
 const G := 9.81  # m/s^2, for thrust-to-weight
 
 
-static func compute(ship: ShipData) -> Dictionary:
+## Cargo comes from `manifest` when given (what is really aboard, where). Otherwise every cargo
+## space is assumed `cargo_load` full (0.0 to 1.0), which is handy for what-if checks.
+## Balance is judged with tanks full.
+static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest = null) -> Dictionary:
+	cargo_load = clampf(cargo_load, 0.0, 1.0)
 	var lib := ship.library
 	var cost := 0
 	var dry := 0.0
@@ -22,8 +26,13 @@ static func compute(ship: ShipData) -> Dictionary:
 	var lo := Vector3(INF, INF, INF)
 	var hi := Vector3(-INF, -INF, -INF)
 	var has_helm := false
+	var airlocks := 0
+	var cargo_slots := 0
+	var cargo_capacity := 0.0
+	var cargo_carried := 0.0
 
-	for m in ship.modules:
+	for mi in ship.modules.size():
+		var m: Dictionary = ship.modules[mi]
 		var d := lib.get_def(m.id)
 		var cells := ship.world_cells(m.id, m.cell, m.rot)
 		var centroid := Vector3.ZERO
@@ -37,7 +46,13 @@ static func compute(ship: ShipData) -> Dictionary:
 		dry += d.mass
 		fuel += d.fuel
 		cost += d.cost
-		mass_weighted += centroid * (d.mass + d.fuel)  # balance is judged with tanks full
+		cargo_slots += d.cargo_slots
+		cargo_capacity += d.cargo_capacity
+		var carried := d.cargo_capacity * cargo_load
+		if manifest != null:
+			carried = manifest.mass_at(mi)
+		cargo_carried += carried
+		mass_weighted += centroid * (d.mass + d.fuel + carried)
 		if d.power > 0.0:
 			power_gen += d.power
 		else:
@@ -53,12 +68,22 @@ static func compute(ship: ShipData) -> Dictionary:
 			thrust_weighted += centroid * d.thrust
 		if d.helm:
 			has_helm = true
+		if d.airlock:
+			airlocks += 1
 
-	var wet := dry + fuel
+	var wet := dry + fuel  # no cargo
+	var cargo_mass := cargo_carried
+	var used_slots := -1
+	var cargo_value := 0.0
+	if manifest != null:
+		used_slots = manifest.slots_in_use()
+		cargo_value = manifest.value()
+	var load_frac := cargo_mass / cargo_capacity if cargo_capacity > 0.0 else 0.0
+	var loaded := wet + cargo_mass
 	var com := Vector3.ZERO
 	var centre := Vector3.ZERO
-	if wet > 0.0:
-		com = mass_weighted / wet
+	if loaded > 0.0:
+		com = mass_weighted / loaded
 	if not ship.modules.is_empty():
 		centre = (lo + hi) * 0.5
 	var thrust_pos := com
@@ -66,10 +91,15 @@ static func compute(ship: ShipData) -> Dictionary:
 		thrust_pos = thrust_weighted / thrust_total
 	var thrust_offset := Vector2(thrust_pos.x - com.x, thrust_pos.y - com.y).length()
 
+	var open_doors := ship.open_doors().size()
 	var warnings: Array[String] = []
 	if not ship.modules.is_empty():
 		if not has_helm:
 			warnings.append("No cockpit: nothing to fly this from")
+		if open_doors > 0:
+			warnings.append("Hull open: %d doorway%s onto space. Cap with a module" % [open_doors, "" if open_doors == 1 else "s"])
+		if airlocks == 0:
+			warnings.append("No airlock: nobody can get in or out")
 		if power_use > power_gen:
 			warnings.append("Power short by %.0f kW" % (power_use - power_gen))
 		if heat_gen > cooling:
@@ -78,13 +108,27 @@ static func compute(ship: ShipData) -> Dictionary:
 			warnings.append("Some engines aren't pointing aft")
 		if thrust_total > 0.0 and thrust_offset > 1.0:
 			warnings.append("Thrust is %.1f m off the centre of mass: costs manoeuvring fuel" % thrust_offset)
+		if cargo_capacity <= 0.0:
+			warnings.append("No cargo capacity: add a hold or rack to haul freight")
 
 	return {
 		"modules": ship.modules.size(),
+		"open_doors": open_doors,
+		"airlocks": airlocks,
+		"has_helm": has_helm,
+		"twr": thrust_fwd / (wet * G) if wet > 0.0 else 0.0,
+		"twr_loaded": thrust_fwd / (loaded * G) if loaded > 0.0 else 0.0,
 		"cost": cost,
 		"dry": dry,
 		"fuel": fuel,
-		"wet": wet,
+		"wet": wet,  # dry plus full tanks, no cargo
+		"cargo_slots": cargo_slots,
+		"cargo_capacity": cargo_capacity,  # tonnes when full
+		"cargo_load": load_frac,
+		"cargo_used_slots": used_slots,  # -1 when no manifest was given
+		"cargo_value": cargo_value,
+		"cargo_mass": cargo_mass,  # tonnes at the current load
+		"loaded": loaded,  # wet plus cargo at the current load
 		"power_gen": power_gen,
 		"power_use": power_use,
 		"heat_gen": heat_gen,
@@ -101,25 +145,24 @@ static func compute(ship: ShipData) -> Dictionary:
 static func format(s: Dictionary) -> String:
 	if s.modules == 0:
 		return "SHIP STATS\nNo modules yet"
-	var twr := 0.0
-	if s.wet > 0.0:
-		twr = s.thrust_fwd / (s.wet * G)
 	var rel: Vector3 = s.com - s.centre
+	var hull := "sealed" if s.open_doors == 0 else "OPEN (%d doorways)" % s.open_doors
 	var lines := PackedStringArray([
 		"SHIP STATS",
-		"Modules: %d" % s.modules,
-		"Cost: %s cr" % _commas(s.cost),
-		"Dry mass: %.1f t" % s.dry,
-		"Fuel (full): %.1f t" % s.fuel,
-		"Wet mass: %.1f t" % s.wet,
-		"Forward thrust: %.0f kN" % s.thrust_fwd,
-		"Thrust/weight: %.2f at 1 g" % twr,
-		"Power use / gen: %.0f / %.0f kW" % [s.power_use, s.power_gen],
-		"Heat gen / cooling: %.0f / %.0f kW" % [s.heat_gen, s.cooling],
-		"Centre of mass (from hull centre):",
-		"   x %+.1f   y %+.1f   z %+.1f m" % [rel.x, rel.y, rel.z],
+		"%d modules   %s cr" % [s.modules, _commas(s.cost)],
+		"Mass  dry %.1f   wet %.1f   loaded %.1f t" % [s.dry, s.wet, s.loaded],
+		"Fuel  %.1f t full" % s.fuel,
+		"Hull  %s   airlocks %d" % [hull, s.airlocks],
+		"Thrust  %.0f kN   T/W %.2f empty, %.2f loaded" % [s.thrust_fwd, s.twr, s.twr_loaded],
 	])
+	if s.cargo_used_slots >= 0:
+		lines.append("Cargo  %.1f t   worth %s cr" % [s.cargo_mass, _commas(roundi(s.cargo_value))])
+	lines.append("Centre of mass  x %+.1f  y %+.1f  z %+.1f m" % [rel.x, rel.y, rel.z])
 	return "\n".join(lines)
+
+
+static func commas(n: int) -> String:
+	return _commas(n)
 
 
 static func _commas(n: int) -> String:

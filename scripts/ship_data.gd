@@ -81,6 +81,25 @@ func remove_at(cell: Vector3i) -> String:
 	return ""
 
 
+## Doorways that open onto space: a door socket whose neighbouring cell is empty or holds an
+## external part. (A door facing another room's blank wall is sealed by that wall.)
+func open_doors() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for mi in modules.size():
+		var m: Dictionary = modules[mi]
+		for s in world_sockets(m.id, m.cell, m.rot):
+			if s.kind != ModuleSocket.DOOR:
+				continue
+			var nb: Vector3i = s.cell + s.dir
+			var open := not occupied.has(nb)
+			if not open:
+				var other: Dictionary = modules[occupied[nb]]
+				open = not library.get_def(other.id).pressurized
+			if open:
+				out.append({"module": mi, "cell": s.cell, "dir": s.dir})
+	return out
+
+
 func clear() -> void:
 	modules = []
 	occupied = {}

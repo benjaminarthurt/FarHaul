@@ -1,0 +1,97 @@
+extends SceneTree
+# Boots the real builder scene and plays a full loop through the same calls the UI makes.
+
+var ok := true
+
+func check(cond: bool, label: String) -> void:
+	print(("  ok    " if cond else "  FAIL  "), label)
+	if not cond:
+		ok = false
+
+func _initialize() -> void:
+	var scene: Node3D = load("res://scenes/main.tscn").instantiate()
+	root.add_child(scene)
+	process_frame.connect(_run.bind(scene), CONNECT_ONE_SHOT)
+
+func _run(scene: Node3D) -> void:
+	print("start state")
+	check(scene.ship.modules.size() == 10, "starter ship is loaded on a fresh start")
+	check(scene.welcome_panel.visible, "welcome panel shows on first run")
+	check(scene._credits() == 150000 - scene._ship_cost(), "credits = funds minus ship cost")
+	check(scene.last_stats.warnings.size() == 0, "starter has no warnings")
+	print("contract: ", scene.contract_info.text)
+
+	print("placement")
+	var before_n: int = scene.ship.modules.size()
+	scene._select(scene.library.order.find(&"radiator"))
+	scene.hover_active = true
+	scene.hover_cell = Vector3i(-1, 0, 0)
+	scene.hover_rot = scene._fit_rotation(&"radiator", scene.hover_cell)
+	scene.hover_error = scene.ship.check_place(&"radiator", scene.hover_cell, scene.hover_rot)
+	check(scene.hover_error == "", "radiator fits on the cockpit's west side (auto-rotated from rot %d to %d)" % [scene.rot, scene.hover_rot])
+	check(scene.hover_rot == 2, "auto-rotation picked a turn that fits")
+	scene._on_click()
+	check(scene.ship.modules.size() == before_n + 1, "click places the module")
+	check(scene.history.can_undo(), "placing is undoable")
+	scene._undo()
+	check(scene.ship.modules.size() == before_n, "undo removes it")
+	scene._redo()
+	check(scene.ship.modules.size() == before_n + 1, "redo puts it back")
+	scene._undo()
+
+	print("money")
+	var credits: int = scene._credits()
+	scene._select(scene.library.order.find(&"engineering"))
+	scene.hover_cell = Vector3i(5, 0, 5)
+	var poor: int = scene.earned
+	scene.earned = -140000
+	scene.hover_rot = 0
+	scene.hover_error = ""
+	scene._update_ghost()
+	scene.earned = poor
+	check(scene._credits() == credits, "credits restored after the what-if")
+
+	print("cargo and contract")
+	scene._take_contract_cargo()
+	print(scene.message)
+	check(is_equal_approx(scene.manifest.total_of(&"water"), 20.0), "took the 20 t on offer")
+	var rows: Array = Contracts.check(scene.last_stats, scene.manifest, Contracts.get_contract(0))
+	check(Contracts.ready(rows), "starter is fit for the water run")
+	scene._on_contract_selected(1)
+	scene._take_contract_cargo()
+	check(is_equal_approx(scene.manifest.total_of(&"ore"), 0.0), "containers are taken by water, so no ore fits until it's unloaded")
+	scene._unload_all()
+	scene._take_contract_cargo()
+	print(scene.message)
+	check(is_equal_approx(scene.manifest.total(), 24.0), "short on room: hold is full at 24 t")
+	scene._unload_all()
+	scene._on_contract_selected(0)
+	scene._take_contract_cargo()
+	scene._run_contract()
+	check(scene.busy, "run starts")
+	await create_timer(5.6).timeout
+	check(not scene.busy, "run finishes")
+	print(scene.message)
+	check(scene.earned == 9000 and scene.runs == 1, "paid 9,000 for 20 t of water")
+	check(is_equal_approx(scene.manifest.total_of(&"water"), 0.0), "delivered water is off the ship")
+	check(not scene.history.can_undo(), "history cleared after a delivery")
+	check(scene._credits() == credits + 9000, "credits went up")
+
+	print("failure cases")
+	scene._on_contract_selected(4)
+	scene._take_contract_cargo()
+	scene._run_contract()
+	print(scene.message)
+	check(not scene.busy and scene.message.begins_with("Not fit"), "rush job refused: ship too slow")
+
+	print("save and resume")
+	scene.autosave_enabled = false
+	scene._save()
+	scene._clear()
+	check(scene.ship.modules.is_empty(), "cleared")
+	scene._load()
+	check(scene.ship.modules.size() == before_n and scene.earned == 9000, "loaded ship and progress")
+
+	print(scene.stats_label.text)
+	print("SMOKE ", "PASSED" if ok else "FAILED")
+	quit(0 if ok else 1)

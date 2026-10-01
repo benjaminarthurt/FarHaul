@@ -61,6 +61,72 @@ Units are tonnes, credits, kW, kN and metres. All numbers are placeholders to tu
   line far from the centre of mass. The last one stands in for the concept doc's idea that an
   unbalanced ship burns extra manoeuvring propellant.
 
+## Built: cargo sections
+
+Far Haul is a freight game, so cargo capacity is part of the builder from the start.
+
+- Two modules in their own palette group (`group` on `ModuleDef`: hull, cargo, external):
+  - **Cargo hold 1x2**: pressurised and walkable. Doors at both ends, containers along both sides of
+    a 1.4 m aisle. 4 slots, 24 t. Protected, reachable from inside.
+  - **Cargo rack 1x2**: open gantry bolted to the hull, 4 full-size containers, 40 t. Cheaper and
+    lighter per tonne, but exposed (the concept doc's atmosphere, damage and EVA ideas hook in here).
+- Each module declares `cargo_slots` and `cargo_capacity` (tonnes when full).
+- `ShipStats.compute(ship, cargo_load)`: load runs 0 to 1. Cargo mass is spread at each module's
+  centre, so a lopsided rack shifts the centre of mass. Reports capacity, cargo mass, loaded mass, and
+  thrust/weight empty and loaded. Warning if the ship has no cargo capacity.
+- **Manifest** (`CargoManifest`, plain data like the ship): every cargo module has `cargo_slots`
+  equal containers. A container holds one commodity and can be part full, so a location with less
+  freight than the ship has room for is a normal case, not an error.
+- Loading `load(commodity, tonnes)` returns how much actually went aboard (never more than fits).
+  It tops up part-full containers of that commodity first, then opens empty ones. Unloading takes
+  from the least full containers first so loads consolidate.
+- Containers are keyed by module origin cell and slot number, so they survive edits to other modules.
+  A module holding cargo can't be removed until unloaded. Saves carry the manifest; entries that no
+  longer fit the ship are dropped or clamped on load.
+- Stats take the manifest: cargo mass, loaded mass, centre of mass (cargo sits at its module), thrust
+  to weight empty and loaded, containers in use, cargo value. Without a manifest `compute` can still
+  assume a fraction full, for what-if checks.
+- Builder: CARGO panel with a commodity picker, a Tonnes box, Load, Unload, Unload all. In the 3D
+  view containers are coloured by commodity and as tall as they are full.
+- Commodities (`CommodityLibrary`) are placeholders: water, iron ore, food, machinery, electronics,
+  with flat prices per tonne.
+- Not modelled yet: volume versus mass limits, hazardous or perishable goods, per-location supply and
+  prices (the Tonnes box stands in for a market), and contracts.
+
+## Built: look and feel (placeholder art pass)
+
+Everything is generated in code, so there are no image assets yet.
+
+- Industrial palette: dark muted hulls, neutral trim on every cell edge, warm accents.
+- Procedural plating texture (seams, rivets, scuffs, grime) mapped in object space so panel size stays
+  constant on any box. Hazard-stripe thresholds on every doorway. Corrugated containers with corner
+  castings, stencilled with the commodity name. "FUEL" on tanks.
+- Lit details: cockpit canopy, reactor vents, engine throat, floor strips in big rooms.
+- Sky: stars plus a faint nebula from a small sky shader. Filmic tone mapping and glow so lit parts bloom.
+- Lighting: warm key light with shadows, cool fill without. Shadows are fine for the small builder scene
+  but need a budget in flight and on planets; check performance on the Surface Pro.
+- Real art later: set `scene` on a module to replace its generated look. Containers keep working if the
+  scene tags container nodes with the same `slot`, `height` and `bottom_y` metadata.
+
+## Built: the shipyard loop
+
+The builder is a small game on its own, so it can be played and judged before flight exists.
+
+- **Credits**: 150,000 to start. Credits = start funds + profit - cost of the ship, so there is nothing to
+  keep in sync. Removing a part refunds it fully. Can't place what you can't afford.
+- **Sealed hull and airlock**: a doorway onto space (empty cell or an external part) is a hull breach, shown
+  as a pulsing cyan ring. The airlock module is the crew's way out, which the later EVA work needs anyway.
+- **Contracts** (`Contracts`): five freight jobs, each with a commodity, tonnes on offer, rate per tonne and a
+  minimum loaded thrust-to-weight. If the ship can't carry the lot it takes what fits and is paid for that.
+  A checklist shows what's missing: cockpit, engines, sealed hull, airlock, power, cooling, T/W, cargo.
+- **Run contract**: a stand-in for flight. If every box is green the ship launches, the cargo is delivered and
+  the pay is added to profit. This is the loop to replace with real flight.
+- **Starter hauler** (`ShipPresets`): built through the normal rules, passes every check, leaves about 57k.
+- **UX**: auto-rotate to a rotation that fits, a cursor tooltip with the reason or the cost, undo/redo (whole-ship
+  snapshots), eased camera and frame-ship, hide upper decks, parts pop into place, synthesised sounds, autosave.
+- Numbers are placeholders. In particular a cargo rack is very cheap per tonne, which will want a downside
+  (exposure to damage or heat) once those systems exist.
+
 ## Planned: walking inside the ship
 
 - Add collision to module floors and walls.
@@ -97,7 +163,8 @@ Units are tonnes, credits, kW, kN and metres. All numbers are placeholders to tu
 
 ## Open questions and next ideas
 
-- Cargo containers as placeable, standardised objects (central to the concept doc's freight loop).
+- Locations with limited, changing supply and prices, and freight contracts. Today the player types
+  how many tonnes a location "offers".
 - Money loop (Freight, Profit, Ship): modules already carry a `cost`, but there is no economy yet.
 - Atmospheric ships versus space-only ships need extra module attributes (heat protection,
   landing gear, structural limits).

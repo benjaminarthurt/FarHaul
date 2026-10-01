@@ -57,7 +57,7 @@ func _mount(c: Vector3i, d: Vector3i) -> ModuleSocket:
 func _add_defaults() -> void:
 	var o := Vector3i.ZERO
 	var one := Vector3i(1, 1, 1)
-	var steel := Color(0.62, 0.68, 0.75)
+	var steel := Color(0.40, 0.44, 0.50)
 
 	# --- Pressurised hull (walkable) ---
 	_def(&"corridor", "Corridor", one, steel,
@@ -69,40 +69,62 @@ func _add_defaults() -> void:
 	_def(&"tee", "T-junction", one, steel,
 		[_door(o, DIR_N), _door(o, DIR_S), _door(o, DIR_E)],
 		{"mass": 1.0, "cost": 2600})
-	_def(&"shaft", "Ladder shaft", one, Color(0.7, 0.7, 0.45),
+	_def(&"shaft", "Ladder shaft", one, Color(0.55, 0.50, 0.28),
 		[_door(o, DIR_U), _door(o, DIR_D), _door(o, DIR_N), _door(o, DIR_S)],
 		{"mass": 1.2, "cost": 3000})
-	_def(&"room_2x2", "Room 2x2", Vector3i(2, 1, 2), Color(0.45, 0.62, 0.55),
+	_def(&"room_2x2", "Room 2x2", Vector3i(2, 1, 2), Color(0.30, 0.45, 0.40),
 		[
 			_door(Vector3i(0, 0, 0), DIR_N), _door(Vector3i(1, 0, 1), DIR_S),
 			_door(Vector3i(0, 0, 1), DIR_W), _door(Vector3i(1, 0, 0), DIR_E),
 		],
 		{"mass": 4.0, "cost": 9000})
-	_def(&"cockpit", "Cockpit", one, Color(0.4, 0.6, 0.9),
+	_def(&"cockpit", "Cockpit", one, Color(0.28, 0.42, 0.62),
 		[_door(o, DIR_S)],
 		{"mass": 2.0, "cost": 12000, "power": -3.0, "heat": 3.0, "helm": true})
-	_def(&"engineering", "Engineering", one, Color(0.75, 0.4, 0.35),
+	_def(&"engineering", "Engineering", one, Color(0.55, 0.28, 0.25),
 		[_door(o, DIR_N)],
 		{"mass": 6.0, "cost": 30000, "power": 100.0, "heat": 120.0})
 
+	# Airlock: the crew's way in and out. Door on the west face, outer hatch on the east.
+	_def(&"airlock", "Airlock", one, Color(0.50, 0.47, 0.24),
+		[_door(o, DIR_W)],
+		{"mass": 1.5, "cost": 9000, "power": -1.0, "airlock": true})
+
+	# --- Cargo ---
+	# Hold: pressurised and walkable, so freight is protected and can be reached from inside.
+	_def(&"cargo_hold", "Cargo hold 1x2", Vector3i(1, 1, 2), Color(0.38, 0.43, 0.35),
+		[_door(Vector3i(0, 0, 0), DIR_N), _door(Vector3i(0, 0, 1), DIR_S)],
+		{"group": &"cargo", "mass": 3.0, "cost": 6000, "cargo_slots": 4, "cargo_capacity": 24.0})
+	# Rack: bare gantry carrying full-size containers outside. Cheap and big, but exposed.
+	_def(&"cargo_rack", "Cargo rack 1x2", Vector3i(1, 1, 2), Color(0.30, 0.32, 0.36),
+		[
+			_mount(Vector3i(0, 0, 0), DIR_N), _mount(Vector3i(0, 0, 1), DIR_S),
+			_mount(Vector3i(0, 0, 0), DIR_E), _mount(Vector3i(0, 0, 1), DIR_E),
+			_mount(Vector3i(0, 0, 0), DIR_W), _mount(Vector3i(0, 0, 1), DIR_W),
+			_mount(Vector3i(0, 0, 0), DIR_U), _mount(Vector3i(0, 0, 1), DIR_U),
+			_mount(Vector3i(0, 0, 0), DIR_D), _mount(Vector3i(0, 0, 1), DIR_D),
+		],
+		{"group": &"cargo", "pressurized": false, "shape": &"rack", "mass": 1.2, "cost": 4000,
+			"cargo_slots": 4, "cargo_capacity": 40.0})
+
 	# --- External parts (not walkable; bolt onto frames or bare hull faces) ---
-	_def(&"frame", "Frame", one, Color(0.55, 0.55, 0.6),
+	_def(&"frame", "Frame", one, Color(0.32, 0.34, 0.38),
 		[
 			_mount(o, DIR_N), _mount(o, DIR_S), _mount(o, DIR_E),
 			_mount(o, DIR_W), _mount(o, DIR_U), _mount(o, DIR_D),
 		],
-		{"pressurized": false, "shape": &"frame", "mass": 0.4, "cost": 1500})
-	_def(&"tank", "Fuel tank 1x2", Vector3i(1, 1, 2), Color(0.85, 0.85, 0.8),
+		{"group": &"external", "pressurized": false, "shape": &"frame", "mass": 0.4, "cost": 1500})
+	_def(&"tank", "Fuel tank 1x2", Vector3i(1, 1, 2), Color(0.72, 0.72, 0.68),
 		[
 			_mount(Vector3i(0, 0, 0), DIR_N), _mount(Vector3i(0, 0, 1), DIR_S),
 			_mount(Vector3i(0, 0, 0), DIR_E), _mount(Vector3i(0, 0, 1), DIR_E),
 			_mount(Vector3i(0, 0, 0), DIR_W), _mount(Vector3i(0, 0, 1), DIR_W),
 		],
-		{"pressurized": false, "shape": &"tank", "mass": 1.0, "cost": 4000, "fuel": 10.0})
-	_def(&"radiator", "Radiator", one, Color(0.8, 0.8, 0.85),
+		{"group": &"external", "pressurized": false, "shape": &"tank", "mass": 1.0, "cost": 4000, "fuel": 10.0})
+	_def(&"radiator", "Radiator", one, Color(0.55, 0.58, 0.62),
 		[_mount(o, DIR_W)],
-		{"pressurized": false, "shape": &"radiator", "mass": 0.6, "cost": 3000, "heat": -60.0})
-	_def(&"engine", "Engine", one, Color(0.95, 0.55, 0.25),
+		{"group": &"external", "pressurized": false, "shape": &"radiator", "mass": 0.6, "cost": 3000, "heat": -60.0})
+	_def(&"engine", "Engine", one, Color(0.80, 0.45, 0.20),
 		[_mount(o, DIR_N)],
-		{"pressurized": false, "shape": &"engine", "mass": 3.0, "cost": 20000,
+		{"group": &"external", "pressurized": false, "shape": &"engine", "mass": 3.0, "cost": 20000,
 			"thrust": 80.0, "power": -15.0, "heat": 25.0})
