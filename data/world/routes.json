@@ -1,0 +1,207 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "routes": [
+    {
+      "id": "sol_new_houston",
+      "a": "sol",
+      "b": "new_houston",
+      "corridors": [
+        "sol_concord"
+      ],
+      "traffic": "heavy",
+      "development": "core",
+      "cargo_patterns": [
+        "manufactured goods",
+        "technology",
+        "raw materials"
+      ]
+    },
+    {
+      "id": "new_houston_concord",
+      "a": "new_houston",
+      "b": "concord",
+      "corridors": [
+        "sol_concord",
+        "agricultural_loop"
+      ],
+      "traffic": "heavy",
+      "development": "core"
+    },
+    {
+      "id": "new_houston_hesperus",
+      "a": "new_houston",
+      "b": "hesperus",
+      "corridors": [
+        "agricultural_loop"
+      ],
+      "traffic": "heavy",
+      "cargo_patterns": [
+        "machinery outbound to Hesperus",
+        "food outbound to New Houston"
+      ]
+    },
+    {
+      "id": "concord_bradbury",
+      "a": "concord",
+      "b": "bradbury",
+      "corridors": [
+        "agricultural_loop"
+      ],
+      "traffic": "regular",
+      "cargo_patterns": [
+        "high-value scientific and medical freight"
+      ]
+    },
+    {
+      "id": "keshar_iron_gate",
+      "a": "keshar",
+      "b": "iron_gate",
+      "corridors": [
+        "heavy_industrial"
+      ],
+      "traffic": "heavy"
+    },
+    {
+      "id": "iron_gate_carver",
+      "a": "iron_gate",
+      "b": "carver",
+      "corridors": [
+        "heavy_industrial"
+      ],
+      "traffic": "heavy",
+      "cargo_patterns": [
+        "mining machinery to Carver",
+        "ore and metals toward Iron Gate"
+      ]
+    },
+    {
+      "id": "carver_concord",
+      "a": "carver",
+      "b": "concord",
+      "corridors": [
+        "heavy_industrial"
+      ],
+      "traffic": "heavy",
+      "cargo_patterns": [
+        "bulk resources toward Concord",
+        "consumer and manufactured goods toward Carver"
+      ]
+    },
+    {
+      "id": "ilos_bradbury",
+      "a": "ilos",
+      "b": "bradbury",
+      "corridors": [
+        "ilyan_research"
+      ],
+      "traffic": "regular"
+    },
+    {
+      "id": "bradbury_concord",
+      "a": "bradbury",
+      "b": "concord",
+      "corridors": [
+        "ilyan_research"
+      ],
+      "traffic": "regular"
+    },
+    {
+      "id": "veyara_tidemark",
+      "a": "veyara",
+      "b": "tidemark",
+      "corridors": [
+        "ocean_route"
+      ],
+      "traffic": "regular"
+    },
+    {
+      "id": "tidemark_pelagos",
+      "a": "tidemark",
+      "b": "pelagos",
+      "corridors": [
+        "ocean_route"
+      ],
+      "traffic": "regular"
+    },
+    {
+      "id": "pelagos_port_meridian",
+      "a": "pelagos",
+      "b": "port_meridian",
+      "corridors": [
+        "ocean_route"
+      ],
+      "traffic": "regular"
+    },
+    {
+      "id": "orun_foundry",
+      "a": "orun",
+      "b": "foundry",
+      "corridors": [
+        "orun_industrial"
+      ],
+      "traffic": "regular"
+    },
+    {
+      "id": "foundry_port_meridian",
+      "a": "foundry",
+      "b": "port_meridian",
+      "corridors": [
+        "orun_industrial"
+      ],
+      "traffic": "regular"
+    },
+    {
+      "id": "concord_port_meridian",
+      "a": "concord",
+      "b": "port_meridian",
+      "corridors": [
+        "frontier_run"
+      ],
+      "traffic": "heavy",
+      "development": "outer"
+    },
+    {
+      "id": "port_meridian_talos",
+      "a": "port_meridian",
+      "b": "talos",
+      "corridors": [
+        "frontier_run"
+      ],
+      "traffic": "growing",
+      "cargo_patterns": [
+        "construction and support cargo outbound",
+        "limited mineral backhaul"
+      ]
+    },
+    {
+      "id": "port_meridian_waystation",
+      "a": "port_meridian",
+      "b": "waystation",
+      "corridors": [
+        "frontier_run"
+      ],
+      "traffic": "regular"
+    },
+    {
+      "id": "waystation_lastlight",
+      "a": "waystation",
+      "b": "lastlight",
+      "corridors": [
+        "frontier_run"
+      ],
+      "traffic": "light",
+      "development": "frontier"
+    },
+    {
+      "id": "port_meridian_lastlight",
+      "a": "port_meridian",
+      "b": "lastlight",
+      "corridors": [
+        "frontier_run"
+      ],
+      "traffic": "light",
+      "notes": "Longer direct service used by capable vessels; Waystation remains the normal support stop."
+    }
+  ]
+}

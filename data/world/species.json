@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "species": [
+    {
+      "id": "human",
+      "name": "Human",
+      "home_system_id": "sol",
+      "homeworld_id": "earth",
+      "biology": {
+        "native_gravity_g": 1,
+        "environment": "Earth-normal terrestrial",
+        "notes": "Highly varied populations adapted culturally and technologically to many environments."
+      },
+      "civilization": {
+        "identity": "Rapid expansion, commercial diversity, modular engineering, competing standards and extensive field improvisation.",
+        "engineering_style": "Modular, repairable, manufacturer-diverse and frequently improvised.",
+        "trade_strengths": [
+          "manufacturing diversity",
+          "logistics",
+          "modular shipbuilding"
+        ]
+      },
+      "playable": true
+    },
+    {
+      "id": "kesh",
+      "name": "Kesh",
+      "home_system_id": "keshar",
+      "homeworld_id": "keshar_prime",
+      "biology": {
+        "native_gravity_g": 1.35,
+        "environment": "High-gravity terrestrial world with dense atmosphere and extensive shallow seas.",
+        "notes": "Shorter, heavily built physiology with dense skeletal structure and powerful musculature."
+      },
+      "civilization": {
+        "identity": "Conservative heavy engineering emphasizing longevity, redundancy and structural margin.",
+        "engineering_style": "Heavy pressure vessels, oversized structure, redundant systems and exceptionally durable machinery.",
+        "trade_strengths": [
+          "heavy machinery",
+          "pressure vessels",
+          "durable ship components"
+        ]
+      },
+      "playable": true
+    },
+    {
+      "id": "ilyan",
+      "name": "Ilyan",
+      "home_system_id": "ilos",
+      "homeworld_id": "ilos_prime",
+      "biology": {
+        "native_gravity_g": 0.55,
+        "environment": "Low-gravity terrestrial world with dense atmosphere and dramatic vertical geology.",
+        "notes": "Tall, lightweight physiology adapted to low gravity."
+      },
+      "civilization": {
+        "identity": "Mass efficiency and precision are deeply embedded in engineering culture.",
+        "engineering_style": "Lightweight structures, efficient propulsion, skeletal frames and minimal unnecessary mass.",
+        "trade_strengths": [
+          "propulsion",
+          "lightweight materials",
+          "precision engineering"
+        ]
+      },
+      "playable": true
+    },
+    {
+      "id": "vey",
+      "name": "Vey",
+      "home_system_id": "veyara",
+      "homeworld_id": "veyara_prime",
+      "biology": {
+        "environment": "Semi-aquatic; humid terrestrial and aquatic environments.",
+        "notes": "Evolved from coastal semi-aquatic ancestors; comfortable in shared atmospheres but prefer high humidity."
+      },
+      "civilization": {
+        "identity": "Environmental management and biological systems are foundational technologies.",
+        "engineering_style": "Exceptional fluid handling, environmental control, life support and biotechnology.",
+        "trade_strengths": [
+          "life support",
+          "water processing",
+          "biotechnology",
+          "aquaculture"
+        ]
+      },
+      "playable": true
+    },
+    {
+      "id": "orun",
+      "name": "Orun",
+      "home_system_id": "orun",
+      "homeworld_id": "orun_prime",
+      "biology": {
+        "environment": "Terrestrial world with extreme surface temperature cycles; ancestral adaptation to communal subterranean life.",
+        "notes": "Individually intelligent and strongly communal; privacy norms differ from those of humans."
+      },
+      "civilization": {
+        "identity": "Compact, interconnected spaces and machinery integrated closely with habitation.",
+        "engineering_style": "Excellent maintenance access, thermal systems, compact machinery and little unnecessary glazing.",
+        "trade_strengths": [
+          "thermal management",
+          "tunneling",
+          "ceramics",
+          "industrial automation"
+        ]
+      },
+      "playable": true
+    }
+  ]
+}
