@@ -1,0 +1,53 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "independent_hauler_baseline": {
+    "ship_class": "medium_freighter",
+    "capital_cost_cr": [
+      2400000,
+      8500000
+    ],
+    "financed_share": [
+      0.4,
+      0.85
+    ],
+    "crew_count": [
+      1,
+      5
+    ],
+    "monthly_fixed_cost_cr": [
+      18000,
+      85000
+    ],
+    "maintenance_reserve_fraction_revenue": [
+      0.06,
+      0.14
+    ],
+    "insurance_fraction_asset_value_annual": [
+      0.008,
+      0.035
+    ]
+  },
+  "contract_pricing": {
+    "base_components": [
+      "cargo_mass",
+      "cargo_volume",
+      "route_time",
+      "handling",
+      "risk",
+      "urgency",
+      "special_requirements",
+      "market_imbalance"
+    ],
+    "target_operating_margin": [
+      0.08,
+      0.24
+    ],
+    "spot_volatility": [
+      -0.18,
+      0.35
+    ]
+  },
+  "failure_rule": "A normal competent operator must be able to remain solvent on ordinary work; exceptional profit requires risk, specialization, efficiency, information or capital."
+}
