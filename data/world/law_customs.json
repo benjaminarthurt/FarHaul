@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "principles": [
+    "Concord standards are commercial interoperability standards, not a universal government.",
+    "Local jurisdictions control criminal law, customs, landing permission, labor rules and resource claims.",
+    "Ship registry, port jurisdiction, contract venue and physical location can all matter to the same dispute.",
+    "Most captains encounter law through paperwork, inspection, fees and insurance rather than courtroom drama."
+  ],
+  "documents": [
+    {
+      "id": "ship_registry",
+      "name": "Ship Registry Certificate",
+      "purpose": "Identifies legal vessel, registry jurisdiction and owner/operator."
+    },
+    {
+      "id": "cargo_manifest",
+      "name": "Cargo Manifest",
+      "purpose": "Declares commodity, quantity, ownership, hazard class and destination."
+    },
+    {
+      "id": "crew_manifest",
+      "name": "Crew and Passenger Manifest",
+      "purpose": "Required for immigration, rescue planning and life-support compliance."
+    },
+    {
+      "id": "hazard_declaration",
+      "name": "Hazard Declaration",
+      "purpose": "Required before docking with chemical, biological, radiological, pressure or other regulated cargo."
+    },
+    {
+      "id": "survey_filing",
+      "name": "Survey Filing",
+      "purpose": "Records intended route, reserves and return window for supported frontier expeditions; mandatory only in some jurisdictions but strongly encouraged by insurers."
+    },
+    {
+      "id": "salvage_notice",
+      "name": "Salvage Notice",
+      "purpose": "Records discovery/recovery circumstances before title is adjudicated."
+    }
+  ],
+  "jurisdictions": [
+    {
+      "id": "sol_customs",
+      "system_id": "sol",
+      "character": "Dense regulation, excellent electronic processing, serious penalties for undeclared cargo."
+    },
+    {
+      "id": "concord_commercial",
+      "system_id": "concord",
+      "character": "Predictable documentation and arbitration; inspectors care intensely about standards compliance."
+    },
+    {
+      "id": "new_houston_port_state",
+      "system_id": "new_houston",
+      "character": "Business-friendly but strict about unsafe ships entering crowded yard traffic."
+    },
+    {
+      "id": "carver_authority",
+      "system_id": "carver",
+      "character": "Focused on mass declarations, claim ownership and keeping improvised mining operations from endangering habitats."
+    },
+    {
+      "id": "meridian_port_authority",
+      "system_id": "port_meridian",
+      "character": "Pragmatic outer-region enforcement. Paperwork is efficient because congestion is expensive."
+    },
+    {
+      "id": "talos_provisional",
+      "system_id": "talos",
+      "character": "Rules change quickly as a mining camp becomes a permanent jurisdiction. Claim and storage disputes dominate."
+    },
+    {
+      "id": "lastlight_frontier_office",
+      "system_id": "lastlight",
+      "character": "Light bureaucracy for ordinary freight, meticulous records for outbound expeditions and biological samples."
+    }
+  ]
+}
