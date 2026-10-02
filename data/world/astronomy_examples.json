@@ -1,0 +1,88 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "systems": [
+    {
+      "id": "sol",
+      "star": {
+        "spectral_class": "G2V",
+        "mass_solar": 1,
+        "radius_solar": 1,
+        "luminosity_solar": 1,
+        "age_gyr": 4.6
+      },
+      "bodies": [
+        {
+          "id": "earth",
+          "mass_earth": 1,
+          "radius_earth": 1,
+          "gravity_g": 1,
+          "semi_major_axis_au": 1,
+          "orbital_period_days": 365.256,
+          "rotation_hours": 23.934,
+          "atmosphere": "nitrogen_oxygen",
+          "surface_pressure_bar": 1,
+          "mean_temperature_c": 15
+        },
+        {
+          "id": "mars",
+          "mass_earth": 0.107,
+          "radius_earth": 0.532,
+          "gravity_g": 0.38,
+          "semi_major_axis_au": 1.524,
+          "orbital_period_days": 686.98,
+          "rotation_hours": 24.623,
+          "atmosphere": "carbon_dioxide_thin",
+          "surface_pressure_bar": 0.006,
+          "mean_temperature_c": -63
+        },
+        {
+          "id": "luna",
+          "mass_earth": 0.0123,
+          "radius_earth": 0.273,
+          "gravity_g": 0.165,
+          "orbital_period_days": 27.322,
+          "rotation_hours": 655.7,
+          "atmosphere": "trace",
+          "surface_pressure_bar": 0,
+          "mean_temperature_c": -20
+        }
+      ]
+    },
+    {
+      "id": "talos",
+      "star": {
+        "spectral_class": "K2V",
+        "mass_solar": 0.78,
+        "radius_solar": 0.74,
+        "luminosity_solar": 0.34,
+        "age_gyr": 6.1
+      },
+      "bodies": [
+        {
+          "id": "talos_prime",
+          "mass_earth": 0.62,
+          "radius_earth": 0.89,
+          "gravity_g": 0.78,
+          "semi_major_axis_au": 0.61,
+          "orbital_period_days": 196,
+          "rotation_hours": 27.8,
+          "atmosphere": "thin_nitrogen_oxygen",
+          "surface_pressure_bar": 0.62,
+          "mean_temperature_c": 4
+        },
+        {
+          "id": "claim",
+          "mass_earth": 0.008,
+          "radius_earth": 0.19,
+          "gravity_g": 0.22,
+          "orbital_period_days": 18.4,
+          "rotation_hours": 441.6,
+          "atmosphere": "trace",
+          "surface_pressure_bar": 0,
+          "mean_temperature_c": -38
+        }
+      ]
+    }
+  ]
+}
