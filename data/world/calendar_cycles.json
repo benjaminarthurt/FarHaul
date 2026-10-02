@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "calendar": {
+    "era": "ICE",
+    "game_start_year": 286,
+    "standard_day_hours": 24,
+    "commercial_week_days": 7,
+    "standard_month_days": 30,
+    "contract_time_basis": "Concord Standard Time"
+  },
+  "cycles": [
+    {
+      "id": "compact_day",
+      "day_of_year": 1,
+      "type": "shared_holiday",
+      "effects": [
+        "government_closures",
+        "passenger_demand",
+        "reduced_standard_freight"
+      ]
+    },
+    {
+      "id": "first_departure",
+      "day_of_year": 173,
+      "type": "shared_observance",
+      "effects": [
+        "port_events",
+        "passenger_demand"
+      ]
+    },
+    {
+      "id": "hesperus_main_harvest",
+      "day_range": [
+        210,
+        265
+      ],
+      "type": "season",
+      "effects": [
+        "grain_supply_up",
+        "cold_storage_pressure",
+        "carrier_demand_up"
+      ]
+    },
+    {
+      "id": "roosevelt_deep_winter",
+      "day_range": [
+        320,
+        55
+      ],
+      "type": "season_wrap",
+      "effects": [
+        "heating_demand_up",
+        "surface_delay_risk_up"
+      ]
+    },
+    {
+      "id": "tidemark_storm_max",
+      "day_range": [
+        120,
+        190
+      ],
+      "type": "season",
+      "effects": [
+        "platform_delay_risk_up",
+        "prestocking_up"
+      ]
+    },
+    {
+      "id": "talos_construction_season",
+      "day_range": [
+        70,
+        250
+      ],
+      "type": "season",
+      "effects": [
+        "construction_demand_up",
+        "migration_up"
+      ]
+    },
+    {
+      "id": "lastlight_outbound_window",
+      "day_range": [
+        90,
+        220
+      ],
+      "type": "season",
+      "effects": [
+        "survey_departures_up",
+        "fuel_provision_demand_up"
+      ]
+    }
+  ]
+}
