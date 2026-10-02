@@ -16,6 +16,41 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `coordinates.json` | Draft 3D gameplay coordinates and travel/fuel model inputs |
 | `markets.json` | Per-system commodity stock, demand and baseline local price multipliers |
 | `ports.json` | Physical freight terminals, docks and spaceports with hull limits, fees and services |
+| `worlds.json` | Detailed planets, moons, belts, habitats and stations: environment, settlement rationale, culture and visual identity |
+| `history.json` | Shared calendar, setting eras and major historical events |
+| `survey_regions.json` | Exploration states, frontier regions, supply gateways and survey design rules |
+| `frontier_systems.json` | Named uninhabited systems beyond Lastlight, their bodies, survey state, hazards and commercial outlook |
+| `settlements.json` | Cities, habitat districts and frontier towns that make inhabited worlds recognizable |
+| `organizations.json` | Major manufacturers, standards bodies, survey authorities, cooperatives and salvage firms |
+| `local_color.json` | Bars, markets, industrial landmarks and other memorable place-level details |
+| `cultures.json` | Everyday culture, households, food, names, etiquette, work and death traditions for the five playable species |
+| `shared_culture.json` | Trade Common, timekeeping, mixed-species accommodations, crew practice and freight slang |
+| `civic_issues.json` | Grounded commercial, legal and civic tensions that can generate stories and contracts |
+| `ship_culture.json` | Species-origin shipbuilding philosophies, hybrid commercial traditions and lived-in ship details |
+| `naming.json` | Ship naming patterns and station nickname conventions |
+| `manufacturers.json` | Spacecraft and equipment manufacturers with industrial histories and reputations |
+| `ship_classes.json` | Recognizable current and legacy commercial freighter families |
+| `equipment_brands.json` | Named engines, reactors, life-support, thermal and cargo equipment |
+| `carriers.json` | Major, regional and cooperative freight operators |
+| `incidents.json` | Industrial accidents, rescues, shortages and famous freight events |
+| `notable_people.json` | Historic engineers, captains, surveyors and working frontier figures |
+| `flavor_text.json` | In-world advertising, port signs, used-ship listings and freight-board copy |
+| `rumors.json` | Grounded, explicitly uncertain rumors suitable for ambient dialogue and leads |
+| `system_bodies.json` | Secondary planets, moons, belts and orbital geography for all 18 inhabited systems |
+| `local_routes.json` | Intra-system freight lanes and the cargo flows that sustain local economies |
+| `industrial_sites.json` | Named shipbreakers, test ranges, observatories, warehouses, mines and other working sites |
+| `derelicts.json` | Retired infrastructure and ordinary salvage/legacy sites without mystery-box assumptions |
+| `port_services_lore.json` | Dockers, surveyors, chandlers, brokers, tug crews, inspectors and frontier service availability |
+| `daily_life.json` | Media, crew lodging, food/provisioning and commercial training |
+| `law_customs.json` | Freight documents, customs practice and jurisdictional differences |
+| `hazards.json` | Regional weather, traffic, environmental and navigation conditions affecting freight |
+| `businesses.json` | Ordinary chandlers, surveyors, parts shops, lodging and frontier suppliers |
+| `communications.json` | Relay networks, frontier data latency, radio terminology and example traffic |
+| `insurance_finance.json` | Hull/cargo insurance, ship loans and owner-operator financial realities |
+| `governments.json` | Independent system governments, jurisdictions and registry authorities |
+| `ship_registration.json` | Vessel registration states, renewal, major modifications and yard compliance behavior |
+| `insurance_rules.json` | Optional insurance certificates, restrictions, violations, detection and cancellation risk |
+| `port_access_rules.json` | How core, industrial, outer, frontier and informal ports treat registration and insurance |
 
 ## Stable IDs
 
@@ -190,3 +225,5 @@ The current structure deliberately leaves room for:
 - changing populations and development states
 
 These should reference existing IDs rather than duplicate entity definitions.
+
+| `compliance_rules.json` | **Mechanics source of truth** for per-port and per-yard registration, insurance, enforcement, unregistered access, and insurer detection rules |

@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "port_access_profiles": [
+    {
+      "id": "core_secure",
+      "examples": [
+        "Earth Orbital Freight",
+        "Concord Central Exchange"
+      ],
+      "registration": "required_recognized_current",
+      "insurance": "cargo_or_activity_dependent",
+      "inspection": "routine electronic verification with targeted physical inspection",
+      "unregistered_result": "entry to commercial berth refused or directed to controlled inspection/impound handling where legally required"
+    },
+    {
+      "id": "major_industrial",
+      "examples": [
+        "Roosevelt Orbital Freight",
+        "Iron Gate Grand Terminal"
+      ],
+      "registration": "required for ordinary commercial berths",
+      "insurance": "often required for heavy lift, financed ships or high-value work",
+      "inspection": "configuration changes likely to be noticed",
+      "unregistered_result": "limited service or refusal"
+    },
+    {
+      "id": "outer_commercial",
+      "examples": [
+        "Port Meridian Main"
+      ],
+      "registration": "required at main commercial facilities",
+      "insurance": "contract/berth dependent",
+      "inspection": "pragmatic but connected",
+      "unregistered_result": "main berth refusal; peripheral independent facilities may still accept ship"
+    },
+    {
+      "id": "boom_port",
+      "examples": [
+        "Talos Hopewell Field"
+      ],
+      "registration": "officially expected; enforcement inconsistent",
+      "insurance": "valuable cargo contracts often require it",
+      "inspection": "capacity constrained",
+      "unregistered_result": "possible access with delays, fees or informal facilities"
+    },
+    {
+      "id": "frontier_port",
+      "examples": [
+        "Waystation Main Dock",
+        "Lastlight Orbital"
+      ],
+      "registration": "preferred and required for some services/contracts",
+      "insurance": "usually optional unless contract-specific",
+      "inspection": "risk-based",
+      "unregistered_result": "basic docking may remain available, but reputable brokers and government work restricted"
+    },
+    {
+      "id": "informal_yard",
+      "examples": [
+        "remote extraction camps",
+        "gray-market repair slips"
+      ],
+      "registration": "not necessarily requested",
+      "insurance": "not requested",
+      "inspection": "none unless owner pays",
+      "unregistered_result": "accepted; documentation from work may be inadequate for later registration renewal"
+    }
+  ]
+}

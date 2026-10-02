@@ -1,0 +1,475 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "worlds": [
+    {
+      "id": "earth",
+      "system_id": "sol",
+      "name": "Earth",
+      "type": "terrestrial_homeworld",
+      "environment": {
+        "gravity_g": 1,
+        "atmosphere": "nitrogen-oxygen, breathable",
+        "surface": "oceans and heavily developed continents",
+        "habitability": "native human biosphere"
+      },
+      "settlement": {
+        "reason_founded": "Human homeworld.",
+        "why_remain": "Largest concentration of human population, institutions, culture and diversified industry.",
+        "character": "Ancient cities coexist with immense orbital logistics infrastructure."
+      },
+      "culture": [
+        "Earth remains culturally fragmented rather than becoming a single planetary culture.",
+        "Offworld freight is routine but surface access is highly regulated."
+      ],
+      "visual_identity": "Dense coastal megaregions, old urban fabric, orbital elevators/transfer infrastructure where practical, crowded skies and mature ports."
+    },
+    {
+      "id": "luna",
+      "system_id": "sol",
+      "name": "Luna",
+      "type": "airless_moon",
+      "environment": {
+        "gravity_g": 0.166,
+        "atmosphere": "none",
+        "surface": "regolith, excavated industrial zones",
+        "habitability": "sealed"
+      },
+      "settlement": {
+        "reason_founded": "Near-Earth industry, science and launch logistics.",
+        "why_remain": "Low gravity and proximity to Earth make it an enduring manufacturing and transshipment location.",
+        "character": "Old infrastructure repeatedly expanded rather than replaced."
+      },
+      "visual_identity": "Excavated terminals, pressure tunnels, buried habitats and industrial scars visible across worked terrain."
+    },
+    {
+      "id": "mars",
+      "system_id": "sol",
+      "name": "Mars",
+      "type": "cold_desert_planet",
+      "environment": {
+        "gravity_g": 0.38,
+        "atmosphere": "thin carbon-dioxide dominated",
+        "surface": "cold desert",
+        "habitability": "sealed/partially engineered"
+      },
+      "settlement": {
+        "reason_founded": "Science, settlement ambition and local resources.",
+        "why_remain": "Large established population and industrial base independent of Earth's surface constraints.",
+        "character": "A mature world rather than a frontier colony."
+      },
+      "visual_identity": "Dust-muted cities, pressure districts, rail freight and generations of additions."
+    },
+    {
+      "id": "keshar_prime",
+      "system_id": "keshar",
+      "name": "Keshar",
+      "type": "high_gravity_homeworld",
+      "environment": {
+        "gravity_g": 1.35,
+        "atmosphere": "dense, breathable to Kesh; shared environments require conditioning",
+        "surface": "shallow seas, broad continental shelves and rugged uplands",
+        "habitability": "native Kesh biosphere"
+      },
+      "settlement": {
+        "reason_founded": "Kesh homeworld.",
+        "why_remain": "Civilizational center and enormous heavy-industrial economy.",
+        "character": "Infrastructure is designed for high loads, violent weather and long service lives."
+      },
+      "culture": [
+        "Maintenance records commonly outlive owners and companies.",
+        "Foreign crews joke that Kesh buildings are engineered to survive the planet disappearing beneath them."
+      ],
+      "visual_identity": "Low broad cities, enormous foundations, sea walls, gantries, pressure-rated transit and visibly massive structural members."
+    },
+    {
+      "id": "ilos_prime",
+      "system_id": "ilos",
+      "name": "Ilos",
+      "type": "low_gravity_homeworld",
+      "environment": {
+        "gravity_g": 0.55,
+        "atmosphere": "dense",
+        "surface": "deep basins, immense escarpments and vertical geology",
+        "habitability": "native Ilyan biosphere"
+      },
+      "settlement": {
+        "reason_founded": "Ilyan homeworld.",
+        "why_remain": "Civilizational center and precision-manufacturing economy.",
+        "character": "Vertical distance is inexpensive; unnecessary mass is culturally conspicuous."
+      },
+      "culture": [
+        "Architecture treats height as humans treat horizontal distance.",
+        "Imported heavy machinery is often stripped and rebuilt to remove mass."
+      ],
+      "visual_identity": "Tall skeletal towers, suspended infrastructure, cliff cities, long-span bridges and lightweight transit."
+    },
+    {
+      "id": "veyara_prime",
+      "system_id": "veyara",
+      "name": "Veyara",
+      "type": "ocean_homeworld",
+      "environment": {
+        "gravity_g": 0.92,
+        "atmosphere": "humid breathable atmosphere",
+        "surface_water_fraction": 0.85,
+        "surface": "global ocean with island arcs and shallow continental seas",
+        "habitability": "native Vey biosphere"
+      },
+      "settlement": {
+        "reason_founded": "Vey homeworld.",
+        "why_remain": "Civilizational center with unmatched biological and environmental industries.",
+        "character": "The boundary between city, port and water-management system is often indistinct."
+      },
+      "culture": [
+        "Water is treated as inhabited space rather than an obstacle.",
+        "Dry interiors designed for visitors can feel wastefully arid to Vey."
+      ],
+      "visual_identity": "Floating districts, submerged infrastructure, island industry, causeways, pumps and enormous water-processing works."
+    },
+    {
+      "id": "orun_prime",
+      "system_id": "orun",
+      "name": "Orun",
+      "type": "thermal_extreme_homeworld",
+      "environment": {
+        "gravity_g": 0.88,
+        "atmosphere": "breathable with regional dust loading",
+        "surface": "rocky terrain with extreme diurnal temperature swings",
+        "habitability": "native Orun biosphere; surface exposure seasonally difficult"
+      },
+      "settlement": {
+        "reason_founded": "Orun homeworld.",
+        "why_remain": "Civilizational center whose subterranean infrastructure is effectively a second geology.",
+        "character": "Cities grow by excavation and connection rather than outward surface sprawl."
+      },
+      "culture": [
+        "Mechanical spaces are ordinary social spaces.",
+        "Privacy is created deliberately when needed rather than assumed by architecture."
+      ],
+      "visual_identity": "Sparse surface entrances over enormous tunnel cities, ceramic liners, heat exchangers and machinery embedded beside homes and markets."
+    },
+    {
+      "id": "concord_prime",
+      "system_id": "concord",
+      "name": "Concord Prime",
+      "type": "temperate_colony_world",
+      "environment": {
+        "gravity_g": 0.96,
+        "atmosphere": "breathable with routine multispecies conditioning indoors",
+        "surface": "temperate continents and shallow inland seas",
+        "habitability": "broadly compatible"
+      },
+      "settlement": {
+        "reason_founded": "Neutral meeting and exchange site during the early multispecies trade era.",
+        "why_remain": "Its institutions, standards bodies, finance and route position became more valuable than its original physical resources.",
+        "character": "No single species' planning assumptions dominate the built environment."
+      },
+      "culture": [
+        "Commercial signage and public facilities are deliberately multispecies.",
+        "The SCU standard is a point of local civic pride despite being mundane elsewhere."
+      ],
+      "visual_identity": "Layered trade cities, standardized freight architecture, mixed habitat districts and enormous intermodal terminals."
+    },
+    {
+      "id": "roosevelt",
+      "system_id": "new_houston",
+      "name": "Roosevelt",
+      "type": "cold_industrial_planet",
+      "environment": {
+        "gravity_g": 0.84,
+        "atmosphere": "breathable but cold; severe seasonal weather",
+        "surface": "cold mineral-rich continents, mountain belts and inland seas",
+        "habitability": "outdoor survival practical with climate protection"
+      },
+      "settlement": {
+        "reason_founded": "Accessible mineral deposits and a viable human settlement environment.",
+        "why_remain": "Shipbuilding, fabrication and a mature industrial workforce.",
+        "character": "Nearly every city has some relationship to fabrication, extraction or orbital construction."
+      },
+      "culture": [
+        "Independent captains treat New Houston as neutral ground between manufacturers.",
+        "Practical mixed-species engineering is valued more than design purity."
+      ],
+      "visual_identity": "Snow, mines, rail freight, fabrication sheds, launch fields and orbital yards crowded with half-built commercial hulls."
+    },
+    {
+      "id": "hesperus_prime",
+      "system_id": "hesperus",
+      "name": "Hesperus",
+      "type": "agricultural_planet",
+      "environment": {
+        "gravity_g": 0.91,
+        "atmosphere": "breathable",
+        "surface": "broad plains, shallow seas and long temperate growing belts",
+        "habitability": "high"
+      },
+      "settlement": {
+        "reason_founded": "Unusually favorable large-scale agriculture.",
+        "why_remain": "Its food exports support several industrial systems.",
+        "character": "Low population density despite enormous economic footprint."
+      },
+      "culture": [
+        "Harvest schedules affect freight pricing more than politics does.",
+        "Ports smell like soil, machinery, refrigerant and livestock rather than spacecraft."
+      ],
+      "visual_identity": "Huge fields, irrigation geometry, grain elevators, cold stores, agricultural machinery and widely separated towns."
+    },
+    {
+      "id": "iron_gate_prime",
+      "system_id": "iron_gate",
+      "name": "Iron Gate Prime",
+      "type": "industrial_planet",
+      "environment": {
+        "gravity_g": 0.72,
+        "atmosphere": "breathable with industrial controls around major cities",
+        "surface": "dry rocky continents with accessible mineral provinces",
+        "habitability": "moderate"
+      },
+      "settlement": {
+        "reason_founded": "Kesh mining colony with lower gravity than Keshar.",
+        "why_remain": "Low gravity plus heavy industry made construction of enormous spacecraft economical.",
+        "character": "The sky is dominated by orbital construction rather than surface prestige architecture."
+      },
+      "culture": [
+        "Large hull construction is a civic identity.",
+        "Workers from every species arrive for multi-year yard contracts."
+      ],
+      "visual_identity": "Ore trains, vast casting works, orbital rings of incomplete hulls and cranes sized like buildings."
+    },
+    {
+      "id": "carver_belt",
+      "system_id": "carver",
+      "name": "Carver Belt",
+      "type": "asteroid_belt",
+      "environment": {
+        "gravity_g": 0,
+        "atmosphere": "none",
+        "surface": "metal-rich asteroids",
+        "habitability": "industrial EVA only"
+      },
+      "settlement": {
+        "reason_founded": "Exceptionally accessible metal resources.",
+        "why_remain": "Known-space industry continuously consumes its output.",
+        "character": "The workplace is distributed across moving rocks rather than a planetary surface."
+      },
+      "visual_identity": "Tugs, drilling frames, refinery lights, rotating work camps and ore bags against black space."
+    },
+    {
+      "id": "carver_habitats",
+      "system_id": "carver",
+      "name": "Carver Habitats",
+      "type": "distributed_orbital_habitats",
+      "environment": {
+        "gravity_g": "0-1 artificial",
+        "atmosphere": "sealed",
+        "surface": "stations and excavated asteroids",
+        "habitability": "engineered"
+      },
+      "settlement": {
+        "reason_founded": "Housing and services for belt extraction.",
+        "why_remain": "Mining economy and generations of permanent residents.",
+        "character": "Everything ordinary is valuable because almost everything ordinary was shipped in."
+      },
+      "culture": [
+        "Used consumer goods retain value unusually long.",
+        "Freight arrivals are visible social events in smaller habitats."
+      ],
+      "visual_identity": "Rotating cylinders, excavated rock, patched pressure structures and warehouses full of inbound necessities."
+    },
+    {
+      "id": "bradbury_prime",
+      "system_id": "bradbury",
+      "name": "Bradbury Prime",
+      "type": "research_colony_world",
+      "environment": {
+        "gravity_g": 0.68,
+        "atmosphere": "breathable with low pressure",
+        "surface": "cool plateaus, deep valleys and dry inland basins",
+        "habitability": "good with acclimation"
+      },
+      "settlement": {
+        "reason_founded": "Stable environment and isolation suitable for observatories and research.",
+        "why_remain": "Universities, laboratories and precision industries accumulated around the original institutes.",
+        "character": "Research campuses grew into cities."
+      },
+      "culture": [
+        "Cargo paperwork can be more demanding than customs because experiments impose exact handling requirements.",
+        "Academic rivalries coexist with intensely practical freight dependence."
+      ],
+      "visual_identity": "Clean industrial campuses, observatory fields, compact cities and specialized receiving facilities."
+    },
+    {
+      "id": "pelagos_prime",
+      "system_id": "pelagos",
+      "name": "Pelagos",
+      "type": "warm_ocean_planet",
+      "environment": {
+        "gravity_g": 0.94,
+        "atmosphere": "warm, humid and breathable",
+        "surface": "ocean with volcanic island chains",
+        "habitability": "excellent for Vey; good for humans"
+      },
+      "settlement": {
+        "reason_founded": "Rare environment comfortable to both Vey and humans plus rich marine biology.",
+        "why_remain": "Food, pharmaceuticals and biological industry.",
+        "character": "One of the symbolic successes of early joint settlement."
+      },
+      "culture": [
+        "Mixed Vey-human communities developed local customs not native to either homeworld.",
+        "Waterborne freight remains important beneath orbital logistics."
+      ],
+      "visual_identity": "Volcanic islands, floating industrial districts, aquaculture fields, humid ports and orbital transfer craft."
+    },
+    {
+      "id": "tidemark_prime",
+      "system_id": "tidemark",
+      "name": "Tidemark",
+      "type": "deep_ocean_resource_world",
+      "environment": {
+        "gravity_g": 1.03,
+        "atmosphere": "dense, wet and storm-prone",
+        "surface": "almost continuous deep ocean",
+        "habitability": "difficult outside engineered platforms"
+      },
+      "settlement": {
+        "reason_founded": "Valuable dissolved minerals and unusual biological chemistry.",
+        "why_remain": "Extraction remains profitable despite severe logistics.",
+        "character": "Settlements are machines that happen to contain neighborhoods."
+      },
+      "culture": [
+        "Weather forecasts are operational documents.",
+        "Permanent residents distinguish dozens of platform and sea-state conditions outsiders simply call storms."
+      ],
+      "visual_identity": "Floating industrial platforms, wave barriers, tethered structures, heavy rain and almost no natural landing ground."
+    },
+    {
+      "id": "foundry_prime",
+      "system_id": "foundry",
+      "name": "Foundry",
+      "type": "geothermal_industrial_planet",
+      "environment": {
+        "gravity_g": 1.08,
+        "atmosphere": "thin but usable with assistance; volcanic contaminants common",
+        "surface": "hot volcanic uplands and tectonic basins",
+        "habitability": "subterranean preferred"
+      },
+      "settlement": {
+        "reason_founded": "Abundant geothermal energy and accessible industrial minerals.",
+        "why_remain": "Extremely cheap process heat and mature underground factories.",
+        "character": "Surface terminals are only loading mouths for a much larger world below."
+      },
+      "culture": [
+        "Waste heat is treated as a resource stream.",
+        "Surface architecture is deliberately disposable compared with protected subsurface plant."
+      ],
+      "visual_identity": "Black rock, steam plumes, freight elevators, heat exchangers and illuminated shafts descending into factory districts."
+    },
+    {
+      "id": "meridian_station",
+      "system_id": "port_meridian",
+      "name": "Port Meridian",
+      "type": "orbital_settlement",
+      "environment": {
+        "gravity_g": "variable artificial",
+        "atmosphere": "sealed multispecies zones",
+        "surface": "constructed station",
+        "habitability": "engineered"
+      },
+      "settlement": {
+        "reason_founded": "Refueling point where several useful routes converged.",
+        "why_remain": "Network effects: warehouses, repair skill, brokers and expedition services attract more traffic.",
+        "character": "A truck stop that grew until it became a city."
+      },
+      "culture": [
+        "Crews measure parts of the station by old dock numbers rather than official district names.",
+        "Nobody agrees which bar was actually first."
+      ],
+      "visual_identity": "Freight rings, mismatched additions, fuel farms, repair gantries, cheap hotels, illuminated signs and ships from every major manufacturer."
+    },
+    {
+      "id": "talos_prime",
+      "system_id": "talos",
+      "name": "Talos",
+      "type": "frontier_mining_planet",
+      "environment": {
+        "gravity_g": 0.79,
+        "atmosphere": "thin breathable mix at low elevations; supplemental oxygen common",
+        "surface": "cold high desert, exposed mineral formations",
+        "habitability": "marginal but practical"
+      },
+      "settlement": {
+        "reason_founded": "Survey teams confirmed commercially exceptional rare-mineral deposits.",
+        "why_remain": "The boom is still expanding and fortunes are being made supplying it.",
+        "character": "Almost everything looks temporary even when plans call it permanent."
+      },
+      "culture": [
+        "Arrival dates function as social seniority.",
+        "Arguments about what Talos will become are more common than agreement about what it is."
+      ],
+      "visual_identity": "Prefab habitats, excavation pits, dust, temporary roads, stacked freight, overloaded pads and construction lighting all night."
+    },
+    {
+      "id": "waystation_habitat",
+      "system_id": "waystation",
+      "name": "Waystation",
+      "type": "frontier_habitat",
+      "environment": {
+        "gravity_g": "0.62 artificial",
+        "atmosphere": "sealed",
+        "surface": "constructed habitat attached to an airless minor body",
+        "habitability": "engineered"
+      },
+      "settlement": {
+        "reason_founded": "Fuel cache and emergency service point on the outward route.",
+        "why_remain": "Mechanics, pilots and businesses accumulated until leaving made less sense than staying.",
+        "character": "Nobody planned a town; that is still visible in every corridor."
+      },
+      "culture": [
+        "Locals remember ships and captains by name.",
+        "Temporary structures acquire permanent nicknames long before official addresses."
+      ],
+      "visual_identity": "Connected pressure modules, old fuel tanks, repair sheds, reused cargo containers and a small crowded dock."
+    },
+    {
+      "id": "lastlight_settlement",
+      "system_id": "lastlight",
+      "name": "Lastlight",
+      "type": "frontier_planetary_settlement",
+      "environment": {
+        "gravity_g": 0.87,
+        "atmosphere": "cold, thin but breathable with acclimation",
+        "surface": "rocky subpolar plains and low mountain chains",
+        "habitability": "marginal"
+      },
+      "settlement": {
+        "reason_founded": "Survey base positioned to support exploration beyond the established network.",
+        "why_remain": "Exploration, limited mining and the strategic value of being the last substantial supply point.",
+        "character": "Civilization feels concentrated rather than absent: one small place contains almost everything available for light-years."
+      },
+      "culture": [
+        "Departures beyond the charted routes are noticed.",
+        "Survey crews leave records and messages because the next ship may be weeks away."
+      ],
+      "visual_identity": "One illuminated settlement against dark open terrain, antenna fields, fuel tanks, expedition warehouses and a small landing field."
+    },
+    {
+      "id": "lastlight_orbital",
+      "system_id": "lastlight",
+      "name": "Lastlight Orbital",
+      "type": "frontier_orbital_station",
+      "environment": {
+        "gravity_g": "partial artificial",
+        "atmosphere": "sealed",
+        "surface": "constructed station",
+        "habitability": "engineered"
+      },
+      "settlement": {
+        "reason_founded": "Separate heavy freight and expedition staging from the limited surface field.",
+        "why_remain": "Large ships need a transfer point and explorers need a final place to assemble loads.",
+        "character": "The last busy radio traffic before silence."
+      },
+      "visual_identity": "Compact truss station, external cargo racks, fuel tanks, survey craft and a disproportionate number of antennas."
+    }
+  ]
+}

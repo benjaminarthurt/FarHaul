@@ -1,0 +1,134 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "sites": [
+    {
+      "id": "truman_breakers",
+      "system_id": "new_houston",
+      "body_id": "roosevelt_moon",
+      "name": "Truman Breakers",
+      "type": "shipbreaking_yard",
+      "description": "Kilometers of hardstand, cutting frames and component warehouses processing commercial ships too old or damaged to justify refit.",
+      "gameplay_hooks": [
+        "used components",
+        "salvage contracts",
+        "rare legacy parts",
+        "ship provenance"
+      ]
+    },
+    {
+      "id": "compact_range",
+      "system_id": "concord",
+      "body_id": "concord_moon",
+      "name": "Compact Certification Range",
+      "type": "test_range",
+      "description": "Independent facilities test docking hardware, cargo restraints and pressure equipment against Concord standards.",
+      "gameplay_hooks": [
+        "certification freight",
+        "prototype delivery",
+        "damaged test articles"
+      ]
+    },
+    {
+      "id": "shepherd_seed_vault",
+      "system_id": "hesperus",
+      "body_id": "hesperus_moon",
+      "name": "Shepherd Seed Vault",
+      "type": "agricultural_archive",
+      "description": "Distributed cold-storage vaults preserve crop genetics from multiple worlds.",
+      "gameplay_hooks": [
+        "temperature-critical freight",
+        "research cargo"
+      ]
+    },
+    {
+      "id": "anvil_zero",
+      "system_id": "iron_gate",
+      "body_id": "iron_gate_moon",
+      "name": "Anvil Zero",
+      "type": "vacuum_foundry",
+      "description": "Historic heavy casting and fabrication complex still producing enormous structural pieces.",
+      "gameplay_hooks": [
+        "oversized cargo",
+        "heavy lift"
+      ]
+    },
+    {
+      "id": "lowell_quiet_side",
+      "system_id": "bradbury",
+      "body_id": "bradbury_moon",
+      "name": "Quiet Side Array",
+      "type": "observatory",
+      "description": "Radio observatories on the protected farside enforce strict transmission windows.",
+      "gameplay_hooks": [
+        "communications restrictions",
+        "precision instrument delivery"
+      ]
+    },
+    {
+      "id": "shoal_dirty_dock",
+      "system_id": "pelagos",
+      "body_id": "pelagos_moon",
+      "name": "Dirty Dock",
+      "type": "industrial_port",
+      "description": "Informal name for the moon-based heavy industrial terminal keeping smelting and bulk fabrication off Pelagos.",
+      "gameplay_hooks": [
+        "machinery freight",
+        "industrial accidents",
+        "surface transfer"
+      ]
+    },
+    {
+      "id": "meridian_reserve_12",
+      "system_id": "port_meridian",
+      "body_id": "meridian_moon",
+      "name": "Reserve Twelve",
+      "type": "water_mine",
+      "description": "One of several ice extraction installations feeding Port Meridian.",
+      "gameplay_hooks": [
+        "water contracts",
+        "equipment failure",
+        "tug work"
+      ]
+    },
+    {
+      "id": "talos_claim_exchange",
+      "system_id": "talos",
+      "body_id": "talos_moon",
+      "name": "Claim Exchange",
+      "type": "orbital_warehouse",
+      "description": "A rapidly assembled collection of bonded warehouses, assay offices and communications equipment.",
+      "gameplay_hooks": [
+        "mineral backhaul",
+        "claim disputes",
+        "warehouse shortages"
+      ]
+    },
+    {
+      "id": "beacon_array",
+      "system_id": "lastlight",
+      "body_id": "lastlight_moon",
+      "name": "Beacon Array",
+      "type": "deep_space_array",
+      "description": "Sensors and communications equipment aimed outward toward the survey frontier.",
+      "gameplay_hooks": [
+        "survey data",
+        "communications repair",
+        "expedition tracking"
+      ]
+    },
+    {
+      "id": "waystation_tank_4",
+      "system_id": "waystation",
+      "body_id": "waystation_ice",
+      "name": "Tank Four",
+      "type": "ice_processing_site",
+      "description": "Unremarkable water-processing installation famous locally because its repeated pump failures helped create Waystation's repair economy.",
+      "gameplay_hooks": [
+        "replacement pumps",
+        "water hauling",
+        "maintenance calls"
+      ]
+    }
+  ]
+}

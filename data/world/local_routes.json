@@ -1,0 +1,258 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "routes": [
+    {
+      "id": "sol_earth_luna",
+      "system_id": "sol",
+      "from": "earth",
+      "to": "luna",
+      "traffic": "very_high",
+      "cargo": [
+        "manufactured_goods",
+        "passengers",
+        "industrial_goods"
+      ],
+      "character": "One of the most routine space freight lanes in known space."
+    },
+    {
+      "id": "sol_belt_earth",
+      "system_id": "sol",
+      "from": "sol_belt",
+      "to": "earth",
+      "traffic": "high",
+      "cargo": [
+        "metals",
+        "industrial_feedstocks"
+      ],
+      "character": "Mature bulk route dominated by large carriers."
+    },
+    {
+      "id": "keshar_dorr_keshar",
+      "system_id": "keshar",
+      "from": "keshar_inner",
+      "to": "keshar_prime",
+      "traffic": "high",
+      "cargo": [
+        "metals"
+      ],
+      "character": "Automated ore traffic into high-gravity industry."
+    },
+    {
+      "id": "keshar_v_tor",
+      "system_id": "keshar",
+      "from": "keshar_giant",
+      "to": "keshar_prime",
+      "traffic": "medium",
+      "cargo": [
+        "industrial_gases",
+        "chemical_feedstocks"
+      ],
+      "character": "Longer local haul with specialized tankers."
+    },
+    {
+      "id": "ilos_ari",
+      "system_id": "ilos",
+      "from": "ilos_prime",
+      "to": "ilos_moon",
+      "traffic": "medium",
+      "cargo": [
+        "engines",
+        "scientific_instruments"
+      ],
+      "character": "Test hardware outbound; certified assemblies inbound."
+    },
+    {
+      "id": "vey_shaal",
+      "system_id": "veyara",
+      "from": "veyara_inner",
+      "to": "veyara_prime",
+      "traffic": "medium",
+      "cargo": [
+        "metals",
+        "structural_materials"
+      ],
+      "character": "Dry-world materials support an ocean civilization."
+    },
+    {
+      "id": "orun_var",
+      "system_id": "orun",
+      "from": "orun_moon",
+      "to": "orun_prime",
+      "traffic": "high",
+      "cargo": [
+        "manufactured_goods",
+        "machine_components"
+      ],
+      "character": "Vacuum manufacturing feeding subsurface industry."
+    },
+    {
+      "id": "concord_compact",
+      "system_id": "concord",
+      "from": "concord_moon",
+      "to": "concord_prime",
+      "traffic": "very_high",
+      "cargo": [
+        "containers",
+        "certified_components"
+      ],
+      "character": "Certification, bonded warehousing and planetary distribution."
+    },
+    {
+      "id": "nh_toolbox_roosevelt",
+      "system_id": "new_houston",
+      "from": "nh_belt",
+      "to": "roosevelt",
+      "traffic": "very_high",
+      "cargo": [
+        "metals",
+        "structural_materials"
+      ],
+      "character": "Ore and feedstock flow continuously toward shipyards."
+    },
+    {
+      "id": "nh_roosevelt_truman",
+      "system_id": "new_houston",
+      "from": "roosevelt",
+      "to": "roosevelt_moon",
+      "traffic": "high",
+      "cargo": [
+        "ship_modules",
+        "scrap",
+        "engines"
+      ],
+      "character": "New components outbound, stripped components and scrap returning."
+    },
+    {
+      "id": "hesperus_thresh",
+      "system_id": "hesperus",
+      "from": "hesperus_outer",
+      "to": "hesperus_prime",
+      "traffic": "medium",
+      "cargo": [
+        "fertilizer_precursors"
+      ],
+      "character": "Unromantic but essential agricultural supply."
+    },
+    {
+      "id": "iron_keel",
+      "system_id": "iron_gate",
+      "from": "iron_gate_belt",
+      "to": "iron_gate_prime",
+      "traffic": "very_high",
+      "cargo": [
+        "iron",
+        "nickel",
+        "structural_materials"
+      ],
+      "character": "Industrial bulk movement supporting orbital hull construction."
+    },
+    {
+      "id": "carver_belt_habs",
+      "system_id": "carver",
+      "from": "carver_belt",
+      "to": "carver_habitats",
+      "traffic": "very_high",
+      "cargo": [
+        "metals"
+      ],
+      "character": "Short-haul tugs and ore carriers define daily traffic."
+    },
+    {
+      "id": "bradbury_lowell",
+      "system_id": "bradbury",
+      "from": "bradbury_prime",
+      "to": "bradbury_moon",
+      "traffic": "medium",
+      "cargo": [
+        "scientific_instruments",
+        "electronics"
+      ],
+      "character": "Sensitive research freight and personnel."
+    },
+    {
+      "id": "pelagos_shoal",
+      "system_id": "pelagos",
+      "from": "pelagos_moon",
+      "to": "pelagos_prime",
+      "traffic": "high",
+      "cargo": [
+        "structural_materials",
+        "machinery"
+      ],
+      "character": "Heavy dirty industry stays on Shoal; finished equipment goes downwell."
+    },
+    {
+      "id": "tidemark_drymark",
+      "system_id": "tidemark",
+      "from": "tidemark_inner",
+      "to": "tidemark_prime",
+      "traffic": "medium",
+      "cargo": [
+        "structural_materials",
+        "metals"
+      ],
+      "character": "Construction supply to floating settlements."
+    },
+    {
+      "id": "foundry_feedstock",
+      "system_id": "foundry",
+      "from": "foundry_belt",
+      "to": "foundry_prime",
+      "traffic": "high",
+      "cargo": [
+        "industrial_feedstocks",
+        "rare_minerals"
+      ],
+      "character": "Mineral feedstock into geothermal factories."
+    },
+    {
+      "id": "meridian_layover",
+      "system_id": "port_meridian",
+      "from": "meridian_moon",
+      "to": "meridian_station",
+      "traffic": "high",
+      "cargo": [
+        "water",
+        "industrial_gases"
+      ],
+      "character": "Local extraction is what lets a giant freight hub exist so far outward."
+    },
+    {
+      "id": "talos_claim",
+      "system_id": "talos",
+      "from": "talos_prime",
+      "to": "talos_moon",
+      "traffic": "high",
+      "cargo": [
+        "rare_minerals",
+        "equipment",
+        "containers"
+      ],
+      "character": "Rapidly growing transfer route constrained by unfinished infrastructure."
+    },
+    {
+      "id": "waystation_ice",
+      "system_id": "waystation",
+      "from": "waystation_ice",
+      "to": "waystation_habitat",
+      "traffic": "low",
+      "cargo": [
+        "water"
+      ],
+      "character": "Small industrial tugs keep the settlement supplied with locally sourced water."
+    },
+    {
+      "id": "lastlight_reserve",
+      "system_id": "lastlight",
+      "from": "lastlight_outer",
+      "to": "lastlight_orbital",
+      "traffic": "low",
+      "cargo": [
+        "water",
+        "volatiles"
+      ],
+      "character": "Low-volume extraction with outsized strategic importance for expeditions."
+    }
+  ]
+}

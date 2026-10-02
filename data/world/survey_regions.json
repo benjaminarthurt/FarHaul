@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "states": [
+    {
+      "id": "inhabited",
+      "name": "Inhabited",
+      "description": "Permanent population and routine commercial traffic."
+    },
+    {
+      "id": "surveyed",
+      "name": "Surveyed",
+      "description": "Major bodies, hazards and resources characterized well enough for commercial expedition planning."
+    },
+    {
+      "id": "partial",
+      "name": "Partially Surveyed",
+      "description": "System entered and some bodies examined; significant uncertainty remains."
+    },
+    {
+      "id": "cataloged",
+      "name": "Cataloged",
+      "description": "Star and coarse system properties known remotely; no dependable local navigation or resource survey."
+    },
+    {
+      "id": "unmapped",
+      "name": "Unmapped",
+      "description": "Outside dependable commercial survey coverage."
+    }
+  ],
+  "frontier_regions": [
+    {
+      "id": "lastlight_outward_corridor",
+      "gateway_system_id": "lastlight",
+      "name": "Lastlight Outward Corridor",
+      "support_level": "minimal",
+      "description": "The best documented path beyond permanent settlement. Survey craft have established several provisional navigation solutions, but there are no public rescue guarantees.",
+      "expedition_supply_system_ids": [
+        "lastlight",
+        "waystation",
+        "port_meridian"
+      ],
+      "hazards": [
+        "navigation uncertainty",
+        "no routine rescue",
+        "fuel planning",
+        "communications delay",
+        "unverified planetary environments"
+      ]
+    },
+    {
+      "id": "meridian_outer_arc",
+      "gateway_system_id": "port_meridian",
+      "name": "Meridian Outer Arc",
+      "support_level": "limited",
+      "description": "A broad set of commercially interesting catalog targets not yet connected into a dependable route network.",
+      "expedition_supply_system_ids": [
+        "port_meridian"
+      ],
+      "hazards": [
+        "poor route characterization",
+        "incomplete resource data",
+        "limited communications"
+      ]
+    }
+  ],
+  "design_rules": [
+    "Survey information is tradeable economic information.",
+    "Not every surveyed system contains a profitable discovery.",
+    "A discovery becomes strategically important only when logistics can support exploiting or studying it.",
+    "Player activity can move locations from survey targets toward expedition camps and permanent settlements."
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "ship_naming": [
+    {
+      "tradition": "human",
+      "patterns": [
+        "places",
+        "people",
+        "animals",
+        "jokes",
+        "aspirational nouns",
+        "family references"
+      ],
+      "examples": [
+        "Dunlin",
+        "Second Mortgage",
+        "Ada Mercer",
+        "Long Road",
+        "Mule",
+        "Northbound"
+      ]
+    },
+    {
+      "tradition": "kesh",
+      "patterns": [
+        "responsibilities",
+        "durable natural features",
+        "household references",
+        "historical workers"
+      ],
+      "examples": [
+        "Keeps Her Word",
+        "Stone Under Load",
+        "Venn's Measure",
+        "Third Foundation"
+      ]
+    },
+    {
+      "tradition": "ilyan",
+      "patterns": [
+        "motion",
+        "geometry",
+        "weather",
+        "precise poetic images"
+      ],
+      "examples": [
+        "Narrow Arc",
+        "Falling Line",
+        "Quiet Vector",
+        "Sixth Horizon"
+      ]
+    },
+    {
+      "tradition": "vey",
+      "patterns": [
+        "currents",
+        "water states",
+        "living systems",
+        "journeys"
+      ],
+      "examples": [
+        "Returning Current",
+        "Deep Morning",
+        "Open Estuary",
+        "Rain Between Islands"
+      ]
+    },
+    {
+      "tradition": "orun",
+      "patterns": [
+        "junctions",
+        "shared places",
+        "work concepts",
+        "routes"
+      ],
+      "examples": [
+        "Warm Junction",
+        "Throughway",
+        "Common Wall",
+        "East Return"
+      ]
+    },
+    {
+      "tradition": "mixed_frontier",
+      "patterns": [
+        "irony",
+        "old callsigns",
+        "practical descriptions",
+        "places survived"
+      ],
+      "examples": [
+        "Still Here",
+        "Last Good Idea",
+        "Paid For",
+        "Three Pumps",
+        "After Talos"
+      ]
+    }
+  ],
+  "station_naming": {
+    "description": "Formal names coexist with crew names. Dock workers often shorten long institutional titles until the nickname becomes more recognizable than the registry.",
+    "examples": [
+      {
+        "formal": "Port Meridian Main Freight Ring",
+        "common": "Main Ring"
+      },
+      {
+        "formal": "Roosevelt Orbital Freight Terminal",
+        "common": "ROFT or Roosevelt Orbital"
+      },
+      {
+        "formal": "Lastlight Orbital",
+        "common": "The Orbital"
+      }
+    ]
+  }
+}

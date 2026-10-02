@@ -1,0 +1,209 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "calendar": {
+    "era_name": "Interstellar Common Era",
+    "abbreviation": "ICE",
+    "game_start_year": 286,
+    "note": "Year zero is the Concord Compact, chosen for shared commercial recordkeeping rather than any species' religious or national calendar. Absolute Earth-equivalent dating remains intentionally unset."
+  },
+  "eras": [
+    {
+      "id": "contact_generation",
+      "name": "The Contact Generations",
+      "range": "c. -95 to -41 ICE",
+      "summary": "Independent civilizations establish reliable contact over several generations. Trade begins as cautious state and scientific exchange before private carriers become common."
+    },
+    {
+      "id": "standards_period",
+      "name": "The Standards Period",
+      "range": "-40 to 34 ICE",
+      "summary": "Commercial incompatibilities become more expensive than political disagreements. Concord grows as neutral exchange ground; cargo, docking, pressure and identification standards are negotiated."
+    },
+    {
+      "id": "commercial_expansion",
+      "name": "Commercial Expansion",
+      "range": "35 to 176 ICE",
+      "summary": "Mixed-species manufacturers and carriers spread. New Houston, Iron Gate, Hesperus, Bradbury and Pelagos mature into specialized economies linked by dependable freight."
+    },
+    {
+      "id": "outer_buildout",
+      "name": "The Outer Buildout",
+      "range": "177 to 248 ICE",
+      "summary": "Tidemark, Foundry and Port Meridian become economically permanent. Survey and freight networks push beyond the mature core."
+    },
+    {
+      "id": "current_frontier",
+      "name": "The Current Frontier",
+      "range": "249 to 286 ICE",
+      "summary": "Waystation becomes permanent, Lastlight develops into the principal outward staging point and Talos enters a mineral-driven boom."
+    }
+  ],
+  "events": [
+    {
+      "year": -83,
+      "id": "first_sustained_exchange",
+      "name": "First Sustained Exchange",
+      "systems": [
+        "sol",
+        "concord"
+      ],
+      "summary": "Early contact networks become regular enough that crews and cargo can be planned months ahead rather than treated as singular expeditions."
+    },
+    {
+      "year": -46,
+      "id": "concord_exchange_founded",
+      "name": "Concord Exchange Founded",
+      "systems": [
+        "concord"
+      ],
+      "summary": "A neutral commercial settlement is established to handle multispecies transfer, arbitration and incompatible cargo standards."
+    },
+    {
+      "year": 0,
+      "id": "concord_compact",
+      "name": "Concord Compact",
+      "systems": [
+        "concord"
+      ],
+      "summary": "Major trading governments and commercial bodies adopt a shared framework for navigation identifiers, docking liability and commercial records. The event becomes year zero of the Interstellar Common Era."
+    },
+    {
+      "year": 11,
+      "id": "scu_formalized",
+      "name": "Standard Cargo Unit Formalized",
+      "systems": [
+        "concord"
+      ],
+      "summary": "The SCU becomes the dominant interstellar freight-volume standard after competing container systems repeatedly create costly transfer delays."
+    },
+    {
+      "year": 39,
+      "id": "roosevelt_yards_open",
+      "name": "Roosevelt Commercial Yards Open",
+      "systems": [
+        "new_houston"
+      ],
+      "summary": "New Houston's first large independent yards begin combining components from multiple engineering traditions instead of serving a single national or species standard."
+    },
+    {
+      "year": 58,
+      "id": "iron_gate_heavy_keel",
+      "name": "First Iron Gate Heavy Keel",
+      "systems": [
+        "iron_gate"
+      ],
+      "summary": "A Kesh-founded orbital yard demonstrates that very large commercial hulls can be built more cheaply away from Keshar's high gravity."
+    },
+    {
+      "year": 74,
+      "id": "hesperus_export_transition",
+      "name": "Hesperus Becomes Net Food Exporter",
+      "systems": [
+        "hesperus"
+      ],
+      "summary": "Agricultural expansion and imported Vey environmental methods turn Hesperus into a major regional food supplier."
+    },
+    {
+      "year": 96,
+      "id": "pelagos_joint_charter",
+      "name": "Pelagos Joint Charter",
+      "systems": [
+        "pelagos"
+      ],
+      "summary": "Long-standing Human and Vey settlements adopt a shared planetary commercial charter, later cited as an early durable mixed-species colonial government."
+    },
+    {
+      "year": 121,
+      "id": "carver_habitat_wave",
+      "name": "Carver Habitat Wave",
+      "systems": [
+        "carver"
+      ],
+      "summary": "High metal demand funds a generation of rotating habitats, converting temporary extraction camps into permanent communities."
+    },
+    {
+      "year": 143,
+      "id": "bradbury_institute_compact",
+      "name": "Bradbury Institute Compact",
+      "systems": [
+        "bradbury"
+      ],
+      "summary": "Several Human and Ilyan research institutions pool freight, safety and laboratory infrastructure, accelerating the world's growth as a research center."
+    },
+    {
+      "year": 181,
+      "id": "meridian_fuel_depot",
+      "name": "Meridian Fuel Depot Commissioned",
+      "systems": [
+        "port_meridian"
+      ],
+      "summary": "A utilitarian refueling depot opens at a route convergence. Nobody involved describes it as the foundation of a future city."
+    },
+    {
+      "year": 203,
+      "id": "foundry_deepworks",
+      "name": "Foundry Deepworks Expansion",
+      "systems": [
+        "foundry"
+      ],
+      "summary": "New freight elevators and geothermal works make large-scale subsurface manufacturing economically competitive with inner-system factories."
+    },
+    {
+      "year": 217,
+      "id": "tidemark_platform_chain",
+      "name": "Tidemark Platform Chain Completed",
+      "systems": [
+        "tidemark"
+      ],
+      "summary": "A network of floating industrial platforms creates reliable large-scale extraction despite the world's lack of conventional landing terrain."
+    },
+    {
+      "year": 238,
+      "id": "meridian_population_million",
+      "name": "Port Meridian Passes One Million Residents",
+      "systems": [
+        "port_meridian"
+      ],
+      "summary": "The former depot is formally recognized as a major permanent settlement rather than a service installation."
+    },
+    {
+      "year": 251,
+      "id": "waystation_permanent_registry",
+      "name": "Waystation Gets a Permanent Registry",
+      "systems": [
+        "waystation"
+      ],
+      "summary": "Residents successfully petition for permanent settlement status. The name Waystation survives despite repeated proposals for something more dignified."
+    },
+    {
+      "year": 263,
+      "id": "lastlight_base_founded",
+      "name": "Lastlight Survey Base Founded",
+      "systems": [
+        "lastlight"
+      ],
+      "summary": "A multispecies survey base is established at the practical edge of dependable commercial support."
+    },
+    {
+      "year": 278,
+      "id": "talos_deposit_confirmation",
+      "name": "Talos Deposit Confirmation",
+      "systems": [
+        "talos"
+      ],
+      "summary": "Independent assays confirm rare-mineral concentrations high enough to justify rapid industrial settlement."
+    },
+    {
+      "year": 286,
+      "id": "game_start",
+      "name": "Game Start",
+      "systems": [
+        "talos",
+        "lastlight",
+        "port_meridian"
+      ],
+      "summary": "Talos is still absorbing equipment faster than infrastructure can handle it, while Lastlight-supported surveys continue beyond the commercial network."
+    }
+  ]
+}

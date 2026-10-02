@@ -1,7 +1,7 @@
 class_name SaveSlots
 extends RefCounted
 ## Five save slots, one JSON file each. A save holds the ship, its cargo, progress and the
-## player's profile (name, race, difficulty, world, ship name, where they are).
+## player's profile (name, species, difficulty, starting system, ship name, where they are).
 ## Nothing here ever deletes a save: overwriting a slot parks the old file beside it first.
 
 const COUNT := 5

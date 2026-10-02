@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "service_culture": [
+    {
+      "id": "dockers",
+      "name": "Cargo Handling Crews",
+      "description": "Range from highly automated core terminals to frontier crews with loaders, straps and experience. Good loadmasters develop reputations independent captains remember."
+    },
+    {
+      "id": "surveyors",
+      "name": "Independent Marine Surveyors",
+      "description": "Inspect hulls, cargo damage and used ships for insurers and buyers. Their independence matters most when everyone else has money at stake."
+    },
+    {
+      "id": "chandlers",
+      "name": "Ship Chandlers",
+      "description": "Supply food, filters, lubricants, PPE, cleaning chemicals, adapters and hundreds of unglamorous items required to leave port."
+    },
+    {
+      "id": "brokers",
+      "name": "Freight Brokers",
+      "description": "Match irregular cargo with available hulls. Core brokers are data businesses; frontier brokers still rely heavily on personal knowledge of captains and ships."
+    },
+    {
+      "id": "tugs",
+      "name": "Harbor Tug Operators",
+      "description": "Move powerless hulls, assist superheavy ships and recover vessels that cannot safely dock under their own control."
+    },
+    {
+      "id": "inspectors",
+      "name": "Port State Inspectors",
+      "description": "Check declared hazards, structural condition and documentation. Standards are shared widely but enforcement culture differs by jurisdiction."
+    }
+  ],
+  "frontier_services": [
+    {
+      "system_id": "port_meridian",
+      "availability": "broad",
+      "note": "Almost anything can be sourced eventually; urgency is expensive."
+    },
+    {
+      "system_id": "talos",
+      "availability": "strained",
+      "note": "Services exist but demand routinely exceeds capacity."
+    },
+    {
+      "system_id": "waystation",
+      "availability": "limited",
+      "note": "Excellent practical repair capability, poor access to unusual parts."
+    },
+    {
+      "system_id": "lastlight",
+      "availability": "expedition_focused",
+      "note": "Good survey and range equipment; limited heavy industrial capacity."
+    }
+  ]
+}

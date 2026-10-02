@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "principles": [
+    "Known space has disagreements, regulation, labor conflict, commercial rivalry and historical resentment without requiring a single galactic government or central villain.",
+    "Political jurisdictions overlap with trade standards; species identity does not define political allegiance.",
+    "Most conflicts encountered by freight operators should create practical choices: cost, access, delay, risk, legality or relationships."
+  ],
+  "issues": [
+    {
+      "id": "frontier_claims",
+      "name": "Frontier Resource Claims",
+      "description": "Governments, survey crews, investors and settlers disagree about when discovery creates an enforceable extraction right.",
+      "gameplay_effects": [
+        "competing contracts",
+        "claim documentation",
+        "survey-data value",
+        "legal uncertainty"
+      ]
+    },
+    {
+      "id": "bio_protection",
+      "name": "Native Biosphere Protection",
+      "description": "Morrow and future living worlds create tension between scientific access, contamination control and commercial pressure.",
+      "gameplay_effects": [
+        "sterile cargo requirements",
+        "restricted landing zones",
+        "inspection delays"
+      ]
+    },
+    {
+      "id": "port_labor",
+      "name": "Port Automation and Labor",
+      "description": "Automation lowers handling costs but can destabilize communities whose economies formed around dock work.",
+      "gameplay_effects": [
+        "different port fees",
+        "labor disruptions",
+        "manual handling contracts"
+      ]
+    },
+    {
+      "id": "salvage_title",
+      "name": "Salvage Title",
+      "description": "Outer-space recovery law is standardized imperfectly. Ownership of abandoned ships and cargo can remain disputed.",
+      "gameplay_effects": [
+        "salvage permits",
+        "competing claimants",
+        "discounted disputed components"
+      ]
+    },
+    {
+      "id": "standards_lockin",
+      "name": "Standards Lock-in",
+      "description": "Concord standards simplify commerce but established manufacturers benefit disproportionately when new standards resemble existing products.",
+      "gameplay_effects": [
+        "legacy adapters",
+        "cheaper standard parts",
+        "specialized nonstandard equipment"
+      ]
+    },
+    {
+      "id": "talos_growth",
+      "name": "Talos Growth",
+      "description": "Residents, mining interests and infrastructure authorities disagree over how quickly a temporary boom camp should become a permanent governed settlement.",
+      "gameplay_effects": [
+        "construction freight",
+        "changing fees",
+        "housing shortages",
+        "infrastructure contracts"
+      ]
+    }
+  ]
+}

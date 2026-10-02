@@ -1,0 +1,160 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "hazards": [
+    {
+      "id": "roosevelt_winter",
+      "system_id": "new_houston",
+      "area": "Roosevelt surface",
+      "type": "seasonal_weather",
+      "severity": "moderate",
+      "description": "Cold-season storms disrupt surface loading and can ground marginal craft.",
+      "freight_effects": [
+        "deicing delays",
+        "higher heater/thermal equipment demand",
+        "surface diversion"
+      ]
+    },
+    {
+      "id": "hesperus_harvest",
+      "system_id": "hesperus",
+      "area": "Hesperus",
+      "type": "seasonal_congestion",
+      "severity": "moderate",
+      "description": "Harvest periods flood terminals with refrigerated and bulk agricultural freight.",
+      "freight_effects": [
+        "container shortages",
+        "higher outbound rates",
+        "longer loading queues"
+      ]
+    },
+    {
+      "id": "keshar_weather",
+      "system_id": "keshar",
+      "area": "Keshar surface",
+      "type": "dense_atmosphere_weather",
+      "severity": "high",
+      "description": "Powerful weather in the dense atmosphere periodically restricts surface operations.",
+      "freight_effects": [
+        "heavy landing restrictions",
+        "orbital holding",
+        "surface inventory spikes"
+      ]
+    },
+    {
+      "id": "ilos_winds",
+      "system_id": "ilos",
+      "area": "Ilos escarpment regions",
+      "type": "atmospheric_winds",
+      "severity": "moderate",
+      "description": "Dense-air winds around extreme vertical terrain complicate approach corridors.",
+      "freight_effects": [
+        "route-specific landing windows",
+        "light craft restrictions"
+      ]
+    },
+    {
+      "id": "veyara_storm_cycle",
+      "system_id": "veyara",
+      "area": "Veyara ocean regions",
+      "type": "storm_cycle",
+      "severity": "moderate",
+      "description": "Large ocean storms shift surface traffic between floating districts.",
+      "freight_effects": [
+        "marine transfer delays",
+        "increased orbital storage"
+      ]
+    },
+    {
+      "id": "tidemark_storms",
+      "system_id": "tidemark",
+      "area": "Tidemark platforms",
+      "type": "severe_weather",
+      "severity": "high",
+      "description": "Long-duration storms can isolate individual platforms even while orbital traffic remains possible.",
+      "freight_effects": [
+        "platform delivery premiums",
+        "weather holds",
+        "emergency supply demand"
+      ]
+    },
+    {
+      "id": "carver_debris",
+      "system_id": "carver",
+      "area": "active belt zones",
+      "type": "industrial_navigation",
+      "severity": "moderate",
+      "description": "Mining debris, tugs and poorly tracked small bodies create busy local navigation.",
+      "freight_effects": [
+        "mandatory traffic corridors",
+        "sensor requirements",
+        "collision insurance"
+      ]
+    },
+    {
+      "id": "meridian_congestion",
+      "system_id": "port_meridian",
+      "area": "Main Ring approaches",
+      "type": "traffic",
+      "severity": "moderate",
+      "description": "High mixed traffic produces holding delays during peak arrival banks.",
+      "freight_effects": [
+        "berth queues",
+        "tug requirements for large hulls",
+        "rush handling premiums"
+      ]
+    },
+    {
+      "id": "talos_dust",
+      "system_id": "talos",
+      "area": "Hopewell region",
+      "type": "surface_dust",
+      "severity": "moderate",
+      "description": "Fine mineral dust infiltrates mechanisms and reduces visibility during seasonal wind events.",
+      "freight_effects": [
+        "filter demand",
+        "cargo sealing requirements",
+        "surface maintenance"
+      ]
+    },
+    {
+      "id": "lastlight_cold",
+      "system_id": "lastlight",
+      "area": "Beacon/landing field",
+      "type": "cold_weather",
+      "severity": "moderate",
+      "description": "Long cold periods punish neglected seals, batteries and exposed cargo equipment.",
+      "freight_effects": [
+        "preheat time",
+        "battery failures",
+        "thermal packaging"
+      ]
+    },
+    {
+      "id": "needle_debris",
+      "system_id": "needle",
+      "area": "system debris plane",
+      "type": "natural_navigation",
+      "severity": "high",
+      "description": "Dense debris makes high-speed crossing hazardous and limits safe approach geometry.",
+      "freight_effects": [
+        "specialized navigation",
+        "higher insurance",
+        "slow transit"
+      ]
+    },
+    {
+      "id": "faraday_activity",
+      "system_id": "faraday",
+      "area": "system-wide",
+      "type": "stellar_activity",
+      "severity": "high",
+      "description": "Frequent stellar activity threatens electronics and communications.",
+      "freight_effects": [
+        "radiation hardening",
+        "forecast windows",
+        "sensor outages"
+      ]
+    }
+  ]
+}

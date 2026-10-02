@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "communications": {
+    "principles": [
+      "Local system communications are effectively routine; interstellar communication is constrained enough that ships and scheduled relays still matter.",
+      "Market data has an age. The farther outward a captain travels, the less confidence they should have that a quoted price or berth condition is still current.",
+      "Emergency communication improves the chance someone knows you are in trouble; it does not guarantee rescue."
+    ],
+    "services": [
+      {
+        "id": "concord_relay",
+        "name": "Concord Relay Network",
+        "coverage": "core/developed",
+        "description": "Commercial message forwarding and authenticated market-data distribution."
+      },
+      {
+        "id": "meridian_packet",
+        "name": "Meridian Packet",
+        "coverage": "outer region",
+        "description": "Store-and-forward traffic connecting Port Meridian, Talos, Waystation and Lastlight; delays and outages are ordinary enough that businesses plan around them."
+      },
+      {
+        "id": "survey_burst",
+        "name": "Survey Burst",
+        "coverage": "frontier",
+        "description": "Compressed expedition reports transmitted when geometry and power allow; full datasets often return physically aboard ships."
+      }
+    ]
+  },
+  "radio_phrases": [
+    {
+      "phrase": "traffic, traffic",
+      "use": "General local call when maneuvering near poorly controlled frontier sites."
+    },
+    {
+      "phrase": "holding cold",
+      "use": "Ship waiting powered and ready but not actively maneuvering, often for berth/weather clearance."
+    },
+    {
+      "phrase": "cargo secure",
+      "use": "Loadmaster confirmation that cargo restraint and hazardous-cargo checks are complete."
+    },
+    {
+      "phrase": "going outside",
+      "use": "Informal crew announcement before EVA; normally followed by suit/channel identification."
+    },
+    {
+      "phrase": "on local",
+      "use": "Crew member switching from shipwide/intercom to a local work channel."
+    },
+    {
+      "phrase": "good numbers",
+      "use": "Informal confirmation that pressure, power, temperature or other expected readings are within limits."
+    }
+  ],
+  "message_examples": [
+    {
+      "context": "Port Meridian arrival",
+      "text": "Meridian Traffic, independent freighter Paid For, inbound from Waystation, forty-six standard containers, no declared hazard, requesting commercial berth."
+    },
+    {
+      "context": "Lastlight departure",
+      "text": "Survey House, Narrow Arc filing outbound. Lantern direct, then Cairn. Planned return window twenty-two standard days. Four crew, reserves thirty-four."
+    },
+    {
+      "context": "Talos surface",
+      "text": "Hopewell Field to Mule Four-Seven: hold north of marker three. Pad crew is still clearing dust and somebody left a loader where your landing gear wants to be."
+    }
+  ]
+}

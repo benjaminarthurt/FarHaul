@@ -215,6 +215,11 @@ func _add_face(root: Node3D, center: Vector3, d: Vector3i, is_door: bool, mat: M
 		v_axis = 1
 
 	var h := ShipGrid.CELL * 0.5
+	if not is_door and helm and axis != 1:
+		# A flight deck needs to see out: a big windscreen at the front, a smaller window each side.
+		var win := Rect2(-1.2, -0.2, 2.4, 1.2) if axis == 2 else Rect2(-0.55, -0.1, 1.1, 0.8)
+		_add_windowed_wall(root, center, axis, sgn, u_axis, v_axis, win, mat)
+		return
 	if not is_door:
 		_add_panel(root, center, axis, sgn, u_axis, v_axis, Rect2(-h, -h, ShipGrid.CELL, ShipGrid.CELL), mat)
 		return
@@ -234,6 +239,51 @@ func _add_face(root: Node3D, center: Vector3, d: Vector3i, is_door: bool, mat: M
 	for r in strips:
 		if r.size.x > 0.001 and r.size.y > 0.001:
 			_add_panel(root, center, axis, sgn, u_axis, v_axis, r, mat)
+
+
+## A solid wall with a rectangular window: four strips around the opening, a pane of glass in it,
+## and a frame so the window reads from outside as well as in.
+func _add_windowed_wall(root: Node3D, center: Vector3, axis: int, sgn: float, u_axis: int, v_axis: int, hole: Rect2, mat: Material) -> void:
+	var h := ShipGrid.CELL * 0.5
+	var strips: Array[Rect2] = [
+		Rect2(-h, -h, hole.position.x + h, ShipGrid.CELL),
+		Rect2(hole.end.x, -h, h - hole.end.x, ShipGrid.CELL),
+		Rect2(hole.position.x, hole.end.y, hole.size.x, h - hole.end.y),
+		Rect2(hole.position.x, -h, hole.size.x, hole.position.y + h),
+	]
+	for r in strips:
+		if r.size.x > 0.001 and r.size.y > 0.001:
+			_add_panel(root, center, axis, sgn, u_axis, v_axis, r, mat)
+	var along := sgn * (h - WALL_T * 0.5)
+	var pane := Vector3.ZERO
+	pane[axis] = 0.03
+	pane[u_axis] = hole.size.x
+	pane[v_axis] = hole.size.y
+	var off := Vector3.ZERO
+	off[axis] = along
+	off[u_axis] = hole.position.x + hole.size.x * 0.5
+	off[v_axis] = hole.position.y + hole.size.y * 0.5
+	_add_box(root, center + off, pane, Interiors.glass(Color(0.35, 0.6, 0.9), 0.35))
+	# Frame: slightly proud of the outer face, in the module's trim colour.
+	var trim := _mat(color.lerp(Color(0.50, 0.54, 0.60), 0.8), 1.0)
+	var t := 0.07
+	var out := sgn * (h + 0.015)
+	var edges := [
+		[Vector2(hole.position.x + hole.size.x * 0.5, hole.position.y - t * 0.5), Vector2(hole.size.x + t * 2.0, t)],
+		[Vector2(hole.position.x + hole.size.x * 0.5, hole.end.y + t * 0.5), Vector2(hole.size.x + t * 2.0, t)],
+		[Vector2(hole.position.x - t * 0.5, hole.position.y + hole.size.y * 0.5), Vector2(t, hole.size.y)],
+		[Vector2(hole.end.x + t * 0.5, hole.position.y + hole.size.y * 0.5), Vector2(t, hole.size.y)],
+	]
+	for e in edges:
+		var fb := Vector3.ZERO
+		fb[axis] = 0.05
+		fb[u_axis] = e[1].x
+		fb[v_axis] = e[1].y
+		var fo := Vector3.ZERO
+		fo[axis] = out
+		fo[u_axis] = e[0].x
+		fo[v_axis] = e[0].y
+		_add_box(root, center + fo, fb, trim)
 
 
 func _add_panel(root: Node3D, center: Vector3, axis: int, sgn: float, u_axis: int, v_axis: int, r: Rect2, mat: Material) -> void:

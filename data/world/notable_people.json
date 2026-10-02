@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "people": [
+    {
+      "id": "mara_vell",
+      "name": "Mara Vell",
+      "species_id": "human",
+      "era": "historic",
+      "role": "commercial captain",
+      "known_for": "Captain of the early mixed-manufacturer freighter Common Cause; advocated practical cross-species component certification during the Standards Period.",
+      "legacy": "A maintenance scholarship at New Houston bears her name."
+    },
+    {
+      "id": "darak_venn",
+      "name": "Darak Venn",
+      "species_id": "kesh",
+      "era": "historic",
+      "role": "structural engineer",
+      "known_for": "Led the Iron Gate team responsible for the first commercially successful very-heavy orbital keel assembled outside Keshar.",
+      "legacy": "Venn inspection marks remain a colloquial name for several heavy-frame survey points."
+    },
+    {
+      "id": "seli_ar",
+      "name": "Seli Ar",
+      "species_id": "ilyan",
+      "era": "historic",
+      "role": "propulsion engineer",
+      "known_for": "Developed drive-mount standards that allowed Ilyan propulsion packages to be installed reliably on heavier foreign hulls.",
+      "legacy": "Often credited with making the modern mixed-origin freighter economically routine."
+    },
+    {
+      "id": "sava_kel",
+      "name": "Sava Kel",
+      "species_id": "vey",
+      "era": "historic",
+      "role": "environmental engineer",
+      "known_for": "Directed closed-cycle habitat work during Pelagos's early joint settlement.",
+      "legacy": "Pelagos environmental certification awards carry Kel's name."
+    },
+    {
+      "id": "ruun_keshet",
+      "name": "Ruun of Keshet",
+      "species_id": "orun",
+      "era": "historic",
+      "role": "industrial planner",
+      "known_for": "Designed early Port Meridian maintenance corridors around expansion access rather than finished station geometry.",
+      "legacy": "Several supposedly temporary Ruun routes remain critical station service arteries two centuries later."
+    },
+    {
+      "id": "jo_tanner",
+      "name": "Jo Tanner",
+      "species_id": "human",
+      "era": "current",
+      "role": "independent captain",
+      "known_for": "Operator of the aging R-61 Paid For, a familiar ship on the Meridian-Waystation-Lastlight run.",
+      "legacy": "Not famous beyond the frontier; included as the sort of recurring working professional players should encounter."
+    },
+    {
+      "id": "tekk_var",
+      "name": "Tekk of Var Junction",
+      "species_id": "orun",
+      "era": "current",
+      "role": "salvage tug master",
+      "known_for": "Senior tug operator for Meridian Recovery & Salvage.",
+      "legacy": "Known among captains for charging exactly what the contract says and refusing to pretend a dangerous recovery is safe."
+    },
+    {
+      "id": "nae_vesh",
+      "name": "Nae Vesh",
+      "species_id": "ilyan",
+      "era": "current",
+      "role": "surveyor",
+      "known_for": "Principal navigator on several Lantern and Cairn surveys.",
+      "legacy": "Current public charts contain numerous route annotations attributed to Vesh's crews."
+    }
+  ]
+}

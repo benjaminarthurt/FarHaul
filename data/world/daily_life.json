@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "media": [
+    {
+      "id": "concord_wire",
+      "name": "Concord Wire",
+      "type": "commercial_news_service",
+      "base_system_id": "concord",
+      "description": "Dry interstellar business, port and regulatory reporting syndicated across known space.",
+      "audience": "Carriers, brokers, manufacturers and anyone whose money depends on a rule changing."
+    },
+    {
+      "id": "freightline",
+      "name": "Freightline",
+      "type": "trade_publication",
+      "base_system_id": "new_houston",
+      "description": "Ship reviews, maintenance advisories, used-hull prices and long-form reporting on freight economics.",
+      "audience": "Owner-operators and fleet managers."
+    },
+    {
+      "id": "meridian_traffic",
+      "name": "Meridian Traffic",
+      "type": "local_feed",
+      "base_system_id": "port_meridian",
+      "description": "Dock assignments, arrivals, delays, classifieds and local reporting mixed into one indispensable feed.",
+      "audience": "Almost everyone at Port Meridian."
+    },
+    {
+      "id": "outer_band",
+      "name": "Outer Band",
+      "type": "frontier_audio_network",
+      "base_system_id": "waystation",
+      "description": "Recorded interviews, music, repair talk and messages exchanged among outer settlements when bandwidth permits.",
+      "audience": "Frontier crews and residents."
+    },
+    {
+      "id": "lastlight_return_board",
+      "name": "Return Board",
+      "type": "public_status_service",
+      "base_system_id": "lastlight",
+      "description": "Lists filed expedition return windows and whether vessels have checked back in.",
+      "audience": "Survey crews, families, insurers and curious locals."
+    }
+  ],
+  "food_lodging": [
+    {
+      "id": "common_galley",
+      "name": "Common Galley",
+      "location_type": "major_port",
+      "description": "Generic term for inexpensive multispecies cafeterias near freight docks. Menus identify nutrition, allergens and environmental serving conditions more prominently than cuisine."
+    },
+    {
+      "id": "berthhouse",
+      "name": "Berthhouse",
+      "location_type": "freight_port",
+      "description": "Cheap short-stay lodging for crews whose ships are inaccessible during loading, inspection or repair. Rooms are sold by gravity/humidity configuration."
+    },
+    {
+      "id": "chandler_meal_pack",
+      "name": "Chandler Packs",
+      "location_type": "ship_chandler",
+      "description": "Provision bundles sold by crew composition and voyage duration rather than individual meals."
+    },
+    {
+      "id": "talos_night_kitchens",
+      "name": "Night Kitchens",
+      "location_type": "talos",
+      "description": "Container City food stalls serving construction and mine shifts around the clock; menus change whenever a different inbound food shipment is cheap."
+    },
+    {
+      "id": "carver_reheat",
+      "name": "Reheat",
+      "location_type": "carver",
+      "description": "Carver slang for inexpensive prepared food made from surplus station provisioning. Quality ranges from excellent to technically edible."
+    }
+  ],
+  "education": [
+    {
+      "id": "concord_commercial_license",
+      "name": "Concord Commercial Operator Certificate",
+      "description": "Widely recognized baseline qualification covering navigation law, cargo documentation, emergency procedure and mixed-species passenger obligations."
+    },
+    {
+      "id": "new_houston_yard_school",
+      "name": "Roosevelt Yard Schools",
+      "description": "Dozens of competing technical schools feed New Houston shipyards. Practical certifications often matter more locally than prestigious academic degrees."
+    },
+    {
+      "id": "kesh_apprenticeship",
+      "name": "Kesh Heavy Apprenticeship",
+      "description": "Long-form supervised industrial training emphasizing inspection, responsibility and maintenance history."
+    },
+    {
+      "id": "lastlight_survey_orientation",
+      "name": "Lastlight Outbound Orientation",
+      "description": "Short practical course covering unsupported navigation, reserve planning, contamination protocol and filing a useful survey report."
+    }
+  ]
+}

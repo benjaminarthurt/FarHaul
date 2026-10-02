@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "organizations": [
+    {
+      "id": "concord_standards_bureau",
+      "name": "Concord Standards Bureau",
+      "type": "standards_body",
+      "base_system_id": "concord",
+      "scope": "known_space",
+      "role": "Maintains widely adopted freight, docking, cargo identification and interoperability standards.",
+      "character": "Boring by design and enormously influential because almost everyone benefits when containers, couplings and manifests agree."
+    },
+    {
+      "id": "roosevelt_independent_yards_coop",
+      "name": "Roosevelt Independent Yards Cooperative",
+      "type": "industrial_cooperative",
+      "base_system_id": "new_houston",
+      "scope": "regional",
+      "role": "Shared procurement, tug operations and certification services for several otherwise competing independent yards.",
+      "character": "Pragmatic and manufacturer-agnostic; a major reason mixed-origin commercial ships are easy to build at New Houston."
+    },
+    {
+      "id": "kesh_heavy_systems",
+      "name": "Kesh Heavy Systems",
+      "type": "manufacturer",
+      "base_system_id": "keshar",
+      "scope": "known_space",
+      "role": "Pressure vessels, structural members, reactors and industrial machinery.",
+      "character": "Products are expensive, heavy and routinely remain in service long after cheaper competitors are scrapped."
+    },
+    {
+      "id": "ilyan_vector_works",
+      "name": "Ilyan Vector Works",
+      "type": "manufacturer",
+      "base_system_id": "ilos",
+      "scope": "known_space",
+      "role": "Commercial propulsion, maneuvering systems and lightweight drive structures.",
+      "character": "Known for excellent efficiency and unforgiving installation tolerances."
+    },
+    {
+      "id": "vey_closed_cycle",
+      "name": "Vey Closed Cycle",
+      "type": "manufacturer",
+      "base_system_id": "veyara",
+      "scope": "known_space",
+      "role": "Life support, water recovery, atmosphere processing and closed-loop environmental systems.",
+      "character": "Its equipment is common enough that crews often use the company name generically for water-recovery units."
+    },
+    {
+      "id": "orun_thermal_collective",
+      "name": "Orun Thermal Collective",
+      "type": "manufacturer",
+      "base_system_id": "orun",
+      "scope": "known_space",
+      "role": "Heat exchangers, radiators, industrial cooling and compact thermal systems.",
+      "character": "Equipment favors service access and replaceable subassemblies over clean exterior packaging."
+    },
+    {
+      "id": "meridian_recovery",
+      "name": "Meridian Recovery & Salvage",
+      "type": "salvage_company",
+      "base_system_id": "port_meridian",
+      "scope": "outer_region",
+      "role": "Towing, derelict recovery, cargo salvage and distressed-vessel purchase.",
+      "character": "Their tugs are often the last commercial ships outbound crews want to see and the first they are grateful to see."
+    },
+    {
+      "id": "lastlight_survey_office",
+      "name": "Lastlight Survey Office",
+      "type": "survey_authority",
+      "base_system_id": "lastlight",
+      "scope": "frontier",
+      "role": "Registers survey plans, consolidates public navigation observations and purchases selected survey datasets.",
+      "character": "Small office with responsibilities far larger than its staff."
+    },
+    {
+      "id": "hesperus_producers_exchange",
+      "name": "Hesperus Producers Exchange",
+      "type": "trade_cooperative",
+      "base_system_id": "hesperus",
+      "scope": "regional",
+      "role": "Coordinates agricultural storage, export auctions and seasonal freight allocations.",
+      "character": "Its harvest forecasts can move freight prices several systems away."
+    },
+    {
+      "id": "bradbury_institute_consortium",
+      "name": "Bradbury Institute Consortium",
+      "type": "research_consortium",
+      "base_system_id": "bradbury",
+      "scope": "known_space",
+      "role": "Shared laboratories, observatories, grants and high-security scientific logistics.",
+      "character": "Academically competitive internally but unified when negotiating freight and infrastructure."
+    }
+  ]
+}

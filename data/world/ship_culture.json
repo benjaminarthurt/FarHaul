@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "manufacturing_traditions": [
+    {
+      "id": "human_commercial",
+      "name": "Human Commercial",
+      "species_origin_id": "human",
+      "philosophy": "Build around standardized modules, broad supplier choice and field repair.",
+      "recognition": [
+        "rectangular replaceable modules",
+        "mixed manufacturer labels",
+        "visible retrofit plates",
+        "unused mounting points left for future equipment"
+      ],
+      "failure_character": "A Human ship may contain three generations of solutions to the same problem, all still connected."
+    },
+    {
+      "id": "kesh_heavy",
+      "name": "Kesh Heavy",
+      "species_origin_id": "kesh",
+      "philosophy": "Structure first, redundancy second, convenience after survival.",
+      "recognition": [
+        "deep structural frames",
+        "paired critical pumps",
+        "large mechanical isolation valves",
+        "oversized landing gear"
+      ],
+      "failure_character": "Usually continues operating degraded; when something finally exceeds design margin, the event is rarely subtle."
+    },
+    {
+      "id": "ilyan_efficient",
+      "name": "Ilyan Efficient",
+      "species_origin_id": "ilyan",
+      "philosophy": "Every kilogram must justify itself.",
+      "recognition": [
+        "skeletal trusses",
+        "high-performance compact engines",
+        "carefully routed services",
+        "minimal reserve volume"
+      ],
+      "failure_character": "Excellent when maintained to specification; careless substitutions can cascade because margins were intentionally allocated rather than simply oversized."
+    },
+    {
+      "id": "vey_closed_cycle",
+      "name": "Vey Closed-Cycle",
+      "species_origin_id": "vey",
+      "philosophy": "A ship is an artificial ecosystem whose outputs should become inputs.",
+      "recognition": [
+        "prominent fluid manifolds",
+        "high-capacity reclamation",
+        "humidity-zoned habitation",
+        "biological processing options"
+      ],
+      "failure_character": "Environmental systems often degrade gracefully because flows can be rerouted, but contamination can spread through interconnected loops."
+    },
+    {
+      "id": "orun_integrated",
+      "name": "Orun Integrated",
+      "species_origin_id": "orun",
+      "philosophy": "Machinery should remain reachable from where people actually live and work.",
+      "recognition": [
+        "multiple crawlways",
+        "removable interior panels",
+        "short service runs",
+        "machinery sharing walls with common spaces"
+      ],
+      "failure_character": "Easy to reach and patch; noise, heat or vibration may intrude into habitation long before a system actually fails."
+    }
+  ],
+  "common_hybrid_patterns": [
+    {
+      "id": "new_houston_independent",
+      "name": "New Houston Independent",
+      "description": "Human-style modular hull, Ilyan propulsion, Vey environmental plant, Kesh structural components and whatever thermal equipment was affordable. Extremely common among owner-operators."
+    },
+    {
+      "id": "meridian_frontier_refit",
+      "name": "Meridian Frontier Refit",
+      "description": "Existing ship modified for range and repairability: extra tanks, external racks, redundant comms, survey sensors, spare-part lockers and visibly non-original radiators."
+    },
+    {
+      "id": "carver_bulk_conversion",
+      "name": "Carver Bulk Conversion",
+      "description": "Older hull stripped of passenger or specialty spaces and converted into ugly high-volume ore or container carrier. Cheap, slow and profitable on the right route."
+    }
+  ],
+  "shipboard_details": [
+    "Manufacturer data plates are rarely decorative; experienced crews photograph them before buying used equipment.",
+    "External patch plates are not automatically signs of neglect. Properly documented repairs can remain certified for decades.",
+    "Commercial bridges favor physical emergency controls even when routine operation is computerized.",
+    "Large ships maintain lockers of adapters because interstellar standards reduce incompatibility rather than eliminating it.",
+    "Paint is often applied for corrosion/thermal reasons first and branding second.",
+    "Owner-operated ships accumulate nonstandard shelves, hooks, labels and storage wherever crews discover wasted space.",
+    "Exterior cargo changes a ship's silhouette from voyage to voyage."
+  ]
+}

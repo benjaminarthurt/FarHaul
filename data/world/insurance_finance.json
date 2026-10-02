@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "insurance": [
+    {
+      "id": "hull",
+      "name": "Hull Coverage",
+      "description": "Covers insured vessel damage subject to maintenance, operating-area and crew qualification requirements.",
+      "frontier_note": "Rates rise sharply beyond routine rescue coverage."
+    },
+    {
+      "id": "cargo",
+      "name": "Cargo Coverage",
+      "description": "Protects cargo owner against loss or damage; handling requirements become contractual obligations."
+    },
+    {
+      "id": "liability",
+      "name": "Carrier Liability",
+      "description": "Covers damage caused by vessel operations, cargo handling or docking incidents."
+    },
+    {
+      "id": "salvage",
+      "name": "Salvage and Recovery Rider",
+      "description": "Pays defined recovery costs rather than leaving a captain to negotiate from distress."
+    },
+    {
+      "id": "survey",
+      "name": "Expedition Coverage",
+      "description": "Specialized coverage for survey work; may require filed route, reserve margins and certified environmental equipment."
+    }
+  ],
+  "credit_practices": [
+    "Independent captains often finance ships over many years; the lender may effectively own the vessel until final payment.",
+    "A ship with excellent maintenance records can be worth substantially more than an identical neglected hull.",
+    "Frontier contracts may offer fuel advances or guaranteed backhaul rather than simply higher rates.",
+    "Large carriers negotiate fuel and docking contracts unavailable to independents; independents compensate by taking irregular freight.",
+    "A catastrophic repair can turn a profitable captain into an employee or force sale of the ship without anyone behaving villainously."
+  ],
+  "common_terms": [
+    {
+      "term": "clear title",
+      "meaning": "No lender, salvage claimant or other recorded party has an ownership interest in the ship."
+    },
+    {
+      "term": "paper ship",
+      "meaning": "Derogatory term for a vessel technically worth less than the debt secured against it."
+    },
+    {
+      "term": "maintenance clean",
+      "meaning": "Used-ship description indicating documented required work is current; not a claim that the ship is cosmetically clean."
+    },
+    {
+      "term": "frontier exclusion",
+      "meaning": "Insurance clause denying or limiting coverage beyond named supported systems."
+    }
+  ],
+  "insurance_design": {
+    "required_by_general_law": false,
+    "summary": "Insurance is normally voluntary, but lenders, ports, cargo owners, passenger contracts and hazardous facilities may require certificates as a condition of doing business.",
+    "policy_violation": "Captains can operate outside policy restrictions. Violations may remain undiscovered, be detected through records, or surface during a claim; consequences can include cancellation, nonrenewal, higher premiums or denial of a materially related claim.",
+    "registration_relationship": "Insurers generally expect a recognized current vessel registration and may suspend or restrict coverage after major undocumented configuration changes."
+  }
+}

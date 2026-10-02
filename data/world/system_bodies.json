@@ -1,0 +1,671 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "design_rules": [
+    "These bodies deepen navigation and local freight; they do not imply every body needs a handcrafted explorable surface.",
+    "Most bodies are economically ordinary. A few useful resources plus logistics determine importance.",
+    "Distances/orbital periods are deliberately omitted until the flight model establishes useful scales."
+  ],
+  "systems": [
+    {
+      "system_id": "sol",
+      "primary": "Sol",
+      "bodies": [
+        {
+          "id": "mercury",
+          "name": "Mercury",
+          "type": "rocky_planet",
+          "role": "solar/industrial",
+          "summary": "Heavily automated high-temperature extraction and solar-energy installations; small permanent workforce."
+        },
+        {
+          "id": "venus",
+          "name": "Venus",
+          "type": "hostile_planet",
+          "role": "atmospheric_industry",
+          "summary": "Upper-atmosphere industrial and scientific stations; surface remains an extreme operating environment."
+        },
+        {
+          "id": "earth",
+          "name": "Earth",
+          "type": "terrestrial_homeworld",
+          "role": "population/commercial center"
+        },
+        {
+          "id": "luna",
+          "name": "Luna",
+          "type": "moon",
+          "role": "industry/transshipment"
+        },
+        {
+          "id": "mars",
+          "name": "Mars",
+          "type": "terrestrial_planet",
+          "role": "mature settlement/industry"
+        },
+        {
+          "id": "sol_belt",
+          "name": "Main Belt",
+          "type": "asteroid_belt",
+          "role": "mature extraction",
+          "summary": "Old, heavily regulated extraction region with extensive infrastructure."
+        },
+        {
+          "id": "jupiter",
+          "name": "Jupiter",
+          "type": "gas_giant",
+          "role": "outer-system logistics",
+          "summary": "Moon settlements and fuel-processing infrastructure support outer Sol traffic."
+        },
+        {
+          "id": "saturn",
+          "name": "Saturn",
+          "type": "gas_giant",
+          "role": "volatiles/science",
+          "summary": "Distributed extraction and research installations among its moons."
+        }
+      ]
+    },
+    {
+      "system_id": "keshar",
+      "primary": "Keshar",
+      "bodies": [
+        {
+          "id": "keshar_inner",
+          "name": "Dorr",
+          "type": "hot_rocky_planet",
+          "role": "metals",
+          "summary": "Automated high-temperature mining feeds Keshar orbital industry."
+        },
+        {
+          "id": "keshar_prime",
+          "name": "Keshar",
+          "type": "high_gravity_homeworld",
+          "role": "population/heavy industry"
+        },
+        {
+          "id": "keshar_moon_1",
+          "name": "Venn",
+          "type": "large_moon",
+          "role": "orbital industry",
+          "summary": "Lower-gravity industrial moon hosting foundries and heavy launch infrastructure."
+        },
+        {
+          "id": "keshar_giant",
+          "name": "Tor",
+          "type": "gas_giant",
+          "role": "volatiles",
+          "summary": "Remote fuel and chemical extraction complex."
+        },
+        {
+          "id": "keshar_outer_belt",
+          "name": "Outer Stone",
+          "type": "asteroid_belt",
+          "role": "specialty minerals",
+          "summary": "Low-volume extraction with long-established Kesh industrial camps."
+        }
+      ]
+    },
+    {
+      "system_id": "ilos",
+      "primary": "Ilos",
+      "bodies": [
+        {
+          "id": "ilos_inner",
+          "name": "Serrin",
+          "type": "rocky_planet",
+          "role": "solar industry",
+          "summary": "Thin-atmosphere inner world used for materials testing and energy-intensive manufacturing."
+        },
+        {
+          "id": "ilos_prime",
+          "name": "Ilos",
+          "type": "low_gravity_homeworld",
+          "role": "population/precision industry"
+        },
+        {
+          "id": "ilos_moon",
+          "name": "Ari",
+          "type": "small_moon",
+          "role": "propulsion testing",
+          "summary": "Airless proving ground for engines and spacecraft structures."
+        },
+        {
+          "id": "ilos_giant",
+          "name": "Elen",
+          "type": "gas_giant",
+          "role": "research/volatiles",
+          "summary": "Upper-atmosphere research and limited fuel extraction."
+        },
+        {
+          "id": "ilos_outer",
+          "name": "Glass Reach",
+          "type": "icy_belt",
+          "role": "water/volatiles",
+          "summary": "Sparse extraction region supplying orbital industry."
+        }
+      ]
+    },
+    {
+      "system_id": "veyara",
+      "primary": "Veyara",
+      "bodies": [
+        {
+          "id": "veyara_inner",
+          "name": "Shaal",
+          "type": "hot_oceanless_planet",
+          "role": "mineral extraction",
+          "summary": "Dry inner world whose geology supplies materials scarce on Veyara."
+        },
+        {
+          "id": "veyara_prime",
+          "name": "Veyara",
+          "type": "ocean_homeworld",
+          "role": "population/environmental industry"
+        },
+        {
+          "id": "veyara_moon",
+          "name": "Neris",
+          "type": "wet_moon",
+          "role": "aquaculture/research",
+          "summary": "Small cool moon with subsurface water and extensive enclosed biological research."
+        },
+        {
+          "id": "veyara_giant",
+          "name": "Oruvai",
+          "type": "gas_giant",
+          "role": "chemicals",
+          "summary": "Atmospheric feedstocks support Vey chemical industries."
+        }
+      ]
+    },
+    {
+      "system_id": "orun",
+      "primary": "Orun",
+      "bodies": [
+        {
+          "id": "orun_inner",
+          "name": "Kes",
+          "type": "airless_planet",
+          "role": "ceramics/minerals",
+          "summary": "Automated extraction of high-temperature industrial minerals."
+        },
+        {
+          "id": "orun_prime",
+          "name": "Orun",
+          "type": "thermal_extreme_homeworld",
+          "role": "population/thermal industry"
+        },
+        {
+          "id": "orun_moon",
+          "name": "Var",
+          "type": "moon",
+          "role": "low-g manufacturing",
+          "summary": "Excavated industrial settlements and vacuum manufacturing."
+        },
+        {
+          "id": "orun_belt",
+          "name": "Junction Belt",
+          "type": "asteroid_belt",
+          "role": "distributed fabrication",
+          "summary": "Numerous small workshops grew around extraction camps and remain interconnected by tug traffic."
+        }
+      ]
+    },
+    {
+      "system_id": "concord",
+      "primary": "Concord",
+      "bodies": [
+        {
+          "id": "concord_inner",
+          "name": "Accord",
+          "type": "rocky_planet",
+          "role": "energy/materials",
+          "summary": "Sparse automated industrial world."
+        },
+        {
+          "id": "concord_prime",
+          "name": "Concord Prime",
+          "type": "temperate_planet",
+          "role": "trade/institutions"
+        },
+        {
+          "id": "concord_moon",
+          "name": "Compact",
+          "type": "moon",
+          "role": "warehousing/standards testing",
+          "summary": "Large orbital logistics complexes and certification ranges."
+        },
+        {
+          "id": "concord_giant",
+          "name": "Arbitrator",
+          "type": "gas_giant",
+          "role": "fuel",
+          "summary": "Industrial gas collection supplies high-volume traffic."
+        },
+        {
+          "id": "concord_freeports",
+          "name": "Freeport Cluster",
+          "type": "orbital_habitat_cluster",
+          "role": "trade",
+          "summary": "Privately operated warehouses and bonded transfer stations outside the busiest planetary traffic."
+        }
+      ]
+    },
+    {
+      "system_id": "new_houston",
+      "primary": "New Houston",
+      "bodies": [
+        {
+          "id": "nh_inner",
+          "name": "Boiler",
+          "type": "hot_rocky_planet",
+          "role": "metals/solar",
+          "summary": "Automated extraction and power installations."
+        },
+        {
+          "id": "roosevelt",
+          "name": "Roosevelt",
+          "type": "cold_industrial_planet",
+          "role": "population/shipbuilding"
+        },
+        {
+          "id": "roosevelt_moon",
+          "name": "Truman",
+          "type": "moon",
+          "role": "shipbreaking/testing",
+          "summary": "Airless yards, drive test stands and one of the system's largest commercial shipbreaking operations."
+        },
+        {
+          "id": "nh_belt",
+          "name": "Toolbox",
+          "type": "asteroid_belt",
+          "role": "raw materials",
+          "summary": "Heavily worked belt feeding Roosevelt fabrication."
+        },
+        {
+          "id": "nh_giant",
+          "name": "Longhorn",
+          "type": "gas_giant",
+          "role": "fuel/chemicals",
+          "summary": "Fuel-processing stations supply shipyards and outbound traffic."
+        }
+      ]
+    },
+    {
+      "system_id": "hesperus",
+      "primary": "Hesperus",
+      "bodies": [
+        {
+          "id": "hesperus_prime",
+          "name": "Hesperus",
+          "type": "agricultural_planet",
+          "role": "food production"
+        },
+        {
+          "id": "hesperus_moon",
+          "name": "Shepherd",
+          "type": "moon",
+          "role": "cold storage",
+          "summary": "Low-temperature warehouses, seed banks and agricultural research installations."
+        },
+        {
+          "id": "hesperus_outer",
+          "name": "Thresh",
+          "type": "small_rocky_planet",
+          "role": "fertilizer feedstocks",
+          "summary": "Mineral extraction primarily supports Hesperus agriculture."
+        },
+        {
+          "id": "hesperus_giant",
+          "name": "Rainmaker",
+          "type": "gas_giant",
+          "role": "chemical feedstocks",
+          "summary": "Source of industrial gases and fertilizer inputs."
+        }
+      ]
+    },
+    {
+      "system_id": "iron_gate",
+      "primary": "Iron Gate",
+      "bodies": [
+        {
+          "id": "iron_gate_prime",
+          "name": "Iron Gate Prime",
+          "type": "industrial_planet",
+          "role": "heavy shipbuilding"
+        },
+        {
+          "id": "iron_gate_moon",
+          "name": "Anvil",
+          "type": "moon",
+          "role": "foundry/yard support",
+          "summary": "Vacuum foundries and component factories."
+        },
+        {
+          "id": "iron_gate_belt",
+          "name": "Keel Belt",
+          "type": "asteroid_belt",
+          "role": "metals",
+          "summary": "Industrialized extraction directly linked to orbital yards."
+        },
+        {
+          "id": "iron_gate_giant",
+          "name": "Hammer",
+          "type": "gas_giant",
+          "role": "fuel",
+          "summary": "Large fuel industry serving superheavy construction and outbound vessels."
+        }
+      ]
+    },
+    {
+      "system_id": "carver",
+      "primary": "Carver",
+      "bodies": [
+        {
+          "id": "carver_inner",
+          "name": "Cinder",
+          "type": "rocky_planet",
+          "role": "limited extraction",
+          "summary": "Marginal deposits; mostly automated."
+        },
+        {
+          "id": "carver_belt",
+          "name": "Carver Belt",
+          "type": "asteroid_belt",
+          "role": "primary metals economy"
+        },
+        {
+          "id": "carver_habitats",
+          "name": "Carver Habitats",
+          "type": "habitat_network",
+          "role": "population/services"
+        },
+        {
+          "id": "carver_giant",
+          "name": "Prospector",
+          "type": "gas_giant",
+          "role": "fuel",
+          "summary": "Remote fuel stations keep ore traffic independent of imported propellant."
+        }
+      ]
+    },
+    {
+      "system_id": "bradbury",
+      "primary": "Bradbury",
+      "bodies": [
+        {
+          "id": "bradbury_inner",
+          "name": "Fahrenheit",
+          "type": "hot_rocky_planet",
+          "role": "materials research",
+          "summary": "Extreme-environment laboratories and automated test installations."
+        },
+        {
+          "id": "bradbury_prime",
+          "name": "Bradbury Prime",
+          "type": "research_planet",
+          "role": "population/research"
+        },
+        {
+          "id": "bradbury_moon",
+          "name": "Lowell",
+          "type": "moon",
+          "role": "observatories",
+          "summary": "Radio-quiet farside preserves major astronomy facilities."
+        },
+        {
+          "id": "bradbury_outer",
+          "name": "Mariner",
+          "type": "icy_planet",
+          "role": "planetary science",
+          "summary": "Research destination with little commercial extraction."
+        }
+      ]
+    },
+    {
+      "system_id": "pelagos",
+      "primary": "Pelagos",
+      "bodies": [
+        {
+          "id": "pelagos_prime",
+          "name": "Pelagos",
+          "type": "ocean_planet",
+          "role": "population/biological industry"
+        },
+        {
+          "id": "pelagos_moon",
+          "name": "Shoal",
+          "type": "moon",
+          "role": "orbital logistics",
+          "summary": "Dry airless moon hosting bulk warehouses and heavy industry unsuitable for the inhabited ocean world."
+        },
+        {
+          "id": "pelagos_giant",
+          "name": "Breaker",
+          "type": "gas_giant",
+          "role": "fuel/research",
+          "summary": "Supports local fuel independence."
+        },
+        {
+          "id": "pelagos_outer",
+          "name": "Drift",
+          "type": "icy_body",
+          "role": "water reserve",
+          "summary": "Strategic but rarely exploited water and volatile reserve."
+        }
+      ]
+    },
+    {
+      "system_id": "tidemark",
+      "primary": "Tidemark",
+      "bodies": [
+        {
+          "id": "tidemark_inner",
+          "name": "Drymark",
+          "type": "rocky_planet",
+          "role": "construction minerals",
+          "summary": "Uninhabited source of rock and metals unavailable conveniently on Tidemark."
+        },
+        {
+          "id": "tidemark_prime",
+          "name": "Tidemark",
+          "type": "deep_ocean_planet",
+          "role": "resource extraction"
+        },
+        {
+          "id": "tidemark_moon",
+          "name": "Anchor",
+          "type": "moon",
+          "role": "orbital warehousing",
+          "summary": "Stable dry logistics site for weather-sensitive cargo."
+        },
+        {
+          "id": "tidemark_giant",
+          "name": "Stormhold",
+          "type": "gas_giant",
+          "role": "research",
+          "summary": "Little commercial use beyond specialized atmospheric science."
+        }
+      ]
+    },
+    {
+      "system_id": "foundry",
+      "primary": "Foundry",
+      "bodies": [
+        {
+          "id": "foundry_inner",
+          "name": "Slag",
+          "type": "hot_rocky_planet",
+          "role": "metals",
+          "summary": "Automated mines and solar furnaces."
+        },
+        {
+          "id": "foundry_prime",
+          "name": "Foundry",
+          "type": "geothermal_planet",
+          "role": "population/manufacturing"
+        },
+        {
+          "id": "foundry_moon",
+          "name": "Lift",
+          "type": "moon",
+          "role": "orbital transfer",
+          "summary": "Mass freight transfer avoids repeated deep planetary operations."
+        },
+        {
+          "id": "foundry_belt",
+          "name": "Feedstock Belt",
+          "type": "asteroid_belt",
+          "role": "industrial minerals",
+          "summary": "Supplies specialized ceramics and machine production."
+        }
+      ]
+    },
+    {
+      "system_id": "port_meridian",
+      "primary": "Meridian",
+      "bodies": [
+        {
+          "id": "meridian_inner",
+          "name": "Scorch",
+          "type": "rocky_planet",
+          "role": "none",
+          "summary": "Hot and economically unremarkable."
+        },
+        {
+          "id": "meridian_station",
+          "name": "Port Meridian",
+          "type": "orbital_settlement",
+          "role": "population/trade hub"
+        },
+        {
+          "id": "meridian_host",
+          "name": "Meridian",
+          "type": "gas_giant",
+          "role": "fuel",
+          "summary": "Port Meridian orbits within the giant's moon system; fuel availability was a major reason for the original depot."
+        },
+        {
+          "id": "meridian_moon",
+          "name": "Layover",
+          "type": "icy_moon",
+          "role": "water/industrial reserve",
+          "summary": "Mining and tank farms supply station water and reaction mass."
+        },
+        {
+          "id": "meridian_outer",
+          "name": "Outbound Belt",
+          "type": "icy_belt",
+          "role": "frontier provisioning",
+          "summary": "Small extraction camps and survey staging sites."
+        }
+      ]
+    },
+    {
+      "system_id": "talos",
+      "primary": "Talos",
+      "bodies": [
+        {
+          "id": "talos_inner",
+          "name": "Prospect",
+          "type": "rocky_planet",
+          "role": "survey",
+          "summary": "Dry inner world with mediocre deposits; largely ignored after Talos discovery."
+        },
+        {
+          "id": "talos_prime",
+          "name": "Talos",
+          "type": "frontier_mining_planet",
+          "role": "population/mining boom"
+        },
+        {
+          "id": "talos_moon",
+          "name": "Claim",
+          "type": "moon",
+          "role": "storage/communications",
+          "summary": "Rapidly expanding orbital warehouses and relay installations."
+        },
+        {
+          "id": "talos_belt",
+          "name": "Second Chance",
+          "type": "asteroid_belt",
+          "role": "prospecting",
+          "summary": "Heavily prospected since the Talos boom; results so far are mixed."
+        }
+      ]
+    },
+    {
+      "system_id": "waystation",
+      "primary": "Waystation",
+      "bodies": [
+        {
+          "id": "waystation_starward",
+          "name": "Burnt Rock",
+          "type": "airless_planet",
+          "role": "none",
+          "summary": "Mineralogically ordinary and too close to the star for convenient operations."
+        },
+        {
+          "id": "waystation_body",
+          "name": "Crossroads",
+          "type": "minor_planet",
+          "role": "habitat anchor",
+          "summary": "Airless body hosting the connected Waystation habitat complex."
+        },
+        {
+          "id": "waystation_habitat",
+          "name": "Waystation",
+          "type": "habitat",
+          "role": "population/refuel/repair"
+        },
+        {
+          "id": "waystation_ice",
+          "name": "Tank Farm",
+          "type": "icy_minor_bodies",
+          "role": "water/fuel",
+          "summary": "Small captured and naturally occurring icy bodies exploited to support the station."
+        }
+      ]
+    },
+    {
+      "system_id": "lastlight",
+      "primary": "Lastlight",
+      "bodies": [
+        {
+          "id": "lastlight_inner",
+          "name": "Ash",
+          "type": "rocky_planet",
+          "role": "none",
+          "summary": "Geologically dull inner world."
+        },
+        {
+          "id": "lastlight_settlement",
+          "name": "Lastlight",
+          "type": "cold_terrestrial_planet",
+          "role": "frontier settlement/survey base"
+        },
+        {
+          "id": "lastlight_moon",
+          "name": "Beacon Moon",
+          "type": "moon",
+          "role": "communications/survey",
+          "summary": "Long-baseline sensor arrays and deep-space communications installations."
+        },
+        {
+          "id": "lastlight_orbital",
+          "name": "Lastlight Orbital",
+          "type": "station",
+          "role": "heavy freight/expedition staging"
+        },
+        {
+          "id": "lastlight_outer",
+          "name": "Reserve",
+          "type": "icy_belt",
+          "role": "water/volatiles",
+          "summary": "Local resources reduce the amount expedition traffic must import from Waystation."
+        }
+      ]
+    }
+  ]
+}

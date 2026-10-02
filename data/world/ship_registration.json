@@ -1,0 +1,75 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "registration": {
+    "description": "Vessel registration establishes legal identity, ownership, home registry, certified configuration and transponder identity.",
+    "cost_model": "Registration charges an initial or renewal fee based on hull class, declared configuration and inspection requirements.",
+    "states": [
+      {
+        "id": "current",
+        "meaning": "Registration and certified configuration are valid."
+      },
+      {
+        "id": "modification_pending",
+        "meaning": "A major alteration has made the recorded configuration stale; vessel may face operating restrictions until inspected."
+      },
+      {
+        "id": "expired",
+        "meaning": "Registration was not renewed by its required date."
+      },
+      {
+        "id": "suspended",
+        "meaning": "Registry authority has temporarily invalidated registration due to safety, ownership or compliance issue."
+      },
+      {
+        "id": "unregistered",
+        "meaning": "No current recognized system registration."
+      }
+    ],
+    "major_change_examples": [
+      "main engine model or thrust geometry change",
+      "reactor replacement with materially different output",
+      "structural frame alteration",
+      "major cargo-volume or mass-rating alteration",
+      "new passenger habitation",
+      "hazardous-cargo system conversion",
+      "atmospheric/landing capability alteration"
+    ],
+    "minor_change_examples": [
+      "like-for-like component replacement",
+      "interior storage changes within certified mass limits",
+      "avionics replacement using approved interfaces",
+      "cosmetic work"
+    ],
+    "renewal_flow": [
+      "Captain submits configuration and ownership record.",
+      "Approved surveyor or registry inspector verifies required items.",
+      "Outstanding registry fee is paid.",
+      "Government issues updated registration and machine-verifiable certificate."
+    ],
+    "yard_behavior": [
+      {
+        "yard_type": "reputable_major",
+        "behavior": "Normally requires registry identity for major work and reports configuration-changing work to the vessel's registry or provides documentation for renewal."
+      },
+      {
+        "yard_type": "independent",
+        "behavior": "May perform work before registration is renewed; captain remains responsible for becoming compliant before entering restrictive ports."
+      },
+      {
+        "yard_type": "gray_market",
+        "behavior": "May perform undocumented structural or propulsion work and may not ask whether the ship is registered at all."
+      }
+    ],
+    "consequences_of_unregistered_operation": [
+      "refusal of docking at some ports",
+      "customs secondary inspection",
+      "ineligibility for many contracts",
+      "difficulty obtaining conventional financing",
+      "difficulty obtaining or retaining insurance",
+      "cargo owners refusing tender",
+      "possible fines where local law requires registration"
+    ],
+    "design_intent": "Unregistered operation is a viable choice with economic and geographic consequences, not an automatic criminal-state flag."
+  }
+}

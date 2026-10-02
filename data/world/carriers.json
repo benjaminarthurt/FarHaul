@@ -1,0 +1,89 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "carriers": [
+    {
+      "id": "concord_interstellar_freight",
+      "name": "Concord Interstellar Freight",
+      "base_system_id": "concord",
+      "scale": "major",
+      "fleet_style": "Large scheduled mixed fleet.",
+      "reputation": "Predictable, bureaucratic and usually on time.",
+      "routes": [
+        "core",
+        "developed",
+        "port_meridian"
+      ],
+      "relationship_to_independents": "Competes poorly for odd freight and small destinations, creating room for owner-operators."
+    },
+    {
+      "id": "sol_transit_combined",
+      "name": "Sol Transit Combined",
+      "base_system_id": "sol",
+      "scale": "major",
+      "fleet_style": "Containerized high-volume trunk carriers.",
+      "reputation": "Enormous buying power and little interest in cargo that does not fit standardized network flows.",
+      "routes": [
+        "sol",
+        "new_houston",
+        "concord"
+      ]
+    },
+    {
+      "id": "stonehaul",
+      "name": "Stonehaul",
+      "base_system_id": "keshar",
+      "scale": "major",
+      "fleet_style": "Heavy Kesh bulk and hazardous carriers.",
+      "reputation": "Expensive but trusted with difficult industrial freight.",
+      "routes": [
+        "keshar",
+        "iron_gate",
+        "carver",
+        "concord"
+      ]
+    },
+    {
+      "id": "bluewater_logistics",
+      "name": "Bluewater Logistics",
+      "base_system_id": "veyara",
+      "scale": "regional",
+      "fleet_style": "Environmental and ocean-world specialist.",
+      "reputation": "Strong Vey/Pelagos/Tidemark network and unusually good biological cargo handling.",
+      "routes": [
+        "veyara",
+        "tidemark",
+        "pelagos",
+        "port_meridian"
+      ]
+    },
+    {
+      "id": "meridian_outbound",
+      "name": "Meridian Outbound",
+      "base_system_id": "port_meridian",
+      "scale": "regional",
+      "fleet_style": "Mixed older ships configured for frontier freight.",
+      "reputation": "Will quote routes larger carriers refuse, but prices risk accordingly.",
+      "routes": [
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ]
+    },
+    {
+      "id": "redline_independent_coop",
+      "name": "Redline Independent Cooperative",
+      "base_system_id": "new_houston",
+      "scale": "cooperative",
+      "fleet_style": "No common fleet; independent captains share dispatch, insurance and backhaul information.",
+      "reputation": "Half freight network, half argument conducted over radio and message boards.",
+      "routes": [
+        "new_houston",
+        "hesperus",
+        "concord",
+        "carver"
+      ]
+    }
+  ]
+}

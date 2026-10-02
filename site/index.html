@@ -81,7 +81,8 @@
         <thead><tr><th scope="col">Area</th><th scope="col">What the game will be</th><th scope="col">Today</th><th scope="col">Status</th></tr></thead>
         <tbody>
           <tr><th scope="row">Ship building</th><td>Ships assembled from physical modules: cockpit, hull, cargo holds, tanks, engines, radiators. Every compartment exists in the world. Balance, power, heat and thrust all matter.</td><td>A 3 m grid builder with 13 parts. Parts snap together at doors and mounts. Live checks for sealed hull, airlock, power, cooling, thrust-to-weight and centre of mass. Undo, redo, autosave.</td><td><span class="chip playable">Playable</span></td></tr>
-          <tr><th scope="row">Menus, saves and the dock</th><td>A proper start: pick who you are and where you begin, keep several games, and always return to the last place you stood.</td><td>New game with name, race, difficulty and starting world. Five save slots. A dock at your starting world's yard, with the shipyard opening from it. Settings are placeholders. Race has no effect yet.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Menus, saves and the dock</th><td>A proper start: pick who you are and where you begin, keep several games, and always return to the last place you stood.</td><td>New game with name, species, difficulty and starting system, taken from the known-space data. Five save slots. A dock at your starting system's yard, with the shipyard opening from it. Settings are placeholders. Species gives no bonuses.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Known space</th><td>Eighteen systems from the five home worlds out to the last settlement at Lastlight, joined by trade routes and named corridors. Every place needs something from somewhere else.</td><td>The setting is written as data: five species, eighteen systems, nineteen routes and the corridors between them. The new game screen reads it for species and starting systems. Nothing else uses it yet.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Interiors</th><td>Cramped, practical, lived-in. Cabins, galleys, engine rooms and cockpits that look like they were built to do a job.</td><td>Each part has its own fitted interior: cockpit seats and controls, a reactor room, crew quarters with bunks and a galley, an airlock with suit lockers. You can see them from the builder camera.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>Not in the builder, which is design only. The rules for five placeholder contracts exist in the code, but nothing in the game uses them yet. The builder has a cargo preview so you can see a loaded ship.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>You cannot fly yet.</td><td><span class="chip planned">Planned</span></td></tr>
@@ -125,8 +126,12 @@
         <figcaption><strong>The dock.</strong> Your starting world decides which yard you begin at. The shipyard opens from here.</figcaption>
       </figure>
       <figure>
+        <button class="shot" data-full="img/cockpit-outside.jpg" data-cap="The cockpit from outside." aria-label="Open the cockpit exterior full size"><img src="img/cockpit-outside.jpg" width="1280" height="720" loading="lazy" alt="The cockpit module from outside, with a wide windscreen and a small side window showing seats and switches inside."></button>
+        <figcaption><strong>Cockpit, outside.</strong> A wide windscreen and a window each side, so you can see in from the builder.</figcaption>
+      </figure>
+      <figure>
         <button class="shot" data-full="img/cockpit.jpg" data-cap="Inside the cockpit." aria-label="Open the cockpit screenshot full size"><img src="img/cockpit.jpg" width="1280" height="720" loading="lazy" alt="Inside a cockpit: two pilot seats facing a windscreen and a dash with glowing screens and switch rows."></button>
-        <figcaption><strong>Cockpit.</strong> Two seats, a dash of screens and switches, a throttle pedestal.</figcaption>
+        <figcaption><strong>Cockpit.</strong> Two seats, a dash of screens and switches, a throttle pedestal, and stars through the windscreen.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/engineering.jpg" data-cap="The reactor room." aria-label="Open the engineering screenshot full size"><img src="img/engineering.jpg" width="1280" height="720" loading="lazy" alt="The engineering room: a glowing reactor core beside a wall of control cabinets with indicator lights."></button>
@@ -258,6 +263,16 @@
       <li><b>Freight is the economy</b><span>Civilisation needs things moved. You earn by moving them, and what you earn becomes a better ship.</span></li>
       <li><b>The frontier gets thin</b><span>Past the core worlds there is less help. Eventually there is no repair yard, no fuel depot, and no rescue.</span></li>
     </ul>
+
+    <h3>Known space</h3>
+    <p>Humans, Kesh, Ilyan, Vey and Orun each have a home system and an engineering tradition. Trade has mixed them for generations, so a Kesh captain at a human-built terminal is ordinary. Your species shapes where you come from, not what you can do. The core is crowded and well supplied. Further out there are fewer ports, fewer repairs and less rescue, until Lastlight, where ordinary commerce runs out.</p>
+    <dl class="facts">
+      <dt>Humans</dt><dd>Sol. Modular, repairable, improvised. Many makers and standards.</dd>
+      <dt>Kesh</dt><dd>Keshar. Heavy, redundant, very durable. High gravity.</dd>
+      <dt>Ilyan</dt><dd>Ilos. Light, efficient, precise. Low gravity, great engines.</dd>
+      <dt>Vey</dt><dd>Veyara. Water, life support and biotechnology. Semi-aquatic.</dd>
+      <dt>Orun</dt><dd>Orun. Compact, accessible machinery and thermal control. Communal and underground.</dd>
+    </dl>
 
     <h3>The prototype</h3>
     <dl class="facts">

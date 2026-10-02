@@ -24,10 +24,11 @@ Load game, Settings, Quit). Any key skips the splash and the intro. Set `FARHAUL
 
 ## How to play
 
-1. **New game.** Choose a name, race, difficulty, starting world and one of five save slots. Difficulty sets
-   your starting credits. Race and Settings are placeholders for now. Replacing a used slot moves the old
+1. **New game.** Choose a name, species, difficulty, starting system and one of five save slots. Species and
+   systems come from `data/world/`; you can start at your species' home system, Concord, New Houston or Port
+   Meridian. Difficulty sets your starting credits. Species gives no bonuses yet, and Settings is a placeholder. Replacing a used slot moves the old
    save aside; nothing is deleted.
-2. **The dock.** You arrive at the yard of your starting world. The ship builder only opens from here.
+2. **The dock.** You arrive at the yard of your starting system. The ship builder only opens from here.
    Continue and Load game return you to wherever you last saved: the dock or the shipyard.
 3. **Build.** Name your ship (top right). Parts cost credits (refunded in full if you remove them). The ghost
    is green if a part fits and red with the reason if not. If your current rotation doesn't fit, it turns to
@@ -118,7 +119,7 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/cargo_manifest.gd` | What is aboard, per container: load, unload, capacity, value |
 | `scripts/surface_textures.gd` | Procedural plating and hazard-stripe textures (no image assets) |
 | `scripts/space_sky.gd` | Procedural star and nebula sky shader |
-| `scripts/session.gd`, `save_slots.gd`, `worlds.gd` | The current game (profile, location), the five save slots, and the starting worlds, races and difficulties |
+| `scripts/session.gd`, `save_slots.gd`, `worlds.gd` | The current game (profile, location), the five save slots, and the new-game choices read from `data/world/` (plus yard names and difficulty, which live in code) |
 | `scripts/new_game_panel.gd`, `load_panel.gd`, `settings_panel.gd`, `dock.gd` | Title-screen panels and the dock scene |
 | `scripts/contracts.gd` | Freight jobs and the checklist a ship must pass to run one (for the game proper; the builder does not use it) |
 | `scripts/ship_history.gd` | Undo and redo snapshots |
