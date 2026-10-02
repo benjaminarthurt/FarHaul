@@ -1,0 +1,76 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "artifacts": [
+    {
+      "type": "manufacturer_copy",
+      "source_id": "northstar_commercial",
+      "text": "MULE 40 — IT FITS. IT FLIES. IT WORKS."
+    },
+    {
+      "type": "manufacturer_copy",
+      "source_id": "roosevelt_modular",
+      "text": "R-88 ROADLINER — YOUR NEXT SHIP DOESN'T HAVE TO BE A DIFFERENT SHIP."
+    },
+    {
+      "type": "manufacturer_copy",
+      "source_id": "kesh_heavy_systems",
+      "text": "STRUCTURE IS NOT WHERE YOU SAVE MASS."
+    },
+    {
+      "type": "manufacturer_copy",
+      "source_id": "ilyan_vector_works",
+      "text": "MOVE THE CARGO. NOT THE ENGINE."
+    },
+    {
+      "type": "manufacturer_copy",
+      "source_id": "vey_closed_cycle",
+      "text": "EVERY LITER. EVERY BREATH. AGAIN."
+    },
+    {
+      "type": "manufacturer_copy",
+      "source_id": "orun_thermal_collective",
+      "text": "IF YOU CANNOT REACH IT, YOU CANNOT MAINTAIN IT."
+    },
+    {
+      "type": "port_sign",
+      "location_id": "meridian_station",
+      "text": "OUTBOUND CREWS: CHECK FUEL TWICE. RESCUE ONCE."
+    },
+    {
+      "type": "port_sign",
+      "location_id": "talos_prime",
+      "text": "NO PAD STORAGE. IF IT ISN'T UNLOADING, MOVE IT."
+    },
+    {
+      "type": "port_sign",
+      "location_id": "lastlight_settlement",
+      "text": "FILE ROUTE. FILE RETURN WINDOW. TELL SOMEONE WHERE YOU WENT."
+    },
+    {
+      "type": "bar_sign",
+      "location_id": "waystation_habitat",
+      "text": "THE SPARE ROOM — VACANCY DEPENDS ON WHAT BROKE."
+    },
+    {
+      "type": "used_ship_listing",
+      "location_id": "roosevelt",
+      "text": "R-61 / 211 ICE FRAME / V-55 DRIVES / CASCADE-3 CONVERSION / 14,200 HOURS SINCE REACTOR REFIT / FRAME SURVEY CURRENT / DON'T ASK ABOUT THE PAINT."
+    },
+    {
+      "type": "freight_board",
+      "location_id": "talos_prime",
+      "text": "PRIORITY: WATER PLANT MEMBRANES / HAB MODULES / HEATERS / MEDICAL / FOOD. BACKHAUL NOT GUARANTEED."
+    },
+    {
+      "type": "freight_board",
+      "location_id": "carver_habitats",
+      "text": "OUTBOUND METALS DAILY. INBOUND EVERYTHING ELSE."
+    },
+    {
+      "type": "graffiti",
+      "location_id": "meridian_station",
+      "text": "LASTLIGHT IS NOT FAR UNTIL SOMETHING BREAKS."
+    }
+  ]
+}
