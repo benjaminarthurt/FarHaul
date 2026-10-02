@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "layers": [
+    {
+      "id": "system_authority",
+      "functions": [
+        "interstellar_customs",
+        "registry_recognition",
+        "system_navigation",
+        "major_trade_law"
+      ]
+    },
+    {
+      "id": "planetary_government",
+      "functions": [
+        "planetary_infrastructure",
+        "environment",
+        "tax",
+        "courts",
+        "regional_coordination"
+      ]
+    },
+    {
+      "id": "regional_government",
+      "functions": [
+        "roads",
+        "water",
+        "land_use",
+        "regional_health",
+        "emergency_coordination"
+      ]
+    },
+    {
+      "id": "municipality",
+      "functions": [
+        "local_roads",
+        "zoning",
+        "waste",
+        "local_transit",
+        "schools_or_local_share",
+        "fire_rescue"
+      ]
+    },
+    {
+      "id": "special_district",
+      "functions": [
+        "port",
+        "transit",
+        "water",
+        "school",
+        "hospital",
+        "industrial_development"
+      ]
+    }
+  ],
+  "fiscal_tools": [
+    "income_tax",
+    "sales_or_transaction_tax",
+    "property_or_site_lease",
+    "utility_rate",
+    "port_fee",
+    "license_fee",
+    "intergovernmental_transfer",
+    "bond_debt"
+  ]
+}
