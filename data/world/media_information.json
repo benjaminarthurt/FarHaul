@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "channels": [
+    {
+      "id": "trade_wire",
+      "scope": "interstellar",
+      "content": [
+        "market",
+        "shipping",
+        "regulation"
+      ],
+      "latency": "relay_dependent"
+    },
+    {
+      "id": "system_news",
+      "scope": "system",
+      "content": [
+        "civic",
+        "weather",
+        "business",
+        "incidents"
+      ],
+      "latency": "local"
+    },
+    {
+      "id": "local_media",
+      "scope": "settlement",
+      "content": [
+        "events",
+        "schools",
+        "sports",
+        "crime",
+        "culture"
+      ],
+      "latency": "immediate"
+    },
+    {
+      "id": "creator_network",
+      "scope": "variable",
+      "content": [
+        "entertainment",
+        "commentary",
+        "education"
+      ],
+      "latency": "network_dependent"
+    }
+  ],
+  "rule": "Media can spread knowledge only along communications paths; reporting may be incomplete or wrong."
+}
