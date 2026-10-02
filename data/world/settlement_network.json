@@ -1,0 +1,191 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "places": [
+    {
+      "id": "luna_copernicus_works",
+      "system_id": "sol",
+      "body_id": "luna",
+      "name": "Copernicus Works",
+      "type": "industrial_city",
+      "population": 12800000
+    },
+    {
+      "id": "mars_lowell_crossing",
+      "system_id": "sol",
+      "body_id": "mars",
+      "name": "Lowell Crossing",
+      "type": "mature_city",
+      "population": 9400000
+    },
+    {
+      "id": "venn_orbital_works",
+      "system_id": "keshar",
+      "body_id": "venn",
+      "name": "Venn Orbital Works",
+      "type": "industrial_habitat",
+      "population": 860000
+    },
+    {
+      "id": "ilos_hanging_works_city",
+      "system_id": "ilos",
+      "body_id": "ilos_prime",
+      "name": "Hanging Works City",
+      "type": "industrial_city",
+      "population": 6200000
+    },
+    {
+      "id": "ari_test_habitat",
+      "system_id": "ilos",
+      "body_id": "ari",
+      "name": "Ari Test Habitat",
+      "type": "research_habitat",
+      "population": 210000
+    },
+    {
+      "id": "veyara_nine_currents_city",
+      "system_id": "veyara",
+      "body_id": "veyara_prime",
+      "name": "Nine Currents",
+      "type": "ocean_metropolis",
+      "population": 18400000
+    },
+    {
+      "id": "neris_field_station",
+      "system_id": "veyara",
+      "body_id": "neris",
+      "name": "Neris Field Station",
+      "type": "research_settlement",
+      "population": 68000
+    },
+    {
+      "id": "orun_warm_junction_city",
+      "system_id": "orun",
+      "body_id": "orun_prime",
+      "name": "Warm Junction",
+      "type": "subterranean_metropolis",
+      "population": 12200000
+    },
+    {
+      "id": "var_lowmass_works",
+      "system_id": "orun",
+      "body_id": "var",
+      "name": "Var Lowmass Works",
+      "type": "industrial_settlement",
+      "population": 340000
+    },
+    {
+      "id": "concord_central_city",
+      "system_id": "concord",
+      "body_id": "concord_prime",
+      "name": "Central Concord",
+      "type": "trade_metropolis",
+      "population": 27000000
+    },
+    {
+      "id": "compact_station",
+      "system_id": "concord",
+      "body_id": "compact",
+      "name": "Compact Station",
+      "type": "certification_habitat",
+      "population": 480000
+    },
+    {
+      "id": "truman_breakers_town",
+      "system_id": "new_houston",
+      "body_id": "truman",
+      "name": "Breakers Town",
+      "type": "industrial_settlement",
+      "population": 290000
+    },
+    {
+      "id": "shepherd_vault_town",
+      "system_id": "hesperus",
+      "body_id": "shepherd",
+      "name": "Vault Town",
+      "type": "support_habitat",
+      "population": 92000
+    },
+    {
+      "id": "anvil_zero_habitat",
+      "system_id": "iron_gate",
+      "body_id": "anvil",
+      "name": "Anvil Zero",
+      "type": "industrial_city",
+      "population": 1300000
+    },
+    {
+      "id": "carver_twelve",
+      "system_id": "carver",
+      "body_id": "carver_habitats",
+      "name": "Twelve",
+      "type": "rotating_habitat",
+      "population": 610000
+    },
+    {
+      "id": "bradbury_lowell",
+      "system_id": "bradbury",
+      "body_id": "bradbury_prime",
+      "name": "Lowell",
+      "type": "research_city",
+      "population": 4300000
+    },
+    {
+      "id": "pelagos_crosswater",
+      "system_id": "pelagos",
+      "body_id": "pelagos_prime",
+      "name": "Crosswater",
+      "type": "floating_city",
+      "population": 2600000
+    },
+    {
+      "id": "tidemark_anchor_seven",
+      "system_id": "tidemark",
+      "body_id": "tidemark_prime",
+      "name": "Anchor Seven",
+      "type": "platform_city",
+      "population": 184000
+    },
+    {
+      "id": "foundry_deepworks",
+      "system_id": "foundry",
+      "body_id": "foundry_prime",
+      "name": "Deepworks",
+      "type": "subterranean_city",
+      "population": 5100000
+    },
+    {
+      "id": "meridian_old_ring",
+      "system_id": "port_meridian",
+      "body_id": "meridian_station",
+      "name": "Old Ring",
+      "type": "station_district",
+      "population": 310000
+    },
+    {
+      "id": "talos_hopewell",
+      "system_id": "talos",
+      "body_id": "talos_prime",
+      "name": "Hopewell",
+      "type": "boomtown",
+      "population": 51000
+    },
+    {
+      "id": "waystation_crossroads",
+      "system_id": "waystation",
+      "body_id": "waystation_habitat",
+      "name": "Crossroads",
+      "type": "habitat_core",
+      "population": 23000
+    },
+    {
+      "id": "lastlight_beacon",
+      "system_id": "lastlight",
+      "body_id": "lastlight_settlement",
+      "name": "Beacon",
+      "type": "frontier_town",
+      "population": 7900
+    }
+  ]
+}
