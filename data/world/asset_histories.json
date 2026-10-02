@@ -1,0 +1,112 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "assets": [
+    {
+      "id": "frame_plant_4",
+      "type": "factory",
+      "founded_ice": 91,
+      "location": "roosevelt",
+      "events": [
+        {
+          "year": 112,
+          "event": "first_major_expansion"
+        },
+        {
+          "year": 174,
+          "event": "automation_refit"
+        },
+        {
+          "year": 233,
+          "event": "pressure_fire",
+          "outcome": "rebuilt_two_lines"
+        },
+        {
+          "year": 279,
+          "event": "heavy_frame_line_added"
+        }
+      ]
+    },
+    {
+      "id": "greenline_main",
+      "type": "rail_corridor",
+      "founded_ice": 81,
+      "location": "hesperus",
+      "events": [
+        {
+          "year": 104,
+          "event": "double_track_core"
+        },
+        {
+          "year": 188,
+          "event": "cold_chain_priority_slots"
+        },
+        {
+          "year": 271,
+          "event": "flood_rebuild"
+        }
+      ]
+    },
+    {
+      "id": "keelward_plate_works",
+      "type": "factory",
+      "founded_ice": 67,
+      "location": "iron_gate",
+      "events": [
+        {
+          "year": 93,
+          "event": "second_casting_hall"
+        },
+        {
+          "year": 156,
+          "event": "orbital_contract_expansion"
+        },
+        {
+          "year": 244,
+          "event": "major_reline"
+        }
+      ]
+    },
+    {
+      "id": "meridian_outer_storage",
+      "type": "warehouse_district",
+      "founded_ice": 226,
+      "location": "port_meridian",
+      "events": [
+        {
+          "year": 238,
+          "event": "million_resident_expansion"
+        },
+        {
+          "year": 268,
+          "event": "black_week_emergency_use"
+        },
+        {
+          "year": 283,
+          "event": "bonded_storage_modernization"
+        }
+      ]
+    },
+    {
+      "id": "hopewell_freight_yard",
+      "type": "freight_yard",
+      "founded_ice": 279,
+      "location": "talos",
+      "events": [
+        {
+          "year": 280,
+          "event": "temporary_yard_opened"
+        },
+        {
+          "year": 282,
+          "event": "winter_shortage_emergency_expansion"
+        },
+        {
+          "year": 285,
+          "event": "permanent_cranes_installed"
+        }
+      ]
+    }
+  ]
+}
