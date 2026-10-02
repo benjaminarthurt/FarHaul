@@ -1,0 +1,732 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "pricing_model": {
+    "base_price_source": "commodities.json base_value",
+    "price_multiplier_meaning": "Local baseline before dynamic stock, demand, contracts and events.",
+    "stock_scale": "0 none, 1 scarce, 2 limited, 3 normal, 4 abundant, 5 surplus",
+    "demand_scale": "0 none, 1 weak, 2 low, 3 normal, 4 strong, 5 critical"
+  },
+  "markets": [
+    {
+      "id": "sol_market",
+      "system_id": "sol",
+      "destination_id": "earth",
+      "commodities": [
+        {
+          "commodity_id": "electronics",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.9
+        },
+        {
+          "commodity_id": "pharmaceuticals",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.95
+        },
+        {
+          "commodity_id": "manufactured_goods",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.82
+        },
+        {
+          "commodity_id": "structural_materials",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.18
+        },
+        {
+          "commodity_id": "food",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.2
+        }
+      ]
+    },
+    {
+      "id": "new_houston_market",
+      "system_id": "new_houston",
+      "destination_id": "roosevelt",
+      "commodities": [
+        {
+          "commodity_id": "ship_modules",
+          "stock": 5,
+          "demand": 3,
+          "price_multiplier": 0.82
+        },
+        {
+          "commodity_id": "reactors",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.9
+        },
+        {
+          "commodity_id": "structural_materials",
+          "stock": 5,
+          "demand": 3,
+          "price_multiplier": 0.8
+        },
+        {
+          "commodity_id": "electronics",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.22
+        },
+        {
+          "commodity_id": "food",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.2
+        },
+        {
+          "commodity_id": "specialty_chemicals",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.18
+        }
+      ]
+    },
+    {
+      "id": "hesperus_market",
+      "system_id": "hesperus",
+      "destination_id": "hesperus_prime",
+      "commodities": [
+        {
+          "commodity_id": "grain",
+          "stock": 5,
+          "demand": 1,
+          "price_multiplier": 0.62
+        },
+        {
+          "commodity_id": "protein_products",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.72
+        },
+        {
+          "commodity_id": "fruit",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.7
+        },
+        {
+          "commodity_id": "agricultural_machinery",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.42
+        },
+        {
+          "commodity_id": "electronics",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.2
+        },
+        {
+          "commodity_id": "fertilizer_precursors",
+          "stock": 2,
+          "demand": 5,
+          "price_multiplier": 1.35
+        }
+      ]
+    },
+    {
+      "id": "concord_market",
+      "system_id": "concord",
+      "destination_id": "concord_prime",
+      "commodities": [
+        {
+          "commodity_id": "electronics",
+          "stock": 4,
+          "demand": 4,
+          "price_multiplier": 1
+        },
+        {
+          "commodity_id": "manufactured_goods",
+          "stock": 4,
+          "demand": 4,
+          "price_multiplier": 1
+        },
+        {
+          "commodity_id": "consumer_goods",
+          "stock": 4,
+          "demand": 4,
+          "price_multiplier": 1
+        },
+        {
+          "commodity_id": "food",
+          "stock": 3,
+          "demand": 4,
+          "price_multiplier": 1.08
+        },
+        {
+          "commodity_id": "structural_materials",
+          "stock": 3,
+          "demand": 4,
+          "price_multiplier": 1.08
+        },
+        {
+          "commodity_id": "pharmaceuticals",
+          "stock": 3,
+          "demand": 4,
+          "price_multiplier": 1.1
+        }
+      ]
+    },
+    {
+      "id": "keshar_market",
+      "system_id": "keshar",
+      "destination_id": "keshar_prime",
+      "commodities": [
+        {
+          "commodity_id": "structural_components",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.72
+        },
+        {
+          "commodity_id": "mining_equipment",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.88
+        },
+        {
+          "commodity_id": "reactors",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.9
+        },
+        {
+          "commodity_id": "precision_equipment",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.22
+        },
+        {
+          "commodity_id": "food",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.2
+        }
+      ]
+    },
+    {
+      "id": "iron_gate_market",
+      "system_id": "iron_gate",
+      "destination_id": "iron_gate_prime",
+      "commodities": [
+        {
+          "commodity_id": "ship_modules",
+          "stock": 5,
+          "demand": 3,
+          "price_multiplier": 0.8
+        },
+        {
+          "commodity_id": "structural_components",
+          "stock": 5,
+          "demand": 3,
+          "price_multiplier": 0.78
+        },
+        {
+          "commodity_id": "mining_equipment",
+          "stock": 5,
+          "demand": 3,
+          "price_multiplier": 0.82
+        },
+        {
+          "commodity_id": "electronics",
+          "stock": 2,
+          "demand": 5,
+          "price_multiplier": 1.32
+        },
+        {
+          "commodity_id": "food",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.22
+        }
+      ]
+    },
+    {
+      "id": "carver_market",
+      "system_id": "carver",
+      "destination_id": "carver_habitats",
+      "commodities": [
+        {
+          "commodity_id": "iron",
+          "stock": 5,
+          "demand": 1,
+          "price_multiplier": 0.55
+        },
+        {
+          "commodity_id": "nickel",
+          "stock": 5,
+          "demand": 1,
+          "price_multiplier": 0.6
+        },
+        {
+          "commodity_id": "titanium",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.68
+        },
+        {
+          "commodity_id": "platinum_group_metals",
+          "stock": 4,
+          "demand": 2,
+          "price_multiplier": 0.78
+        },
+        {
+          "commodity_id": "food",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.55
+        },
+        {
+          "commodity_id": "replacement_parts",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.48
+        },
+        {
+          "commodity_id": "consumer_goods",
+          "stock": 1,
+          "demand": 4,
+          "price_multiplier": 1.4
+        }
+      ]
+    },
+    {
+      "id": "bradbury_market",
+      "system_id": "bradbury",
+      "destination_id": "bradbury_prime",
+      "commodities": [
+        {
+          "commodity_id": "scientific_instruments",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.78
+        },
+        {
+          "commodity_id": "sensors",
+          "stock": 5,
+          "demand": 3,
+          "price_multiplier": 0.82
+        },
+        {
+          "commodity_id": "pharmaceuticals",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.9
+        },
+        {
+          "commodity_id": "biological_materials",
+          "stock": 2,
+          "demand": 5,
+          "price_multiplier": 1.4
+        },
+        {
+          "commodity_id": "specialty_chemicals",
+          "stock": 2,
+          "demand": 5,
+          "price_multiplier": 1.35
+        }
+      ]
+    },
+    {
+      "id": "ilos_market",
+      "system_id": "ilos",
+      "destination_id": "ilos_prime",
+      "commodities": [
+        {
+          "commodity_id": "engines",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.78
+        },
+        {
+          "commodity_id": "lightweight_structural_materials",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.74
+        },
+        {
+          "commodity_id": "sensors",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.88
+        },
+        {
+          "commodity_id": "iron",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.2
+        },
+        {
+          "commodity_id": "machinery",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.2
+        }
+      ]
+    },
+    {
+      "id": "veyara_market",
+      "system_id": "veyara",
+      "destination_id": "veyara_prime",
+      "commodities": [
+        {
+          "commodity_id": "life_support_equipment",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.76
+        },
+        {
+          "commodity_id": "water_processing_equipment",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.78
+        },
+        {
+          "commodity_id": "pharmaceuticals",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.88
+        },
+        {
+          "commodity_id": "structural_materials",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.2
+        },
+        {
+          "commodity_id": "machinery",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.22
+        }
+      ]
+    },
+    {
+      "id": "tidemark_market",
+      "system_id": "tidemark",
+      "destination_id": "tidemark_prime",
+      "commodities": [
+        {
+          "commodity_id": "chemical_feedstocks",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.68
+        },
+        {
+          "commodity_id": "biological_materials",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.72
+        },
+        {
+          "commodity_id": "rare_dissolved_minerals",
+          "stock": 4,
+          "demand": 2,
+          "price_multiplier": 0.78
+        },
+        {
+          "commodity_id": "machinery",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.5
+        },
+        {
+          "commodity_id": "electronics",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.48
+        }
+      ]
+    },
+    {
+      "id": "pelagos_market",
+      "system_id": "pelagos",
+      "destination_id": "pelagos_prime",
+      "commodities": [
+        {
+          "commodity_id": "aquatic_food_products",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.68
+        },
+        {
+          "commodity_id": "biological_feedstocks",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.72
+        },
+        {
+          "commodity_id": "pharmaceuticals",
+          "stock": 4,
+          "demand": 3,
+          "price_multiplier": 0.9
+        },
+        {
+          "commodity_id": "metals",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.4
+        },
+        {
+          "commodity_id": "machinery",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.25
+        }
+      ]
+    },
+    {
+      "id": "orun_market",
+      "system_id": "orun",
+      "destination_id": "orun_prime",
+      "commodities": [
+        {
+          "commodity_id": "thermal_equipment",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.74
+        },
+        {
+          "commodity_id": "automation_systems",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.78
+        },
+        {
+          "commodity_id": "ceramics",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.7
+        },
+        {
+          "commodity_id": "food",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.45
+        },
+        {
+          "commodity_id": "biological_materials",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.3
+        }
+      ]
+    },
+    {
+      "id": "foundry_market",
+      "system_id": "foundry",
+      "destination_id": "foundry_prime",
+      "commodities": [
+        {
+          "commodity_id": "ceramics",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.65
+        },
+        {
+          "commodity_id": "thermal_equipment",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.72
+        },
+        {
+          "commodity_id": "machine_components",
+          "stock": 5,
+          "demand": 2,
+          "price_multiplier": 0.7
+        },
+        {
+          "commodity_id": "food",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.5
+        },
+        {
+          "commodity_id": "electronics",
+          "stock": 2,
+          "demand": 5,
+          "price_multiplier": 1.38
+        }
+      ]
+    },
+    {
+      "id": "port_meridian_market",
+      "system_id": "port_meridian",
+      "destination_id": "meridian_station",
+      "commodities": [
+        {
+          "commodity_id": "food",
+          "stock": 3,
+          "demand": 4,
+          "price_multiplier": 1.16
+        },
+        {
+          "commodity_id": "replacement_parts",
+          "stock": 4,
+          "demand": 4,
+          "price_multiplier": 1.18
+        },
+        {
+          "commodity_id": "life_support_equipment",
+          "stock": 3,
+          "demand": 4,
+          "price_multiplier": 1.2
+        },
+        {
+          "commodity_id": "consumer_goods",
+          "stock": 3,
+          "demand": 4,
+          "price_multiplier": 1.15
+        },
+        {
+          "commodity_id": "survey_data",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.25
+        }
+      ]
+    },
+    {
+      "id": "talos_market",
+      "system_id": "talos",
+      "destination_id": "talos_prime",
+      "commodities": [
+        {
+          "commodity_id": "rare_minerals",
+          "stock": 2,
+          "demand": 2,
+          "price_multiplier": 0.82
+        },
+        {
+          "commodity_id": "structural_materials",
+          "stock": 0,
+          "demand": 5,
+          "price_multiplier": 1.8
+        },
+        {
+          "commodity_id": "mining_equipment",
+          "stock": 0,
+          "demand": 5,
+          "price_multiplier": 1.9
+        },
+        {
+          "commodity_id": "reactors",
+          "stock": 0,
+          "demand": 5,
+          "price_multiplier": 1.85
+        },
+        {
+          "commodity_id": "vehicles",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.7
+        },
+        {
+          "commodity_id": "food",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.65
+        },
+        {
+          "commodity_id": "water_processing_equipment",
+          "stock": 0,
+          "demand": 5,
+          "price_multiplier": 1.9
+        },
+        {
+          "commodity_id": "medical_supplies",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.75
+        },
+        {
+          "commodity_id": "habitation_modules",
+          "stock": 0,
+          "demand": 5,
+          "price_multiplier": 2
+        }
+      ]
+    },
+    {
+      "id": "waystation_market",
+      "system_id": "waystation",
+      "destination_id": "waystation_habitat",
+      "commodities": [
+        {
+          "commodity_id": "food",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.3
+        },
+        {
+          "commodity_id": "replacement_parts",
+          "stock": 3,
+          "demand": 4,
+          "price_multiplier": 1.28
+        },
+        {
+          "commodity_id": "consumer_goods",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.32
+        },
+        {
+          "commodity_id": "medical_supplies",
+          "stock": 2,
+          "demand": 4,
+          "price_multiplier": 1.35
+        }
+      ]
+    },
+    {
+      "id": "lastlight_market",
+      "system_id": "lastlight",
+      "destination_id": "lastlight_settlement",
+      "commodities": [
+        {
+          "commodity_id": "survey_data",
+          "stock": 3,
+          "demand": 5,
+          "price_multiplier": 1.6
+        },
+        {
+          "commodity_id": "food",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.65
+        },
+        {
+          "commodity_id": "replacement_parts",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.75
+        },
+        {
+          "commodity_id": "medical_supplies",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.7
+        },
+        {
+          "commodity_id": "manufactured_goods",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.65
+        },
+        {
+          "commodity_id": "life_support_equipment",
+          "stock": 1,
+          "demand": 5,
+          "price_multiplier": 1.8
+        }
+      ]
+    }
+  ]
+}
