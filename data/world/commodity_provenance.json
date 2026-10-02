@@ -9,7 +9,7 @@
         "hesperus"
       ],
       "producer_entities": [
-        "greenline_producers_exchange"
+        "hesperus_producers_exchange"
       ],
       "major_destinations": [
         "concord",
@@ -26,7 +26,7 @@
         "pelagos"
       ],
       "producer_entities": [
-        "greenline_producers_exchange"
+        "hesperus_producers_exchange"
       ],
       "major_destinations": [
         "new_houston",
@@ -41,7 +41,7 @@
         "pelagos"
       ],
       "producer_entities": [
-        "nine_currents_bioprocessing"
+        "nine_currents_bio"
       ],
       "major_destinations": [
         "concord",
@@ -56,7 +56,7 @@
         "bradbury"
       ],
       "producer_entities": [
-        "nine_currents_bioprocessing",
+        "nine_currents_bio",
         "bradbury_institute_consortium"
       ],
       "major_destinations": [
@@ -156,7 +156,7 @@
         "new_houston"
       ],
       "producer_entities": [
-        "carver_metals_exchange"
+        "carver_metals"
       ],
       "major_destinations": [
         "shipbuilding_manufacturing"
@@ -169,7 +169,7 @@
         "iron_gate"
       ],
       "producer_entities": [
-        "carver_metals_exchange"
+        "carver_metals"
       ],
       "major_destinations": [
         "shipbuilding_manufacturing"
@@ -182,7 +182,7 @@
         "ilos"
       ],
       "producer_entities": [
-        "carver_metals_exchange"
+        "carver_metals"
       ],
       "major_destinations": [
         "precision_shipbuilding"
@@ -194,7 +194,7 @@
         "talos"
       ],
       "producer_entities": [
-        "hopewell_claim_exchange"
+        "hopewell_freight_coop"
       ],
       "major_destinations": [
         "concord",
@@ -211,7 +211,7 @@
         "carver"
       ],
       "producer_entities": [
-        "roosevelt_machine_fabrication"
+        "roosevelt_machine"
       ],
       "major_destinations": [
         "construction_shipbuilding"
@@ -224,7 +224,7 @@
         "orun"
       ],
       "producer_entities": [
-        "deepworks_technical_ceramics"
+        "deepworks_ceramics"
       ],
       "major_destinations": [
         "shipbuilding_thermal_industry"
@@ -238,7 +238,7 @@
         "keshar"
       ],
       "producer_entities": [
-        "roosevelt_machine_fabrication"
+        "roosevelt_machine"
       ],
       "major_destinations": [
         "all_industrial"
@@ -252,7 +252,7 @@
         "foundry"
       ],
       "producer_entities": [
-        "roosevelt_machine_fabrication"
+        "roosevelt_machine"
       ],
       "major_destinations": [
         "mining_agriculture_construction"
@@ -281,7 +281,7 @@
         "keshar"
       ],
       "producer_entities": [
-        "roosevelt_machine_fabrication"
+        "roosevelt_machine"
       ],
       "major_destinations": [
         "hesperus"
