@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "star_fields": [
+    "spectral_class",
+    "mass_solar",
+    "radius_solar",
+    "luminosity_solar",
+    "age_gyr",
+    "metallicity",
+    "activity",
+    "multiplicity"
+  ],
+  "body_fields": [
+    "mass_earth",
+    "radius_earth",
+    "gravity_g",
+    "semi_major_axis_au",
+    "orbital_period_days",
+    "eccentricity",
+    "inclination_deg",
+    "rotation_hours",
+    "axial_tilt_deg",
+    "atmosphere",
+    "surface_pressure_bar",
+    "mean_temperature_c",
+    "albedo",
+    "magnetosphere",
+    "moons",
+    "rings"
+  ],
+  "generation_constraints": [
+    "Keplerian periods derive from mass and semi-major axis.",
+    "Temperature estimates derive from luminosity, distance, albedo and greenhouse modifier.",
+    "Gravity derives from mass and radius.",
+    "Tidal locking probability rises for close-in bodies.",
+    "Atmosphere retention considers gravity, temperature and stellar activity.",
+    "Habitable conditions are not guaranteed by orbital zone alone."
+  ]
+}
