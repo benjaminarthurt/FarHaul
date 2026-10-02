@@ -1,0 +1,74 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "program": "runtime_simulation_specification",
+  "status": "complete",
+  "phases": [
+    {
+      "id": 1,
+      "name": "Canonical Data Cleanup & Numerical Calibration",
+      "files": [
+        "units.json",
+        "economic_calibration.json",
+        "reconciliation_rules.json"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Ship Simulation",
+      "files": [
+        "ship_modules.json",
+        "ship_networks.json",
+        "flight_physics.json",
+        "ship_damage.json"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Living Economy Runtime",
+      "files": [
+        "inventory_ledger.json",
+        "company_behavior.json",
+        "market_runtime.json",
+        "warehouse_runtime.json"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Contract & Logistics Runtime",
+      "files": [
+        "contract_pipeline.json",
+        "freight_rates.json",
+        "npc_carriers.json",
+        "procurement_example.json"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "People & World Runtime",
+      "files": [
+        "people_runtime.json",
+        "schedule_templates.json",
+        "local_traffic.json",
+        "world_events.json"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Exploration & Settlement Runtime",
+      "files": [
+        "system_generation.json",
+        "settlement_runtime.json",
+        "exploration_commerce_loop.json",
+        "generated_history.json"
+      ]
+    }
+  ],
+  "integration": [
+    "simulation_tick.json",
+    "save_state_contract.json",
+    "runtime_test_scenarios.json"
+  ],
+  "completion_definition": "All six planned runtime domains have mechanics-facing structured specifications, narrative documentation, integration order, persistence contract and acceptance scenarios."
+}
