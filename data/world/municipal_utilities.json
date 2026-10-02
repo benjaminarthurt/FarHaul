@@ -1,0 +1,384 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "operators": [
+    {
+      "id": "atlantic_grid",
+      "name": "Earth Atlantic Grid Cooperative",
+      "body_id": "earth",
+      "sector": "power",
+      "systems": [
+        "fusion",
+        "solar",
+        "storage"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "earth_water_authorities",
+      "name": "Earth Regional Water Authorities",
+      "body_id": "earth",
+      "sector": "water",
+      "systems": [
+        "surface_water",
+        "recycling",
+        "desalination"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "luna_civic_loop",
+      "name": "Luna Civic Loop",
+      "body_id": "luna",
+      "sector": "life_support",
+      "systems": [
+        "ice_import",
+        "recycling"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "mars_pressure_utilities",
+      "name": "Mars Pressure Utilities",
+      "body_id": "mars",
+      "sector": "life_support",
+      "systems": [
+        "water_recovery",
+        "atmosphere_processing",
+        "district_heat"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "keshar_storm_grid",
+      "name": "Keshar Storm Grid",
+      "body_id": "keshar_prime",
+      "sector": "power",
+      "systems": [
+        "grid",
+        "storage",
+        "storm_reserve"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "keshar_waterworks",
+      "name": "Keshar Shelf Waterworks",
+      "body_id": "keshar_prime",
+      "sector": "water",
+      "systems": [
+        "desalination",
+        "reservoirs"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "ilos_masslight_power",
+      "name": "Masslight Power",
+      "body_id": "ilos_prime",
+      "sector": "power",
+      "systems": [
+        "grid",
+        "storage"
+      ],
+      "resilience": "high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "ilos_vertical_water",
+      "name": "Ilos Vertical Water",
+      "body_id": "ilos_prime",
+      "sector": "water",
+      "systems": [
+        "recovery",
+        "uplift"
+      ],
+      "resilience": "high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "veyara_current_utilities",
+      "name": "Current Utilities Cooperative",
+      "body_id": "veyara_prime",
+      "sector": "water_environment",
+      "systems": [
+        "water_processing",
+        "biofiltration",
+        "storm_reserve"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "orun_deep_heat",
+      "name": "Deep Heat Commons",
+      "body_id": "orun_prime",
+      "sector": "thermal_power",
+      "systems": [
+        "geothermal",
+        "district_heat"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "concord_common_services",
+      "name": "Concord Common Services",
+      "body_id": "concord_prime",
+      "sector": "multiutility",
+      "systems": [
+        "power",
+        "water",
+        "atmosphere_zones",
+        "waste"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "roosevelt_coldgrid",
+      "name": "Roosevelt Coldgrid",
+      "body_id": "roosevelt",
+      "sector": "power_heat",
+      "systems": [
+        "grid",
+        "district_heat",
+        "storage"
+      ],
+      "resilience": "high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "hesperus_water_board",
+      "name": "Hesperus Water Board",
+      "body_id": "hesperus_prime",
+      "sector": "water_irrigation",
+      "systems": [
+        "reservoirs",
+        "irrigation",
+        "municipal"
+      ],
+      "resilience": "high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "iron_gate_process_utility",
+      "name": "Gate Process Utility",
+      "body_id": "iron_gate_prime",
+      "sector": "industrial_utility",
+      "systems": [
+        "power",
+        "process_water",
+        "cooling"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "bradbury_clean_grid",
+      "name": "Bradbury Clean Grid",
+      "body_id": "bradbury_prime",
+      "sector": "power",
+      "systems": [
+        "grid",
+        "laboratory_backup"
+      ],
+      "resilience": "high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "pelagos_currentworks",
+      "name": "Pelagos Currentworks",
+      "body_id": "pelagos_prime",
+      "sector": "multiutility",
+      "systems": [
+        "water",
+        "power",
+        "storm"
+      ],
+      "resilience": "high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "anchor_seven_utility",
+      "name": "Anchor Seven Utility",
+      "body_id": "tidemark_prime",
+      "sector": "life_support",
+      "systems": [
+        "desalination",
+        "power",
+        "air",
+        "storm_reserve"
+      ],
+      "resilience": "mission_critical",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "deepworks_utility",
+      "name": "Deepworks Utility Cooperative",
+      "body_id": "foundry_prime",
+      "sector": "multiutility",
+      "systems": [
+        "geothermal",
+        "cooling",
+        "air",
+        "water"
+      ],
+      "resilience": "very_high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "hopewell_services",
+      "name": "Hopewell Municipal Services",
+      "body_id": "talos_prime",
+      "sector": "frontier_utility",
+      "systems": [
+        "power_modules",
+        "water_processing",
+        "waste"
+      ],
+      "resilience": "uneven",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "crossroads_plant",
+      "name": "Crossroads Plant",
+      "body_id": "waystation_habitat",
+      "sector": "life_support",
+      "systems": [
+        "air",
+        "water",
+        "power",
+        "heat"
+      ],
+      "resilience": "mission_critical",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    },
+    {
+      "id": "beacon_utility",
+      "name": "Beacon Utility District",
+      "body_id": "lastlight_settlement",
+      "sector": "frontier_utility",
+      "systems": [
+        "power",
+        "water",
+        "heat",
+        "waste"
+      ],
+      "resilience": "high",
+      "contract_demand": [
+        "replacement_parts",
+        "filters",
+        "electronics",
+        "industrial_chemicals"
+      ]
+    }
+  ]
+}
