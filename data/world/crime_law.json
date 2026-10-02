@@ -1,0 +1,128 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "principles": [
+    "Offenses are jurisdiction-specific.",
+    "Suspicion is not conviction.",
+    "Organizations only react to records or information they possess.",
+    "Ordinary regulatory violations are distinct from deliberate criminal acts."
+  ],
+  "offenses": [
+    {
+      "id": "manifest_error",
+      "class": "civil",
+      "severity": 1,
+      "intent_required": false,
+      "typical_outcomes": [
+        "correction",
+        "fee",
+        "small_fine"
+      ]
+    },
+    {
+      "id": "undeclared_dutiable_cargo",
+      "class": "civil_or_criminal",
+      "severity": 2,
+      "intent_required": "contextual",
+      "typical_outcomes": [
+        "back_duty",
+        "fine",
+        "cargo_hold"
+      ]
+    },
+    {
+      "id": "deliberate_false_manifest",
+      "class": "criminal",
+      "severity": 3,
+      "intent_required": true,
+      "typical_outcomes": [
+        "fine",
+        "cargo_seizure",
+        "record"
+      ]
+    },
+    {
+      "id": "concealed_cargo",
+      "class": "criminal",
+      "severity": 4,
+      "intent_required": true,
+      "typical_outcomes": [
+        "cargo_seizure",
+        "vessel_hold",
+        "record"
+      ]
+    },
+    {
+      "id": "false_transponder",
+      "class": "criminal",
+      "severity": 5,
+      "intent_required": true,
+      "typical_outcomes": [
+        "vessel_hold",
+        "registration_suspension",
+        "record"
+      ]
+    },
+    {
+      "id": "salvage_without_notice",
+      "class": "civil_or_criminal",
+      "severity": 2,
+      "intent_required": "contextual",
+      "typical_outcomes": [
+        "claim_loss",
+        "fine"
+      ]
+    },
+    {
+      "id": "salvage_conversion",
+      "class": "criminal",
+      "severity": 4,
+      "intent_required": true,
+      "typical_outcomes": [
+        "restitution",
+        "fine",
+        "record"
+      ]
+    },
+    {
+      "id": "contract_fraud",
+      "class": "criminal",
+      "severity": 4,
+      "intent_required": true,
+      "typical_outcomes": [
+        "restitution",
+        "commercial_record",
+        "record"
+      ]
+    },
+    {
+      "id": "reckless_operation",
+      "class": "civil_or_criminal",
+      "severity": 3,
+      "intent_required": false,
+      "typical_outcomes": [
+        "fine",
+        "license_review",
+        "registration_hold"
+      ]
+    }
+  ],
+  "record_states": [
+    "allegation",
+    "citation",
+    "pending_case",
+    "adjudicated",
+    "dismissed"
+  ],
+  "cross_system_exchange": {
+    "default": "serious adjudicated offenses and active vessel alerts are commonly exchanged; minor civil violations are not universally shared",
+    "shared_categories": [
+      "false_transponder",
+      "serious_smuggling",
+      "major_fraud",
+      "dangerous_operation_alert"
+    ],
+    "not_universal": true
+  }
+}
