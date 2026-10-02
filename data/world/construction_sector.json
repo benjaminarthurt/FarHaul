@@ -1,0 +1,176 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "firms": [
+    {
+      "id": "terran_civil",
+      "name": "Terran Civil Systems",
+      "base_system_id": "sol",
+      "specialties": [
+        "urban_infrastructure",
+        "orbital_links"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "kesh_foundation",
+      "name": "Kesh Foundation Works",
+      "base_system_id": "keshar",
+      "specialties": [
+        "heavy_civil",
+        "seawalls",
+        "industrial"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "ilos_spanworks",
+      "name": "Ilos Spanworks",
+      "base_system_id": "ilos",
+      "specialties": [
+        "vertical_structures",
+        "light_structures"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "veyara_habitat_marine",
+      "name": "Veyara Habitat Marine",
+      "base_system_id": "veyara",
+      "specialties": [
+        "floating_structures",
+        "submerged_utilities"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "orun_excavation",
+      "name": "Orun Excavation Cooperative",
+      "base_system_id": "orun",
+      "specialties": [
+        "tunnels",
+        "subsurface_habitat"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "concord_civic_builders",
+      "name": "Concord Civic Builders",
+      "base_system_id": "concord",
+      "specialties": [
+        "multispecies_commercial",
+        "infrastructure"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "roosevelt_siteworks",
+      "name": "Roosevelt Siteworks",
+      "base_system_id": "new_houston",
+      "specialties": [
+        "industrial",
+        "yards",
+        "housing"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "gate_heavy_civil",
+      "name": "Gate Heavy Civil",
+      "base_system_id": "iron_gate",
+      "specialties": [
+        "foundries",
+        "orbital_support"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "crosswater_marine_builders",
+      "name": "Crosswater Marine Builders",
+      "base_system_id": "pelagos",
+      "specialties": [
+        "floating_city",
+        "marine_infrastructure"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "hopewell_construction_combine",
+      "name": "Hopewell Construction Combine",
+      "base_system_id": "talos",
+      "specialties": [
+        "prefab_housing",
+        "roads",
+        "pads",
+        "utilities"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    },
+    {
+      "id": "beacon_fieldworks",
+      "name": "Beacon Fieldworks",
+      "base_system_id": "lastlight",
+      "specialties": [
+        "expedition_sites",
+        "utilities",
+        "repairs"
+      ],
+      "inputs": [
+        "structural_modules",
+        "machine_parts",
+        "electronics",
+        "construction_consumables"
+      ]
+    }
+  ]
+}
