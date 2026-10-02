@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "incidents": [
+    {
+      "id": "harker_loss",
+      "year_ice": 192,
+      "name": "Loss of the Harker Vale",
+      "location_system_id": "carver",
+      "type": "freighter_loss",
+      "summary": "Bulk carrier Harker Vale broke apart during an improperly documented ore-loading operation after departing a Carver habitat.",
+      "cause": "Progressive structural overload caused by cargo distribution outside certified limits; investigation also found falsified loading records.",
+      "consequence": "Modern Carver bulk terminals adopted independent mass verification. 'Harkering it' remains dock slang for pretending a load problem will fix itself.",
+      "tone": "Industrial disaster caused by ordinary commercial pressure, not mystery."
+    },
+    {
+      "id": "concord_dock_14",
+      "year_ice": 213,
+      "name": "Dock 14 Pressure Accident",
+      "location_system_id": "concord",
+      "type": "port_accident",
+      "summary": "A docking adapter interpreted an obsolete pressure-ready signal as authorization to cycle a transfer collar.",
+      "cause": "Standards translation failure between legacy hardware and modern port control.",
+      "consequence": "Mandatory physical interlock revisions spread through Concord-standard docking equipment.",
+      "tone": "Frequently taught in commercial certification courses."
+    },
+    {
+      "id": "pelagos_storm_lift",
+      "year_ice": 231,
+      "name": "Pelagos Storm Lift",
+      "location_system_id": "pelagos",
+      "type": "rescue",
+      "summary": "Six cargo craft and dozens of surface vessels coordinated evacuation and supply during a severe volcanic-island storm sequence.",
+      "cause": "Natural disaster.",
+      "consequence": "Mixed orbital/surface logistics procedures developed afterward became standard across Pelagos.",
+      "tone": "Remembered as an example of freight crews becoming emergency infrastructure."
+    },
+    {
+      "id": "meridian_black_week",
+      "year_ice": 247,
+      "name": "Meridian Black Week",
+      "location_system_id": "port_meridian",
+      "type": "infrastructure_failure",
+      "summary": "A cascading power-distribution failure left large sections of Port Meridian on local backup for six days.",
+      "cause": "Deferred replacement of original depot-era distribution equipment hidden behind decades of expansion.",
+      "consequence": "Massive rebuild created today's segmented station grid. Old Ring businesses still display blackout lanterns during the anniversary.",
+      "tone": "Foundational local memory."
+    },
+    {
+      "id": "waystation_three_pumps",
+      "year_ice": 259,
+      "name": "The Three Pumps Run",
+      "location_system_id": "waystation",
+      "type": "freight_run",
+      "summary": "Independent freighter Three Pumps carried replacement atmosphere equipment to Waystation after two scheduled carriers declined a poorly insured emergency charter.",
+      "cause": "A contaminant damaged habitat circulation machinery.",
+      "consequence": "The ship's name became shorthand for small operators taking work large networks cannot price neatly.",
+      "tone": "Famous without being heroic mythology; the crew was paid and argued about the rate afterward."
+    },
+    {
+      "id": "talos_first_winter",
+      "year_ice": 281,
+      "name": "Talos First Winter Shortage",
+      "location_system_id": "talos",
+      "type": "supply_crisis",
+      "summary": "Population growth outran storage and surface transport during Talos's first major winter after the mineral rush.",
+      "cause": "Poor forecasting, weather and too much inbound construction cargo occupying warehouse capacity.",
+      "consequence": "Food, heaters and water equipment commanded extreme emergency rates; new freight rules reserve storage for essential supplies.",
+      "tone": "Recent event still shaping local attitudes."
+    },
+    {
+      "id": "lastlight_accord_overdue",
+      "year_ice": 284,
+      "name": "Accord Overdue",
+      "location_system_id": "lastlight",
+      "type": "exploration_loss",
+      "summary": "Survey vessel Accord failed to return from a cataloged target beyond Redoubt. No confirmed wreckage or distress transmission has been recovered.",
+      "cause": "Unknown; insufficient evidence.",
+      "consequence": "Lastlight Survey Office tightened route-plan and reserve recommendations. The crew is listed overdue rather than legally presumed lost.",
+      "tone": "A reminder that exploration can simply fail without revealing a conspiracy."
+    }
+  ]
+}
