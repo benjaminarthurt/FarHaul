@@ -1,0 +1,758 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "systems": [
+    {
+      "id": "sol",
+      "name": "Sol",
+      "classification": [
+        "core",
+        "home_system"
+      ],
+      "origin_species_ids": [
+        "human"
+      ],
+      "population": 18400000000,
+      "home_species_ids": [
+        "human"
+      ],
+      "destinations": [
+        {
+          "id": "earth",
+          "name": "Earth",
+          "type": "planet",
+          "role": "Human homeworld"
+        },
+        {
+          "id": "luna",
+          "name": "Luna",
+          "type": "moon"
+        },
+        {
+          "id": "mars",
+          "name": "Mars",
+          "type": "planet"
+        },
+        {
+          "id": "sol_belt",
+          "name": "Belt Installations",
+          "type": "distributed_habitats"
+        },
+        {
+          "id": "jovian_infrastructure",
+          "name": "Jovian Infrastructure",
+          "type": "distributed_habitats"
+        }
+      ],
+      "economy": {
+        "role": "Historic human center and enormous diversified economy.",
+        "exports": [
+          "advanced manufacturing",
+          "electronics",
+          "pharmaceuticals",
+          "entertainment",
+          "financial services",
+          "specialized machinery"
+        ],
+        "imports": [
+          "raw materials",
+          "food specialties",
+          "exotic biological products",
+          "industrial feedstocks"
+        ]
+      },
+      "narrative": {
+        "summary": "Humanity's home system remains one of known space's largest population, financial and industrial centers. Earth is expensive, regulated and congested; independent freight competes with enormous established carriers.",
+        "gameplay_identity": "Dense traffic, strict regulation, enormous ports and virtually every commercial service."
+      }
+    },
+    {
+      "id": "keshar",
+      "name": "Keshar",
+      "classification": [
+        "core",
+        "home_system"
+      ],
+      "origin_species_ids": [
+        "kesh"
+      ],
+      "population": 11800000000,
+      "home_species_ids": [
+        "kesh"
+      ],
+      "destinations": [
+        {
+          "id": "keshar_prime",
+          "name": "Keshar",
+          "type": "planet",
+          "role": "Kesh homeworld",
+          "gravity_g": 1.35
+        }
+      ],
+      "economy": {
+        "role": "Heavy-industrial home system.",
+        "exports": [
+          "structural components",
+          "pressure vessels",
+          "heavy reactors",
+          "mining equipment",
+          "durable ship components"
+        ],
+        "imports": [
+          "biological products",
+          "precision electronics",
+          "specialty foods",
+          "lightweight manufactured goods"
+        ]
+      },
+      "narrative": {
+        "summary": "Dense atmosphere and high gravity shaped Kesh civilization and its famously conservative engineering. Surface cities are broad, heavily constructed and filled with infrastructure other species often regard as overbuilt.",
+        "gameplay_identity": "High gravity, enormous machinery and exceptionally durable equipment. Landing heavy ships demands careful design."
+      }
+    },
+    {
+      "id": "ilos",
+      "name": "Ilos",
+      "classification": [
+        "core",
+        "home_system"
+      ],
+      "origin_species_ids": [
+        "ilyan"
+      ],
+      "population": 7200000000,
+      "home_species_ids": [
+        "ilyan"
+      ],
+      "destinations": [
+        {
+          "id": "ilos_prime",
+          "name": "Ilos",
+          "type": "planet",
+          "role": "Ilyan homeworld",
+          "gravity_g": 0.55
+        }
+      ],
+      "economy": {
+        "role": "Precision engineering and propulsion center.",
+        "exports": [
+          "engines",
+          "lightweight structural materials",
+          "sensors",
+          "precision equipment"
+        ],
+        "imports": [
+          "bulk metals",
+          "heavy machinery",
+          "food products",
+          "industrial feedstocks"
+        ]
+      },
+      "narrative": {
+        "summary": "Ilos combines low gravity, dense atmosphere and immense vertical geological formations. Ilyan cities exploit that verticality and their industry is renowned for doing more with less mass.",
+        "gameplay_identity": "Vertical architecture, lightweight spacecraft and premium propulsion technology."
+      }
+    },
+    {
+      "id": "veyara",
+      "name": "Veyara",
+      "classification": [
+        "core",
+        "home_system"
+      ],
+      "origin_species_ids": [
+        "vey"
+      ],
+      "population": 9600000000,
+      "home_species_ids": [
+        "vey"
+      ],
+      "destinations": [
+        {
+          "id": "veyara_prime",
+          "name": "Veyara",
+          "type": "planet",
+          "role": "Vey homeworld",
+          "surface_water_fraction": 0.85
+        }
+      ],
+      "economy": {
+        "role": "Biotechnology and environmental engineering center.",
+        "exports": [
+          "life-support equipment",
+          "water-processing systems",
+          "biotechnology",
+          "pharmaceuticals",
+          "aquaculture products"
+        ],
+        "imports": [
+          "metals",
+          "dry-world agricultural products",
+          "heavy industrial equipment"
+        ]
+      },
+      "narrative": {
+        "summary": "An ocean-dominated homeworld of islands, floating infrastructure, coastal cities and extensive underwater settlements.",
+        "gameplay_identity": "Oceans, floating ports, high humidity and enormous environmental systems."
+      }
+    },
+    {
+      "id": "orun",
+      "name": "Orun",
+      "classification": [
+        "core",
+        "home_system"
+      ],
+      "origin_species_ids": [
+        "orun"
+      ],
+      "population": 6700000000,
+      "home_species_ids": [
+        "orun"
+      ],
+      "destinations": [
+        {
+          "id": "orun_prime",
+          "name": "Orun",
+          "type": "planet",
+          "role": "Orun homeworld"
+        }
+      ],
+      "economy": {
+        "role": "Thermal engineering and compact industrial technology center.",
+        "exports": [
+          "thermal-management systems",
+          "tunneling equipment",
+          "compact machinery",
+          "ceramics",
+          "industrial automation"
+        ],
+        "imports": [
+          "biological products",
+          "surface-grown foods",
+          "specialty metals"
+        ]
+      },
+      "narrative": {
+        "summary": "Extreme surface temperature cycles drove early Orun civilization underground. Modern cities retain extensive subterranean architecture and industrial infrastructure.",
+        "gameplay_identity": "Underground ports, tunnels, compact architecture and machinery integrated directly with habitation."
+      }
+    },
+    {
+      "id": "concord",
+      "name": "Concord",
+      "classification": [
+        "core",
+        "multispecies_hub"
+      ],
+      "origin_species_ids": [
+        "human",
+        "kesh",
+        "ilyan",
+        "vey",
+        "orun"
+      ],
+      "population": 2800000000,
+      "destinations": [
+        {
+          "id": "concord_prime",
+          "name": "Concord Prime",
+          "type": "planet",
+          "role": "Primary population center"
+        }
+      ],
+      "economy": {
+        "role": "Known space's principal multispecies commercial center.",
+        "exports": [
+          "financial services",
+          "logistics technology",
+          "electronics",
+          "manufactured goods"
+        ],
+        "imports": [
+          "all major commodity classes"
+        ],
+        "special_notes": [
+          "Many interstellar cargo, docking and atmospheric compatibility standards were formalized here.",
+          "The Standard Cargo Unit was formalized here."
+        ]
+      },
+      "narrative": {
+        "summary": "Founded as a neutral trade settlement after interspecies contact, Concord grew into one of known space's largest commercial centers. No species holds an overwhelming majority.",
+        "gameplay_identity": "The great commercial crossroads. Sol represents humanity; Concord represents known space."
+      }
+    },
+    {
+      "id": "new_houston",
+      "name": "New Houston",
+      "classification": [
+        "developed",
+        "industrial"
+      ],
+      "origin_species_ids": [
+        "human"
+      ],
+      "population": 640000000,
+      "destinations": [
+        {
+          "id": "roosevelt",
+          "name": "Roosevelt",
+          "type": "planet",
+          "role": "Primary inhabited world"
+        }
+      ],
+      "economy": {
+        "role": "Commercial shipbuilding and heavy manufacturing.",
+        "exports": [
+          "ship modules",
+          "reactors",
+          "industrial equipment",
+          "structural materials"
+        ],
+        "imports": [
+          "food",
+          "specialty chemicals",
+          "electronics"
+        ]
+      },
+      "narrative": {
+        "summary": "One of humanity's oldest extrasolar colonies. Cold, mineral-rich Roosevelt became heavily industrialized, and its orbital yards became famous for combining technologies from multiple civilizations into affordable commercial spacecraft.",
+        "gameplay_identity": "The place independent operators go to build and substantially refit ships."
+      }
+    },
+    {
+      "id": "hesperus",
+      "name": "Hesperus",
+      "classification": [
+        "developed",
+        "agricultural"
+      ],
+      "origin_species_ids": [
+        "human"
+      ],
+      "population": 84000000,
+      "destinations": [
+        {
+          "id": "hesperus_prime",
+          "name": "Hesperus",
+          "type": "planet",
+          "role": "Primary agricultural world"
+        }
+      ],
+      "economy": {
+        "role": "Major agricultural exporter.",
+        "exports": [
+          "grain",
+          "protein products",
+          "fruit",
+          "livestock products",
+          "biological feedstocks"
+        ],
+        "imports": [
+          "agricultural machinery",
+          "electronics",
+          "fertilizer precursors",
+          "vehicles"
+        ]
+      },
+      "narrative": {
+        "summary": "A favorable agricultural colony whose output expanded dramatically through later Vey agricultural science. Large-scale farming feeds several nearby industrial systems.",
+        "gameplay_identity": "Huge farms and high-volume, relatively low-value outbound freight."
+      }
+    },
+    {
+      "id": "iron_gate",
+      "name": "Iron Gate",
+      "classification": [
+        "developed",
+        "industrial"
+      ],
+      "origin_species_ids": [
+        "kesh"
+      ],
+      "population": 310000000,
+      "destinations": [
+        {
+          "id": "iron_gate_prime",
+          "name": "Iron Gate Prime",
+          "type": "planet",
+          "role": "Primary industrial world"
+        }
+      ],
+      "economy": {
+        "role": "Heavy spacecraft construction and manufacturing.",
+        "exports": [
+          "heavy freighters",
+          "structural modules",
+          "mining machinery",
+          "bulk industrial equipment"
+        ],
+        "imports": [
+          "electronics",
+          "food",
+          "lightweight materials",
+          "labor"
+        ]
+      },
+      "narrative": {
+        "summary": "Founded as a Kesh mining colony between Keshar and the central trade region. Lower gravity than Keshar made it ideal for construction and launch of exceptionally large spacecraft.",
+        "gameplay_identity": "Enormous shipyards and a key late-game destination for very large commercial vessels."
+      }
+    },
+    {
+      "id": "carver",
+      "name": "Carver",
+      "classification": [
+        "developed",
+        "extraction"
+      ],
+      "population": 9400000,
+      "destinations": [
+        {
+          "id": "carver_belt",
+          "name": "Carver Belt",
+          "type": "asteroid_belt",
+          "role": "Primary extraction zone"
+        },
+        {
+          "id": "carver_habitats",
+          "name": "Carver Habitats",
+          "type": "distributed_habitats",
+          "role": "Primary population centers"
+        }
+      ],
+      "economy": {
+        "role": "Asteroid mining and bulk resource extraction.",
+        "exports": [
+          "iron",
+          "nickel",
+          "titanium",
+          "platinum-group metals",
+          "industrial gases"
+        ],
+        "imports": [
+          "food",
+          "medicine",
+          "electronics",
+          "replacement machinery",
+          "consumer goods"
+        ]
+      },
+      "narrative": {
+        "summary": "Carver has no particularly attractive inhabited planet, but its belts contain extraordinary accessible mineral wealth. Most residents live in stations, rotating habitats or excavated asteroids.",
+        "gameplay_identity": "Bulk freight, asteroid operations and constant demand for the ordinary goods an isolated industrial population cannot make locally."
+      }
+    },
+    {
+      "id": "bradbury",
+      "name": "Bradbury",
+      "classification": [
+        "developed",
+        "research"
+      ],
+      "origin_species_ids": [
+        "human",
+        "ilyan"
+      ],
+      "population": 155000000,
+      "destinations": [
+        {
+          "id": "bradbury_prime",
+          "name": "Bradbury Prime",
+          "type": "planet",
+          "role": "Primary research world"
+        }
+      ],
+      "economy": {
+        "role": "Research, education and precision industry.",
+        "exports": [
+          "scientific instruments",
+          "medical technology",
+          "software",
+          "sensors",
+          "pharmaceuticals"
+        ],
+        "imports": [
+          "laboratory materials",
+          "biological samples",
+          "specialty chemicals",
+          "precision machinery"
+        ]
+      },
+      "narrative": {
+        "summary": "A joint Human-Ilyan center of universities, laboratories and precision industries. Freight tends to be small, sensitive and extremely valuable.",
+        "gameplay_identity": "High-value cargo where damage risk matters more than raw tonnage."
+      }
+    },
+    {
+      "id": "pelagos",
+      "name": "Pelagos",
+      "classification": [
+        "developed",
+        "oceanic"
+      ],
+      "origin_species_ids": [
+        "vey",
+        "human"
+      ],
+      "population": 46000000,
+      "destinations": [
+        {
+          "id": "pelagos_prime",
+          "name": "Pelagos",
+          "type": "planet",
+          "role": "Joint ocean colony"
+        }
+      ],
+      "economy": {
+        "role": "Food and biological production.",
+        "exports": [
+          "aquatic food products",
+          "algae products",
+          "pharmaceuticals",
+          "industrial biological feedstocks"
+        ],
+        "imports": [
+          "metals",
+          "machinery",
+          "electronics",
+          "construction materials"
+        ]
+      },
+      "narrative": {
+        "summary": "A warm ocean world with volcanic island chains, comfortable for Vey and readily inhabitable by humans. It became one of the earliest successful joint-species colonies.",
+        "gameplay_identity": "Ocean logistics where ships, aircraft and orbital transport dominate because many destinations have no road connection."
+      }
+    },
+    {
+      "id": "tidemark",
+      "name": "Tidemark",
+      "classification": [
+        "outer",
+        "resource"
+      ],
+      "origin_species_ids": [
+        "vey"
+      ],
+      "population": 3100000,
+      "destinations": [
+        {
+          "id": "tidemark_prime",
+          "name": "Tidemark",
+          "type": "planet",
+          "role": "Oceanic resource world"
+        }
+      ],
+      "economy": {
+        "role": "Marine chemical and mineral extraction.",
+        "exports": [
+          "chemical feedstocks",
+          "biological materials",
+          "rare dissolved minerals"
+        ],
+        "imports": [
+          "manufactured goods",
+          "machinery",
+          "electronics",
+          "food specialties"
+        ]
+      },
+      "narrative": {
+        "summary": "A difficult oceanic colony rich in dissolved minerals and complex biological compounds. Most settlements are floating industrial platforms.",
+        "gameplay_identity": "Surface logistics where finding solid ground for a conventional freighter can be harder than the atmospheric descent."
+      }
+    },
+    {
+      "id": "foundry",
+      "name": "Foundry",
+      "classification": [
+        "outer",
+        "industrial"
+      ],
+      "origin_species_ids": [
+        "orun"
+      ],
+      "population": 22000000,
+      "destinations": [
+        {
+          "id": "foundry_prime",
+          "name": "Foundry",
+          "type": "planet",
+          "role": "Subterranean industrial world"
+        }
+      ],
+      "economy": {
+        "role": "Geothermal manufacturing and machine production.",
+        "exports": [
+          "ceramics",
+          "thermal equipment",
+          "machine components",
+          "automation systems"
+        ],
+        "imports": [
+          "food",
+          "biological material",
+          "precision electronics"
+        ]
+      },
+      "narrative": {
+        "summary": "A hot, geologically active world whose enormous Orun factories exploit geothermal energy and local minerals. The sparse-looking surface hides industrial complexes kilometers across.",
+        "gameplay_identity": "Subterranean logistics; surface transfer terminals feed gigantic freight elevators."
+      }
+    },
+    {
+      "id": "port_meridian",
+      "name": "Port Meridian",
+      "classification": [
+        "outer",
+        "multispecies_hub"
+      ],
+      "population": 2400000,
+      "destinations": [
+        {
+          "id": "meridian_station",
+          "name": "Port Meridian",
+          "type": "orbital_settlement",
+          "role": "Primary settlement and trade hub"
+        }
+      ],
+      "economy": {
+        "role": "Trade, repair, warehousing and expedition services at a major route convergence.",
+        "exports": [
+          "logistics services",
+          "repairs",
+          "ship brokerage",
+          "expedition services"
+        ],
+        "imports": [
+          "all major commodity classes"
+        ],
+        "special_notes": [
+          "Its principal economic product is location."
+        ]
+      },
+      "narrative": {
+        "summary": "Several major corridors converge here before continuing into sparsely developed space. A fuel depot grew into a vast commercial settlement of warehouses, yards, brokers, hotels, bars, salvage dealers and expedition suppliers.",
+        "gameplay_identity": "Far Haul's great multispecies truck stop in space and a signature transition point between established commerce and frontier operations."
+      }
+    },
+    {
+      "id": "talos",
+      "name": "Talos",
+      "classification": [
+        "frontier",
+        "boom_colony"
+      ],
+      "population": 74000,
+      "destinations": [
+        {
+          "id": "talos_prime",
+          "name": "Talos",
+          "type": "planet",
+          "role": "Rapidly growing mining colony"
+        }
+      ],
+      "economy": {
+        "role": "New mineral boom and infrastructure buildout.",
+        "exports": [
+          "rare minerals"
+        ],
+        "imports": [
+          "structural materials",
+          "excavation machinery",
+          "reactors",
+          "vehicles",
+          "food",
+          "water-processing equipment",
+          "medical supplies",
+          "habitation modules"
+        ],
+        "special_notes": [
+          "At game start, production has not caught up with inbound demand, creating severe return-cargo imbalance."
+        ]
+      },
+      "narrative": {
+        "summary": "Commercially exceptional mineral deposits triggered a rapid boom. Temporary housing, constant construction, congested landing pads and cargo accumulation define the colony.",
+        "gameplay_identity": "Highly profitable one-way freight with poor backhaul availability."
+      }
+    },
+    {
+      "id": "waystation",
+      "name": "Waystation",
+      "classification": [
+        "frontier",
+        "transit"
+      ],
+      "population": 38000,
+      "destinations": [
+        {
+          "id": "waystation_habitat",
+          "name": "Waystation",
+          "type": "settlement",
+          "role": "Transit settlement"
+        }
+      ],
+      "economy": {
+        "role": "Fuel, repair and expedition support.",
+        "exports": [
+          "repairs",
+          "fuel",
+          "expedition services"
+        ],
+        "imports": [
+          "food",
+          "consumer goods",
+          "machinery",
+          "medical supplies",
+          "replacement parts"
+        ]
+      },
+      "narrative": {
+        "summary": "A refueling depot that accidentally became a town as mechanics stayed, pilots opened businesses, families arrived and temporary warehouses became permanent.",
+        "gameplay_identity": "A recurring frontier community where familiar controllers, mechanics and businesses make changes over time noticeable."
+      }
+    },
+    {
+      "id": "lastlight",
+      "name": "Lastlight",
+      "classification": [
+        "extreme_frontier",
+        "multispecies"
+      ],
+      "population": 11400,
+      "destinations": [
+        {
+          "id": "lastlight_settlement",
+          "name": "Lastlight",
+          "type": "settlement",
+          "role": "Primary settlement"
+        },
+        {
+          "id": "lastlight_orbital",
+          "name": "Lastlight Orbital",
+          "type": "orbital_station",
+          "role": "Orbital logistics hub"
+        }
+      ],
+      "economy": {
+        "role": "Exploration, survey and frontier mining support.",
+        "exports": [
+          "limited minerals",
+          "survey data"
+        ],
+        "imports": [
+          "food",
+          "machinery",
+          "replacement parts",
+          "medicine",
+          "fuel-processing equipment",
+          "manufactured goods"
+        ]
+      },
+      "narrative": {
+        "summary": "The farthest substantial permanent settlement along the principal exploration corridor. Beyond it lie surveyed but uninhabited systems, then cataloged stars, then unmapped space.",
+        "gameplay_identity": "The end of the road: familiar civilization in one direction and unsupported exploration in the other."
+      }
+    }
+  ]
+}
