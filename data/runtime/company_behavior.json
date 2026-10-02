@@ -1,0 +1,72 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "decision_cycle_hours": 24,
+  "decisions": [
+    {
+      "id": "procure",
+      "signals": [
+        "inventory_below_reorder",
+        "price",
+        "lead_time",
+        "supplier_reliability"
+      ]
+    },
+    {
+      "id": "produce",
+      "signals": [
+        "orders",
+        "inventory",
+        "inputs",
+        "utilities",
+        "labor",
+        "margin"
+      ]
+    },
+    {
+      "id": "price",
+      "signals": [
+        "stock_cover",
+        "replacement_cost",
+        "competition",
+        "backlog"
+      ]
+    },
+    {
+      "id": "hire",
+      "signals": [
+        "utilization",
+        "backlog",
+        "wage_market"
+      ]
+    },
+    {
+      "id": "invest",
+      "signals": [
+        "cash",
+        "credit",
+        "capacity_utilization",
+        "forecast"
+      ]
+    },
+    {
+      "id": "charter_transport",
+      "signals": [
+        "shipment_volume",
+        "owned_capacity",
+        "spot_rate"
+      ]
+    },
+    {
+      "id": "shutdown",
+      "signals": [
+        "insolvency",
+        "utility_loss",
+        "damage",
+        "input_failure"
+      ]
+    }
+  ],
+  "abstraction": "Small firms update aggregate balance sheets; persistent firms retain individual facilities, contracts and debts."
+}
