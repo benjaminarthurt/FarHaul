@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "households": [
+    {
+      "id": "single_worker",
+      "members": 1,
+      "weight": 0.24
+    },
+    {
+      "id": "couple",
+      "members": 2,
+      "weight": 0.25
+    },
+    {
+      "id": "family",
+      "members": 3.6,
+      "weight": 0.31
+    },
+    {
+      "id": "shared_crew_or_students",
+      "members": 3.2,
+      "weight": 0.12
+    },
+    {
+      "id": "extended_household",
+      "members": 5.1,
+      "weight": 0.08
+    }
+  ],
+  "life_stages": [
+    "child",
+    "student_or_apprentice",
+    "working_age",
+    "retired"
+  ],
+  "migration_drivers": [
+    "employment",
+    "education",
+    "family",
+    "housing_cost",
+    "environmental_preference",
+    "boom_conditions",
+    "declining_industry",
+    "frontier_opportunity"
+  ],
+  "commuting": {
+    "core": "dense multimodal",
+    "industrial": "shift-peaked",
+    "rural": "longer-distance",
+    "frontier": "employer-centered"
+  },
+  "rule": "Demographic aggregates generate school, housing, healthcare, retail and passenger demand; species is not used as a personality or occupation class."
+}
