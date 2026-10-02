@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "sites": [
+    {
+      "id": "nh_training_hulk",
+      "name": "NCS Resolute",
+      "system_id": "new_houston",
+      "location": "Truman high orbit",
+      "type": "decommissioned_training_hulk",
+      "origin": "Early Northstar bulk freighter",
+      "status": "legal training/salvage site",
+      "description": "Stripped pressure hull used by yard schools for EVA, cutting and damage-control training. New crews sometimes mistake it for a wreck."
+    },
+    {
+      "id": "carver_mill_6",
+      "name": "Mill Six",
+      "system_id": "carver",
+      "location": "Carver Belt",
+      "type": "abandoned_processing_plant",
+      "origin": "First-wave belt refinery",
+      "status": "registered derelict",
+      "description": "Obsolete refinery abandoned when ore processing centralized. Most valuable machinery is gone, but the structure remains a navigation landmark."
+    },
+    {
+      "id": "meridian_depot_tankage",
+      "name": "Old Tankage",
+      "system_id": "port_meridian",
+      "location": "outside current Main Ring",
+      "type": "retired_fuel_depot",
+      "origin": "Original Meridian fuel depot",
+      "status": "partially preserved/partially industrial",
+      "description": "Old tanks and trusses surround newer infrastructure. Some sections are museum pieces; others still carry utility lines because replacing them would cost more than maintaining them."
+    },
+    {
+      "id": "talos_survey_camp_3",
+      "name": "Camp Three",
+      "system_id": "talos",
+      "location": "Talos northern survey region",
+      "type": "abandoned_surface_camp",
+      "origin": "Pre-boom mineral survey",
+      "status": "abandoned",
+      "description": "Small pressure shelters and equipment left when prospecting shifted toward richer deposits. Legally mundane salvage, logistically inconvenient."
+    },
+    {
+      "id": "lastlight_pathfinder",
+      "name": "Pathfinder Relay 2",
+      "system_id": "lastlight",
+      "location": "outer system",
+      "type": "retired_navigation_relay",
+      "origin": "Early Lastlight survey program",
+      "status": "inactive but protected",
+      "description": "Obsolete navigation relay retained as a surveyed reference point. Occasionally serviced solely because every chart still references it."
+    }
+  ]
+}
