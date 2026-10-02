@@ -1,0 +1,76 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "documents": [
+    {
+      "id": "certificate_of_origin",
+      "applies": [
+        "regulated",
+        "preferential_tariff",
+        "biological"
+      ],
+      "fields": [
+        "commodity",
+        "producer",
+        "origin",
+        "lot",
+        "date"
+      ]
+    },
+    {
+      "id": "chain_of_custody",
+      "applies": [
+        "high_value",
+        "scientific",
+        "controlled"
+      ],
+      "fields": [
+        "owner",
+        "custodian_history",
+        "seal_ids",
+        "timestamps"
+      ]
+    },
+    {
+      "id": "biosecurity_certificate",
+      "applies": [
+        "biological",
+        "food",
+        "live_animals"
+      ],
+      "fields": [
+        "origin",
+        "inspection",
+        "treatment",
+        "destination_permission"
+      ]
+    },
+    {
+      "id": "controlled_technology_license",
+      "applies": [
+        "restricted_technology"
+      ],
+      "fields": [
+        "exporter",
+        "importer",
+        "technology_class",
+        "quantity",
+        "validity"
+      ]
+    },
+    {
+      "id": "mineral_title_record",
+      "applies": [
+        "rare_minerals",
+        "salvaged_material"
+      ],
+      "fields": [
+        "claim",
+        "producer",
+        "lot",
+        "ownership"
+      ]
+    }
+  ]
+}
