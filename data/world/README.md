@@ -345,3 +345,8 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `asset_histories.json` | Persistent infrastructure histories |
 | `sample_vessel_histories.json` | Individual vessel provenance examples |
 | `urban_histories.json` | District and neighborhood evolution |
+| `reference_contracts.json` | Foreign-key and stable-ID validation contracts |
+
+## Validation
+
+Run `python tools/validate_world_data.py` from the repository root to validate JSON syntax and critical cross-file references. See `docs/world/data-validation.md` and `docs/world/integrated-world-model.md`.
