@@ -1,0 +1,257 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "archetypes": [
+    {
+      "id": "grocery",
+      "sector": "retail",
+      "typical_inputs": [
+        "food",
+        "consumer_goods"
+      ],
+      "employee_band": [
+        4,
+        180
+      ]
+    },
+    {
+      "id": "restaurant",
+      "sector": "hospitality",
+      "typical_inputs": [
+        "food",
+        "beverages",
+        "cleaning_supplies"
+      ],
+      "employee_band": [
+        2,
+        90
+      ]
+    },
+    {
+      "id": "hotel",
+      "sector": "hospitality",
+      "typical_inputs": [
+        "food",
+        "cleaning_supplies",
+        "furniture"
+      ],
+      "employee_band": [
+        8,
+        420
+      ]
+    },
+    {
+      "id": "machine_shop",
+      "sector": "industrial_service",
+      "typical_inputs": [
+        "metals",
+        "machine_components",
+        "electronics"
+      ],
+      "employee_band": [
+        3,
+        140
+      ]
+    },
+    {
+      "id": "vehicle_repair",
+      "sector": "repair",
+      "typical_inputs": [
+        "replacement_parts",
+        "electronics"
+      ],
+      "employee_band": [
+        2,
+        80
+      ]
+    },
+    {
+      "id": "ship_chandler",
+      "sector": "retail_logistics",
+      "typical_inputs": [
+        "replacement_parts",
+        "consumer_goods",
+        "life_support_equipment"
+      ],
+      "employee_band": [
+        3,
+        120
+      ]
+    },
+    {
+      "id": "construction_contractor",
+      "sector": "construction",
+      "typical_inputs": [
+        "structural_materials",
+        "machinery"
+      ],
+      "employee_band": [
+        4,
+        900
+      ]
+    },
+    {
+      "id": "waste_recovery",
+      "sector": "utility_service",
+      "typical_inputs": [
+        "waste_streams"
+      ],
+      "employee_band": [
+        8,
+        600
+      ]
+    },
+    {
+      "id": "telecom_provider",
+      "sector": "utility_service",
+      "typical_inputs": [
+        "electronics",
+        "replacement_parts"
+      ],
+      "employee_band": [
+        10,
+        2000
+      ]
+    },
+    {
+      "id": "laundry",
+      "sector": "service",
+      "typical_inputs": [
+        "cleaning_supplies",
+        "water"
+      ],
+      "employee_band": [
+        2,
+        60
+      ]
+    },
+    {
+      "id": "pharmacy",
+      "sector": "medical_retail",
+      "typical_inputs": [
+        "pharmaceuticals",
+        "medical_supplies"
+      ],
+      "employee_band": [
+        2,
+        50
+      ]
+    },
+    {
+      "id": "equipment_rental",
+      "sector": "industrial_service",
+      "typical_inputs": [
+        "machinery",
+        "replacement_parts"
+      ],
+      "employee_band": [
+        3,
+        100
+      ]
+    },
+    {
+      "id": "fuel_distributor",
+      "sector": "logistics",
+      "typical_inputs": [
+        "fuel",
+        "containers"
+      ],
+      "employee_band": [
+        4,
+        180
+      ]
+    },
+    {
+      "id": "warehouse_operator",
+      "sector": "logistics",
+      "typical_inputs": [
+        "handling_equipment",
+        "replacement_parts"
+      ],
+      "employee_band": [
+        6,
+        500
+      ]
+    },
+    {
+      "id": "freight_broker",
+      "sector": "professional",
+      "typical_inputs": [
+        "data_services"
+      ],
+      "employee_band": [
+        1,
+        80
+      ]
+    },
+    {
+      "id": "bank_branch",
+      "sector": "finance",
+      "typical_inputs": [
+        "data_services",
+        "security_services"
+      ],
+      "employee_band": [
+        3,
+        90
+      ]
+    },
+    {
+      "id": "medical_supplier",
+      "sector": "distribution",
+      "typical_inputs": [
+        "medical_supplies",
+        "pharmaceuticals"
+      ],
+      "employee_band": [
+        5,
+        240
+      ]
+    },
+    {
+      "id": "media_studio",
+      "sector": "media",
+      "typical_inputs": [
+        "electronics",
+        "data_services"
+      ],
+      "employee_band": [
+        3,
+        160
+      ]
+    },
+    {
+      "id": "entertainment_venue",
+      "sector": "entertainment",
+      "typical_inputs": [
+        "food",
+        "beverages",
+        "electronics"
+      ],
+      "employee_band": [
+        5,
+        260
+      ]
+    }
+  ],
+  "generation": {
+    "density_drivers": [
+      "population",
+      "income",
+      "land_use",
+      "employment",
+      "tourism",
+      "industrial_mix",
+      "remoteness"
+    ],
+    "failure_drivers": [
+      "rent",
+      "input_cost",
+      "demand_loss",
+      "credit",
+      "disaster"
+    ],
+    "persistence_rule": "Businesses encountered, contracted with, owned, indebted, damaged or historically relevant become persistent entities."
+  }
+}
