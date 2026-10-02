@@ -1,0 +1,69 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "networks": [
+    {
+      "id": "concord_post",
+      "name": "Concord Post & Parcel",
+      "systems": [
+        "concord",
+        "port_meridian",
+        "new_houston"
+      ],
+      "services": [
+        "letters",
+        "parcel",
+        "commercial_documents",
+        "ship_spares"
+      ],
+      "data_latency_aware": true
+    },
+    {
+      "id": "sol_post",
+      "name": "Sol Postal Network",
+      "systems": [
+        "sol"
+      ],
+      "services": [
+        "mail",
+        "parcel",
+        "government_documents"
+      ],
+      "data_latency_aware": false
+    },
+    {
+      "id": "redline_parcel",
+      "name": "Redline Parcel Cooperative",
+      "systems": [
+        "new_houston",
+        "hesperus",
+        "iron_gate",
+        "carver"
+      ],
+      "services": [
+        "parcel",
+        "small_freight",
+        "parts"
+      ],
+      "data_latency_aware": true
+    },
+    {
+      "id": "outer_packet_and_parcel",
+      "name": "Outer Packet & Parcel",
+      "systems": [
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ],
+      "services": [
+        "mail",
+        "parcel",
+        "documents",
+        "critical_small_parts"
+      ],
+      "data_latency_aware": true
+    }
+  ],
+  "mail_rule": "Physical mail persists for originals, legal instruments, personal objects and routes where data latency or trust makes carriage useful."
+}
