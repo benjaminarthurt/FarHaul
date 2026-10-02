@@ -17,6 +17,7 @@ func _run(scene: Node3D) -> void:
 	print("start state")
 	check(scene.ship.modules.size() == 10, "starter ship is loaded on a fresh start")
 	check(scene.welcome_panel.visible, "welcome panel shows on first run")
+	check(scene._credits() == 150000 - scene._ship_cost(), "credits = funds minus ship cost")
 	check(scene.last_stats.warnings.size() == 0, "starter has no warnings")
 
 	print("placement")
@@ -36,6 +37,18 @@ func _run(scene: Node3D) -> void:
 	scene._redo()
 	check(scene.ship.modules.size() == before_n + 1, "redo puts it back")
 	scene._undo()
+
+	print("money")
+	var credits: int = scene._credits()
+	scene._select(scene.library.order.find(&"engineering"))
+	scene.hover_cell = Vector3i(5, 0, 5)
+	var poor: int = scene.earned
+	scene.earned = -140000
+	scene.hover_rot = 0
+	scene.hover_error = ""
+	scene._update_ghost()
+	scene.earned = poor
+	check(scene._credits() == credits, "credits restored after the what-if")
 
 	print("cargo preview")
 	scene.commodity_pick.select(0)

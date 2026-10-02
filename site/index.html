@@ -44,7 +44,7 @@
       <p class="note">Runs in your browser with no install. About 10 MB on the first load. Works best on a laptop or desktop with a mouse.</p>
       <dl class="slip">
         <div><dt>Version</dt><dd>0.1.0, ship builder prototype</dd></div>
-        <div><dt>You can</dt><dd>Design a ship, check it, preview it loaded with cargo</dd></div>
+        <div><dt>You can</dt><dd>Design a ship with a credit budget, check it, preview it loaded with cargo</dd></div>
         <div><dt>Not yet</dt><dd>Flying, walking the ship, planets, space walks</dd></div>
       </dl>
     </div>
@@ -105,7 +105,7 @@
     <div class="shots">
       <figure>
         <button class="shot" data-full="img/builder-cargo.jpg" data-cap="The ship builder with the hold filled to preview a loaded ship." aria-label="Open the builder screenshot full size"><img src="img/builder-cargo.jpg" width="1280" height="720" loading="lazy" alt="The ship builder with a freighter and the hold filled with water."></button>
-        <figcaption><strong>Shipyard.</strong> Design the ship and check the engineering numbers. The cargo preview fills the hold so you can see it loaded. Nothing is bought or sold here.</figcaption>
+        <figcaption><strong>Shipyard.</strong> Design the ship and check the engineering numbers. The cargo preview fills the hold so you can see it loaded. The cargo preview does not buy or sell anything.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/title.jpg" data-cap="The title screen." aria-label="Open the title screen full size"><img src="img/title.jpg" width="1280" height="720" loading="lazy" alt="The title screen with the Far Haul logo and a starter ship flying past."></button>
@@ -133,7 +133,7 @@
       </figure>
       <figure>
         <button class="shot" data-full="img/builder.jpg" data-cap="The starter ship before any cargo is loaded." aria-label="Open the starter ship screenshot full size"><img src="img/builder.jpg" width="1280" height="720" loading="lazy" alt="The ship builder showing the starter ship with an empty hold."></button>
-        <figcaption><strong>Starter ship.</strong> The builder starts with this hauler. Change it however you like.</figcaption>
+        <figcaption><strong>Starter ship.</strong> Every new game begins with this hauler and 150,000 credits.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/intro.jpg" data-cap="A frame from the placeholder intro video." aria-label="Open the intro frame full size"><img src="img/intro.jpg" width="1280" height="720" loading="lazy" alt="The end of the intro video: the Far Haul logo and tagline on a starfield."></button>
@@ -148,7 +148,7 @@
   <div class="band"></div>
   <div class="body">
     <h2 id="help-h">Help</h2>
-    <p class="lede">The builder starts with a ready-made hauler and every part is free. Change it, check it, save it.</p>
+    <p class="lede">You start with a ready-made hauler and 150,000 credits. Change it, check it, save it.</p>
 
     <div class="cols">
       <div>
@@ -157,7 +157,7 @@
           <li>Press <strong>Launch game</strong>, then <strong>Start</strong> on the title screen.</li>
           <li>Look at the ship. Click a part in the palette on the left, then click next to the ship to place it. Green means it fits. Red tells you why not.</li>
           <li>Watch the power, cooling and cargo meters and the warnings on the right. Each warning says what is missing.</li>
-          <li>Use <strong>Cargo preview</strong> to fill the hold and see the ship loaded. This only changes how the ship looks and weighs. Nothing is bought or sold.</li>
+          <li>Use <strong>Cargo preview</strong> to fill the hold and see the ship loaded. This only changes how the ship looks and weighs. It does not buy or sell anything.</li>
           <li>Press <kbd>S</kbd> to save. Your ship also autosaves.</li>
         </ol>
 
@@ -203,11 +203,11 @@
     </details>
     <details>
       <summary>I cannot place a part. Why?</summary>
-      <p>Move the cursor over the ship and read the red message under it. The usual reasons are overlapping another module, no matching door or mount on the neighbouring part, or a doorway that is blocked.</p>
+      <p>Move the cursor over the ship and read the red message under it. The usual reasons are overlapping another module, no matching door or mount on the neighbouring part, or not enough credits.</p>
     </details>
     <details>
-      <summary>Why does the builder have no contracts or money?</summary>
-      <p>The builder is only for designing the ship. Contracts, prices and payment belong to the game itself, which comes after flight is built. The cargo preview is there so you can see and weigh a loaded ship.</p>
+      <summary>Why does the builder have no contracts?</summary>
+      <p>The builder is only for designing the ship. Parts cost credits from your starting funds, but contracts and payment belong to the game itself, which comes after flight is built. The cargo preview is there so you can see and weigh a loaded ship.</p>
     </details>
     <details>
       <summary>There is no sound.</summary>

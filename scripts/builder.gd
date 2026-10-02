@@ -1,6 +1,6 @@
 extends Node3D
-## The shipyard: a free-build ship designer. Place parts, check the stats, preview the ship with cargo aboard.
-## Contracts, money and flight belong to the game proper, not here.
+## The shipyard: design a ship, spend credits on parts, check the stats, preview it with cargo aboard.
+## Contracts and flight belong to the game proper, not here.
 ## Everything (camera, lights, UI) is created in code so there's nothing to wire up in the editor.
 
 const GOOD := Color(0.25, 1.0, 0.4, 0.45)
@@ -8,6 +8,7 @@ const BAD := Color(1.0, 0.25, 0.25, 0.45)
 const GRID_HALF := 12  # grid extends this many cells each way from the origin
 const SAVE_PATH := "user://ship.json"
 const AUTOSAVE_PATH := "user://autosave.json"
+const START_FUNDS := 150000
 const OK_COLOR := Color(0.35, 0.85, 0.45)
 const BAD_COLOR := Color(0.95, 0.35, 0.3)
 const WARN_COLOR := Color(1.0, 0.7, 0.25)
@@ -18,6 +19,8 @@ var manifest: CargoManifest  ## what the ship is carrying
 var ship_view: ShipView
 var history := ShipHistory.new()
 
+# Progress
+var earned := 0  ## profit from the game so far; credits = START_FUNDS + earned - cost of the ship
 var busy := false  ## reserved for animations that should freeze editing
 var muted := false
 var autosave_enabled := not OS.has_environment("FARHAUL_NOSAVE")
@@ -347,7 +350,7 @@ func _build_right_column(ui: Control) -> void:
 	commodity_pick.focus_mode = Control.FOCUS_NONE
 	commodity_pick.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for id in manifest.commodities.order:
-		commodity_pick.add_item(manifest.commodities.label(id))
+		commodity_pick.add_item("%s  (%d cr/t)" % [manifest.commodities.label(id), roundi(manifest.commodities.price(id))])
 	crow.add_child(commodity_pick)
 	amount_box = SpinBox.new()
 	amount_box.min_value = 0
@@ -362,7 +365,7 @@ func _build_right_column(ui: Control) -> void:
 	_add_action_button(brow, "Unload", _unload_cargo)
 	_add_action_button(brow, "Unload all", _unload_all)
 	var hint := Label.new()
-	hint.text = "Fill the hold to see the ship loaded. Nothing is bought or sold here."
+	hint.text = "Fill the hold to see the ship loaded. Preview only."
 	hint.modulate = Color(0.65, 0.7, 0.8)
 	hint.add_theme_font_size_override("font_size", 12)
 	cbox.add_child(hint)
@@ -389,7 +392,7 @@ func _build_welcome(ui: Control) -> void:
 	var body := Label.new()
 	body.custom_minimum_size = Vector2(460, 0)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.text = "Design your ship here. Parts are free.\n\n1. Build. Click to place a part, Shift+click to remove it. Green ghost means it fits, red tells you why not. Cyan rings are open doorways: cap them so the hull is sealed.\n2. Watch the power, cooling and cargo meters on the right.\n3. Use Cargo preview to see how the ship looks fully loaded. Save when you are happy."
+	body.text = "You start with a small hauler and %s credits.\n\n1. Build. Click to place a part, Shift+click to remove it. Green ghost means it fits, red tells you why not. Cyan rings are open doorways: cap them so the hull is sealed.\n2. Watch the power, cooling and cargo meters on the right.\n3. Use Cargo preview to see how the ship looks fully loaded. Save when you are happy." % ShipStats.commas(START_FUNDS)
 	box.add_child(body)
 	var go := Button.new()
 	go.text = "Start building"
@@ -642,9 +645,13 @@ func _select(i: int) -> void:
 
 
 func _style_buttons() -> void:
+	var credits := _credits()
 	for j in buttons.size():
+		var cost := library.get_def(library.order[j]).cost
 		if j == selected:
 			buttons[j].modulate = Color(1.0, 0.95, 0.5)
+		elif cost > credits:
+			buttons[j].modulate = Color(1.0, 0.55, 0.55, 0.75)
 		else:
 			buttons[j].modulate = Color.WHITE
 
@@ -717,6 +724,8 @@ func _update_ghost() -> void:
 	if hover_error == "":
 		if hover_rot != rot:
 			note = "  (turned to fit)"
+		if def.cost > _credits():
+			hover_error = "Can't afford: need %s cr more" % ShipStats.commas(def.cost - _credits())
 	ghost_mat.albedo_color = GOOD if hover_error == "" else BAD
 	ghost.position = ShipGrid.cell_to_world(hover_cell)
 	ghost.rotation.y = hover_rot * PI / 2.0
@@ -726,13 +735,13 @@ func _update_ghost() -> void:
 		if ship.occupied.has(cell):
 			var m: Dictionary = ship.modules[ship.occupied[cell]]
 			var gone := library.get_def(m.id)
-			_show_tip("Remove %s" % gone.display_name, WARN_COLOR)
+			_show_tip("Remove %s  (+%s cr)" % [gone.display_name, ShipStats.commas(gone.cost)], WARN_COLOR)
 		else:
 			tip_panel.visible = false
 	elif hover_error != "":
 		_show_tip(hover_error, BAD_COLOR)
 	else:
-		_show_tip("%s%s" % [def.display_name, note], OK_COLOR)
+		_show_tip("%s  (-%s cr)%s" % [def.display_name, ShipStats.commas(def.cost), note], OK_COLOR)
 
 
 func _show_tip(text: String, col: Color) -> void:
@@ -769,6 +778,10 @@ func _on_click() -> void:
 
 
 # --- Money -----------------------------------------------------------------------------------
+
+func _credits() -> int:
+	return START_FUNDS + earned - _ship_cost()
+
 
 func _ship_cost() -> int:
 	var total := 0
@@ -845,8 +858,9 @@ func _refresh_ship() -> void:
 
 
 func _refresh_top() -> void:
-	top_label.text = "Parts  %d     Ship value  %s cr" % [ship.modules.size(), ShipStats.commas(_ship_cost())]
-	top_label.modulate = Color.WHITE
+	var credits := _credits()
+	top_label.text = "Credits  %s cr     Ship value  %s cr" % [ShipStats.commas(credits), ShipStats.commas(_ship_cost())]
+	top_label.modulate = Color.WHITE if credits >= 0 else BAD_COLOR
 
 
 func _refresh_info() -> void:
@@ -926,6 +940,7 @@ func _unload_all() -> void:
 func _save_dict() -> Dictionary:
 	var data: Dictionary = JSON.parse_string(ship.to_json())
 	data["cargo"] = manifest.to_dict()
+	data["earned"] = earned
 	return data
 
 
@@ -945,6 +960,7 @@ func _load_from(path: String) -> bool:
 		return false
 	var parsed: Variant = JSON.parse_string(text)
 	manifest.from_dict(parsed.get("cargo", {}))
+	earned = int(parsed.get("earned", 0))
 	return true
 
 
@@ -978,7 +994,7 @@ func _clear() -> void:
 	var before := _snapshot()
 	ship.clear()
 	manifest.contents.clear()
-	message = "Cleared"
+	message = "Cleared. Everything refunded"
 	_sfx(&"remove")
 	_commit(before)
 	_refresh_ship()

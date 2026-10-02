@@ -24,12 +24,12 @@ New game, Quit). Any key skips the splash and the intro. Set `FARHAUL_SKIP_INTRO
 
 ## How to play
 
-The builder is a free-build ship designer. Parts cost nothing, and there are no contracts or money here.
+The builder is a ship designer. You start with a small hauler and 150,000 credits. Contracts and flight belong to the game proper and are not in the builder.
 
-1. **Build.** The ghost is green if a part fits and red with the reason if not. If your current rotation
+1. **Build.** Parts cost credits (refunded in full if you remove them). The ghost is green if a part fits and red with the reason if not. If your current rotation
    doesn't fit, it turns to one that does. Cyan rings mark open doorways: cap them so the hull is sealed.
 2. **Check.** The panel on the right shows power, cooling, thrust-to-weight and warnings.
-3. **Cargo preview.** Fill the hold to see and weigh the ship loaded. Nothing is bought or sold.
+3. **Cargo preview.** Fill the hold to see and weigh the ship loaded. It does not buy or sell anything.
 
 A ship needs a cockpit, an engine, a sealed hull, an airlock, enough power and cooling, and enough
 thrust-to-weight when loaded. Your progress autosaves.
