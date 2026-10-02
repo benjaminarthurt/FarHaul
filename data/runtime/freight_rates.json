@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "rate_formula": "rate = max(cost_floor, base_route_rate * chargeable_units * modifiers)",
+  "chargeable_units": "max(SCU, mass_kg / route_mass_equivalent_kg)",
+  "modifiers": {
+    "urgency": [
+      1,
+      2.4
+    ],
+    "hazard": [
+      1,
+      1.8
+    ],
+    "refrigeration": [
+      1.05,
+      1.45
+    ],
+    "secure": [
+      1.05,
+      1.6
+    ],
+    "oversize": [
+      1.15,
+      3
+    ],
+    "frontier": [
+      1.15,
+      2.8
+    ],
+    "reliability_requirement": [
+      1,
+      1.3
+    ]
+  },
+  "cost_floor_components": [
+    "fuel",
+    "crew_time",
+    "maintenance_reserve",
+    "port_and_handling",
+    "insurance",
+    "financing_share",
+    "transfer_costs"
+  ]
+}
