@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "classes": {
+    "core": {
+      "movements_day": [
+        1200,
+        12000
+      ],
+      "rescue": "dense",
+      "market_age_hours": [
+        0.1,
+        4
+      ]
+    },
+    "developed": {
+      "movements_day": [
+        180,
+        1800
+      ],
+      "rescue": "routine",
+      "market_age_hours": [
+        1,
+        12
+      ]
+    },
+    "outer": {
+      "movements_day": [
+        30,
+        400
+      ],
+      "rescue": "limited",
+      "market_age_hours": [
+        4,
+        36
+      ]
+    },
+    "frontier": {
+      "movements_day": [
+        2,
+        80
+      ],
+      "rescue": "conditional",
+      "market_age_hours": [
+        12,
+        120
+      ]
+    }
+  },
+  "assignments": {
+    "sol": "core",
+    "keshar": "core",
+    "ilos": "core",
+    "veyara": "core",
+    "orun": "core",
+    "concord": "core",
+    "new_houston": "developed",
+    "hesperus": "developed",
+    "iron_gate": "developed",
+    "carver": "developed",
+    "bradbury": "developed",
+    "pelagos": "developed",
+    "tidemark": "outer",
+    "foundry": "developed",
+    "port_meridian": "outer",
+    "talos": "frontier",
+    "waystation": "frontier",
+    "lastlight": "frontier"
+  }
+}
