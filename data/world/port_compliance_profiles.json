@@ -1,0 +1,116 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "policy_scale": {
+    "registration": [
+      "verified",
+      "required",
+      "preferred",
+      "local_review"
+    ],
+    "insurance": [
+      "broad_commercial",
+      "special_cargo",
+      "contract_only",
+      "optional"
+    ]
+  },
+  "port_profiles": [
+    {
+      "port_id": "earth_orbital_freight",
+      "registration_posture": "verified",
+      "insurance_posture": "broad_commercial"
+    },
+    {
+      "port_id": "keshar_highport",
+      "registration_posture": "verified",
+      "insurance_posture": "special_cargo"
+    },
+    {
+      "port_id": "ilos_lattice_port",
+      "registration_posture": "verified",
+      "insurance_posture": "special_cargo"
+    },
+    {
+      "port_id": "veyara_bluewater_orbital",
+      "registration_posture": "required",
+      "insurance_posture": "special_cargo"
+    },
+    {
+      "port_id": "orun_transfer_crown",
+      "registration_posture": "required",
+      "insurance_posture": "contract_only"
+    },
+    {
+      "port_id": "concord_central_exchange",
+      "registration_posture": "verified",
+      "insurance_posture": "broad_commercial"
+    },
+    {
+      "port_id": "roosevelt_orbital_freight",
+      "registration_posture": "required",
+      "insurance_posture": "contract_only"
+    },
+    {
+      "port_id": "new_houston_surface_port",
+      "registration_posture": "required",
+      "insurance_posture": "contract_only"
+    },
+    {
+      "port_id": "hesperus_agricultural_terminal",
+      "registration_posture": "required",
+      "insurance_posture": "broad_commercial"
+    },
+    {
+      "port_id": "iron_gate_grand_terminal",
+      "registration_posture": "verified",
+      "insurance_posture": "special_cargo"
+    },
+    {
+      "port_id": "carver_habitat_exchange",
+      "registration_posture": "local_review",
+      "insurance_posture": "contract_only"
+    },
+    {
+      "port_id": "bradbury_research_port",
+      "registration_posture": "verified",
+      "insurance_posture": "special_cargo"
+    },
+    {
+      "port_id": "pelagos_highport",
+      "registration_posture": "required",
+      "insurance_posture": "special_cargo"
+    },
+    {
+      "port_id": "tidemark_platform_exchange",
+      "registration_posture": "local_review",
+      "insurance_posture": "contract_only"
+    },
+    {
+      "port_id": "foundry_lift_terminal",
+      "registration_posture": "required",
+      "insurance_posture": "special_cargo"
+    },
+    {
+      "port_id": "port_meridian_main",
+      "registration_posture": "verified",
+      "insurance_posture": "special_cargo"
+    },
+    {
+      "port_id": "talos_hopewell_field",
+      "registration_posture": "local_review",
+      "insurance_posture": "contract_only"
+    },
+    {
+      "port_id": "waystation_main_dock",
+      "registration_posture": "preferred",
+      "insurance_posture": "optional"
+    },
+    {
+      "port_id": "lastlight_orbital",
+      "registration_posture": "preferred",
+      "insurance_posture": "contract_only"
+    }
+  ]
+}
