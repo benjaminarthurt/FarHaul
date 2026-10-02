@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "address_formats": [
+    {
+      "id": "surface_standard",
+      "format": "{number} {street}, {district}, {settlement}",
+      "applies": [
+        "road_based_settlement"
+      ]
+    },
+    {
+      "id": "habitat",
+      "format": "{ring_or_section}-{corridor}-{unit}, {settlement}",
+      "applies": [
+        "station",
+        "sealed_habitat"
+      ]
+    },
+    {
+      "id": "vertical",
+      "format": "{span}.{level}.{unit}, {district}, {settlement}",
+      "applies": [
+        "ilos_vertical"
+      ]
+    },
+    {
+      "id": "marine",
+      "format": "{platform_or_basin}/{berth_or_block}/{unit}, {settlement}",
+      "applies": [
+        "veyara",
+        "pelagos",
+        "tidemark"
+      ]
+    },
+    {
+      "id": "subsurface",
+      "format": "{junction}-{branch}-{cell}, {settlement}",
+      "applies": [
+        "orun",
+        "foundry"
+      ]
+    }
+  ],
+  "delivery_fields": [
+    "access_class",
+    "loading_space",
+    "vehicle_limit",
+    "environment",
+    "receiving_hours",
+    "contact",
+    "security",
+    "special_handling"
+  ]
+}
