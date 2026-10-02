@@ -1,0 +1,447 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "design_rule": "Physical geography constrains climate, hydrology, settlement, infrastructure and freight. Named regions are anchors inside larger modeled surfaces.",
+  "worlds": [
+    {
+      "id": "roosevelt",
+      "body_id": "roosevelt",
+      "land_fraction": 0.62,
+      "regions": [
+        {
+          "id": "roosevelt_northshield",
+          "name": "Northshield",
+          "type": "continental_highland",
+          "area_mkm2": 8.4,
+          "elevation_m": [
+            600,
+            3100
+          ],
+          "climate": [
+            "subarctic",
+            "cold_steppe"
+          ],
+          "features": [
+            "Longhorn Range",
+            "Coldwater Basin"
+          ],
+          "resources": [
+            "iron",
+            "nickel",
+            "industrial_stone"
+          ],
+          "population_share": 0.18
+        },
+        {
+          "id": "roosevelt_midlands",
+          "name": "Roosevelt Midlands",
+          "type": "interior_plain",
+          "area_mkm2": 11.2,
+          "elevation_m": [
+            120,
+            900
+          ],
+          "climate": [
+            "cool_continental"
+          ],
+          "features": [
+            "Truman River",
+            "Central Lakes"
+          ],
+          "resources": [
+            "construction_minerals",
+            "groundwater"
+          ],
+          "population_share": 0.46
+        },
+        {
+          "id": "roosevelt_southcoast",
+          "name": "South Coast",
+          "type": "coastal_lowland",
+          "area_mkm2": 6.9,
+          "elevation_m": [
+            0,
+            700
+          ],
+          "climate": [
+            "cool_maritime"
+          ],
+          "features": [
+            "Houston Gulf",
+            "South Shelf"
+          ],
+          "resources": [
+            "marine_food",
+            "salt",
+            "offshore_minerals"
+          ],
+          "population_share": 0.31
+        },
+        {
+          "id": "roosevelt_farwest",
+          "name": "Far West",
+          "type": "dry_plateau",
+          "area_mkm2": 5.1,
+          "elevation_m": [
+            800,
+            2400
+          ],
+          "climate": [
+            "cold_arid"
+          ],
+          "features": [
+            "Toolbox Escarpment"
+          ],
+          "resources": [
+            "metals",
+            "rare_industrial_minerals"
+          ],
+          "population_share": 0.05
+        }
+      ]
+    },
+    {
+      "id": "hesperus_prime",
+      "body_id": "hesperus_prime",
+      "land_fraction": 0.71,
+      "regions": [
+        {
+          "id": "greenline_plain",
+          "name": "Greenline Plain",
+          "type": "agricultural_plain",
+          "area_mkm2": 15.6,
+          "elevation_m": [
+            40,
+            520
+          ],
+          "climate": [
+            "temperate_grassland"
+          ],
+          "features": [
+            "Green River",
+            "Thresh Lakes"
+          ],
+          "resources": [
+            "deep_soils",
+            "freshwater"
+          ],
+          "population_share": 0.52
+        },
+        {
+          "id": "rainmaker_basin",
+          "name": "Rainmaker Basin",
+          "type": "agricultural_basin",
+          "area_mkm2": 9.1,
+          "elevation_m": [
+            120,
+            880
+          ],
+          "climate": [
+            "seasonal_temperate"
+          ],
+          "features": [
+            "Rainmaker River"
+          ],
+          "resources": [
+            "irrigated_soils"
+          ],
+          "population_share": 0.22
+        },
+        {
+          "id": "shepherd_uplands",
+          "name": "Shepherd Uplands",
+          "type": "rolling_highland",
+          "area_mkm2": 12.4,
+          "elevation_m": [
+            400,
+            1700
+          ],
+          "climate": [
+            "cool_grassland"
+          ],
+          "features": [
+            "Shepherd Hills"
+          ],
+          "resources": [
+            "grazing",
+            "stone"
+          ],
+          "population_share": 0.17
+        },
+        {
+          "id": "western_drylands",
+          "name": "Western Drylands",
+          "type": "semiarid_plain",
+          "area_mkm2": 8.8,
+          "elevation_m": [
+            200,
+            1100
+          ],
+          "climate": [
+            "steppe"
+          ],
+          "features": [
+            "Salt March"
+          ],
+          "resources": [
+            "phosphates",
+            "solar"
+          ],
+          "population_share": 0.09
+        }
+      ]
+    },
+    {
+      "id": "iron_gate_prime",
+      "body_id": "iron_gate_prime",
+      "land_fraction": 0.83,
+      "regions": [
+        {
+          "id": "keel_basin",
+          "name": "Keel Basin",
+          "type": "industrial_basin",
+          "area_mkm2": 7.3,
+          "elevation_m": [
+            200,
+            1300
+          ],
+          "climate": [
+            "dry_continental"
+          ],
+          "features": [
+            "Keelward Depression"
+          ],
+          "resources": [
+            "iron",
+            "nickel",
+            "chromium"
+          ],
+          "population_share": 0.44
+        },
+        {
+          "id": "anvil_range",
+          "name": "Anvil Range",
+          "type": "mountain_chain",
+          "area_mkm2": 5.6,
+          "elevation_m": [
+            900,
+            4900
+          ],
+          "climate": [
+            "alpine",
+            "cold_arid"
+          ],
+          "features": [
+            "Anvil Massif"
+          ],
+          "resources": [
+            "metals",
+            "ceramic_feedstock"
+          ],
+          "population_share": 0.11
+        },
+        {
+          "id": "hammer_plain",
+          "name": "Hammer Plain",
+          "type": "industrial_plain",
+          "area_mkm2": 9.8,
+          "elevation_m": [
+            100,
+            900
+          ],
+          "climate": [
+            "arid"
+          ],
+          "features": [
+            "Hammer Dry Sea"
+          ],
+          "resources": [
+            "industrial_minerals"
+          ],
+          "population_share": 0.31
+        },
+        {
+          "id": "gate_coast",
+          "name": "Gate Coast",
+          "type": "coastal_strip",
+          "area_mkm2": 3.4,
+          "elevation_m": [
+            0,
+            600
+          ],
+          "climate": [
+            "cool_dry_maritime"
+          ],
+          "features": [
+            "Gate Sea"
+          ],
+          "resources": [
+            "water",
+            "salt"
+          ],
+          "population_share": 0.14
+        }
+      ]
+    },
+    {
+      "id": "bradbury_prime",
+      "body_id": "bradbury_prime",
+      "land_fraction": 0.68,
+      "regions": [
+        {
+          "id": "lowell_plateau",
+          "name": "Lowell Plateau",
+          "type": "high_plateau",
+          "area_mkm2": 8.1,
+          "elevation_m": [
+            1100,
+            2600
+          ],
+          "climate": [
+            "cool_dry"
+          ],
+          "features": [
+            "Quiet Side Array"
+          ],
+          "resources": [
+            "stable_geology"
+          ],
+          "population_share": 0.41
+        },
+        {
+          "id": "mariner_valleys",
+          "name": "Mariner Valleys",
+          "type": "valley_network",
+          "area_mkm2": 6.7,
+          "elevation_m": [
+            300,
+            1300
+          ],
+          "climate": [
+            "temperate_dry"
+          ],
+          "features": [
+            "Mariner River"
+          ],
+          "resources": [
+            "water",
+            "agriculture"
+          ],
+          "population_share": 0.37
+        },
+        {
+          "id": "fahrenheit_basin",
+          "name": "Fahrenheit Basin",
+          "type": "desert_basin",
+          "area_mkm2": 9.4,
+          "elevation_m": [
+            -200,
+            800
+          ],
+          "climate": [
+            "cold_desert"
+          ],
+          "features": [
+            "Fahrenheit Salt"
+          ],
+          "resources": [
+            "salts",
+            "industrial_chemicals"
+          ],
+          "population_share": 0.08
+        },
+        {
+          "id": "eastern_escarpment",
+          "name": "Eastern Escarpment",
+          "type": "mountain_edge",
+          "area_mkm2": 4.9,
+          "elevation_m": [
+            800,
+            3500
+          ],
+          "climate": [
+            "alpine"
+          ],
+          "features": [
+            "Bradbury Wall"
+          ],
+          "resources": [
+            "stone",
+            "metals"
+          ],
+          "population_share": 0.14
+        }
+      ]
+    },
+    {
+      "id": "talos_prime",
+      "body_id": "talos_prime",
+      "land_fraction": 0.91,
+      "regions": [
+        {
+          "id": "hopewell_basin",
+          "name": "Hopewell Basin",
+          "type": "high_desert_basin",
+          "area_mkm2": 4.1,
+          "elevation_m": [
+            700,
+            1600
+          ],
+          "climate": [
+            "cold_high_desert"
+          ],
+          "features": [
+            "Hopewell Flats"
+          ],
+          "resources": [
+            "rare_minerals"
+          ],
+          "population_share": 0.78
+        },
+        {
+          "id": "prospect_rim",
+          "name": "Prospect Rim",
+          "type": "broken_highland",
+          "area_mkm2": 7.8,
+          "elevation_m": [
+            1200,
+            3400
+          ],
+          "climate": [
+            "cold_arid"
+          ],
+          "features": [
+            "Prospect Range"
+          ],
+          "resources": [
+            "rare_minerals",
+            "industrial_stone"
+          ],
+          "population_share": 0.17
+        },
+        {
+          "id": "second_chance_plain",
+          "name": "Second Chance Plain",
+          "type": "wind_plain",
+          "area_mkm2": 6.2,
+          "elevation_m": [
+            900,
+            1900
+          ],
+          "climate": [
+            "cold_steppe"
+          ],
+          "features": [
+            "Second Chance Dry Lake"
+          ],
+          "resources": [
+            "water_ice_deep",
+            "construction_material"
+          ],
+          "population_share": 0.05
+        }
+      ]
+    }
+  ]
+}
