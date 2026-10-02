@@ -1,0 +1,138 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "principles": [
+    "Each inhabited star system has its own government or recognized governing authority.",
+    "System governments control vessel registration, customs, port access, local resource rights, criminal law and commercial enforcement inside their jurisdiction.",
+    "Concord standards enable interoperability but do not create a suprasystem government.",
+    "A vessel may operate without registration where local law or enforcement allows it, but doing so sharply limits access to reputable commerce."
+  ],
+  "governments": [
+    {
+      "system_id": "sol",
+      "name": "Sol System Authority",
+      "form": "federal system authority",
+      "registry_character": "strict",
+      "notes": "Large mature bureaucracy with strong electronic records and extensive reciprocal verification."
+    },
+    {
+      "system_id": "keshar",
+      "name": "Keshar Civic Directorate",
+      "form": "federated civic administration",
+      "registry_character": "strict",
+      "notes": "Places unusual emphasis on structural certification and maintenance accountability."
+    },
+    {
+      "system_id": "ilos",
+      "name": "Ilos System Assembly",
+      "form": "representative system administration",
+      "registry_character": "strict",
+      "notes": "Detailed mass, propulsion and modification records are central to registration."
+    },
+    {
+      "system_id": "veyara",
+      "name": "Veyara Waters and Orbital Council",
+      "form": "planetary-system council",
+      "registry_character": "standard",
+      "notes": "Environmental compliance and closed-cycle systems receive particular scrutiny."
+    },
+    {
+      "system_id": "orun",
+      "name": "Orun Junction Council",
+      "form": "networked regional council",
+      "registry_character": "standard",
+      "notes": "Registration records emphasize service access and infrastructure compatibility."
+    },
+    {
+      "system_id": "concord",
+      "name": "Concord Administration",
+      "form": "chartered system government",
+      "registry_character": "strict",
+      "notes": "Efficient, standards-heavy and widely trusted by insurers and cargo owners."
+    },
+    {
+      "system_id": "new_houston",
+      "name": "Roosevelt System Government",
+      "form": "planetary-led system government",
+      "registry_character": "standard",
+      "notes": "Popular with independents because yard inspections and registration services are easy to combine."
+    },
+    {
+      "system_id": "hesperus",
+      "name": "Hesperus Commonwealth",
+      "form": "planetary commonwealth",
+      "registry_character": "standard",
+      "notes": "Routine commercial registry with strong agricultural biosecurity requirements."
+    },
+    {
+      "system_id": "iron_gate",
+      "name": "Iron Gate Industrial Authority",
+      "form": "industrial system authority",
+      "registry_character": "strict",
+      "notes": "Heavy vessels and orbital-only construction receive specialized registry classes."
+    },
+    {
+      "system_id": "carver",
+      "name": "Carver Habitat Authority",
+      "form": "federation of registered habitats",
+      "registry_character": "pragmatic",
+      "notes": "Registry focuses heavily on declared mass, transponders and collision liability."
+    },
+    {
+      "system_id": "bradbury",
+      "name": "Bradbury Civil Administration",
+      "form": "civil system government",
+      "registry_character": "standard",
+      "notes": "Research and hazardous scientific equipment can add endorsements to ordinary vessel registration."
+    },
+    {
+      "system_id": "pelagos",
+      "name": "Pelagos Joint Authority",
+      "form": "joint Vey-Human charter government",
+      "registry_character": "standard",
+      "notes": "Recognizes specialized amphibious and marine-capable vessel certifications."
+    },
+    {
+      "system_id": "tidemark",
+      "name": "Tidemark Platform Council",
+      "form": "platform federation",
+      "registry_character": "pragmatic",
+      "notes": "Weatherworthiness and emergency reserve requirements are important for surface-operating ships."
+    },
+    {
+      "system_id": "foundry",
+      "name": "Foundry Deepworks Authority",
+      "form": "industrial civic authority",
+      "registry_character": "standard",
+      "notes": "Industrial and hazardous-cargo endorsements are common."
+    },
+    {
+      "system_id": "port_meridian",
+      "name": "Meridian Station Authority",
+      "form": "station-system government",
+      "registry_character": "pragmatic",
+      "notes": "Registration is enforced at major commercial berths, while some peripheral docks tolerate unregistered traffic."
+    },
+    {
+      "system_id": "talos",
+      "name": "Talos Provisional Authority",
+      "form": "provisional frontier government",
+      "registry_character": "inconsistent",
+      "notes": "Registry exists and is increasingly enforced, but growth has outpaced inspectors and records."
+    },
+    {
+      "system_id": "waystation",
+      "name": "Waystation Council",
+      "form": "settlement council",
+      "registry_character": "light",
+      "notes": "Registered ships receive easier commercial access; unregistered vessels are common enough not to cause immediate alarm."
+    },
+    {
+      "system_id": "lastlight",
+      "name": "Lastlight Civil Office",
+      "form": "frontier civil administration",
+      "registry_character": "light",
+      "notes": "Ordinary registration enforcement is modest, but survey, biological and expedition documentation is taken seriously."
+    }
+  ]
+}
