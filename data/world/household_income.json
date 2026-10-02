@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "unit": "cr_per_year",
+  "markets": [
+    {
+      "id": "new_houston",
+      "median": 68400
+    },
+    {
+      "id": "central_concord",
+      "median": 79300
+    },
+    {
+      "id": "nine_currents",
+      "median": 71100
+    },
+    {
+      "id": "keelward",
+      "median": 73600
+    },
+    {
+      "id": "hopewell",
+      "median": 92400,
+      "note": "High nominal wages offset high housing/import costs."
+    },
+    {
+      "id": "beacon",
+      "median": 75800
+    }
+  ]
+}
