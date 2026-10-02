@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "fuel_types": [
+    {
+      "id": "reaction_mass",
+      "name": "Reaction Mass",
+      "source": "water or compatible refined volatiles",
+      "use": "maneuvering and conventional propulsion systems"
+    },
+    {
+      "id": "drive_feedstock",
+      "name": "Drive Feedstock",
+      "source": "refined industrial fuel chain",
+      "use": "interstellar drive operation",
+      "note": "Exact fictional physics intentionally abstracted."
+    },
+    {
+      "id": "reactor_fuel",
+      "name": "Reactor Fuel Assemblies",
+      "source": "specialized industrial production",
+      "use": "long-duration onboard power",
+      "replacement": "infrequent service item rather than every-trip fuel"
+    }
+  ],
+  "system_supply": [
+    {
+      "system_id": "sol",
+      "reaction_mass": "abundant",
+      "drive_feedstock": "abundant",
+      "price_factor": 0.9
+    },
+    {
+      "system_id": "new_houston",
+      "reaction_mass": "abundant",
+      "drive_feedstock": "abundant",
+      "price_factor": 0.88
+    },
+    {
+      "system_id": "concord",
+      "reaction_mass": "abundant",
+      "drive_feedstock": "abundant",
+      "price_factor": 1
+    },
+    {
+      "system_id": "carver",
+      "reaction_mass": "standard",
+      "drive_feedstock": "standard",
+      "price_factor": 0.95
+    },
+    {
+      "system_id": "port_meridian",
+      "reaction_mass": "abundant",
+      "drive_feedstock": "standard",
+      "price_factor": 1.25
+    },
+    {
+      "system_id": "talos",
+      "reaction_mass": "limited",
+      "drive_feedstock": "limited",
+      "price_factor": 1.5
+    },
+    {
+      "system_id": "waystation",
+      "reaction_mass": "standard",
+      "drive_feedstock": "limited",
+      "price_factor": 1.55
+    },
+    {
+      "system_id": "lastlight",
+      "reaction_mass": "standard",
+      "drive_feedstock": "limited",
+      "price_factor": 1.65
+    },
+    {
+      "system_id": "lantern",
+      "reaction_mass": "field_production_possible",
+      "drive_feedstock": "none",
+      "price_factor": null
+    },
+    {
+      "system_id": "harbor",
+      "reaction_mass": "field_production_possible",
+      "drive_feedstock": "none",
+      "price_factor": null
+    }
+  ],
+  "reserve_rules": {
+    "supported_space_recommended_fraction": 0.15,
+    "frontier_recommended_fraction": 0.3,
+    "unsupported_recommended_fraction": 0.45
+  },
+  "rule": "A ship can depart below recommended reserve unless a contract, insurer, captain policy or local expedition rule prevents it."
+}
