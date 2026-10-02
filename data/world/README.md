@@ -262,3 +262,23 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `port_compliance_profiles.json` | Port operating requirement profiles |
 | `commercial_ecosystem.json` | Producers, manufacturers, services and logistics firms |
 | `settlement_network.json` | Expanded cities, habitats and frontier settlements |
+| `municipal_utilities.json` | Power, water, heat, life-support and municipal utility operators |
+| `telecom_media.json` | Local communications providers and media outlets |
+| `retail_hospitality.json` | Grocery, hardware, lodging and crew-service chains |
+| `housing_property.json` | Housing types, occupancy and property operators |
+| `construction_sector.json` | Civil engineering and construction firms |
+| `waste_recycling.json` | Municipal/industrial waste and material recovery |
+| `local_logistics.json` | Surface freight, rail, drayage and local carriers |
+| `employment_economy.json` | Employment-sector distributions by economy type |
+| `business_density.json` | Aggregate ordinary-business counts per population |
+| `food_systems.json` | Local food production, imports, exports and food security |
+| `health_education_networks.json` | Medical and education networks |
+| `government_agencies.json` | System and local agencies beyond top-level governments |
+| `banking_payments.json` | Consumer/commercial banking and payment infrastructure |
+| `leisure_culture.json` | Ordinary recreation, entertainment and civic culture |
+| `surface_freight_facilities.json` | Throughput-rated inland ports, depots and terminals |
+| `inventory_logistics.json` | Safety stocks, reorder behavior and shortage propagation |
+| `land_use.json` | Settlement land-use patterns |
+| `demographics_households.json` | Household composition, migration and commuting |
+| `small_business_archetypes.json` | Generated ordinary-business types and freight inputs |
+| `economic_rhythms.json` | Daily, seasonal and industrial demand cycles |
