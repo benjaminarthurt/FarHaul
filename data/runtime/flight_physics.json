@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "equations": [
+    {
+      "id": "acceleration",
+      "expression": "a = available_thrust_N / current_mass_kg"
+    },
+    {
+      "id": "electric_power",
+      "expression": "sum(load_MW) <= generation_MW + battery_discharge_MW"
+    },
+    {
+      "id": "heat",
+      "expression": "heat_next = heat + generated_MJ - rejected_MJ"
+    },
+    {
+      "id": "cargo_mass",
+      "expression": "current_mass = dry_mass + fuel + cargo + crew + consumables"
+    },
+    {
+      "id": "center_of_mass",
+      "expression": "COM = sum(mass_i * position_i) / total_mass"
+    },
+    {
+      "id": "life_support",
+      "expression": "endurance limited by air regeneration, water, food, waste and power"
+    }
+  ],
+  "design_effects": [
+    "Poor cargo distribution changes center of mass and maneuver authority.",
+    "Damaged radiators can force power or thrust reduction.",
+    "A severed bus can leave intact equipment unusable.",
+    "External cargo changes mass distribution and drag where atmosphere matters."
+  ]
+}
