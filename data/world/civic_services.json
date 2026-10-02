@@ -1,0 +1,157 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "services": [
+    {
+      "id": "earth_public_services",
+      "body_id": "earth",
+      "healthcare": "universal_mix_by_jurisdiction",
+      "education": "dense_primary_secondary_higher_ed",
+      "emergency": "mature_multilayer",
+      "retail": "extremely_dense",
+      "food_security": "high",
+      "utility_resilience": "high"
+    },
+    {
+      "id": "keshar_public_services",
+      "body_id": "keshar_prime",
+      "healthcare": "dense_civic_network",
+      "education": "schools_plus_apprenticeship",
+      "emergency": "storm_and_industrial_specialized",
+      "retail": "dense",
+      "food_security": "high",
+      "utility_resilience": "very_high"
+    },
+    {
+      "id": "ilos_public_services",
+      "body_id": "ilos_prime",
+      "healthcare": "dense_vertical_clinics",
+      "education": "high_technical_density",
+      "emergency": "vertical_rescue_specialized",
+      "retail": "dense",
+      "food_security": "high",
+      "utility_resilience": "high"
+    },
+    {
+      "id": "veyara_public_services",
+      "body_id": "veyara_prime",
+      "healthcare": "aquatic_and_dry_facilities",
+      "education": "distributed_water_districts",
+      "emergency": "marine_and_storm_specialized",
+      "retail": "dense_waterborne",
+      "food_security": "very_high",
+      "utility_resilience": "high"
+    },
+    {
+      "id": "orun_public_services",
+      "body_id": "orun_prime",
+      "healthcare": "junction_clinic_network",
+      "education": "community_and_technical",
+      "emergency": "distributed_maintenance_response",
+      "retail": "dense_communal",
+      "food_security": "high",
+      "utility_resilience": "very_high"
+    },
+    {
+      "id": "concord_public_services",
+      "body_id": "concord_prime",
+      "healthcare": "multispecies_specialist",
+      "education": "dense_multispecies",
+      "emergency": "mature",
+      "retail": "extremely_dense",
+      "food_security": "high_import_dependent",
+      "utility_resilience": "very_high"
+    },
+    {
+      "id": "roosevelt_public_services",
+      "body_id": "roosevelt",
+      "healthcare": "urban_high_rural_standard",
+      "education": "public_plus_trade",
+      "emergency": "industrial_and_cold_weather",
+      "retail": "dense_in_cities",
+      "food_security": "import_reliant",
+      "utility_resilience": "high"
+    },
+    {
+      "id": "hesperus_public_services",
+      "body_id": "hesperus_prime",
+      "healthcare": "regional_hubs",
+      "education": "distributed_rural",
+      "emergency": "agricultural_and_transport",
+      "retail": "town_centered",
+      "food_security": "very_high",
+      "utility_resilience": "standard"
+    },
+    {
+      "id": "iron_gate_public_services",
+      "body_id": "iron_gate_prime",
+      "healthcare": "industrial_medicine_dense",
+      "education": "trade_heavy",
+      "emergency": "yard_and_foundry_specialized",
+      "retail": "dense_worker_cities",
+      "food_security": "import_reliant",
+      "utility_resilience": "high"
+    },
+    {
+      "id": "bradbury_public_services",
+      "body_id": "bradbury_prime",
+      "healthcare": "research_hospital_network",
+      "education": "very_high_higher_ed",
+      "emergency": "laboratory_specialized",
+      "retail": "dense_cities",
+      "food_security": "import_reliant",
+      "utility_resilience": "high"
+    },
+    {
+      "id": "pelagos_public_services",
+      "body_id": "pelagos_prime",
+      "healthcare": "marine_multispecies",
+      "education": "joint_network",
+      "emergency": "marine_rescue",
+      "retail": "dense_island_centers",
+      "food_security": "very_high",
+      "utility_resilience": "high"
+    },
+    {
+      "id": "tidemark_public_services",
+      "body_id": "tidemark_prime",
+      "healthcare": "platform_clinics",
+      "education": "technical_and_remote",
+      "emergency": "storm_survival_core_service",
+      "retail": "limited_platform",
+      "food_security": "import_reliant",
+      "utility_resilience": "mission_critical"
+    },
+    {
+      "id": "foundry_public_services",
+      "body_id": "foundry_prime",
+      "healthcare": "subsurface_clinic_network",
+      "education": "technical_dense",
+      "emergency": "industrial_and_thermal",
+      "retail": "dense_deepworks",
+      "food_security": "import_reliant",
+      "utility_resilience": "very_high"
+    },
+    {
+      "id": "talos_public_services",
+      "body_id": "talos_prime",
+      "healthcare": "one_main_clinic_plus_site_medics",
+      "education": "small_school_and_trade_programs",
+      "emergency": "overstretched",
+      "retail": "rapidly_expanding",
+      "food_security": "import_dependent",
+      "utility_resilience": "uneven"
+    },
+    {
+      "id": "lastlight_public_services",
+      "body_id": "lastlight_settlement",
+      "healthcare": "small_hospital_clinic",
+      "education": "small_local_school",
+      "emergency": "capable_locally_limited_beyond",
+      "retail": "small",
+      "food_security": "import_dependent",
+      "utility_resilience": "high_local_redundancy"
+    }
+  ]
+}
