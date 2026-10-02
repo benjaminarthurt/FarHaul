@@ -8,6 +8,8 @@ var centre := Vector3.ZERO
 var orbit := 0.0
 var fade: ColorRect
 var status: Label
+var contract_panel: PanelContainer
+var contract_list: VBoxContainer
 var leaving := false
 
 
@@ -129,7 +131,7 @@ func _build_ui() -> void:
 	menu.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	col.add_child(menu)
 	var yard_btn := _button(menu, "ENTER SHIPYARD", _enter_yard)
-	_button(menu, "CONTRACT BOARD  (coming soon)", Callable()).disabled = true
+	_button(menu, "CONTRACT BOARD", _show_contracts)
 	_button(menu, "DEPART  (coming soon)", Callable()).disabled = true
 	_button(menu, "SAVE GAME", _save)
 	_button(menu, "MAIN MENU", _main_menu)
@@ -137,6 +139,14 @@ func _build_ui() -> void:
 	status.add_theme_color_override("font_color", Brand.MUTED)
 	status.add_theme_font_size_override("font_size", 13)
 	col.add_child(status)
+	contract_panel = PanelContainer.new()
+	contract_panel.visible = false
+	contract_panel.add_theme_stylebox_override("panel", Brand.panel_box())
+	contract_panel.custom_minimum_size = Vector2(520, 0)
+	col.add_child(contract_panel)
+	contract_list = VBoxContainer.new()
+	contract_list.add_theme_constant_override("separation", 4)
+	contract_panel.add_child(contract_list)
 	var note := Brand.note("The shipyard is where you build and fit your ship. It is only open at a yard like this one.")
 	note.custom_minimum_size = Vector2(380, 0)
 	col.add_child(note)
@@ -187,6 +197,31 @@ func _go(scene: String) -> void:
 	var tw := create_tween()
 	tw.tween_property(fade, "color:a", 1.0, 0.35)
 	tw.tween_callback(func() -> void: get_tree().change_scene_to_file(scene))
+
+
+func _show_contracts() -> void:
+	contract_panel.visible = not contract_panel.visible
+	for child in contract_list.get_children():
+		child.queue_free()
+	if not contract_panel.visible:
+		return
+	var system_id := Worlds.yard_system(String(Session.profile.world))
+	var port := Worlds.primary_port(system_id)
+	var heading := Brand.heading("FREIGHT BOARD — %s" % String(port.get("name", system_id)).to_upper(), 15)
+	contract_list.add_child(heading)
+	var offers := Contracts.offers_from(system_id)
+	if offers.is_empty():
+		contract_list.add_child(Brand.note("No profitable scheduled freight is posted here right now."))
+		return
+	for c in offers:
+		var goods := Worlds.commodity(String(c.commodity))
+		var destination := Worlds.port(String(c.destination_port_id))
+		var line := Label.new()
+		line.text = "%s  →  %s\n%.1f t available  ·  %.2f ly  ·  %s cr/t  ·  up to %s cr" % [
+			goods.name, destination.get("name", c.destination_system_id), float(c.offer), float(c.distance_ly),
+			ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate)))]
+		line.add_theme_color_override("font_color", Brand.OFFWHITE)
+		contract_list.add_child(line)
 
 
 func _enter_yard() -> void:
