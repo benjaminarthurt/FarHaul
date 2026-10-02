@@ -22,6 +22,8 @@ func _run() -> void:
 	check(Worlds.starting_yards().size() >= 3 and Worlds.RACES.size() == 5 and Worlds.DIFFICULTIES.size() == 3, "yards, species and difficulties are defined")
 	check(Worlds.distance_ly("sol", "new_houston") > 0.0, "known systems have usable coordinates")
 	check(not Worlds.market("talos").is_empty() and Worlds.commodity("grain").base_value > 0, "markets and commodities load from data")
+	check(not Worlds.primary_port("new_houston").is_empty(), "ports load for known systems")
+	check(Contracts.offers_from("new_houston").size() > 0, "market and route data generate freight offers")
 
 	print("new game")
 	check(Session.begin_new(2, "Mara Voss", "human", "hard", "roosevelt_independent_yards"), "begin a new game in slot 3")
