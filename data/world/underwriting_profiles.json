@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "profiles": [
+    {
+      "id": "continuity_mutual",
+      "preferred": [
+        "documented_maintenance",
+        "kesh_components",
+        "developed_routes"
+      ],
+      "cautious": [
+        "undocumented_modification",
+        "frontier"
+      ],
+      "declines": [
+        "fraud_record"
+      ]
+    },
+    {
+      "id": "concord_underwriters",
+      "preferred": [
+        "current_registration",
+        "commercial_history",
+        "core_routes"
+      ],
+      "cautious": [
+        "high_value_frontier",
+        "salvage_title"
+      ],
+      "declines": [
+        "false_certificate"
+      ]
+    },
+    {
+      "id": "outer_reach_assurance",
+      "preferred": [
+        "survey_credential",
+        "frontier_equipment",
+        "filed_route"
+      ],
+      "cautious": [
+        "solo_unsupported",
+        "poor_reserve"
+      ],
+      "declines": [
+        "concealed_material_risk"
+      ]
+    },
+    {
+      "id": "bluecurrent_mutual",
+      "preferred": [
+        "closed_cycle_systems",
+        "environmental_controls"
+      ],
+      "cautious": [
+        "dry_world_biological_transfer"
+      ],
+      "declines": [
+        "biosecurity_fraud"
+      ]
+    }
+  ]
+}
