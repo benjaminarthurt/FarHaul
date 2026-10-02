@@ -1,0 +1,133 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "sites": [
+    {
+      "id": "roosevelt_frame_plant_4",
+      "body_id": "roosevelt",
+      "name": "Frame Plant 4",
+      "type": "ship_structure_factory",
+      "employees": 18400,
+      "inputs": [
+        "structural_metals",
+        "technical_ceramics",
+        "electronics"
+      ],
+      "outputs": [
+        "ship_frames",
+        "structural_modules"
+      ],
+      "daily_input_scu": 9200,
+      "daily_output_scu": 6100
+    },
+    {
+      "id": "roosevelt_coldwater_food",
+      "body_id": "roosevelt",
+      "name": "Coldwater Foods",
+      "type": "food_processor",
+      "employees": 6100,
+      "inputs": [
+        "bulk_food",
+        "packaging",
+        "refrigeration"
+      ],
+      "outputs": [
+        "processed_food"
+      ],
+      "daily_input_scu": 4400,
+      "daily_output_scu": 3900
+    },
+    {
+      "id": "hesperus_greenline_mill",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Foods Complex",
+      "type": "food_processor",
+      "employees": 9200,
+      "inputs": [
+        "grain",
+        "protein",
+        "packaging"
+      ],
+      "outputs": [
+        "stable_food",
+        "feed",
+        "industrial_organics"
+      ],
+      "daily_input_scu": 17800,
+      "daily_output_scu": 15400
+    },
+    {
+      "id": "keelward_plate_works",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward Plate Works",
+      "type": "heavy_factory",
+      "employees": 27600,
+      "inputs": [
+        "refined_metals",
+        "energy",
+        "ceramics"
+      ],
+      "outputs": [
+        "heavy_plate",
+        "structural_members"
+      ],
+      "daily_input_scu": 25100,
+      "daily_output_scu": 21800
+    },
+    {
+      "id": "lowell_precision_3",
+      "body_id": "bradbury_prime",
+      "name": "Lowell Precision 3",
+      "type": "instrument_factory",
+      "employees": 4800,
+      "inputs": [
+        "electronics",
+        "lightweight_materials",
+        "technical_ceramics"
+      ],
+      "outputs": [
+        "survey_instruments",
+        "lab_instruments"
+      ],
+      "daily_input_scu": 760,
+      "daily_output_scu": 310
+    },
+    {
+      "id": "deepworks_machine_12",
+      "body_id": "foundry_prime",
+      "name": "Machine Hall 12",
+      "type": "machine_factory",
+      "employees": 11300,
+      "inputs": [
+        "metals",
+        "ceramics",
+        "electronics"
+      ],
+      "outputs": [
+        "machine_parts",
+        "cargo_machinery"
+      ],
+      "daily_input_scu": 6200,
+      "daily_output_scu": 4100
+    },
+    {
+      "id": "hopewell_concentrator",
+      "body_id": "talos_prime",
+      "name": "Hopewell Concentrator",
+      "type": "mineral_processor",
+      "employees": 2400,
+      "inputs": [
+        "raw_ore",
+        "water",
+        "industrial_chemicals"
+      ],
+      "outputs": [
+        "rare_mineral_concentrate",
+        "tailings"
+      ],
+      "daily_input_scu": 8700,
+      "daily_output_scu": 1700
+    }
+  ]
+}
