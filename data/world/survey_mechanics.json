@@ -1,0 +1,103 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "disciplines": [
+    {
+      "id": "stellar",
+      "outputs": [
+        "stellar_class",
+        "activity",
+        "radiation_environment"
+      ]
+    },
+    {
+      "id": "navigation",
+      "outputs": [
+        "local_solution",
+        "hazards",
+        "safe_approaches"
+      ]
+    },
+    {
+      "id": "orbital_mapping",
+      "outputs": [
+        "major_bodies",
+        "orbits",
+        "debris"
+      ]
+    },
+    {
+      "id": "atmosphere",
+      "outputs": [
+        "composition",
+        "pressure",
+        "weather",
+        "toxicity"
+      ]
+    },
+    {
+      "id": "geology",
+      "outputs": [
+        "surface_map",
+        "mineral_indicators",
+        "landing_ground"
+      ]
+    },
+    {
+      "id": "resource_assay",
+      "outputs": [
+        "resource_presence",
+        "grade_estimate",
+        "extraction_difficulty"
+      ]
+    },
+    {
+      "id": "biology",
+      "outputs": [
+        "biosignature",
+        "ecosystems",
+        "contamination_risk"
+      ]
+    },
+    {
+      "id": "landing_sites",
+      "outputs": [
+        "candidate_sites",
+        "surface_access",
+        "local_hazards"
+      ]
+    }
+  ],
+  "quality_scale": [
+    0,
+    100
+  ],
+  "data_value_factors": [
+    "novelty",
+    "quality",
+    "commercial_relevance",
+    "scientific_relevance",
+    "buyer_need",
+    "exclusivity"
+  ],
+  "example_progress": {
+    "system_id": "lantern",
+    "stellar": 100,
+    "navigation": 94,
+    "orbital_mapping": 100,
+    "atmosphere": 88,
+    "geology": 43,
+    "resource_assay": 19,
+    "biology": 8,
+    "landing_sites": 31
+  },
+  "publication_states": [
+    "private",
+    "embargoed",
+    "sold_exclusive",
+    "licensed",
+    "public"
+  ],
+  "rule": "Survey state is derived from discipline coverage; it is not a single boolean unlock."
+}
