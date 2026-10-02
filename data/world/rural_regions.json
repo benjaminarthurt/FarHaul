@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "regions": [
+    {
+      "id": "roosevelt_midlands_rural",
+      "body_id": "roosevelt",
+      "region_id": "roosevelt_midlands",
+      "population": 84000000,
+      "density_per_km2": 7.5,
+      "settlement_pattern": "rail_towns_and_service_centers",
+      "economy": [
+        "agriculture",
+        "quarrying",
+        "regional_services"
+      ],
+      "service_access": {
+        "hospital_minutes": 64,
+        "secondary_school_minutes": 38,
+        "freight_depot_minutes": 51
+      }
+    },
+    {
+      "id": "hesperus_greenline_rural",
+      "body_id": "hesperus_prime",
+      "region_id": "greenline_plain",
+      "population": 27800000,
+      "density_per_km2": 3.1,
+      "settlement_pattern": "farm_towns_and_processing_nodes",
+      "economy": [
+        "agriculture",
+        "equipment_service",
+        "food_processing"
+      ],
+      "service_access": {
+        "hospital_minutes": 78,
+        "secondary_school_minutes": 42,
+        "freight_depot_minutes": 36
+      }
+    },
+    {
+      "id": "hesperus_shepherd_rural",
+      "body_id": "hesperus_prime",
+      "region_id": "shepherd_uplands",
+      "population": 6900000,
+      "density_per_km2": 0.9,
+      "settlement_pattern": "small_towns_and_large_holdings",
+      "economy": [
+        "livestock",
+        "forestry_equivalent",
+        "stone"
+      ],
+      "service_access": {
+        "hospital_minutes": 122,
+        "secondary_school_minutes": 71,
+        "freight_depot_minutes": 84
+      }
+    },
+    {
+      "id": "bradbury_mariner_rural",
+      "body_id": "bradbury_prime",
+      "region_id": "mariner_valleys",
+      "population": 18600000,
+      "density_per_km2": 5.2,
+      "settlement_pattern": "valley_towns",
+      "economy": [
+        "specialty_agriculture",
+        "research_support",
+        "tourism"
+      ],
+      "service_access": {
+        "hospital_minutes": 49,
+        "secondary_school_minutes": 31,
+        "freight_depot_minutes": 44
+      }
+    },
+    {
+      "id": "talos_outlying_claims",
+      "body_id": "talos_prime",
+      "region_id": "prospect_rim",
+      "population": 12600,
+      "density_per_km2": 0.002,
+      "settlement_pattern": "mining_camps_and_utility_posts",
+      "economy": [
+        "mining",
+        "survey",
+        "haulage"
+      ],
+      "service_access": {
+        "hospital_minutes": 240,
+        "secondary_school_minutes": null,
+        "freight_depot_minutes": 116
+      }
+    }
+  ]
+}
