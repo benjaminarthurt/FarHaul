@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "rules": [
+    "Lot mass is constrained by package and commodity density.",
+    "Package selection depends on commodity handling class and consignee scale.",
+    "Shelf life begins at production or packing, not player pickup.",
+    "Damage can affect part of a multi-package lot.",
+    "Seals are physical and custody-visible.",
+    "Lots may be split or consolidated if contracts and packaging allow."
+  ],
+  "examples": [
+    {
+      "id": "grain_lot_example",
+      "commodity_id": "grain",
+      "package_type": "standard_scu_container",
+      "package_count": 8,
+      "gross_mass_kg": 82400,
+      "temperature_range_c": [
+        2,
+        28
+      ],
+      "shelf_life_days": 240,
+      "hazard_class": null
+    },
+    {
+      "id": "pharma_lot_example",
+      "commodity_id": "pharmaceuticals",
+      "package_type": "refrigerated_scu",
+      "package_count": 2,
+      "gross_mass_kg": 8400,
+      "temperature_range_c": [
+        2,
+        8
+      ],
+      "shelf_life_days": 120,
+      "hazard_class": null
+    },
+    {
+      "id": "precision_lot_example",
+      "commodity_id": "precision_equipment",
+      "package_type": "sealed_crate_large",
+      "package_count": 5,
+      "gross_mass_kg": 11600,
+      "shock_limit_g": 2.5,
+      "shelf_life_days": null,
+      "hazard_class": null
+    }
+  ]
+}
