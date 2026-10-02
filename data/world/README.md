@@ -41,6 +41,12 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `industrial_sites.json` | Named shipbreakers, test ranges, observatories, warehouses, mines and other working sites |
 | `derelicts.json` | Retired infrastructure and ordinary salvage/legacy sites without mystery-box assumptions |
 | `port_services_lore.json` | Dockers, surveyors, chandlers, brokers, tug crews, inspectors and frontier service availability |
+| `daily_life.json` | Media, crew lodging, food/provisioning and commercial training |
+| `law_customs.json` | Freight documents, customs practice and jurisdictional differences |
+| `hazards.json` | Regional weather, traffic, environmental and navigation conditions affecting freight |
+| `businesses.json` | Ordinary chandlers, surveyors, parts shops, lodging and frontier suppliers |
+| `communications.json` | Relay networks, frontier data latency, radio terminology and example traffic |
+| `insurance_finance.json` | Hull/cargo insurance, ship loans and owner-operator financial realities |
 
 ## Stable IDs
 
