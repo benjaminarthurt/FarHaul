@@ -1,0 +1,149 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "institutions": [
+    {
+      "id": "sol_union_bank",
+      "name": "Sol Union Bank",
+      "system_id": "sol",
+      "products": [
+        "consumer",
+        "commercial",
+        "trade_finance"
+      ]
+    },
+    {
+      "id": "kesh_continuity_bank",
+      "name": "Continuity Bank",
+      "system_id": "keshar",
+      "products": [
+        "consumer",
+        "industrial",
+        "equipment"
+      ]
+    },
+    {
+      "id": "ilos_mass_credit",
+      "name": "Mass Credit Cooperative",
+      "system_id": "ilos",
+      "products": [
+        "consumer",
+        "commercial",
+        "equipment"
+      ]
+    },
+    {
+      "id": "veyara_current_credit",
+      "name": "Current Credit Union",
+      "system_id": "veyara",
+      "products": [
+        "consumer",
+        "cooperative",
+        "marine"
+      ]
+    },
+    {
+      "id": "orun_junction_credit",
+      "name": "Junction Credit Cooperative",
+      "system_id": "orun",
+      "products": [
+        "consumer",
+        "small_business"
+      ]
+    },
+    {
+      "id": "concord_commercial_bank",
+      "name": "Concord Commercial Bank",
+      "system_id": "concord",
+      "products": [
+        "trade_finance",
+        "ship_finance",
+        "commercial"
+      ]
+    },
+    {
+      "id": "roosevelt_equipment_credit",
+      "name": "Roosevelt Equipment Credit",
+      "system_id": "new_houston",
+      "products": [
+        "ship_finance",
+        "equipment",
+        "small_business"
+      ]
+    },
+    {
+      "id": "greenline_credit",
+      "name": "Greenline Producers Credit",
+      "system_id": "hesperus",
+      "products": [
+        "agriculture",
+        "consumer",
+        "equipment"
+      ]
+    },
+    {
+      "id": "gateworks_finance",
+      "name": "Gateworks Commercial Finance",
+      "system_id": "iron_gate",
+      "products": [
+        "ship_finance",
+        "industrial"
+      ]
+    },
+    {
+      "id": "carver_habitat_credit",
+      "name": "Carver Habitat Credit Union",
+      "system_id": "carver",
+      "products": [
+        "consumer",
+        "small_business",
+        "equipment"
+      ]
+    },
+    {
+      "id": "bradbury_research_bank",
+      "name": "Bradbury Research Bank",
+      "system_id": "bradbury",
+      "products": [
+        "institutional",
+        "commercial",
+        "consumer"
+      ]
+    },
+    {
+      "id": "meridian_captains_credit",
+      "name": "Meridian Captains Credit Union",
+      "system_id": "port_meridian",
+      "products": [
+        "ship_finance",
+        "repair_bridge",
+        "consumer"
+      ]
+    },
+    {
+      "id": "hopewell_claim_credit",
+      "name": "Hopewell Claim Credit",
+      "system_id": "talos",
+      "products": [
+        "equipment",
+        "claim_finance",
+        "consumer"
+      ]
+    },
+    {
+      "id": "crossroads_credit_desk",
+      "name": "Crossroads Credit Desk",
+      "system_id": "waystation",
+      "products": [
+        "small_business",
+        "repair_bridge"
+      ]
+    }
+  ],
+  "payment_system": {
+    "unit": "cr",
+    "retail_settlement": "local electronic clearing",
+    "interstellar_settlement": "delayed reconciled ledgers through banks and carried/relayed records",
+    "cash_equivalents": "local stored-value instruments remain useful during communications outages"
+  }
+}
