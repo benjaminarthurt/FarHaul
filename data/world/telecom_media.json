@@ -1,0 +1,181 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "providers": [
+    {
+      "id": "solnet",
+      "name": "SolNet",
+      "system_id": "sol",
+      "market": "consumer_business_data",
+      "service_level": "very_high"
+    },
+    {
+      "id": "redplanet_link",
+      "name": "Red Planet Link",
+      "system_id": "sol",
+      "market": "mars_regional",
+      "service_level": "high"
+    },
+    {
+      "id": "keshar_civic_net",
+      "name": "Keshar Civic Net",
+      "system_id": "keshar",
+      "market": "public_commercial",
+      "service_level": "very_high"
+    },
+    {
+      "id": "ilos_spanlink",
+      "name": "SpanLink",
+      "system_id": "ilos",
+      "market": "public_commercial",
+      "service_level": "high"
+    },
+    {
+      "id": "veyara_currentnet",
+      "name": "CurrentNet",
+      "system_id": "veyara",
+      "market": "marine_public_commercial",
+      "service_level": "high"
+    },
+    {
+      "id": "orun_junction_data",
+      "name": "Junction Data Cooperative",
+      "system_id": "orun",
+      "market": "public_commercial",
+      "service_level": "high"
+    },
+    {
+      "id": "concord_exchange_net",
+      "name": "Concord Exchange Network",
+      "system_id": "concord",
+      "market": "finance_trade_data",
+      "service_level": "very_high"
+    },
+    {
+      "id": "roosevelt_yardlink",
+      "name": "YardLink",
+      "system_id": "new_houston",
+      "market": "industrial_consumer",
+      "service_level": "high"
+    },
+    {
+      "id": "hesperus_rural_net",
+      "name": "Hesperus Rural Network",
+      "system_id": "hesperus",
+      "market": "rural_agricultural",
+      "service_level": "standard"
+    },
+    {
+      "id": "gateworks_data",
+      "name": "Gateworks Data Services",
+      "system_id": "iron_gate",
+      "market": "industrial",
+      "service_level": "high"
+    },
+    {
+      "id": "bradbury_research_net",
+      "name": "Bradbury Research Network",
+      "system_id": "bradbury",
+      "market": "research_consumer",
+      "service_level": "very_high"
+    },
+    {
+      "id": "pelagos_blueband",
+      "name": "Blueband",
+      "system_id": "pelagos",
+      "market": "marine_consumer",
+      "service_level": "high"
+    },
+    {
+      "id": "meridian_packet_local",
+      "name": "Meridian Packet Local",
+      "system_id": "port_meridian",
+      "market": "station_frontier_relay",
+      "service_level": "high"
+    },
+    {
+      "id": "talos_claimnet",
+      "name": "ClaimNet",
+      "system_id": "talos",
+      "market": "commercial_local",
+      "service_level": "uneven"
+    },
+    {
+      "id": "crossroads_local",
+      "name": "Crossroads Local",
+      "system_id": "waystation",
+      "market": "habitat_relay",
+      "service_level": "standard"
+    },
+    {
+      "id": "beacon_outbound_net",
+      "name": "Beacon Outbound Network",
+      "system_id": "lastlight",
+      "market": "survey_relay",
+      "service_level": "standard"
+    }
+  ],
+  "media": [
+    {
+      "id": "sol_public_wire",
+      "name": "Sol Public Wire",
+      "system_id": "sol",
+      "type": "general_news"
+    },
+    {
+      "id": "load_report",
+      "name": "The Load Report",
+      "system_id": "keshar",
+      "type": "industrial_news"
+    },
+    {
+      "id": "span_daily",
+      "name": "Span Daily",
+      "system_id": "ilos",
+      "type": "general_news"
+    },
+    {
+      "id": "current_voice",
+      "name": "Current Voice",
+      "system_id": "veyara",
+      "type": "general_news"
+    },
+    {
+      "id": "junction_board",
+      "name": "Junction Board",
+      "system_id": "orun",
+      "type": "civic_news"
+    },
+    {
+      "id": "concord_wire",
+      "name": "Concord Wire",
+      "system_id": "concord",
+      "type": "interstellar_news"
+    },
+    {
+      "id": "yard_shift",
+      "name": "Yard Shift",
+      "system_id": "new_houston",
+      "type": "labor_industry"
+    },
+    {
+      "id": "harvest_line",
+      "name": "Harvest Line",
+      "system_id": "hesperus",
+      "type": "agriculture_weather"
+    },
+    {
+      "id": "meridian_traffic",
+      "name": "Meridian Traffic",
+      "system_id": "port_meridian",
+      "type": "traffic_commercial"
+    },
+    {
+      "id": "outer_band",
+      "name": "Outer Band",
+      "system_id": "lastlight",
+      "type": "frontier_news"
+    }
+  ]
+}
