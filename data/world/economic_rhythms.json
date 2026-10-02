@@ -1,0 +1,99 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "cycles": [
+    {
+      "id": "daily_commute",
+      "effects": [
+        "passenger peaks",
+        "delivery windows",
+        "road congestion"
+      ],
+      "applies": [
+        "core",
+        "developed"
+      ]
+    },
+    {
+      "id": "industrial_shift_change",
+      "effects": [
+        "worker transit peak",
+        "canteen demand",
+        "gate congestion"
+      ],
+      "applies": [
+        "industrial"
+      ]
+    },
+    {
+      "id": "weekly_restock",
+      "effects": [
+        "retail replenishment",
+        "warehouse drawdown"
+      ],
+      "applies": [
+        "all"
+      ]
+    },
+    {
+      "id": "harvest_season",
+      "effects": [
+        "agricultural export surge",
+        "labor demand",
+        "cold storage pressure"
+      ],
+      "applies": [
+        "hesperus"
+      ]
+    },
+    {
+      "id": "storm_cycle",
+      "effects": [
+        "port closure risk",
+        "pre-storm stocking",
+        "repair demand"
+      ],
+      "applies": [
+        "keshar",
+        "veyara",
+        "tidemark"
+      ]
+    },
+    {
+      "id": "yard_launch_window",
+      "effects": [
+        "oversize cargo demand",
+        "tug demand",
+        "temporary labor"
+      ],
+      "applies": [
+        "new_houston",
+        "iron_gate"
+      ]
+    },
+    {
+      "id": "survey_departure_window",
+      "effects": [
+        "fuel",
+        "provisions",
+        "survey equipment",
+        "crew lodging"
+      ],
+      "applies": [
+        "lastlight"
+      ]
+    },
+    {
+      "id": "boom_arrival_cycle",
+      "effects": [
+        "housing shortage",
+        "construction demand",
+        "food imports"
+      ],
+      "applies": [
+        "talos"
+      ]
+    }
+  ],
+  "simulation_rule": "Economic demand should have predictable rhythms plus stochastic disruptions; not every market change is random."
+}
