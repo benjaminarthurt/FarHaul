@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "mechanics": [
+    {
+      "id": "ephemeris",
+      "effect": "Body positions change with time; local route geometry is time-dependent."
+    },
+    {
+      "id": "transfer_window",
+      "effect": "Efficient transfers depend on relative orbital position."
+    },
+    {
+      "id": "high_energy_transfer",
+      "effect": "Faster transfer trades additional propellant/power/heat."
+    },
+    {
+      "id": "gravity_well",
+      "effect": "Landing and departure costs depend on body gravity and atmosphere."
+    },
+    {
+      "id": "inclination_change",
+      "effect": "Plane changes consume maneuver capability and time."
+    }
+  ],
+  "abstraction_rule": "The game may compress travel time, but costs and route differences should remain physically motivated and deterministic."
+}
