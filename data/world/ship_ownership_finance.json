@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "ownership_forms": [
+    "individual",
+    "partnership",
+    "company",
+    "cooperative",
+    "lender_secured",
+    "lease"
+  ],
+  "finance_products": [
+    {
+      "id": "secured_ship_loan",
+      "down_payment_fraction": 0.2,
+      "term_days": 3600,
+      "interest_model": "risk_and_credit_based",
+      "requires": [
+        "registration",
+        "hull_insurance"
+      ],
+      "lender_interest": "recorded_lien"
+    },
+    {
+      "id": "used_ship_note",
+      "down_payment_fraction": 0.12,
+      "term_days": 2160,
+      "interest_model": "higher_risk",
+      "requires": [
+        "registration",
+        "hull_insurance"
+      ],
+      "lender_interest": "recorded_lien"
+    },
+    {
+      "id": "lease_to_own",
+      "down_payment_fraction": 0.08,
+      "term_days": 1800,
+      "interest_model": "embedded_lease_rate",
+      "requires": [
+        "registration",
+        "hull_insurance"
+      ],
+      "lender_interest": "legal_owner_until_buyout"
+    },
+    {
+      "id": "yard_refit_finance",
+      "down_payment_fraction": 0.25,
+      "term_days": 720,
+      "interest_model": "short_term",
+      "requires": [
+        "registered_or_documented_hull"
+      ],
+      "lender_interest": "mechanic_or_contract_lien"
+    }
+  ],
+  "lien_priority": [
+    "government_seizure_or_court_order",
+    "secured_lender",
+    "yard_mechanics_lien",
+    "adjudicated_salvage_interest",
+    "owner_equity"
+  ],
+  "default_outcomes": [
+    "grace_period",
+    "restructure_offer",
+    "repossession_notice",
+    "voluntary_sale",
+    "repossession"
+  ],
+  "rule": "Repossession requires the lender or its agent to obtain lawful access to the vessel; debt does not teleport the ship away."
+}
