@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "patterns": [
+    {
+      "id": "core_metropolis",
+      "shares": {
+        "residential": 0.31,
+        "commercial": 0.13,
+        "industrial": 0.14,
+        "transport": 0.12,
+        "civic": 0.08,
+        "utilities": 0.05,
+        "parks_open": 0.17
+      }
+    },
+    {
+      "id": "heavy_industrial_city",
+      "shares": {
+        "residential": 0.24,
+        "commercial": 0.08,
+        "industrial": 0.28,
+        "transport": 0.17,
+        "civic": 0.06,
+        "utilities": 0.08,
+        "parks_open": 0.09
+      }
+    },
+    {
+      "id": "agricultural_region",
+      "shares": {
+        "settlement": 0.04,
+        "agriculture": 0.66,
+        "processing": 0.05,
+        "transport": 0.07,
+        "utilities": 0.03,
+        "water_protected": 0.15
+      }
+    },
+    {
+      "id": "sealed_habitat",
+      "shares": {
+        "residential": 0.3,
+        "commercial": 0.1,
+        "industrial": 0.18,
+        "transport": 0.15,
+        "civic": 0.08,
+        "utilities": 0.14,
+        "recreation": 0.05
+      }
+    },
+    {
+      "id": "frontier_boomtown",
+      "shares": {
+        "residential": 0.23,
+        "commercial": 0.12,
+        "industrial": 0.2,
+        "transport_storage": 0.2,
+        "civic": 0.05,
+        "utilities": 0.1,
+        "undeveloped": 0.1
+      }
+    }
+  ]
+}
