@@ -5,7 +5,7 @@
   "relationships": [
     {
       "from": "roosevelt_equipment_credit",
-      "to": "roosevelt_independent_yards",
+      "to": "roosevelt_independent_yards_coop",
       "type": "commercial_partner"
     },
     {
@@ -35,7 +35,7 @@
     },
     {
       "from": "current_cold_chain",
-      "to": "nine_currents_bioprocessing",
+      "to": "nine_currents_bio",
       "type": "supplier_customer"
     },
     {
@@ -45,7 +45,7 @@
     },
     {
       "from": "hopewell_freight_coop",
-      "to": "hopewell_construction_combine",
+      "to": "hopewell_construction",
       "type": "supplier_customer"
     },
     {
