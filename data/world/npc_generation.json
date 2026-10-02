@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "fields": [
+    "id",
+    "species",
+    "age",
+    "home",
+    "household",
+    "job",
+    "employer",
+    "work_site",
+    "income_band",
+    "education",
+    "credentials",
+    "schedule",
+    "relationships",
+    "financial_obligations",
+    "vehicle_or_transit",
+    "preferences",
+    "history",
+    "known_information"
+  ],
+  "persistence_triggers": [
+    "named_contract_contact",
+    "crew",
+    "passenger",
+    "repeated_business_contact",
+    "incident_witness",
+    "creditor_or_debtor",
+    "friendship_or_hostility",
+    "property_owner",
+    "government_case",
+    "story_relevance"
+  ],
+  "schedule_blocks": [
+    "sleep",
+    "home",
+    "commute",
+    "work",
+    "meal",
+    "errand",
+    "recreation",
+    "caregiving",
+    "social",
+    "travel"
+  ],
+  "memory_rule": "NPCs remember events they personally experienced or learned through plausible communication; they do not receive omniscient player-state updates."
+}
