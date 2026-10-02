@@ -1,0 +1,286 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "regions": [
+    {
+      "id": "earth_atlantic_arc",
+      "body_id": "earth",
+      "name": "Atlantic Arc",
+      "population": 2100000000,
+      "settlement_pattern": "dense coastal megaregions and inland logistics corridors",
+      "sectors": [
+        "finance",
+        "services",
+        "advanced_manufacturing",
+        "orbital_logistics"
+      ],
+      "freight_nodes": [
+        "earth_orbital_freight"
+      ],
+      "character": "Old cities merged into layered freight and passenger corridors without losing local identities."
+    },
+    {
+      "id": "earth_pacific_arc",
+      "body_id": "earth",
+      "name": "Pacific Arc",
+      "population": 2400000000,
+      "settlement_pattern": "coastal megaregions and major interior production belts",
+      "sectors": [
+        "manufacturing",
+        "electronics",
+        "biotech",
+        "trade"
+      ],
+      "character": "One of Earth's largest production and consumption zones."
+    },
+    {
+      "id": "earth_interior_networks",
+      "body_id": "earth",
+      "name": "Interior Networks",
+      "population": 1800000000,
+      "settlement_pattern": "agricultural, industrial and metropolitan corridors",
+      "sectors": [
+        "food",
+        "materials",
+        "energy",
+        "manufacturing"
+      ],
+      "character": "Bulk freight feeds coastal and orbital export systems."
+    },
+    {
+      "id": "earth_other_regions",
+      "body_id": "earth",
+      "name": "Other Earth Regions",
+      "population": 3100000000,
+      "settlement_pattern": "diverse urban, rural and protected landscapes",
+      "sectors": [
+        "diversified"
+      ],
+      "character": "Aggregate record for Earth's many distinct regions not individually authored."
+    },
+    {
+      "id": "mars_northern_corridor",
+      "body_id": "mars",
+      "name": "Northern Corridor",
+      "population": 610000000,
+      "settlement_pattern": "pressurized cities linked by rail and buried utilities",
+      "sectors": [
+        "manufacturing",
+        "science",
+        "food_systems"
+      ],
+      "character": "Mature Martian urban belt."
+    },
+    {
+      "id": "mars_equatorial_industry",
+      "body_id": "mars",
+      "name": "Equatorial Industry Belt",
+      "population": 420000000,
+      "settlement_pattern": "industrial cities and launch complexes",
+      "sectors": [
+        "fabrication",
+        "launch_services",
+        "materials"
+      ],
+      "character": "Surface-to-orbit industry dominates land use."
+    },
+    {
+      "id": "luna_nearside_industrial",
+      "body_id": "luna",
+      "name": "Nearside Industrial Network",
+      "population": 190000000,
+      "settlement_pattern": "excavated cities, terminals and buried factories",
+      "sectors": [
+        "vacuum_manufacturing",
+        "logistics",
+        "science"
+      ],
+      "character": "Old infrastructure layered beneath newer freight works."
+    },
+    {
+      "id": "keshar_shelf_cities",
+      "body_id": "keshar_prime",
+      "name": "Shelf Cities",
+      "population": 5200000000,
+      "settlement_pattern": "low broad coastal cities behind immense sea defenses",
+      "sectors": [
+        "heavy_industry",
+        "shipping",
+        "machinery"
+      ],
+      "character": "The densest Kesh urban-industrial region."
+    },
+    {
+      "id": "keshar_uplands",
+      "body_id": "keshar_prime",
+      "name": "Upland Works",
+      "population": 3300000000,
+      "settlement_pattern": "industrial valleys and fortified transport corridors",
+      "sectors": [
+        "mining",
+        "structural_materials",
+        "energy"
+      ],
+      "character": "High-load infrastructure and extraction dominate."
+    },
+    {
+      "id": "ilos_escarpment_belt",
+      "body_id": "ilos_prime",
+      "name": "Escarpment Belt",
+      "population": 3900000000,
+      "settlement_pattern": "vertical cities and suspended transit",
+      "sectors": [
+        "precision_manufacturing",
+        "propulsion",
+        "education"
+      ],
+      "character": "Height is ordinary urban distance."
+    },
+    {
+      "id": "veyara_nine_currents",
+      "body_id": "veyara_prime",
+      "name": "Nine Currents Basin",
+      "population": 4100000000,
+      "settlement_pattern": "floating, island and submerged districts",
+      "sectors": [
+        "biotech",
+        "aquaculture",
+        "environmental_systems"
+      ],
+      "character": "Waterways function as streets, utilities and industrial space."
+    },
+    {
+      "id": "orun_deep_network",
+      "body_id": "orun_prime",
+      "name": "Deep Network",
+      "population": 3600000000,
+      "settlement_pattern": "interconnected subterranean cities",
+      "sectors": [
+        "automation",
+        "thermal",
+        "ceramics",
+        "services"
+      ],
+      "character": "The distinction between neighborhood and infrastructure is deliberately weak."
+    },
+    {
+      "id": "concord_exchange_belt",
+      "body_id": "concord_prime",
+      "name": "Exchange Belt",
+      "population": 1700000000,
+      "settlement_pattern": "multispecies trade cities and intermodal corridors",
+      "sectors": [
+        "finance",
+        "trade",
+        "administration",
+        "services"
+      ],
+      "character": "Known space's densest concentration of cross-species commerce."
+    },
+    {
+      "id": "roosevelt_new_houston_region",
+      "body_id": "roosevelt",
+      "name": "New Houston Industrial Region",
+      "population": 188000000,
+      "settlement_pattern": "fabrication cities, rail freight and launch fields",
+      "sectors": [
+        "shipbuilding",
+        "fabrication",
+        "machinery"
+      ],
+      "character": "Independent yards shape the regional economy."
+    },
+    {
+      "id": "hesperus_greenline_belt",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Belt",
+      "population": 23000000,
+      "settlement_pattern": "widely separated agricultural towns and processing hubs",
+      "sectors": [
+        "agriculture",
+        "cold_storage",
+        "food_processing"
+      ],
+      "character": "Harvest traffic dominates seasonal life."
+    },
+    {
+      "id": "iron_gate_keelward_region",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward Industrial Region",
+      "population": 74000000,
+      "settlement_pattern": "foundry cities feeding orbital yards",
+      "sectors": [
+        "metals",
+        "shipbuilding",
+        "heavy_fabrication"
+      ],
+      "character": "Nearly every employer ultimately serves large-hull construction."
+    },
+    {
+      "id": "bradbury_lowell_plateau",
+      "body_id": "bradbury_prime",
+      "name": "Lowell Plateau",
+      "population": 36000000,
+      "settlement_pattern": "research cities and instrument campuses",
+      "sectors": [
+        "research",
+        "instruments",
+        "education"
+      ],
+      "character": "Cargo handling is unusually specification-driven."
+    },
+    {
+      "id": "pelagos_crosswater_chain",
+      "body_id": "pelagos_prime",
+      "name": "Crosswater Chain",
+      "population": 18000000,
+      "settlement_pattern": "island and floating urban chain",
+      "sectors": [
+        "aquaculture",
+        "biotech",
+        "marine_services"
+      ],
+      "character": "Mixed Vey-human civic culture is strongest here."
+    },
+    {
+      "id": "foundry_deepworks_region",
+      "body_id": "foundry_prime",
+      "name": "Deepworks Region",
+      "population": 5100000,
+      "settlement_pattern": "subterranean factory-city network",
+      "sectors": [
+        "ceramics",
+        "thermal",
+        "machine_parts"
+      ],
+      "character": "Surface terminals reveal little of the industrial volume below."
+    },
+    {
+      "id": "talos_hopewell_claims",
+      "body_id": "talos_prime",
+      "name": "Hopewell Claims District",
+      "population": 51000,
+      "settlement_pattern": "boomtown, camps and active claims",
+      "sectors": [
+        "mining",
+        "construction",
+        "services"
+      ],
+      "character": "Most of Talos's current growth is concentrated here."
+    },
+    {
+      "id": "lastlight_beacon_region",
+      "body_id": "lastlight_settlement",
+      "name": "Beacon Region",
+      "population": 7900,
+      "settlement_pattern": "single town plus scattered survey and extraction sites",
+      "sectors": [
+        "survey",
+        "expedition_support",
+        "limited_mining"
+      ],
+      "character": "The last concentrated civilian infrastructure before the outward corridor."
+    }
+  ]
+}
