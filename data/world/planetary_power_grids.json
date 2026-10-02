@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "grids": [
+    {
+      "id": "roosevelt_integrated_grid",
+      "body_id": "roosevelt",
+      "generation_gw": 182,
+      "peak_load_gw": 149,
+      "reserve_margin": 0.22,
+      "regions": [
+        "Northshield",
+        "Midlands",
+        "South Coast"
+      ],
+      "backbone": "high_capacity_surface_grid",
+      "major_storage_gwh": 510,
+      "risks": [
+        "winter_peak",
+        "transmission_icing"
+      ]
+    },
+    {
+      "id": "hesperus_rural_grid",
+      "body_id": "hesperus_prime",
+      "generation_gw": 31,
+      "peak_load_gw": 24,
+      "reserve_margin": 0.29,
+      "regions": [
+        "Greenline Plain",
+        "Rainmaker Basin",
+        "Shepherd Uplands"
+      ],
+      "backbone": "distributed_rural_grid",
+      "major_storage_gwh": 104,
+      "risks": [
+        "harvest_peak",
+        "storm_damage"
+      ]
+    },
+    {
+      "id": "iron_gate_industrial_grid",
+      "body_id": "iron_gate_prime",
+      "generation_gw": 410,
+      "peak_load_gw": 366,
+      "reserve_margin": 0.12,
+      "regions": [
+        "Keel Basin",
+        "Hammer Plain",
+        "Gate Coast"
+      ],
+      "backbone": "industrial_supergrid",
+      "major_storage_gwh": 760,
+      "risks": [
+        "foundry_peak",
+        "cooling_water_constraint"
+      ]
+    },
+    {
+      "id": "bradbury_clean_grid",
+      "body_id": "bradbury_prime",
+      "generation_gw": 44,
+      "peak_load_gw": 34,
+      "reserve_margin": 0.29,
+      "regions": [
+        "Lowell Plateau",
+        "Mariner Valleys"
+      ],
+      "backbone": "high_reliability_grid",
+      "major_storage_gwh": 188,
+      "risks": [
+        "research_quality_requirements"
+      ]
+    },
+    {
+      "id": "talos_patchwork_grid",
+      "body_id": "talos_prime",
+      "generation_gw": 0.71,
+      "peak_load_gw": 0.61,
+      "reserve_margin": 0.16,
+      "regions": [
+        "Hopewell Basin",
+        "Prospect Rim"
+      ],
+      "backbone": "modular_microgrids",
+      "major_storage_gwh": 2.8,
+      "risks": [
+        "single_unit_failure",
+        "rapid_load_growth",
+        "spares_delay"
+      ]
+    },
+    {
+      "id": "lastlight_local_grid",
+      "body_id": "lastlight_settlement",
+      "generation_gw": 0.19,
+      "peak_load_gw": 0.13,
+      "reserve_margin": 0.46,
+      "regions": [
+        "Beacon Region"
+      ],
+      "backbone": "redundant_local_microgrid",
+      "major_storage_gwh": 1.1,
+      "risks": [
+        "parts_latency"
+      ]
+    }
+  ]
+}
