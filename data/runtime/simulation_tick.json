@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "tick_order": [
+    "advance_clock",
+    "apply_scheduled_services",
+    "update_ship_and_facility_networks",
+    "consume_household_and_institutional_inventory",
+    "run_production",
+    "update_inventory_ledgers",
+    "generate_procurement",
+    "allocate_shipments",
+    "update_markets",
+    "run_company_decisions",
+    "generate_contract_offers",
+    "dispatch_npc_carriers",
+    "advance_freight_and_passengers",
+    "update_local_traffic",
+    "process_world_events",
+    "update_people_schedules_and_memory",
+    "advance_projects",
+    "monthly_population_and_settlement_update_if_due",
+    "persist_promoted_entities",
+    "validate_invariants"
+  ],
+  "scales": {
+    "near_player": "individual_or_site",
+    "settlement": "aggregate_flows_plus_persistent_entities",
+    "planet": "regional_aggregate",
+    "system": "trade_and_transport_aggregate",
+    "remote": "event_driven_coarse"
+  },
+  "determinism": "Simulation RNG streams are seeded by world seed + subsystem + tick; persistent entities store outcomes."
+}
