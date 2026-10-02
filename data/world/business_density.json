@@ -1,0 +1,72 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "business_density_templates": [
+    {
+      "id": "core_metropolis",
+      "per_100k_population": {
+        "food_retail": 160,
+        "restaurants": 240,
+        "lodging": 18,
+        "medical_sites": 42,
+        "schools_training": 34,
+        "repair_trades": 95,
+        "professional_firms": 210,
+        "construction_firms": 75,
+        "warehouses": 28,
+        "local_carriers": 22,
+        "entertainment": 80
+      }
+    },
+    {
+      "id": "industrial_city",
+      "per_100k_population": {
+        "food_retail": 125,
+        "restaurants": 150,
+        "lodging": 20,
+        "medical_sites": 30,
+        "schools_training": 24,
+        "repair_trades": 160,
+        "professional_firms": 90,
+        "construction_firms": 105,
+        "warehouses": 55,
+        "local_carriers": 44,
+        "entertainment": 42
+      }
+    },
+    {
+      "id": "rural_agricultural",
+      "per_100k_population": {
+        "food_retail": 90,
+        "restaurants": 70,
+        "lodging": 12,
+        "medical_sites": 18,
+        "schools_training": 20,
+        "repair_trades": 110,
+        "professional_firms": 45,
+        "construction_firms": 65,
+        "warehouses": 35,
+        "local_carriers": 30,
+        "entertainment": 18
+      }
+    },
+    {
+      "id": "frontier",
+      "per_100k_population": {
+        "food_retail": 70,
+        "restaurants": 85,
+        "lodging": 30,
+        "medical_sites": 12,
+        "schools_training": 10,
+        "repair_trades": 180,
+        "professional_firms": 50,
+        "construction_firms": 140,
+        "warehouses": 65,
+        "local_carriers": 55,
+        "entertainment": 25
+      }
+    }
+  ],
+  "rule": "Aggregate business counts represent ordinary establishments not worth individual static records. Named businesses are memorable anchors within these totals."
+}
