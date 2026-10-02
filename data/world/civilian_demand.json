@@ -1,0 +1,143 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "demand_profiles": [
+    {
+      "id": "core_homeworld_household",
+      "applies_to": [
+        "earth",
+        "keshar_prime",
+        "ilos_prime",
+        "veyara_prime",
+        "orun_prime"
+      ],
+      "per_capita_demand_weights": {
+        "food": 1,
+        "housing_services": 1,
+        "consumer_goods": 0.75,
+        "medical": 0.22,
+        "education": 0.18,
+        "mobility": 0.55,
+        "communications": 0.32,
+        "entertainment": 0.28
+      },
+      "note": "Most consumption is supplied locally; interstellar freight concentrates on specialties and imbalances."
+    },
+    {
+      "id": "trade_hub_household",
+      "applies_to": [
+        "concord_prime",
+        "meridian_station"
+      ],
+      "per_capita_demand_weights": {
+        "food": 1,
+        "housing_services": 1,
+        "consumer_goods": 0.9,
+        "medical": 0.28,
+        "mobility": 0.8,
+        "communications": 0.55,
+        "hospitality": 0.5
+      },
+      "note": "Transient crews materially increase food, lodging, repair and entertainment demand."
+    },
+    {
+      "id": "industrial_world_household",
+      "applies_to": [
+        "roosevelt",
+        "iron_gate_prime",
+        "foundry_prime"
+      ],
+      "per_capita_demand_weights": {
+        "food": 1.1,
+        "housing_services": 1,
+        "consumer_goods": 0.7,
+        "medical": 0.28,
+        "workwear": 0.35,
+        "mobility": 0.5,
+        "parts_services": 0.25
+      },
+      "note": "Industrial wages and shift work support dense service economies around production centers."
+    },
+    {
+      "id": "agricultural_world_household",
+      "applies_to": [
+        "hesperus_prime"
+      ],
+      "per_capita_demand_weights": {
+        "food": 0.55,
+        "housing_services": 1,
+        "consumer_goods": 0.85,
+        "medical": 0.22,
+        "machinery_services": 0.42,
+        "mobility": 0.65
+      },
+      "note": "Food is locally abundant; machinery and consumer imports matter more."
+    },
+    {
+      "id": "research_world_household",
+      "applies_to": [
+        "bradbury_prime"
+      ],
+      "per_capita_demand_weights": {
+        "food": 1,
+        "housing_services": 1,
+        "consumer_goods": 0.8,
+        "medical": 0.25,
+        "education": 0.4,
+        "communications": 0.5,
+        "instruments": 0.3
+      },
+      "note": "Institutional purchasing sits on top of ordinary household demand."
+    },
+    {
+      "id": "ocean_industrial_household",
+      "applies_to": [
+        "pelagos_prime",
+        "tidemark_prime"
+      ],
+      "per_capita_demand_weights": {
+        "food": 0.8,
+        "housing_services": 1,
+        "consumer_goods": 0.75,
+        "medical": 0.28,
+        "marine_services": 0.4,
+        "filters": 0.25
+      },
+      "note": "Tidemark imports much more basic consumption than Pelagos."
+    },
+    {
+      "id": "boomtown_household",
+      "applies_to": [
+        "talos_prime"
+      ],
+      "per_capita_demand_weights": {
+        "food": 1.25,
+        "housing_services": 1.4,
+        "consumer_goods": 0.9,
+        "medical": 0.35,
+        "water": 0.7,
+        "tools": 0.45,
+        "construction": 0.8
+      },
+      "note": "Rapid population growth keeps ordinary necessities commercially valuable."
+    },
+    {
+      "id": "frontier_household",
+      "applies_to": [
+        "lastlight_settlement",
+        "waystation_habitat"
+      ],
+      "per_capita_demand_weights": {
+        "food": 1.2,
+        "housing_services": 1,
+        "consumer_goods": 0.55,
+        "medical": 0.4,
+        "parts": 0.6,
+        "life_support": 0.55,
+        "communications": 0.45
+      },
+      "note": "Small populations still generate persistent high-value demand because replacement supply is distant."
+    }
+  ]
+}
