@@ -156,7 +156,7 @@ static func format(s: Dictionary) -> String:
 		"Thrust  %.0f kN   T/W %.2f empty, %.2f loaded" % [s.thrust_fwd, s.twr, s.twr_loaded],
 	])
 	if s.cargo_used_slots >= 0:
-		lines.append("Cargo  %.1f t   worth %s cr" % [s.cargo_mass, _commas(roundi(s.cargo_value))])
+		lines.append("Cargo  %.1f t" % s.cargo_mass)
 	lines.append("Centre of mass  x %+.1f  y %+.1f  z %+.1f m" % [rel.x, rel.y, rel.z])
 	return "\n".join(lines)
 

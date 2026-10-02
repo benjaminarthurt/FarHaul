@@ -1,5 +1,6 @@
 extends Node3D
-## The shipyard: build a hauler, fit it to a contract, load freight, run it, get paid, upgrade.
+## The shipyard: a free-build ship designer. Place parts, check the stats, preview the ship with cargo aboard.
+## Contracts, money and flight belong to the game proper, not here.
 ## Everything (camera, lights, UI) is created in code so there's nothing to wire up in the editor.
 
 const GOOD := Color(0.25, 1.0, 0.4, 0.45)
@@ -7,7 +8,6 @@ const BAD := Color(1.0, 0.25, 0.25, 0.45)
 const GRID_HALF := 12  # grid extends this many cells each way from the origin
 const SAVE_PATH := "user://ship.json"
 const AUTOSAVE_PATH := "user://autosave.json"
-const START_FUNDS := 150000
 const OK_COLOR := Color(0.35, 0.85, 0.45)
 const BAD_COLOR := Color(0.95, 0.35, 0.3)
 const WARN_COLOR := Color(1.0, 0.7, 0.25)
@@ -18,11 +18,7 @@ var manifest: CargoManifest  ## what the ship is carrying
 var ship_view: ShipView
 var history := ShipHistory.new()
 
-# Progress
-var earned := 0  ## profit so far; credits = START_FUNDS + earned - cost of the ship
-var runs := 0
-var contract_index := 0
-var busy := false  ## true while a run is playing out
+var busy := false  ## reserved for animations that should freeze editing
 var muted := false
 var autosave_enabled := not OS.has_environment("FARHAUL_NOSAVE")
 var last_stats: Dictionary = {}
@@ -65,13 +61,6 @@ var meters: Dictionary = {}
 var commodity_pick: OptionButton
 var amount_box: SpinBox
 var cargo_label: Label
-var contract_pick: OptionButton
-var contract_info: Label
-var pay_label: Label
-var check_rects: Array[ColorRect] = []
-var check_labels: Array[Label] = []
-var take_button: Button
-var run_button: Button
 var undo_button: Button
 var redo_button: Button
 var tip_panel: PanelContainer
@@ -246,7 +235,6 @@ func _setup_ui() -> void:
 	_build_palette(ui)
 	_build_top_bar(ui)
 	_build_right_column(ui)
-	_build_contract_panel(ui)
 
 	help_label = Label.new()
 	help_label.text = "Click place  ·  Shift+click remove\nR rotate  ·  Q/E deck  ·  Ctrl+Z undo  ·  F frame\nRight-drag orbit  ·  wheel zoom  ·  middle-drag pan\nH hide upper decks  ·  M mute  ·  F1 help"
@@ -352,14 +340,14 @@ func _build_right_column(ui: Control) -> void:
 	right.add_child(cargo_panel)
 	var cbox := VBoxContainer.new()
 	cargo_panel.add_child(cbox)
-	cbox.add_child(_header("CARGO HOLD"))
+	cbox.add_child(_header("CARGO PREVIEW"))
 	var crow := HBoxContainer.new()
 	cbox.add_child(crow)
 	commodity_pick = OptionButton.new()
 	commodity_pick.focus_mode = Control.FOCUS_NONE
 	commodity_pick.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for id in manifest.commodities.order:
-		commodity_pick.add_item("%s  (%d cr/t)" % [manifest.commodities.label(id), roundi(manifest.commodities.price(id))])
+		commodity_pick.add_item(manifest.commodities.label(id))
 	crow.add_child(commodity_pick)
 	amount_box = SpinBox.new()
 	amount_box.min_value = 0
@@ -374,7 +362,7 @@ func _build_right_column(ui: Control) -> void:
 	_add_action_button(brow, "Unload", _unload_cargo)
 	_add_action_button(brow, "Unload all", _unload_all)
 	var hint := Label.new()
-	hint.text = "Load: tonnes on offer here   Unload: tonnes delivered"
+	hint.text = "Fill the hold to see the ship loaded. Nothing is bought or sold here."
 	hint.modulate = Color(0.65, 0.7, 0.8)
 	hint.add_theme_font_size_override("font_size", 12)
 	cbox.add_child(hint)
@@ -385,57 +373,6 @@ func _build_right_column(ui: Control) -> void:
 
 	right.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 12)
 	right.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-
-
-func _build_contract_panel(ui: Control) -> void:
-	var panel := PanelContainer.new()
-	ui.add_child(panel)
-	var box := VBoxContainer.new()
-	panel.add_child(box)
-	var top := HBoxContainer.new()
-	box.add_child(top)
-	top.add_child(_header("CONTRACT"))
-	contract_pick = OptionButton.new()
-	contract_pick.focus_mode = Control.FOCUS_NONE
-	contract_pick.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	for c in Contracts.LIST:
-		contract_pick.add_item(c.title)
-	contract_pick.item_selected.connect(_on_contract_selected)
-	top.add_child(contract_pick)
-	contract_info = Label.new()
-	contract_info.custom_minimum_size = Vector2(540, 0)
-	contract_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	contract_info.modulate = Color(0.8, 0.85, 0.95)
-	box.add_child(contract_info)
-	var checklist := GridContainer.new()
-	checklist.columns = 2
-	checklist.add_theme_constant_override("h_separation", 28)
-	checklist.add_theme_constant_override("v_separation", 2)
-	box.add_child(checklist)
-	for i in 8:
-		var row := HBoxContainer.new()
-		row.custom_minimum_size = Vector2(260, 0)
-		var rect := ColorRect.new()
-		rect.custom_minimum_size = Vector2(10, 10)
-		rect.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(rect)
-		var label := Label.new()
-		label.add_theme_font_size_override("font_size", 13)
-		row.add_child(label)
-		checklist.add_child(row)
-		check_rects.append(rect)
-		check_labels.append(label)
-	var brow := HBoxContainer.new()
-	box.add_child(brow)
-	take_button = _add_action_button(brow, "Take on cargo", _take_contract_cargo)
-	run_button = _add_action_button(brow, "Run contract", _run_contract)
-	pay_label = Label.new()
-	pay_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	pay_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	brow.add_child(pay_label)
-	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 12)
-	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
 
 
 func _build_welcome(ui: Control) -> void:
@@ -452,7 +389,7 @@ func _build_welcome(ui: Control) -> void:
 	var body := Label.new()
 	body.custom_minimum_size = Vector2(460, 0)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.text = "You start with a small hauler and %s credits.\n\n1. Build. Click to place a part, Shift+click to remove it. Green ghost means it fits, red tells you why not. Cyan rings are open doorways: cap them so the hull is sealed.\n2. Pick a contract at the bottom, press Take on cargo, and turn every requirement green.\n3. Run the contract to get paid, then spend your credits on a bigger, faster ship." % ShipStats.commas(START_FUNDS)
+	body.text = "Design your ship here. Parts are free.\n\n1. Build. Click to place a part, Shift+click to remove it. Green ghost means it fits, red tells you why not. Cyan rings are open doorways: cap them so the hull is sealed.\n2. Watch the power, cooling and cargo meters on the right.\n3. Use Cargo preview to see how the ship looks fully loaded. Save when you are happy."
 	box.add_child(body)
 	var go := Button.new()
 	go.text = "Start building"
@@ -645,10 +582,10 @@ func _process(delta: float) -> void:
 func _update_camera() -> void:
 	var offset := Vector3(0, 0, cam_dist)
 	offset = offset.rotated(Vector3.RIGHT, -cam_pitch).rotated(Vector3.UP, cam_yaw)
-	# Look slightly below the target so the ship sits in the clear middle, above the contract panel.
+	# Look slightly below the target so the ship sits in the clear middle.
 	var view := -offset.normalized()
 	var up := (Vector3.UP - view * view.dot(Vector3.UP)).normalized()
-	var focus := cam_target - up * cam_dist * 0.13
+	var focus := cam_target - up * cam_dist * 0.04
 	camera.position = focus + offset
 	camera.look_at(focus, Vector3.UP)
 
@@ -705,13 +642,9 @@ func _select(i: int) -> void:
 
 
 func _style_buttons() -> void:
-	var credits := _credits()
 	for j in buttons.size():
-		var cost := library.get_def(library.order[j]).cost
 		if j == selected:
 			buttons[j].modulate = Color(1.0, 0.95, 0.5)
-		elif cost > credits:
-			buttons[j].modulate = Color(1.0, 0.55, 0.55, 0.75)
 		else:
 			buttons[j].modulate = Color.WHITE
 
@@ -784,8 +717,6 @@ func _update_ghost() -> void:
 	if hover_error == "":
 		if hover_rot != rot:
 			note = "  (turned to fit)"
-		if def.cost > _credits():
-			hover_error = "Can't afford: need %s cr more" % ShipStats.commas(def.cost - _credits())
 	ghost_mat.albedo_color = GOOD if hover_error == "" else BAD
 	ghost.position = ShipGrid.cell_to_world(hover_cell)
 	ghost.rotation.y = hover_rot * PI / 2.0
@@ -795,13 +726,13 @@ func _update_ghost() -> void:
 		if ship.occupied.has(cell):
 			var m: Dictionary = ship.modules[ship.occupied[cell]]
 			var gone := library.get_def(m.id)
-			_show_tip("Remove %s  (+%s cr)" % [gone.display_name, ShipStats.commas(gone.cost)], WARN_COLOR)
+			_show_tip("Remove %s" % gone.display_name, WARN_COLOR)
 		else:
 			tip_panel.visible = false
 	elif hover_error != "":
 		_show_tip(hover_error, BAD_COLOR)
 	else:
-		_show_tip("%s  (-%s cr)%s" % [def.display_name, ShipStats.commas(def.cost), note], OK_COLOR)
+		_show_tip("%s%s" % [def.display_name, note], OK_COLOR)
 
 
 func _show_tip(text: String, col: Color) -> void:
@@ -844,10 +775,6 @@ func _ship_cost() -> int:
 	for m in ship.modules:
 		total += library.get_def(m.id).cost
 	return total
-
-
-func _credits() -> int:
-	return START_FUNDS + earned - _ship_cost()
 
 
 # --- Undo / redo -----------------------------------------------------------------------------
@@ -907,7 +834,6 @@ func _refresh_ship() -> void:
 	_set_meter(meters.cargo, c_ratio, "%.1f / %.0f t" % [st.cargo_mass, st.cargo_capacity], false)
 
 	_refresh_cargo_label()
-	_refresh_contract()
 	_refresh_top()
 	_style_buttons()
 	undo_button.disabled = not history.can_undo()
@@ -919,9 +845,8 @@ func _refresh_ship() -> void:
 
 
 func _refresh_top() -> void:
-	var credits := _credits()
-	top_label.text = "Credits  %s cr     Contracts run  %d" % [ShipStats.commas(credits), runs]
-	top_label.modulate = Color.WHITE if credits >= 0 else BAD_COLOR
+	top_label.text = "Parts  %d     Ship value  %s cr" % [ship.modules.size(), ShipStats.commas(_ship_cost())]
+	top_label.modulate = Color.WHITE
 
 
 func _refresh_info() -> void:
@@ -947,22 +872,6 @@ func _refresh_cargo_label() -> void:
 	if lines.is_empty():
 		lines.append("No cargo modules yet")
 	cargo_label.text = "\n".join(lines)
-
-
-func _refresh_contract() -> void:
-	var c := Contracts.get_contract(contract_index)
-	var rows := Contracts.check(last_stats, manifest, c)
-	contract_info.text = "%s  ·  %.0f t of %s on offer at %d cr/t. %s" % [
-		manifest.commodities.label(c.commodity), c.offer, manifest.commodities.label(c.commodity), roundi(c.rate), c.blurb]
-	for i in check_labels.size():
-		var r: Dictionary = rows[i]
-		check_rects[i].color = OK_COLOR if r.ok else BAD_COLOR
-		check_labels[i].text = r.label if r.ok else "%s: %s" % [r.label, r.detail]
-		check_labels[i].modulate = Color(0.85, 0.9, 0.85) if r.ok else Color(1.0, 0.75, 0.7)
-	var go := Contracts.ready(rows)
-	run_button.modulate = Color(0.6, 1.0, 0.65) if go else Color(1, 1, 1, 0.7)
-	pay_label.text = "Pays %s cr now  (up to %s cr with a full hold)" % [
-		ShipStats.commas(Contracts.pay(manifest, c)), ShipStats.commas(Contracts.best_pay(manifest, c))]
 
 
 # --- Cargo ---------------------------------------------------------------------------------------
@@ -992,9 +901,9 @@ func _unload_cargo() -> void:
 	var before := _snapshot()
 	var removed := manifest.unload(c, asked)
 	if removed < asked - 0.001:
-		message = "Delivered %.1f t of %s (that was all you had)" % [removed, manifest.commodities.label(c)]
+		message = "Removed %.1f t of %s (that was all there was)" % [removed, manifest.commodities.label(c)]
 	else:
-		message = "Delivered %.1f t of %s" % [removed, manifest.commodities.label(c)]
+		message = "Removed %.1f t of %s" % [removed, manifest.commodities.label(c)]
 	_sfx(&"remove" if removed > 0.0 else &"error")
 	_commit(before)
 	_refresh_ship()
@@ -1012,98 +921,11 @@ func _unload_all() -> void:
 	_refresh_ship()
 
 
-# --- Contracts -----------------------------------------------------------------------------------
-
-func _on_contract_selected(index: int) -> void:
-	contract_index = index
-	_sfx(&"select")
-	_refresh_ship()
-
-
-## Loads as much of the contract's cargo as the ship has room for.
-func _take_contract_cargo() -> void:
-	if busy:
-		return
-	var c := Contracts.get_contract(contract_index)
-	var before := _snapshot()
-	var need: float = c.offer - manifest.total_of(c.commodity)
-	var goods := manifest.commodities.label(c.commodity)
-	if need <= 0.001:
-		message = "Already carrying the full %.0f t of %s" % [c.offer, goods]
-		_sfx(&"error")
-	elif manifest.capacity() <= 0.0:
-		message = "No cargo space on this ship"
-		_sfx(&"error")
-	else:
-		var loaded := manifest.load(c.commodity, need)
-		if loaded < need - 0.001:
-			message = "Took %.1f t of %s. Only room for that much: %.1f t left behind" % [loaded, goods, need - loaded]
-		else:
-			message = "Took the full %.1f t of %s" % [loaded, goods]
-		_sfx(&"place" if loaded > 0.0 else &"error")
-	_commit(before)
-	_refresh_ship()
-
-
-## A stand-in for flight: checks the ship is fit, plays a launch, pays out and unloads.
-func _run_contract() -> void:
-	if busy:
-		return
-	var c := Contracts.get_contract(contract_index)
-	var rows := Contracts.check(last_stats, manifest, c)
-	if not Contracts.ready(rows):
-		var first := ""
-		for r in rows:
-			if not r.ok:
-				first = "%s: %s" % [r.label, r.detail]
-				break
-		message = "Not fit to launch. %s" % first
-		_sfx(&"error")
-		_refresh_info()
-		return
-	var tonnes := Contracts.payable_tonnes(manifest, c)
-	var pay := Contracts.pay(manifest, c)
-	busy = true
-	hover_active = false
-	ghost.visible = false
-	tip_panel.visible = false
-	com_marker.visible = false
-	message = "Launching..."
-	_refresh_info()
-	_sfx(&"launch")
-	ship_view.set_flames(true)
-	var t := create_tween()
-	t.tween_interval(1.0)  # engines spool up before she moves
-	t.tween_property(ship_view, "position", Vector3(0, 0, -700), 2.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	t.tween_callback(_finish_run.bind(c, tonnes, pay))
-	t.tween_property(ship_view, "position", Vector3.ZERO, 1.6).from(Vector3(0, 0, 700)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	t.tween_callback(_run_done.bind(c, tonnes, pay))
-
-
-func _finish_run(c: Dictionary, tonnes: float, pay: int) -> void:
-	manifest.unload(c.commodity, tonnes)
-	earned += pay
-	runs += 1
-	history.clear()  # a delivery can't be undone
-	_refresh_ship()
-
-
-func _run_done(c: Dictionary, tonnes: float, pay: int) -> void:
-	ship_view.set_flames(false)
-	busy = false
-	message = "Delivered %.1f t of %s. Paid %s cr." % [tonnes, manifest.commodities.label(c.commodity), ShipStats.commas(pay)]
-	_sfx(&"cash")
-	_refresh_ship()
-
-
 # --- Save / load / clear -------------------------------------------------------------------
 
 func _save_dict() -> Dictionary:
 	var data: Dictionary = JSON.parse_string(ship.to_json())
 	data["cargo"] = manifest.to_dict()
-	data["earned"] = earned
-	data["runs"] = runs
-	data["contract"] = contract_index
 	return data
 
 
@@ -1123,10 +945,6 @@ func _load_from(path: String) -> bool:
 		return false
 	var parsed: Variant = JSON.parse_string(text)
 	manifest.from_dict(parsed.get("cargo", {}))
-	earned = int(parsed.get("earned", 0))
-	runs = int(parsed.get("runs", 0))
-	contract_index = clampi(int(parsed.get("contract", 0)), 0, Contracts.LIST.size() - 1)
-	contract_pick.select(contract_index)
 	return true
 
 
@@ -1160,7 +978,7 @@ func _clear() -> void:
 	var before := _snapshot()
 	ship.clear()
 	manifest.contents.clear()
-	message = "Cleared. Everything refunded"
+	message = "Cleared"
 	_sfx(&"remove")
 	_commit(before)
 	_refresh_ship()

@@ -44,13 +44,13 @@
       <p class="note">Runs in your browser with no install. About 10 MB on the first load. Works best on a laptop or desktop with a mouse.</p>
       <dl class="slip">
         <div><dt>Version</dt><dd>0.1.0, ship builder prototype</dd></div>
-        <div><dt>You can</dt><dd>Design a ship, load cargo, run a contract, get paid</dd></div>
+        <div><dt>You can</dt><dd>Design a ship, check it, preview it loaded with cargo</dd></div>
         <div><dt>Not yet</dt><dd>Flying, walking the ship, planets, space walks</dd></div>
       </dl>
     </div>
     <figure>
-      <img src="img/builder-cargo.jpg" width="1280" height="720" alt="The ship builder: a small freighter with cargo loaded, the parts palette on the left and a contract panel along the bottom.">
-      <figcaption>The ship builder as it plays today. Parts on the left, engineering numbers on the right, the contract along the bottom.</figcaption>
+      <img src="img/builder-cargo.jpg" width="1280" height="720" alt="The ship builder: a small freighter with cargo loaded, the parts palette on the left and the ship stats and cargo preview on the right.">
+      <figcaption>The ship builder as it plays today. Parts on the left, engineering numbers and the cargo preview on the right.</figcaption>
     </figure>
   </div>
 </section>
@@ -82,12 +82,12 @@
         <tbody>
           <tr><th scope="row">Ship building</th><td>Ships assembled from physical modules: cockpit, hull, cargo holds, tanks, engines, radiators. Every compartment exists in the world. Balance, power, heat and thrust all matter.</td><td>A 3 m grid builder with 13 parts. Parts snap together at doors and mounts. Live checks for sealed hull, airlock, power, cooling, thrust-to-weight and centre of mass. Undo, redo, autosave.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Interiors</th><td>Cramped, practical, lived-in. Cabins, galleys, engine rooms and cockpits that look like they were built to do a job.</td><td>Each part has its own fitted interior: cockpit seats and controls, a reactor room, crew quarters with bunks and a galley, an airlock with suit lockers. You can see them from the builder camera.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>Five fixed contracts, five goods, partial loads when a place has less than your hold can carry, and a delivery run that pays you. Prices and names are placeholders.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>The launch is a short scripted animation. You cannot fly yet.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>Not in the builder, which is design only. The rules for five placeholder contracts exist in the code, but nothing in the game uses them yet. The builder has a cargo preview so you can see a loaded ship.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>You cannot fly yet.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Walking the ship</th><td>Leave the seat and walk the corridors while underway. A longer ship means a longer walk to engineering.</td><td>The interiors are modelled and furnished, but there is no first-person view yet.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Landing and exploring</th><td>Land on rocky worlds and moons, then explore by ship, rover and on foot.</td><td>Nothing yet. Flat procedural terrain comes first.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Space walks and repair</th><td>Go out through the airlock on a tether to fix radiators, engines and hull damage.</td><td>Airlocks exist and the builder checks for one. Nothing outside the hull yet.</td><td><span class="chip planned">Planned</span></td></tr>
-          <tr><th scope="row">Living economy</th><td>Freight demand that comes from what places produce and need. Frontier outposts that grow because you supplied them.</td><td>Fixed prices on a short list of contracts.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Living economy</th><td>Freight demand that comes from what places produce and need. Frontier outposts that grow because you supplied them.</td><td>Nothing yet.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Manufacturers and wear</th><td>Parts from companies with recognisable engineering habits. Components wear and fail where you can see it.</td><td>One generic part for each job.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Crew, passengers, salvage, combat</th><td>People who live aboard, wrecks worth boarding, and danger that is a cost to avoid rather than the main event.</td><td>None of these yet.</td><td><span class="chip planned">Planned</span></td></tr>
         </tbody>
@@ -104,8 +104,8 @@
     <p class="lede">All taken from the game itself. Select any image to see it full size.</p>
     <div class="shots">
       <figure>
-        <button class="shot" data-full="img/builder-cargo.jpg" data-cap="The ship builder with a water contract loaded." aria-label="Open the builder screenshot full size"><img src="img/builder-cargo.jpg" width="1280" height="720" loading="lazy" alt="The ship builder with a freighter, cargo loaded and every contract requirement green."></button>
-        <figcaption><strong>Shipyard.</strong> Design the ship, load the contract cargo, check the engineering numbers, then run the job.</figcaption>
+        <button class="shot" data-full="img/builder-cargo.jpg" data-cap="The ship builder with the hold filled to preview a loaded ship." aria-label="Open the builder screenshot full size"><img src="img/builder-cargo.jpg" width="1280" height="720" loading="lazy" alt="The ship builder with a freighter and the hold filled with water."></button>
+        <figcaption><strong>Shipyard.</strong> Design the ship and check the engineering numbers. The cargo preview fills the hold so you can see it loaded. Nothing is bought or sold here.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/title.jpg" data-cap="The title screen." aria-label="Open the title screen full size"><img src="img/title.jpg" width="1280" height="720" loading="lazy" alt="The title screen with the Far Haul logo and a starter ship flying past."></button>
@@ -133,7 +133,7 @@
       </figure>
       <figure>
         <button class="shot" data-full="img/builder.jpg" data-cap="The starter ship before any cargo is loaded." aria-label="Open the starter ship screenshot full size"><img src="img/builder.jpg" width="1280" height="720" loading="lazy" alt="The ship builder showing the starter ship with an empty hold."></button>
-        <figcaption><strong>Starter ship.</strong> Every new game begins with this hauler and 150,000 credits.</figcaption>
+        <figcaption><strong>Starter ship.</strong> The builder starts with this hauler. Change it however you like.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/intro.jpg" data-cap="A frame from the placeholder intro video." aria-label="Open the intro frame full size"><img src="img/intro.jpg" width="1280" height="720" loading="lazy" alt="The end of the intro video: the Far Haul logo and tagline on a starfield."></button>
@@ -148,18 +148,17 @@
   <div class="band"></div>
   <div class="body">
     <h2 id="help-h">Help</h2>
-    <p class="lede">You start with a ready-made hauler and 150,000 credits. Change it, load it, run a job.</p>
+    <p class="lede">The builder starts with a ready-made hauler and every part is free. Change it, check it, save it.</p>
 
     <div class="cols">
       <div>
-        <h3>Your first contract</h3>
+        <h3>Your first ship</h3>
         <ol class="steps">
           <li>Press <strong>Launch game</strong>, then <strong>Start</strong> on the title screen.</li>
           <li>Look at the ship. Click a part in the palette on the left, then click next to the ship to place it. Green means it fits. Red tells you why not.</li>
-          <li>Pick a contract in the bottom panel and press <strong>Take on cargo</strong>.</li>
-          <li>Make every item in the checklist green. Each red item says what is missing.</li>
-          <li>Press <strong>Run contract</strong>. The ship launches, delivers, and you are paid.</li>
-          <li>Spend the money on a bigger or faster ship and take a harder contract.</li>
+          <li>Watch the power, cooling and cargo meters and the warnings on the right. Each warning says what is missing.</li>
+          <li>Use <strong>Cargo preview</strong> to fill the hold and see the ship loaded. This only changes how the ship looks and weighs. Nothing is bought or sold.</li>
+          <li>Press <kbd>S</kbd> to save. Your ship also autosaves.</li>
         </ol>
 
         <h3>What makes a ship valid</h3>
@@ -170,7 +169,7 @@
           <li>An airlock, so the crew can get in and out.</li>
           <li>Enough power for everything that draws it.</li>
           <li>Enough cooling for the heat you make.</li>
-          <li>Enough thrust for the loaded weight. Each contract sets a minimum thrust-to-weight.</li>
+          <li>Enough thrust for the loaded weight. The stats panel shows thrust-to-weight empty and loaded.</li>
         </ul>
       </div>
 
@@ -204,11 +203,11 @@
     </details>
     <details>
       <summary>I cannot place a part. Why?</summary>
-      <p>Move the cursor over the ship and read the red message under it. The usual reasons are overlapping another module, no matching door or mount on the neighbouring part, or not enough credits.</p>
+      <p>Move the cursor over the ship and read the red message under it. The usual reasons are overlapping another module, no matching door or mount on the neighbouring part, or a doorway that is blocked.</p>
     </details>
     <details>
-      <summary>Run contract is greyed out.</summary>
-      <p>One or more checklist items are red. Fix them top to bottom. If only <em>Cargo aboard</em> is red, press <strong>Take on cargo</strong>. If a place has less cargo than your hold can carry, you take what is there and the run pays for that amount.</p>
+      <summary>Why does the builder have no contracts or money?</summary>
+      <p>The builder is only for designing the ship. Contracts, prices and payment belong to the game itself, which comes after flight is built. The cargo preview is there so you can see and weigh a loaded ship.</p>
     </details>
     <details>
       <summary>There is no sound.</summary>
@@ -224,7 +223,7 @@
     </details>
     <details>
       <summary>Can I fly the ship?</summary>
-      <p>Not yet. Flight is the next stage after the builder. For now, Run contract plays a short launch and delivery.</p>
+      <p>Not yet. Flight is the next stage after the builder.</p>
     </details>
   </div>
 </section>
@@ -250,7 +249,7 @@
       <dt>Version</dt><dd>0.1.0, ship builder prototype</dd>
       <dt>Built with</dt><dd>Godot 4.4, written in GDScript. Runs in the browser through the Compatibility renderer.</dd>
       <dt>Art and sound</dt><dd>Made in code: the textures, sky, sounds and logo are generated. The intro video is a placeholder.</dd>
-      <dt>Placeholders</dt><dd>Prices, contract text, part stats and the intro video will all change.</dd>
+      <dt>Placeholders</dt><dd>Prices, part stats and the intro video will all change.</dd>
       <dt>Source</dt><dd><a href="https://github.com/benjaminarthurt/FarHaul">github.com/benjaminarthurt/FarHaul</a></dd>
     </dl>
   </div>

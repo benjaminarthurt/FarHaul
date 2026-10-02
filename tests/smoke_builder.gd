@@ -17,9 +17,7 @@ func _run(scene: Node3D) -> void:
 	print("start state")
 	check(scene.ship.modules.size() == 10, "starter ship is loaded on a fresh start")
 	check(scene.welcome_panel.visible, "welcome panel shows on first run")
-	check(scene._credits() == 150000 - scene._ship_cost(), "credits = funds minus ship cost")
 	check(scene.last_stats.warnings.size() == 0, "starter has no warnings")
-	print("contract: ", scene.contract_info.text)
 
 	print("placement")
 	var before_n: int = scene.ship.modules.size()
@@ -39,50 +37,16 @@ func _run(scene: Node3D) -> void:
 	check(scene.ship.modules.size() == before_n + 1, "redo puts it back")
 	scene._undo()
 
-	print("money")
-	var credits: int = scene._credits()
-	scene._select(scene.library.order.find(&"engineering"))
-	scene.hover_cell = Vector3i(5, 0, 5)
-	var poor: int = scene.earned
-	scene.earned = -140000
-	scene.hover_rot = 0
-	scene.hover_error = ""
-	scene._update_ghost()
-	scene.earned = poor
-	check(scene._credits() == credits, "credits restored after the what-if")
-
-	print("cargo and contract")
-	scene._take_contract_cargo()
-	print(scene.message)
-	check(is_equal_approx(scene.manifest.total_of(&"water"), 20.0), "took the 20 t on offer")
-	var rows: Array = Contracts.check(scene.last_stats, scene.manifest, Contracts.get_contract(0))
-	check(Contracts.ready(rows), "starter is fit for the water run")
-	scene._on_contract_selected(1)
-	scene._take_contract_cargo()
-	check(is_equal_approx(scene.manifest.total_of(&"ore"), 0.0), "containers are taken by water, so no ore fits until it's unloaded")
+	print("cargo preview")
+	scene.commodity_pick.select(0)
+	scene.amount_box.value = 20
+	scene._load_cargo()
+	check(scene.manifest.total() > 0.0, "loading cargo puts freight aboard")
+	scene._unload_cargo()
+	scene._load_cargo()
 	scene._unload_all()
-	scene._take_contract_cargo()
-	print(scene.message)
-	check(is_equal_approx(scene.manifest.total(), 24.0), "short on room: hold is full at 24 t")
-	scene._unload_all()
-	scene._on_contract_selected(0)
-	scene._take_contract_cargo()
-	scene._run_contract()
-	check(scene.busy, "run starts")
-	await create_timer(5.6).timeout
-	check(not scene.busy, "run finishes")
-	print(scene.message)
-	check(scene.earned == 9000 and scene.runs == 1, "paid 9,000 for 20 t of water")
-	check(is_equal_approx(scene.manifest.total_of(&"water"), 0.0), "delivered water is off the ship")
-	check(not scene.history.can_undo(), "history cleared after a delivery")
-	check(scene._credits() == credits + 9000, "credits went up")
-
-	print("failure cases")
-	scene._on_contract_selected(4)
-	scene._take_contract_cargo()
-	scene._run_contract()
-	print(scene.message)
-	check(not scene.busy and scene.message.begins_with("Not fit"), "rush job refused: ship too slow")
+	check(is_equal_approx(scene.manifest.total(), 0.0), "unload all empties the hold")
+	scene._load_cargo()
 
 	print("save and resume")
 	scene.autosave_enabled = false
@@ -90,7 +54,7 @@ func _run(scene: Node3D) -> void:
 	scene._clear()
 	check(scene.ship.modules.is_empty(), "cleared")
 	scene._load()
-	check(scene.ship.modules.size() == before_n and scene.earned == 9000, "loaded ship and progress")
+	check(scene.ship.modules.size() == before_n and scene.manifest.total() > 0.0, "loaded ship and cargo")
 
 	print(scene.stats_label.text)
 	print("SMOKE ", "PASSED" if ok else "FAILED")

@@ -24,13 +24,12 @@ New game, Quit). Any key skips the splash and the intro. Set `FARHAUL_SKIP_INTRO
 
 ## How to play
 
-You start with a small hauler and 150,000 credits.
+The builder is a free-build ship designer. Parts cost nothing, and there are no contracts or money here.
 
-1. **Build.** Parts cost credits (refunded in full if you remove them). The ghost is green if it fits and
-   red with the reason if not. If your current rotation doesn't fit, it turns to one that does. Cyan
-   rings mark open doorways: cap them so the hull is sealed.
-2. **Pick a contract** (bottom panel), press **Take on cargo**, and make every requirement go green.
-3. **Run contract.** The ship launches, delivers and you are paid. Spend it on a bigger, faster ship.
+1. **Build.** The ghost is green if a part fits and red with the reason if not. If your current rotation
+   doesn't fit, it turns to one that does. Cyan rings mark open doorways: cap them so the hull is sealed.
+2. **Check.** The panel on the right shows power, cooling, thrust-to-weight and warnings.
+3. **Cargo preview.** Fill the hold to see and weigh the ship loaded. Nothing is bought or sold.
 
 A ship needs a cockpit, an engine, a sealed hull, an airlock, enough power and cooling, and enough
 thrust-to-weight when loaded. Your progress autosaves.
@@ -114,7 +113,7 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/cargo_manifest.gd` | What is aboard, per container: load, unload, capacity, value |
 | `scripts/surface_textures.gd` | Procedural plating and hazard-stripe textures (no image assets) |
 | `scripts/space_sky.gd` | Procedural star and nebula sky shader |
-| `scripts/contracts.gd` | Freight jobs and the checklist a ship must pass to run one |
+| `scripts/contracts.gd` | Freight jobs and the checklist a ship must pass to run one (for the game proper; the builder does not use it) |
 | `scripts/ship_history.gd` | Undo and redo snapshots |
 | `scripts/ship_presets.gd` | Ready-made ships (the starter hauler) |
 | `scripts/sfx.gd` | Synthesised sound effects |
