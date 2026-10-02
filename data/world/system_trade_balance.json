@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "system_balances": [
+    {
+      "id": "hesperus",
+      "surplus": [
+        "grain",
+        "food",
+        "protein_products"
+      ],
+      "deficit": [
+        "agricultural_machinery",
+        "electronics",
+        "replacement_parts"
+      ]
+    },
+    {
+      "id": "new_houston",
+      "surplus": [
+        "machinery",
+        "ship_modules",
+        "structural_components"
+      ],
+      "deficit": [
+        "grain",
+        "metals",
+        "ceramics"
+      ]
+    },
+    {
+      "id": "iron_gate",
+      "surplus": [
+        "structural_materials",
+        "structural_components",
+        "ship_modules"
+      ],
+      "deficit": [
+        "food",
+        "electronics",
+        "consumer_goods"
+      ]
+    },
+    {
+      "id": "bradbury",
+      "surplus": [
+        "scientific_instruments",
+        "precision_equipment",
+        "sensors"
+      ],
+      "deficit": [
+        "food",
+        "structural_materials"
+      ]
+    },
+    {
+      "id": "port_meridian",
+      "surplus": [
+        "services",
+        "redistributed_goods"
+      ],
+      "deficit": [
+        "food",
+        "metals",
+        "consumer_goods",
+        "replacement_parts"
+      ]
+    },
+    {
+      "id": "talos",
+      "surplus": [
+        "rare_minerals"
+      ],
+      "deficit": [
+        "food",
+        "habitation_modules",
+        "machinery",
+        "consumer_goods",
+        "medical_supplies"
+      ]
+    },
+    {
+      "id": "lastlight",
+      "surplus": [
+        "survey_data"
+      ],
+      "deficit": [
+        "food",
+        "replacement_parts",
+        "consumer_goods",
+        "medical_supplies"
+      ]
+    }
+  ]
+}
