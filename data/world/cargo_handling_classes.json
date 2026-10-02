@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "classes": [
+    {
+      "id": "ambient_general",
+      "requirements": [
+        "dry_storage"
+      ],
+      "inspection": "visual"
+    },
+    {
+      "id": "refrigerated",
+      "requirements": [
+        "powered_storage",
+        "temperature_log"
+      ],
+      "inspection": "temperature_record"
+    },
+    {
+      "id": "frozen",
+      "requirements": [
+        "low_temperature_storage",
+        "temperature_log"
+      ],
+      "inspection": "temperature_record"
+    },
+    {
+      "id": "fragile",
+      "requirements": [
+        "shock_monitor",
+        "securement"
+      ],
+      "inspection": "shock_record"
+    },
+    {
+      "id": "hazardous",
+      "requirements": [
+        "segregation",
+        "declaration",
+        "trained_handler"
+      ],
+      "inspection": "hazard_document"
+    },
+    {
+      "id": "secure",
+      "requirements": [
+        "seal",
+        "controlled_access",
+        "custody_log"
+      ],
+      "inspection": "seal_and_custody"
+    },
+    {
+      "id": "biological",
+      "requirements": [
+        "biosecurity",
+        "temperature_or_environment"
+      ],
+      "inspection": "certificate_and_condition"
+    },
+    {
+      "id": "oversize",
+      "requirements": [
+        "route_clearance",
+        "heavy_handling",
+        "custom_securement"
+      ],
+      "inspection": "load_plan"
+    }
+  ]
+}
