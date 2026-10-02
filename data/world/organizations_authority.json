@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "identity_authority": true,
+  "organization_classes": [
+    "government",
+    "standards",
+    "manufacturer",
+    "carrier",
+    "insurer",
+    "lender",
+    "cooperative",
+    "research",
+    "utility",
+    "logistics",
+    "retail",
+    "service"
+  ],
+  "organizations": [
+    {
+      "id": "concord_standards_bureau",
+      "name": "Concord Standards Bureau",
+      "class": "standards",
+      "home_system_id": "concord"
+    },
+    {
+      "id": "roosevelt_independent_yards_coop",
+      "name": "Roosevelt Independent Yards Cooperative",
+      "class": "cooperative",
+      "home_system_id": "new_houston"
+    },
+    {
+      "id": "kesh_heavy_systems",
+      "name": "Kesh Heavy Systems",
+      "class": "manufacturer",
+      "home_system_id": "keshar"
+    },
+    {
+      "id": "ilyan_vector_works",
+      "name": "Ilyan Vector Works",
+      "class": "manufacturer",
+      "home_system_id": "ilos"
+    },
+    {
+      "id": "vey_closed_cycle",
+      "name": "Vey Closed Cycle",
+      "class": "manufacturer",
+      "home_system_id": "veyara"
+    },
+    {
+      "id": "orun_thermal_collective",
+      "name": "Orun Thermal Collective",
+      "class": "manufacturer",
+      "home_system_id": "orun"
+    },
+    {
+      "id": "meridian_recovery_salvage",
+      "name": "Meridian Recovery & Salvage",
+      "class": "service",
+      "home_system_id": "port_meridian"
+    },
+    {
+      "id": "lastlight_survey_office",
+      "name": "Lastlight Survey Office",
+      "class": "government",
+      "home_system_id": "lastlight"
+    },
+    {
+      "id": "hesperus_producers_exchange",
+      "name": "Hesperus Producers Exchange",
+      "class": "cooperative",
+      "home_system_id": "hesperus"
+    },
+    {
+      "id": "bradbury_institute_consortium",
+      "name": "Bradbury Institute Consortium",
+      "class": "research",
+      "home_system_id": "bradbury"
+    },
+    {
+      "id": "concord_interstellar_freight",
+      "name": "Concord Interstellar Freight",
+      "class": "carrier",
+      "home_system_id": "concord"
+    },
+    {
+      "id": "stonehaul",
+      "name": "Stonehaul",
+      "class": "carrier",
+      "home_system_id": "keshar"
+    },
+    {
+      "id": "bluewater_logistics",
+      "name": "Bluewater Logistics",
+      "class": "carrier",
+      "home_system_id": "veyara"
+    },
+    {
+      "id": "meridian_outbound",
+      "name": "Meridian Outbound",
+      "class": "carrier",
+      "home_system_id": "port_meridian"
+    },
+    {
+      "id": "redline_independent_cooperative",
+      "name": "Redline Independent Cooperative",
+      "class": "carrier",
+      "home_system_id": "concord"
+    },
+    {
+      "id": "concord_underwriters",
+      "name": "Concord Underwriters Exchange",
+      "class": "insurer",
+      "home_system_id": "concord"
+    },
+    {
+      "id": "outer_reach_assurance",
+      "name": "Outer Reach Assurance",
+      "class": "insurer",
+      "home_system_id": "port_meridian"
+    },
+    {
+      "id": "roosevelt_equipment_credit",
+      "name": "Roosevelt Equipment Credit",
+      "class": "lender",
+      "home_system_id": "new_houston"
+    },
+    {
+      "id": "concord_commercial_bank",
+      "name": "Concord Commercial Bank",
+      "class": "lender",
+      "home_system_id": "concord"
+    },
+    {
+      "id": "meridian_captains_credit",
+      "name": "Meridian Captains Credit Union",
+      "class": "lender",
+      "home_system_id": "port_meridian"
+    }
+  ]
+}
