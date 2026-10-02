@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "stock_classes": [
+    {
+      "id": "critical",
+      "examples": [
+        "life_support_filters",
+        "medical_supplies",
+        "reactor_controls"
+      ],
+      "target_days_core": 45,
+      "target_days_developed": 30,
+      "target_days_outer": 45,
+      "target_days_frontier": 75
+    },
+    {
+      "id": "food_fresh",
+      "examples": [
+        "produce",
+        "fresh_protein"
+      ],
+      "target_days_core": 7,
+      "target_days_developed": 10,
+      "target_days_outer": 12,
+      "target_days_frontier": 18
+    },
+    {
+      "id": "food_stable",
+      "examples": [
+        "grain",
+        "preserved_food"
+      ],
+      "target_days_core": 30,
+      "target_days_developed": 35,
+      "target_days_outer": 50,
+      "target_days_frontier": 90
+    },
+    {
+      "id": "industrial_common",
+      "examples": [
+        "fasteners",
+        "hoses",
+        "bearings",
+        "wire",
+        "sealant"
+      ],
+      "target_days_core": 35,
+      "target_days_developed": 45,
+      "target_days_outer": 60,
+      "target_days_frontier": 100
+    },
+    {
+      "id": "consumer",
+      "examples": [
+        "clothing",
+        "appliances",
+        "electronics"
+      ],
+      "target_days_core": 25,
+      "target_days_developed": 30,
+      "target_days_outer": 45,
+      "target_days_frontier": 60
+    }
+  ],
+  "reorder_rule": "Demand forecasts, lead time, market price and safety stock generate replenishment demand. Shortages emerge when stock falls below local targets."
+}
