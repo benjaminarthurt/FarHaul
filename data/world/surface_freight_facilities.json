@@ -1,0 +1,222 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "facilities": [
+    {
+      "id": "atlantic_inland_port",
+      "body_id": "earth",
+      "name": "Atlantic Inland Port",
+      "type": "intermodal",
+      "modes": [
+        "rail",
+        "road",
+        "orbital_feeder"
+      ],
+      "nominal_daily_scu": 180000
+    },
+    {
+      "id": "pacific_freight_complex",
+      "body_id": "earth",
+      "name": "Pacific Freight Complex",
+      "type": "intermodal",
+      "modes": [
+        "rail",
+        "road",
+        "sea",
+        "air"
+      ],
+      "nominal_daily_scu": 240000
+    },
+    {
+      "id": "copernicus_cargo_terminal",
+      "body_id": "luna",
+      "name": "Copernicus Cargo Terminal",
+      "type": "sealed_terminal",
+      "modes": [
+        "rail",
+        "surface",
+        "orbital"
+      ],
+      "nominal_daily_scu": 54000
+    },
+    {
+      "id": "mars_north_intermodal",
+      "body_id": "mars",
+      "name": "Mars North Intermodal",
+      "type": "sealed_terminal",
+      "modes": [
+        "rail",
+        "road",
+        "orbital"
+      ],
+      "nominal_daily_scu": 76000
+    },
+    {
+      "id": "old_load_terminal",
+      "body_id": "keshar_prime",
+      "name": "Old Load Terminal",
+      "type": "heavy_intermodal",
+      "modes": [
+        "rail",
+        "road",
+        "marine"
+      ],
+      "nominal_daily_scu": 110000
+    },
+    {
+      "id": "hanging_works_freight",
+      "body_id": "ilos_prime",
+      "name": "Hanging Works Freight Exchange",
+      "type": "vertical_terminal",
+      "modes": [
+        "vertical_rail",
+        "air",
+        "orbital"
+      ],
+      "nominal_daily_scu": 68000
+    },
+    {
+      "id": "nine_currents_freight",
+      "body_id": "veyara_prime",
+      "name": "Nine Currents Freight Basin",
+      "type": "marine_intermodal",
+      "modes": [
+        "marine",
+        "subsurface",
+        "orbital"
+      ],
+      "nominal_daily_scu": 82000
+    },
+    {
+      "id": "warm_junction_freight",
+      "body_id": "orun_prime",
+      "name": "Warm Junction Freight Hall",
+      "type": "subsurface_terminal",
+      "modes": [
+        "tunnel",
+        "cargo_crawl",
+        "orbital"
+      ],
+      "nominal_daily_scu": 72000
+    },
+    {
+      "id": "concord_freight_basin_terminal",
+      "body_id": "concord_prime",
+      "name": "Concord Freight Basin Terminal",
+      "type": "intermodal",
+      "modes": [
+        "rail",
+        "road",
+        "air",
+        "orbital"
+      ],
+      "nominal_daily_scu": 160000
+    },
+    {
+      "id": "new_houston_railport",
+      "body_id": "roosevelt",
+      "name": "New Houston Railport",
+      "type": "industrial_intermodal",
+      "modes": [
+        "rail",
+        "road",
+        "surface_launch"
+      ],
+      "nominal_daily_scu": 94000
+    },
+    {
+      "id": "greenline_collection_terminal",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Collection Terminal",
+      "type": "agricultural",
+      "modes": [
+        "rail",
+        "road",
+        "cold_chain"
+      ],
+      "nominal_daily_scu": 125000
+    },
+    {
+      "id": "keelward_heavy_terminal",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward Heavy Terminal",
+      "type": "heavy_intermodal",
+      "modes": [
+        "rail",
+        "heavy_road",
+        "orbital_lift"
+      ],
+      "nominal_daily_scu": 145000
+    },
+    {
+      "id": "lowell_secure_terminal",
+      "body_id": "bradbury_prime",
+      "name": "Lowell Secure Terminal",
+      "type": "precision",
+      "modes": [
+        "rail",
+        "air",
+        "secure_road"
+      ],
+      "nominal_daily_scu": 36000
+    },
+    {
+      "id": "crosswater_freight_basin",
+      "body_id": "pelagos_prime",
+      "name": "Crosswater Freight Basin",
+      "type": "marine",
+      "modes": [
+        "marine",
+        "ferry",
+        "orbital"
+      ],
+      "nominal_daily_scu": 41000
+    },
+    {
+      "id": "anchor_seven_cargo",
+      "body_id": "tidemark_prime",
+      "name": "Anchor Seven Cargo Deck",
+      "type": "platform",
+      "modes": [
+        "platform",
+        "marine",
+        "orbital"
+      ],
+      "nominal_daily_scu": 19000
+    },
+    {
+      "id": "deepworks_lift_terminal",
+      "body_id": "foundry_prime",
+      "name": "Deepworks Lift Terminal",
+      "type": "subsurface",
+      "modes": [
+        "tunnel",
+        "mass_lift"
+      ],
+      "nominal_daily_scu": 56000
+    },
+    {
+      "id": "hopewell_freight_yard",
+      "body_id": "talos_prime",
+      "name": "Hopewell Freight Yard",
+      "type": "frontier",
+      "modes": [
+        "haul_road",
+        "surface_pad"
+      ],
+      "nominal_daily_scu": 17000
+    },
+    {
+      "id": "beacon_outbound_yard",
+      "body_id": "lastlight_settlement",
+      "name": "Beacon Outbound Yard",
+      "type": "frontier",
+      "modes": [
+        "road",
+        "crawler",
+        "orbital"
+      ],
+      "nominal_daily_scu": 8000
+    }
+  ]
+}
