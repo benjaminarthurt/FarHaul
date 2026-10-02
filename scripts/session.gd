@@ -15,9 +15,9 @@ static var skip_intro := false  ## set when returning to the title so the splash
 static func default_profile() -> Dictionary:
 	return {
 		"name": "Captain",
-		"race": "terran",
+		"race": "human",
 		"difficulty": "normal",
-		"world": "calder",
+		"world": "roosevelt_independent_yards",
 		"ship_name": "",
 		"location": "dock",  # "dock" or "shipyard"
 		"seen_welcome": false,
@@ -30,8 +30,12 @@ static func start_funds() -> int:
 	return int(Worlds.difficulty(profile.difficulty).funds)
 
 
+static func yard() -> Dictionary:
+	return Worlds.yard(String(profile.world))
+
+
 static func world() -> Dictionary:
-	return Worlds.world(profile.world)
+	return yard()
 
 
 static func ship_label() -> String:

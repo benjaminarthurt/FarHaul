@@ -1,6 +1,6 @@
 class_name NewGamePanel
 extends PanelContainer
-## Choices for a new game: name, race, difficulty, starting world and which slot to save in.
+## Choices for a new game: name, species, difficulty, starting yard and which slot to save in.
 
 signal begin(slot: int, player_name: String, race: String, difficulty: String, world_id: String)
 signal back
@@ -15,6 +15,7 @@ var world_note: Label
 var slot_buttons: Array[Button] = []
 var slot_note: Label
 var begin_btn: Button
+var starting_yards: Array = []
 
 
 func _init() -> void:
@@ -34,7 +35,7 @@ func _init() -> void:
 	name_edit.text_changed.connect(func(_t: String) -> void: _refresh())
 	col.add_child(name_edit)
 
-	col.add_child(Brand.heading("RACE"))
+	col.add_child(Brand.heading("SPECIES"))
 	var rrow := HBoxContainer.new()
 	rrow.add_theme_constant_override("separation", 14)
 	col.add_child(rrow)
@@ -63,20 +64,22 @@ func _init() -> void:
 	diff_note = Brand.note("")
 	col.add_child(diff_note)
 
-	col.add_child(Brand.heading("STARTING WORLD"))
+	col.add_child(Brand.heading("STARTING YARD"))
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 6)
 	grid.add_theme_constant_override("v_separation", 6)
 	col.add_child(grid)
 	var wgroup := ButtonGroup.new()
-	for w in Worlds.WORLDS:
-		var b := Brand.toggle(w.name, wgroup)
+	starting_yards = Worlds.starting_yards()
+	for y in starting_yards:
+		var b := Brand.toggle(y.name, wgroup)
 		b.custom_minimum_size = Vector2(250, 0)
 		b.pressed.connect(_refresh)
 		grid.add_child(b)
 		world_buttons.append(b)
-	world_buttons[0].button_pressed = true
+	if not world_buttons.is_empty():
+		world_buttons[0].button_pressed = true
 	world_note = Brand.note("")
 	world_note.custom_minimum_size = Vector2(500, 0)
 	col.add_child(world_note)
@@ -134,8 +137,20 @@ func selected_slot() -> int:
 func _refresh() -> void:
 	race_note.text = Worlds.RACES[race_pick.selected].blurb
 	diff_note.text = Worlds.DIFFICULTIES[_index(diff_buttons)].blurb
-	var w: Dictionary = Worlds.WORLDS[_index(world_buttons)]
-	world_note.text = "%s. You start at %s, a %s.\n%s" % [w.name, w.yard_name, String(w.yard_type).to_lower(), w.blurb]
+	if starting_yards.is_empty():
+		world_note.text = "No starting yards are defined in data/world/yards.json."
+		begin_btn.disabled = true
+		return
+	var y: Dictionary = starting_yards[_index(world_buttons)]
+	var tier := Worlds.yard_tier(String(y.tier))
+	var service: Dictionary = y.get("service", {})
+	world_note.text = "%s — %s / %s. %s. Largest build: %s. Build %.0f%%, repair %.0f%% of baseline.\n%s" % [
+		y.name, y.system_id, y.destination_id, tier.get("name", y.tier),
+		String(y.largest_hull_class).replace("_", " "),
+		float(service.get("build_price_multiplier", 1.0)) * 100.0,
+		float(service.get("repair_price_multiplier", 1.0)) * 100.0,
+		y.narrative,
+	]
 	var s := selected_slot()
 	if SaveSlots.exists(s):
 		var p := SaveSlots.profile(s)
@@ -148,5 +163,7 @@ func _refresh() -> void:
 
 
 func _on_begin() -> void:
+	if starting_yards.is_empty():
+		return
 	begin.emit(selected_slot(), name_edit.text.strip_edges(), Worlds.RACES[race_pick.selected].id,
-		Worlds.DIFFICULTIES[_index(diff_buttons)].id, Worlds.WORLDS[_index(world_buttons)].id)
+		Worlds.DIFFICULTIES[_index(diff_buttons)].id, starting_yards[_index(world_buttons)].id)

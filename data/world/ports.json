@@ -1,0 +1,393 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "service_flags": [
+    "fuel",
+    "repair",
+    "freight_broker",
+    "market",
+    "customs",
+    "lodging",
+    "food",
+    "salvage",
+    "shipyard",
+    "passenger_terminal",
+    "survey_office"
+  ],
+  "ports": [
+    {
+      "id": "earth_orbital_freight",
+      "name": "Earth Orbital Freight Terminal",
+      "system_id": "sol",
+      "destination_id": "earth",
+      "type": "orbital_freight_terminal",
+      "max_hull_class": "heavy_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "lodging",
+        "food",
+        "passenger_terminal"
+      ],
+      "docking_fee": 900,
+      "cargo_handling_multiplier": 1.15,
+      "traffic": "very_high"
+    },
+    {
+      "id": "keshar_highport",
+      "name": "Keshar Highport",
+      "system_id": "keshar",
+      "destination_id": "keshar_prime",
+      "type": "orbital_port",
+      "max_hull_class": "heavy_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "food",
+        "shipyard"
+      ],
+      "docking_fee": 520,
+      "cargo_handling_multiplier": 0.95,
+      "traffic": "high"
+    },
+    {
+      "id": "ilos_lattice_port",
+      "name": "Ilos Lattice Port",
+      "system_id": "ilos",
+      "destination_id": "ilos_prime",
+      "type": "orbital_port",
+      "max_hull_class": "large_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "passenger_terminal",
+        "shipyard"
+      ],
+      "docking_fee": 610,
+      "cargo_handling_multiplier": 1,
+      "traffic": "high"
+    },
+    {
+      "id": "veyara_bluewater_orbital",
+      "name": "Bluewater Orbital",
+      "system_id": "veyara",
+      "destination_id": "veyara_prime",
+      "type": "orbital_port",
+      "max_hull_class": "large_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "passenger_terminal",
+        "shipyard"
+      ],
+      "docking_fee": 570,
+      "cargo_handling_multiplier": 1.05,
+      "traffic": "high"
+    },
+    {
+      "id": "orun_transfer_crown",
+      "name": "Orun Transfer Crown",
+      "system_id": "orun",
+      "destination_id": "orun_prime",
+      "type": "orbital_transfer_port",
+      "max_hull_class": "large_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "shipyard"
+      ],
+      "docking_fee": 430,
+      "cargo_handling_multiplier": 0.9,
+      "traffic": "high"
+    },
+    {
+      "id": "concord_central_exchange",
+      "name": "Concord Central Exchange",
+      "system_id": "concord",
+      "destination_id": "concord_prime",
+      "type": "orbital_trade_port",
+      "max_hull_class": "heavy_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "lodging",
+        "food",
+        "passenger_terminal",
+        "shipyard"
+      ],
+      "docking_fee": 760,
+      "cargo_handling_multiplier": 1,
+      "traffic": "very_high"
+    },
+    {
+      "id": "roosevelt_orbital_freight",
+      "name": "Roosevelt Orbital Freight Terminal",
+      "system_id": "new_houston",
+      "destination_id": "roosevelt",
+      "type": "orbital_freight_terminal",
+      "max_hull_class": "heavy_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "shipyard",
+        "food"
+      ],
+      "docking_fee": 390,
+      "cargo_handling_multiplier": 0.88,
+      "traffic": "high"
+    },
+    {
+      "id": "new_houston_surface_port",
+      "name": "New Houston Surface Port",
+      "system_id": "new_houston",
+      "destination_id": "roosevelt",
+      "type": "surface_spaceport",
+      "max_hull_class": "medium_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "lodging",
+        "food"
+      ],
+      "docking_fee": 240,
+      "cargo_handling_multiplier": 0.92,
+      "traffic": "high"
+    },
+    {
+      "id": "hesperus_agricultural_terminal",
+      "name": "Hesperus Agricultural Terminal",
+      "system_id": "hesperus",
+      "destination_id": "hesperus_prime",
+      "type": "surface_freight_port",
+      "max_hull_class": "large_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "food"
+      ],
+      "docking_fee": 210,
+      "cargo_handling_multiplier": 0.72,
+      "traffic": "high"
+    },
+    {
+      "id": "iron_gate_grand_terminal",
+      "name": "Iron Gate Grand Terminal",
+      "system_id": "iron_gate",
+      "destination_id": "iron_gate_prime",
+      "type": "orbital_industrial_port",
+      "max_hull_class": "superheavy_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "shipyard",
+        "salvage"
+      ],
+      "docking_fee": 680,
+      "cargo_handling_multiplier": 0.8,
+      "traffic": "high"
+    },
+    {
+      "id": "carver_habitat_exchange",
+      "name": "Carver Habitat Exchange",
+      "system_id": "carver",
+      "destination_id": "carver_habitats",
+      "type": "orbital_industrial_port",
+      "max_hull_class": "heavy_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "food",
+        "salvage"
+      ],
+      "docking_fee": 300,
+      "cargo_handling_multiplier": 0.78,
+      "traffic": "medium"
+    },
+    {
+      "id": "bradbury_research_port",
+      "name": "Bradbury Research Port",
+      "system_id": "bradbury",
+      "destination_id": "bradbury_prime",
+      "type": "orbital_port",
+      "max_hull_class": "large_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "passenger_terminal"
+      ],
+      "docking_fee": 540,
+      "cargo_handling_multiplier": 1.25,
+      "traffic": "medium"
+    },
+    {
+      "id": "pelagos_highport",
+      "name": "Pelagos Highport",
+      "system_id": "pelagos",
+      "destination_id": "pelagos_prime",
+      "type": "orbital_port",
+      "max_hull_class": "large_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "passenger_terminal"
+      ],
+      "docking_fee": 420,
+      "cargo_handling_multiplier": 1.08,
+      "traffic": "medium"
+    },
+    {
+      "id": "tidemark_platform_exchange",
+      "name": "Tidemark Platform Exchange",
+      "system_id": "tidemark",
+      "destination_id": "tidemark_prime",
+      "type": "floating_spaceport",
+      "max_hull_class": "medium_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market"
+      ],
+      "docking_fee": 350,
+      "cargo_handling_multiplier": 1.35,
+      "traffic": "low"
+    },
+    {
+      "id": "foundry_lift_terminal",
+      "name": "Foundry Lift Terminal",
+      "system_id": "foundry",
+      "destination_id": "foundry_prime",
+      "type": "surface_transfer_port",
+      "max_hull_class": "large_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs"
+      ],
+      "docking_fee": 320,
+      "cargo_handling_multiplier": 0.9,
+      "traffic": "medium"
+    },
+    {
+      "id": "port_meridian_main",
+      "name": "Port Meridian Main Freight Ring",
+      "system_id": "port_meridian",
+      "destination_id": "meridian_station",
+      "type": "orbital_trade_hub",
+      "max_hull_class": "heavy_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "customs",
+        "lodging",
+        "food",
+        "salvage",
+        "shipyard",
+        "passenger_terminal",
+        "survey_office"
+      ],
+      "docking_fee": 980,
+      "cargo_handling_multiplier": 1.3,
+      "traffic": "very_high"
+    },
+    {
+      "id": "talos_hopewell_field",
+      "name": "Hopewell Field",
+      "system_id": "talos",
+      "destination_id": "talos_prime",
+      "type": "surface_frontier_port",
+      "max_hull_class": "medium_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "food"
+      ],
+      "docking_fee": 90,
+      "cargo_handling_multiplier": 1.55,
+      "traffic": "medium"
+    },
+    {
+      "id": "waystation_main_dock",
+      "name": "Waystation Main Dock",
+      "system_id": "waystation",
+      "destination_id": "waystation_habitat",
+      "type": "orbital_frontier_port",
+      "max_hull_class": "medium_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "lodging",
+        "food",
+        "salvage"
+      ],
+      "docking_fee": 120,
+      "cargo_handling_multiplier": 1.25,
+      "traffic": "low"
+    },
+    {
+      "id": "lastlight_orbital",
+      "name": "Lastlight Orbital",
+      "system_id": "lastlight",
+      "destination_id": "lastlight_orbital",
+      "type": "orbital_frontier_port",
+      "max_hull_class": "large_freighter",
+      "services": [
+        "fuel",
+        "repair",
+        "freight_broker",
+        "market",
+        "survey_office",
+        "food"
+      ],
+      "docking_fee": 160,
+      "cargo_handling_multiplier": 1.45,
+      "traffic": "low"
+    }
+  ]
+}

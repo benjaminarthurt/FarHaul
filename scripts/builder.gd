@@ -325,7 +325,7 @@ func _build_top_bar(ui: Control) -> void:
 	yard_label.modulate = Color(0.7, 0.8, 1.0)
 	yard_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var w := Session.world()
-	yard_label.text = "%s  ·  %s  ·  %s" % [w.yard_name, w.yard_type, w.name]
+	yard_label.text = "%s  ·  %s  ·  %s" % [w.name, Worlds.yard_tier(String(w.tier)).name, String(w.system_id).replace("_", " ").capitalize()]
 	tbox.add_child(yard_label)
 	top_label = Label.new()
 	top_label.add_theme_font_size_override("font_size", 16)
