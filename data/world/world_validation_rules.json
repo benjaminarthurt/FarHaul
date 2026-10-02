@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "checks": [
+    {
+      "id": "population_reconciliation",
+      "severity": "error",
+      "rule": "Named settlement populations must not exceed body/system population; aggregate remainder must be nonnegative."
+    },
+    {
+      "id": "food_path",
+      "severity": "error",
+      "rule": "Every inhabited population requires local food production, imports, or both."
+    },
+    {
+      "id": "water_air_path",
+      "severity": "error",
+      "rule": "Sealed or hostile habitats require explicit water/air supply and recovery."
+    },
+    {
+      "id": "employment_balance",
+      "severity": "warning",
+      "rule": "Employment plus commuters should remain plausible relative to working-age population."
+    },
+    {
+      "id": "school_capacity",
+      "severity": "warning",
+      "rule": "School seats should scale with dependent/student population."
+    },
+    {
+      "id": "medical_capacity",
+      "severity": "warning",
+      "rule": "Remote locations need local stabilization capacity or an explicit referral path."
+    },
+    {
+      "id": "waste_path",
+      "severity": "error",
+      "rule": "Material consumption requires recovery, treatment, storage or export."
+    },
+    {
+      "id": "industrial_inputs",
+      "severity": "error",
+      "rule": "Named factories require plausible supply paths for major inputs."
+    },
+    {
+      "id": "freight_capacity",
+      "severity": "warning",
+      "rule": "External import/export demand should fit port, terminal and warehouse throughput over time."
+    },
+    {
+      "id": "budget_scale",
+      "severity": "warning",
+      "rule": "Municipal services and infrastructure should be supportable by stated revenues/transfers/debt."
+    },
+    {
+      "id": "frontier_redundancy",
+      "severity": "warning",
+      "rule": "Single-point infrastructure failures should be explicit where redundancy is absent."
+    },
+    {
+      "id": "data_duality",
+      "severity": "error",
+      "rule": "Gameplay-affecting lore must have structured representation; structured rules should have narrative explanation where player-facing."
+    }
+  ]
+}
