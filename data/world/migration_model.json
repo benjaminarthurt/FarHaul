@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "drivers": [
+    {
+      "id": "employment",
+      "weight": 0.28
+    },
+    {
+      "id": "housing_cost",
+      "weight": 0.18
+    },
+    {
+      "id": "service_quality",
+      "weight": 0.12
+    },
+    {
+      "id": "family_network",
+      "weight": 0.12
+    },
+    {
+      "id": "education",
+      "weight": 0.08
+    },
+    {
+      "id": "safety",
+      "weight": 0.08
+    },
+    {
+      "id": "environmental_fit",
+      "weight": 0.07
+    },
+    {
+      "id": "transport_access",
+      "weight": 0.07
+    }
+  ],
+  "flows": [
+    {
+      "id": "talos_boom_inmigration",
+      "origin_classes": [
+        "outer_industrial",
+        "core"
+      ],
+      "destination": "talos",
+      "profile": "working_age_skilled_and_service",
+      "volatility": "high"
+    },
+    {
+      "id": "lastlight_rotation",
+      "origin_classes": [
+        "port_meridian",
+        "bradbury"
+      ],
+      "destination": "lastlight",
+      "profile": "survey_technical_fixed_term",
+      "volatility": "medium"
+    },
+    {
+      "id": "hesperus_seasonal",
+      "origin_classes": [
+        "regional"
+      ],
+      "destination": "hesperus",
+      "profile": "seasonal_processing_transport",
+      "volatility": "seasonal"
+    }
+  ]
+}
