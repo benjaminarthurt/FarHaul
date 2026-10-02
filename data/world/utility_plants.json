@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "plants": [
+    {
+      "id": "roosevelt_north_heat",
+      "body_id": "roosevelt",
+      "name": "North District Heat & Power",
+      "type": "power_heat",
+      "capacity_gw": 8.4,
+      "employees": 2900,
+      "critical_inputs": [
+        "control_electronics",
+        "pump_parts",
+        "treatment_chemicals"
+      ]
+    },
+    {
+      "id": "concord_west_grid",
+      "body_id": "concord_prime",
+      "name": "West Grid Station",
+      "type": "power",
+      "capacity_gw": 19.2,
+      "employees": 4100,
+      "critical_inputs": [
+        "power_electronics",
+        "coolant",
+        "switchgear"
+      ]
+    },
+    {
+      "id": "nine_currents_waterworks",
+      "body_id": "veyara_prime",
+      "name": "Nine Currents Waterworks",
+      "type": "water_environment",
+      "capacity_ml_day": 6800,
+      "employees": 7300,
+      "critical_inputs": [
+        "membranes",
+        "biofilters",
+        "pump_parts"
+      ]
+    },
+    {
+      "id": "keelward_process_water",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward Process Water Works",
+      "type": "industrial_water",
+      "capacity_ml_day": 3100,
+      "employees": 2600,
+      "critical_inputs": [
+        "filters",
+        "chemicals",
+        "pump_parts"
+      ]
+    },
+    {
+      "id": "hopewell_water_one",
+      "body_id": "talos_prime",
+      "name": "Hopewell Water Plant One",
+      "type": "water",
+      "capacity_ml_day": 11.4,
+      "employees": 64,
+      "critical_inputs": [
+        "filters",
+        "membranes",
+        "pump_parts"
+      ],
+      "redundancy": "limited"
+    },
+    {
+      "id": "hopewell_power_yard",
+      "body_id": "talos_prime",
+      "name": "Hopewell Power Yard",
+      "type": "power",
+      "capacity_gw": 0.26,
+      "employees": 91,
+      "critical_inputs": [
+        "reactor_parts",
+        "power_electronics",
+        "coolant"
+      ],
+      "redundancy": "limited"
+    },
+    {
+      "id": "beacon_heatplant",
+      "body_id": "lastlight_settlement",
+      "name": "Beacon Heatplant",
+      "type": "power_heat",
+      "capacity_gw": 0.08,
+      "employees": 28,
+      "critical_inputs": [
+        "pump_parts",
+        "control_electronics",
+        "filters"
+      ],
+      "redundancy": "high_for_scale"
+    }
+  ]
+}
