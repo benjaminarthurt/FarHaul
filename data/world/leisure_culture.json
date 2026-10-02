@@ -1,0 +1,121 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "categories": [
+    "restaurants",
+    "bars",
+    "cafes",
+    "spectator_sports",
+    "participation_sports",
+    "music",
+    "theater",
+    "games",
+    "parks",
+    "water_recreation",
+    "museums",
+    "religious_and_civic_gathering",
+    "clubs",
+    "maker_spaces"
+  ],
+  "world_flavor": [
+    {
+      "id": "earth",
+      "examples": [
+        "regional sports leagues",
+        "historic districts",
+        "ocean recreation",
+        "mass entertainment"
+      ]
+    },
+    {
+      "id": "keshar_prime",
+      "examples": [
+        "strength sports",
+        "maintenance competitions",
+        "communal meals",
+        "stormwatch halls"
+      ]
+    },
+    {
+      "id": "ilos_prime",
+      "examples": [
+        "vertical racing",
+        "gliding",
+        "precision games",
+        "elevated public gardens"
+      ]
+    },
+    {
+      "id": "veyara_prime",
+      "examples": [
+        "open-water sport",
+        "current festivals",
+        "submerged performance",
+        "floating markets"
+      ]
+    },
+    {
+      "id": "orun_prime",
+      "examples": [
+        "junction feasts",
+        "maker halls",
+        "thermal baths",
+        "communal games"
+      ]
+    },
+    {
+      "id": "concord_prime",
+      "examples": [
+        "multispecies leagues",
+        "food districts",
+        "trade museums",
+        "travel entertainment"
+      ]
+    },
+    {
+      "id": "roosevelt",
+      "examples": [
+        "yard leagues",
+        "truck stops",
+        "winter sport",
+        "maker clubs"
+      ]
+    },
+    {
+      "id": "hesperus_prime",
+      "examples": [
+        "harvest festivals",
+        "local racing",
+        "farm markets",
+        "community halls"
+      ]
+    },
+    {
+      "id": "iron_gate_prime",
+      "examples": [
+        "yard competitions",
+        "heavy sport",
+        "worker clubs",
+        "industrial museums"
+      ]
+    },
+    {
+      "id": "talos_prime",
+      "examples": [
+        "claim-house bars",
+        "improvised leagues",
+        "equipment races",
+        "container markets"
+      ]
+    },
+    {
+      "id": "lastlight_settlement",
+      "examples": [
+        "survey nights",
+        "small league sports",
+        "crew storytelling",
+        "outbound board gatherings"
+      ]
+    }
+  ]
+}
