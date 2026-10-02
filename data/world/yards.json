@@ -1,0 +1,379 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "yard_tiers": {
+    "repair_only": {
+      "name": "Repair only",
+      "build_capability": false
+    },
+    "standard_builds": {
+      "name": "Standard builds",
+      "build_capability": true
+    },
+    "heavy_builds": {
+      "name": "Heavy builds",
+      "build_capability": true
+    }
+  },
+  "yards": [
+    {
+      "id": "sol_orbital_yards",
+      "name": "Sol Commercial Orbital Yards",
+      "system_id": "sol",
+      "destination_id": "earth",
+      "location_type": "orbital",
+      "tier": "standard_builds",
+      "largest_hull_class": "large_freighter",
+      "parts_catalogue_tags": [
+        "human",
+        "commercial",
+        "general",
+        "precision"
+      ],
+      "service": {
+        "build_price_multiplier": 1.15,
+        "refit_price_multiplier": 1.2,
+        "repair_price_multiplier": 1.25,
+        "build_wait_days": 8,
+        "refit_wait_days": 3,
+        "repair_wait_days": 1
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "large_freighter",
+        "daily_storage_fee": 180
+      },
+      "starting_option": false,
+      "narrative": "Dense, regulated and comprehensive yards serving Earth's orbital freight economy."
+    },
+    {
+      "id": "keshar_heavy_orbital",
+      "name": "Keshar Heavy Orbital Works",
+      "system_id": "keshar",
+      "destination_id": "keshar_prime",
+      "location_type": "orbital",
+      "tier": "heavy_builds",
+      "largest_hull_class": "heavy_freighter",
+      "parts_catalogue_tags": [
+        "kesh",
+        "heavy",
+        "durable",
+        "industrial"
+      ],
+      "service": {
+        "build_price_multiplier": 1.08,
+        "refit_price_multiplier": 1.05,
+        "repair_price_multiplier": 0.95,
+        "build_wait_days": 10,
+        "refit_wait_days": 4,
+        "repair_wait_days": 2
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "heavy_freighter",
+        "daily_storage_fee": 120
+      },
+      "starting_option": false,
+      "narrative": "Conservative Kesh construction, heavy components and unusually capable structural repair."
+    },
+    {
+      "id": "ilos_orbital_fabrication",
+      "name": "Ilos Orbital Fabrication Ring",
+      "system_id": "ilos",
+      "destination_id": "ilos_prime",
+      "location_type": "orbital",
+      "tier": "standard_builds",
+      "largest_hull_class": "large_freighter",
+      "parts_catalogue_tags": [
+        "ilyan",
+        "lightweight",
+        "propulsion",
+        "precision"
+      ],
+      "service": {
+        "build_price_multiplier": 1.18,
+        "refit_price_multiplier": 1.12,
+        "repair_price_multiplier": 1.1,
+        "build_wait_days": 7,
+        "refit_wait_days": 3,
+        "repair_wait_days": 1
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "medium_freighter",
+        "daily_storage_fee": 150
+      },
+      "starting_option": false,
+      "narrative": "Mass-efficient construction and premium propulsion work above Ilos."
+    },
+    {
+      "id": "veyara_orbital_dockworks",
+      "name": "Veyara Orbital Dockworks",
+      "system_id": "veyara",
+      "destination_id": "veyara_prime",
+      "location_type": "orbital",
+      "tier": "standard_builds",
+      "largest_hull_class": "large_freighter",
+      "parts_catalogue_tags": [
+        "vey",
+        "life_support",
+        "environmental",
+        "biotech"
+      ],
+      "service": {
+        "build_price_multiplier": 1.12,
+        "refit_price_multiplier": 1.08,
+        "repair_price_multiplier": 1.05,
+        "build_wait_days": 8,
+        "refit_wait_days": 3,
+        "repair_wait_days": 1
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "large_freighter",
+        "daily_storage_fee": 140
+      },
+      "starting_option": false,
+      "narrative": "Specialist environmental and life-support integration with full commercial construction capability."
+    },
+    {
+      "id": "orun_subsurface_orbital_link",
+      "name": "Orun Transfer Yards",
+      "system_id": "orun",
+      "destination_id": "orun_prime",
+      "location_type": "orbital",
+      "tier": "standard_builds",
+      "largest_hull_class": "large_freighter",
+      "parts_catalogue_tags": [
+        "orun",
+        "thermal",
+        "compact",
+        "automation"
+      ],
+      "service": {
+        "build_price_multiplier": 1.02,
+        "refit_price_multiplier": 0.98,
+        "repair_price_multiplier": 0.95,
+        "build_wait_days": 9,
+        "refit_wait_days": 3,
+        "repair_wait_days": 1
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "large_freighter",
+        "daily_storage_fee": 100
+      },
+      "starting_option": false,
+      "narrative": "Compact orbital slips linked directly to Orun's subterranean industrial network."
+    },
+    {
+      "id": "concord_exchange_yards",
+      "name": "Concord Exchange Yards",
+      "system_id": "concord",
+      "destination_id": "concord_prime",
+      "location_type": "orbital",
+      "tier": "standard_builds",
+      "largest_hull_class": "large_freighter",
+      "parts_catalogue_tags": [
+        "multispecies",
+        "commercial",
+        "general",
+        "aftermarket"
+      ],
+      "service": {
+        "build_price_multiplier": 1.1,
+        "refit_price_multiplier": 1.08,
+        "repair_price_multiplier": 1.12,
+        "build_wait_days": 6,
+        "refit_wait_days": 2,
+        "repair_wait_days": 1
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "large_freighter",
+        "daily_storage_fee": 165
+      },
+      "starting_option": true,
+      "narrative": "The broadest ordinary commercial catalogue in known space and a natural start for an independent operator."
+    },
+    {
+      "id": "roosevelt_independent_yards",
+      "name": "Roosevelt Independent Yards",
+      "system_id": "new_houston",
+      "destination_id": "roosevelt",
+      "location_type": "orbital",
+      "tier": "standard_builds",
+      "largest_hull_class": "large_freighter",
+      "parts_catalogue_tags": [
+        "human",
+        "multispecies",
+        "commercial",
+        "modular",
+        "aftermarket"
+      ],
+      "service": {
+        "build_price_multiplier": 0.92,
+        "refit_price_multiplier": 0.9,
+        "repair_price_multiplier": 0.95,
+        "build_wait_days": 5,
+        "refit_wait_days": 2,
+        "repair_wait_days": 1
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "large_freighter",
+        "daily_storage_fee": 90
+      },
+      "starting_option": true,
+      "narrative": "Affordable modular commercial construction; the classic independent operator's shipyard."
+    },
+    {
+      "id": "iron_gate_grand_yards",
+      "name": "Iron Gate Grand Yards",
+      "system_id": "iron_gate",
+      "destination_id": "iron_gate_prime",
+      "location_type": "orbital",
+      "tier": "heavy_builds",
+      "largest_hull_class": "superheavy_freighter",
+      "parts_catalogue_tags": [
+        "kesh",
+        "heavy",
+        "capital_scale",
+        "industrial"
+      ],
+      "service": {
+        "build_price_multiplier": 1.05,
+        "refit_price_multiplier": 1,
+        "repair_price_multiplier": 0.98,
+        "build_wait_days": 16,
+        "refit_wait_days": 6,
+        "repair_wait_days": 2
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "superheavy_freighter",
+        "daily_storage_fee": 220
+      },
+      "starting_option": false,
+      "narrative": "Known for construction of enormous commercial hulls that smaller yards cannot accommodate."
+    },
+    {
+      "id": "carver_field_dock",
+      "name": "Carver Field Dock",
+      "system_id": "carver",
+      "destination_id": "carver_habitats",
+      "location_type": "orbital",
+      "tier": "repair_only",
+      "largest_hull_class": "medium_freighter",
+      "parts_catalogue_tags": [
+        "industrial",
+        "mining",
+        "field_repair"
+      ],
+      "service": {
+        "build_price_multiplier": 1,
+        "refit_price_multiplier": 1.2,
+        "repair_price_multiplier": 1.05,
+        "build_wait_days": 0,
+        "refit_wait_days": 4,
+        "repair_wait_days": 2
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "medium_freighter",
+        "daily_storage_fee": 70
+      },
+      "starting_option": false,
+      "narrative": "A practical mining-region repair dock focused on keeping working ships working."
+    },
+    {
+      "id": "port_meridian_service_yards",
+      "name": "Port Meridian Service Yards",
+      "system_id": "port_meridian",
+      "destination_id": "meridian_station",
+      "location_type": "orbital",
+      "tier": "heavy_builds",
+      "largest_hull_class": "heavy_freighter",
+      "parts_catalogue_tags": [
+        "multispecies",
+        "general",
+        "aftermarket",
+        "expedition",
+        "salvage"
+      ],
+      "service": {
+        "build_price_multiplier": 1.35,
+        "refit_price_multiplier": 1.4,
+        "repair_price_multiplier": 1.5,
+        "build_wait_days": 7,
+        "refit_wait_days": 2,
+        "repair_wait_days": 1
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "heavy_freighter",
+        "daily_storage_fee": 260
+      },
+      "starting_option": true,
+      "narrative": "Can repair almost anything and source almost anything, but frontier convenience is expensive."
+    },
+    {
+      "id": "waystation_service_slip",
+      "name": "Waystation Service Slip",
+      "system_id": "waystation",
+      "destination_id": "waystation_habitat",
+      "location_type": "orbital",
+      "tier": "repair_only",
+      "largest_hull_class": "medium_freighter",
+      "parts_catalogue_tags": [
+        "field_repair",
+        "expedition",
+        "used_parts"
+      ],
+      "service": {
+        "build_price_multiplier": 1,
+        "refit_price_multiplier": 1.35,
+        "repair_price_multiplier": 1.3,
+        "build_wait_days": 0,
+        "refit_wait_days": 5,
+        "repair_wait_days": 2
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "small_freighter",
+        "daily_storage_fee": 60
+      },
+      "starting_option": true,
+      "narrative": "A frontier repair slip where improvisation and used parts are often faster than waiting for factory stock."
+    },
+    {
+      "id": "lastlight_orbital_service",
+      "name": "Lastlight Orbital Service Bay",
+      "system_id": "lastlight",
+      "destination_id": "lastlight_orbital",
+      "location_type": "orbital",
+      "tier": "repair_only",
+      "largest_hull_class": "medium_freighter",
+      "parts_catalogue_tags": [
+        "expedition",
+        "field_repair",
+        "survey"
+      ],
+      "service": {
+        "build_price_multiplier": 1,
+        "refit_price_multiplier": 1.55,
+        "repair_price_multiplier": 1.6,
+        "build_wait_days": 0,
+        "refit_wait_days": 7,
+        "repair_wait_days": 3
+      },
+      "hangar": {
+        "available": true,
+        "capacity_class": "small_freighter",
+        "daily_storage_fee": 85
+      },
+      "starting_option": false,
+      "narrative": "The last dependable repair capability before unsupported exploration."
+    }
+  ]
+}
