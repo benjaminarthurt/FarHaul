@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "price_model": {
+    "baseline": "canonical commodity base_value",
+    "multipliers": [
+      "local_stock_ratio",
+      "expected_inbound",
+      "consumption_rate",
+      "production_rate",
+      "handling_cost",
+      "route_cost",
+      "information_age",
+      "risk",
+      "seasonality"
+    ],
+    "rule": "Prices emerge from inventory and expected replenishment; a shortage is not a random global modifier."
+  },
+  "stock_states": [
+    {
+      "id": "glut",
+      "ratio": [
+        1.5,
+        null
+      ],
+      "price_pressure": [
+        0.65,
+        0.9
+      ]
+    },
+    {
+      "id": "comfortable",
+      "ratio": [
+        1.05,
+        1.5
+      ],
+      "price_pressure": [
+        0.9,
+        1
+      ]
+    },
+    {
+      "id": "normal",
+      "ratio": [
+        0.75,
+        1.05
+      ],
+      "price_pressure": [
+        0.98,
+        1.08
+      ]
+    },
+    {
+      "id": "tight",
+      "ratio": [
+        0.4,
+        0.75
+      ],
+      "price_pressure": [
+        1.08,
+        1.35
+      ]
+    },
+    {
+      "id": "shortage",
+      "ratio": [
+        0,
+        0.4
+      ],
+      "price_pressure": [
+        1.3,
+        2.5
+      ]
+    }
+  ]
+}
