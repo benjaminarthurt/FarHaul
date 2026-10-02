@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "ship_record_fields": [
+    "vessel_id",
+    "class_id",
+    "manufacturer_serial",
+    "build_year_ice",
+    "current_name",
+    "prior_names",
+    "registry_history",
+    "owner_history",
+    "lien_history",
+    "major_modifications",
+    "major_repairs",
+    "casualties",
+    "insurance_claims",
+    "salvage_history",
+    "notable_voyages",
+    "maintenance_summary"
+  ],
+  "event_types": [
+    "built",
+    "sold",
+    "renamed",
+    "registered",
+    "registration_transferred",
+    "lien_recorded",
+    "lien_released",
+    "major_refit",
+    "casualty",
+    "major_repair",
+    "insurance_claim",
+    "salvage_claim",
+    "survey_milestone"
+  ],
+  "valuation_effects": {
+    "complete_records": 1.08,
+    "incomplete_records": 0.92,
+    "major_casualty_repaired": 0.9,
+    "clean_recent_inspection": 1.05,
+    "desirable_legacy_provenance": 1.03
+  },
+  "rule": "History follows the physical vessel across owners. Reputation of the current captain does not erase the hull's record."
+}

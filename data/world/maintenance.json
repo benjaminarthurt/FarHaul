@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "condition_states": [
+    "excellent",
+    "serviceable",
+    "worn",
+    "degraded",
+    "critical",
+    "failed"
+  ],
+  "component_categories": [
+    {
+      "id": "main_drive",
+      "service_interval_hours": 1200,
+      "failure_consequence": "reduced_or_lost_propulsion"
+    },
+    {
+      "id": "maneuver_thrusters",
+      "service_interval_hours": 900,
+      "failure_consequence": "handling_degradation"
+    },
+    {
+      "id": "reactor",
+      "service_interval_hours": 1800,
+      "failure_consequence": "power_limit_or_shutdown"
+    },
+    {
+      "id": "life_support",
+      "service_interval_hours": 700,
+      "failure_consequence": "environmental_capacity_loss"
+    },
+    {
+      "id": "thermal",
+      "service_interval_hours": 800,
+      "failure_consequence": "power_and_drive_derating"
+    },
+    {
+      "id": "landing_gear",
+      "service_interval_cycles": 450,
+      "failure_consequence": "landing_restriction"
+    },
+    {
+      "id": "cargo_handling",
+      "service_interval_hours": 650,
+      "failure_consequence": "loading_delay_or_manual_work"
+    }
+  ],
+  "deferred_maintenance": {
+    "rule": "Passing a service interval increases wear and failure probability; it does not trigger automatic failure.",
+    "effects": [
+      "lower reliability",
+      "inspection findings",
+      "insurance exposure",
+      "lower resale value"
+    ]
+  },
+  "repair_types": [
+    "temporary_field_patch",
+    "component_service",
+    "component_rebuild",
+    "replacement"
+  ],
+  "records_rule": "Documented maintenance improves resale, registry inspection outcomes and insurer confidence. Undocumented work can be mechanically sound while remaining commercially suspicious."
+}

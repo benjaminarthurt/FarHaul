@@ -1,0 +1,132 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "definition": "Smuggling is moving cargo, people, data, or controlled material while intentionally evading a declaration, restriction, duty, quarantine, embargo, ownership rule, or inspection requirement.",
+  "methods": [
+    {
+      "id": "false_manifest",
+      "concealment": 0.25,
+      "cost": "low",
+      "risks": [
+        "document_crosscheck",
+        "mass_balance"
+      ],
+      "capacity": "high"
+    },
+    {
+      "id": "underdeclare_quantity",
+      "concealment": 0.3,
+      "cost": "low",
+      "risks": [
+        "mass_balance",
+        "cargo_count"
+      ],
+      "capacity": "medium"
+    },
+    {
+      "id": "sealed_container_tamper",
+      "concealment": 0.5,
+      "cost": "medium",
+      "risks": [
+        "seal_check",
+        "scan"
+      ],
+      "capacity": "medium"
+    },
+    {
+      "id": "concealed_compartment",
+      "concealment": 0.72,
+      "cost": "high",
+      "risks": [
+        "mass_balance",
+        "scan",
+        "physical_search"
+      ],
+      "capacity": "low",
+      "registration_effect": "Major structural concealment may itself create an undeclared configuration change."
+    },
+    {
+      "id": "external_hidden_mount",
+      "concealment": 0.58,
+      "cost": "medium",
+      "risks": [
+        "visual_inspection",
+        "mass_balance",
+        "yard_record"
+      ],
+      "capacity": "low"
+    },
+    {
+      "id": "informal_port_transfer",
+      "concealment": 0.82,
+      "cost": "variable",
+      "risks": [
+        "informant",
+        "local_patrol",
+        "counterparty"
+      ],
+      "capacity": "medium"
+    },
+    {
+      "id": "identity_substitution",
+      "concealment": 0.45,
+      "cost": "high",
+      "risks": [
+        "registry_check",
+        "transponder_check"
+      ],
+      "capacity": "high",
+      "severity": "very_high"
+    }
+  ],
+  "detection_model": {
+    "conceptual_formula": "inspection_method_effectiveness * customs_quality * scrutiny * cargo_signature * (1 - concealment)",
+    "rule": "Do not roll detection if no institution performs or receives an applicable observation."
+  },
+  "cargo_pressure": [
+    {
+      "id": "untaxed_legal_goods",
+      "profit_driver": "duty avoidance",
+      "legal_risk": "low_to_medium"
+    },
+    {
+      "id": "restricted_technology",
+      "profit_driver": "access restrictions",
+      "legal_risk": "medium_to_high"
+    },
+    {
+      "id": "quarantine_biological",
+      "profit_driver": "scarcity/time",
+      "legal_risk": "high"
+    },
+    {
+      "id": "stolen_cargo",
+      "profit_driver": "discount acquisition",
+      "legal_risk": "high",
+      "requires": "title laundering or complicit buyer"
+    },
+    {
+      "id": "undeclared_passenger",
+      "profit_driver": "access/immigration evasion",
+      "legal_risk": "high"
+    },
+    {
+      "id": "proprietary_survey_data",
+      "profit_driver": "information value",
+      "legal_risk": "jurisdiction_and_contract_dependent"
+    }
+  ],
+  "counterparties": [
+    "legitimate buyer unaware of concealment",
+    "buyer willing not to ask",
+    "complicit broker",
+    "informal frontier settlement",
+    "criminal fence"
+  ],
+  "design_rules": [
+    "Smuggling should emerge from restrictions and price differences rather than a separate magic black-market inventory.",
+    "Many smuggling opportunities involve otherwise ordinary goods.",
+    "High concealment capacity should cost cargo volume, money, mass, maintainability, or registration legitimacy."
+  ]
+}

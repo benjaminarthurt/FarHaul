@@ -1,0 +1,89 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "principles": [
+    "Finding property does not automatically transfer ownership.",
+    "Rescue of living people takes priority over property claims.",
+    "Salvage rights depend on jurisdiction, abandonment, contract, registry and prior ownership.",
+    "A salvage notice preserves evidence; it does not itself prove title."
+  ],
+  "asset_states": [
+    "distressed",
+    "derelict",
+    "abandoned_declared",
+    "lost",
+    "wreck",
+    "unclaimed",
+    "title_disputed",
+    "salvage_awarded"
+  ],
+  "claim_types": [
+    {
+      "id": "assistance_claim",
+      "description": "Compensation for saving a vessel or cargo whose owner retains title."
+    },
+    {
+      "id": "recovery_contract",
+      "description": "Owner or insurer hires a salvor under agreed terms."
+    },
+    {
+      "id": "finders_claim",
+      "description": "Claim filed on apparently abandoned property; title remains pending."
+    },
+    {
+      "id": "government_hazard_removal",
+      "description": "Authority pays or authorizes removal of dangerous wreckage."
+    },
+    {
+      "id": "insurer_subrogation",
+      "description": "Insurer that paid a total loss may own or control recovery rights."
+    },
+    {
+      "id": "secured_lender_claim",
+      "description": "Lender can retain interest in a financed vessel even after abandonment by operator."
+    }
+  ],
+  "claim_record_fields": [
+    "claim_id",
+    "finder_id",
+    "vessel_id_or_asset_id",
+    "location",
+    "jurisdiction",
+    "discovery_time",
+    "condition",
+    "evidence",
+    "prior_registry",
+    "known_owner",
+    "cargo_seals",
+    "actions_taken"
+  ],
+  "priority_order": [
+    "rescue_and_public_safety",
+    "existing_owner",
+    "contracted_recovery_right",
+    "insurer_or_secured_interest",
+    "recognized_salvage_award",
+    "finder"
+  ],
+  "adjudication_factors": [
+    "was property legally abandoned",
+    "was owner identifiable",
+    "did salvor prevent greater loss",
+    "was recovery authorized",
+    "did salvor conceal discovery",
+    "was cargo opened or converted",
+    "which jurisdiction had authority"
+  ],
+  "gameplay_outcomes": [
+    "salvage_fee",
+    "percentage_award",
+    "title_awarded",
+    "claim_denied",
+    "property_returned",
+    "cargo_seized_as_evidence",
+    "competing_claim",
+    "fine_for_unauthorized_conversion"
+  ],
+  "frontier_rule": "Beyond effective jurisdiction, possession can be easy and clean title can be difficult. Bringing an undocumented recovered ship back into reputable commerce exposes the title problem."
+}

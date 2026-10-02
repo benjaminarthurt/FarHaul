@@ -1,0 +1,123 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "supply_chains": [
+    {
+      "id": "frontier_food",
+      "name": "Frontier Food Chain",
+      "steps": [
+        {
+          "from": "greenline_agricultural",
+          "to": "meridian_chandlers_union",
+          "commodity": "food",
+          "role": "bulk food moves outward"
+        },
+        {
+          "from": "meridian_chandlers_union",
+          "to": "hopewell_construction",
+          "commodity": "provision_packs",
+          "role": "workforce provisioning"
+        },
+        {
+          "from": "meridian_chandlers_union",
+          "to": "beacon_expedition_supply",
+          "commodity": "provision_packs",
+          "role": "expedition provisioning"
+        }
+      ],
+      "disruption_effects": [
+        "higher outer food prices",
+        "priority freight contracts",
+        "substitution toward preserved stock"
+      ]
+    },
+    {
+      "id": "agricultural_machinery",
+      "name": "Hesperus Machinery Loop",
+      "steps": [
+        {
+          "from": "carver_metals",
+          "to": "roosevelt_machine",
+          "commodity": "metals",
+          "role": "fabrication feedstock"
+        },
+        {
+          "from": "roosevelt_machine",
+          "to": "greenline_agricultural",
+          "commodity": "agricultural_machinery",
+          "role": "farm equipment"
+        },
+        {
+          "from": "greenline_agricultural",
+          "to": "port_meridian",
+          "commodity": "food",
+          "role": "export production"
+        }
+      ],
+      "disruption_effects": [
+        "machinery shortages",
+        "lower agricultural throughput after delay",
+        "rising food export prices"
+      ]
+    },
+    {
+      "id": "talos_buildout",
+      "name": "Talos Buildout",
+      "steps": [
+        {
+          "from": "carver_metals",
+          "to": "roosevelt_machine",
+          "commodity": "metals",
+          "role": "structural feedstock"
+        },
+        {
+          "from": "roosevelt_machine",
+          "to": "hopewell_construction",
+          "commodity": "structural_modules",
+          "role": "construction"
+        },
+        {
+          "from": "deepworks_ceramics",
+          "to": "hopewell_construction",
+          "commodity": "thermal_components",
+          "role": "habitat environmental systems"
+        }
+      ],
+      "disruption_effects": [
+        "construction delays",
+        "temporary housing shortage",
+        "higher inbound rates"
+      ]
+    },
+    {
+      "id": "survey_support",
+      "name": "Lastlight Survey Support",
+      "steps": [
+        {
+          "from": "nine_currents_bio",
+          "to": "beacon_expedition_supply",
+          "commodity": "biofilters",
+          "role": "closed-cycle consumables"
+        },
+        {
+          "from": "bradbury_institute_consortium",
+          "to": "beacon_expedition_supply",
+          "commodity": "survey_instruments",
+          "role": "science payload"
+        },
+        {
+          "from": "beacon_expedition_supply",
+          "to": "lastlight_survey_office",
+          "commodity": "survey_loadouts",
+          "role": "expedition issue"
+        }
+      ],
+      "disruption_effects": [
+        "survey launch delay",
+        "higher expedition preparation cost"
+      ]
+    }
+  ],
+  "simulation_rule": "Shortages propagate with time delay and substitution. A missing input reduces output capacity rather than instantly setting downstream stock to zero."
+}

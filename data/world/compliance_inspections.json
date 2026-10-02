@@ -1,0 +1,136 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "inspection_events": [
+    {
+      "id": "port_entry_registry_check",
+      "trigger": "arrival at connected regulated port",
+      "checks": [
+        "registration_status",
+        "registry_identity",
+        "transponder_match"
+      ],
+      "base_detection_by_enforcement": {
+        "strict": 1,
+        "standard": 0.92,
+        "light": 0.55,
+        "inconsistent": 0.45,
+        "none": 0
+      }
+    },
+    {
+      "id": "customs_manifest_check",
+      "trigger": "cargo declaration",
+      "checks": [
+        "cargo_manifest",
+        "hazard_declarations",
+        "ship_endorsements"
+      ],
+      "base_detection_by_enforcement": {
+        "strict": 0.95,
+        "standard": 0.8,
+        "light": 0.45,
+        "inconsistent": 0.35,
+        "none": 0
+      }
+    },
+    {
+      "id": "random_safety_inspection",
+      "trigger": "eligible port visit",
+      "checks": [
+        "registration_configuration",
+        "maintenance",
+        "safety_systems",
+        "visible_modifications"
+      ],
+      "base_probability_by_enforcement": {
+        "strict": 0.12,
+        "standard": 0.06,
+        "light": 0.025,
+        "inconsistent": 0.03,
+        "none": 0
+      }
+    },
+    {
+      "id": "incident_inspection",
+      "trigger": "collision fire distress hazardous release or serious docking event",
+      "checks": [
+        "configuration",
+        "maintenance",
+        "crew_documents",
+        "cargo",
+        "policy_certificate"
+      ],
+      "base_probability": 0.95
+    },
+    {
+      "id": "contract_certificate_check",
+      "trigger": "accepting contract with insurance requirement",
+      "checks": [
+        "certificate_validity",
+        "coverage_products",
+        "limits",
+        "route_exclusions",
+        "cargo_exclusions"
+      ],
+      "base_probability": 1
+    }
+  ],
+  "risk_modifiers": [
+    {
+      "id": "recent_major_modification",
+      "multiplier": 1.8
+    },
+    {
+      "id": "expired_registration",
+      "multiplier": 2.5
+    },
+    {
+      "id": "prior_violation",
+      "multiplier": 1.5
+    },
+    {
+      "id": "hazardous_manifest",
+      "multiplier": 1.6
+    },
+    {
+      "id": "distress_record",
+      "multiplier": 1.4
+    },
+    {
+      "id": "clean_history",
+      "multiplier": 0.8
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "clear",
+      "effect": "No action."
+    },
+    {
+      "id": "warning",
+      "effect": "Compliance issue recorded; deadline may be issued."
+    },
+    {
+      "id": "fine",
+      "effect": "Monetary penalty."
+    },
+    {
+      "id": "restricted_berth",
+      "effect": "Ship may dock only at designated berth/services."
+    },
+    {
+      "id": "registration_hold",
+      "effect": "Commercial departure can be denied until registration issue resolved where local law permits."
+    },
+    {
+      "id": "cargo_refused",
+      "effect": "Cargo cannot be loaded or unloaded through that facility."
+    },
+    {
+      "id": "insurer_notification",
+      "effect": "Relevant records become available to insurer."
+    }
+  ],
+  "design_rule": "Checks should arise from visible institutions and player actions. Avoid arbitrary omniscient detection."
+}

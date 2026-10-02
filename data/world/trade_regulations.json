@@ -1,0 +1,146 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "permit_types": [
+    {
+      "id": "bio_import",
+      "name": "Biological Import Permit",
+      "applies_to": [
+        "live_organisms",
+        "native_samples",
+        "unsterilized_biomaterial"
+      ]
+    },
+    {
+      "id": "hazchem",
+      "name": "Controlled Chemical Permit",
+      "applies_to": [
+        "high_hazard_chemicals"
+      ]
+    },
+    {
+      "id": "radioactive",
+      "name": "Radiological Transport Permit",
+      "applies_to": [
+        "radioactive_material"
+      ]
+    },
+    {
+      "id": "restricted_tech",
+      "name": "Restricted Technology Transfer Permit",
+      "applies_to": [
+        "controlled_sensors",
+        "advanced_drive_components",
+        "security_technology"
+      ]
+    },
+    {
+      "id": "pharma_control",
+      "name": "Controlled Pharmaceutical Permit",
+      "applies_to": [
+        "regulated_pharmaceuticals"
+      ]
+    },
+    {
+      "id": "survey_sample",
+      "name": "Protected Survey Sample Permit",
+      "applies_to": [
+        "protected_exobiology",
+        "restricted_geological_samples"
+      ]
+    }
+  ],
+  "system_rules": [
+    {
+      "system_id": "sol",
+      "import_duty_base": 0.06,
+      "export_duty_base": 0.02,
+      "permit_strictness": "high",
+      "special": [
+        "bio_import",
+        "restricted_tech"
+      ]
+    },
+    {
+      "system_id": "concord",
+      "import_duty_base": 0.04,
+      "export_duty_base": 0.02,
+      "permit_strictness": "high",
+      "special": [
+        "restricted_tech"
+      ]
+    },
+    {
+      "system_id": "new_houston",
+      "import_duty_base": 0.03,
+      "export_duty_base": 0.015,
+      "permit_strictness": "standard",
+      "special": [
+        "hazchem"
+      ]
+    },
+    {
+      "system_id": "hesperus",
+      "import_duty_base": 0.02,
+      "export_duty_base": 0.01,
+      "permit_strictness": "high_biosecurity",
+      "special": [
+        "bio_import"
+      ]
+    },
+    {
+      "system_id": "bradbury",
+      "import_duty_base": 0.035,
+      "export_duty_base": 0.015,
+      "permit_strictness": "high_scientific",
+      "special": [
+        "survey_sample",
+        "restricted_tech"
+      ]
+    },
+    {
+      "system_id": "port_meridian",
+      "import_duty_base": 0.055,
+      "export_duty_base": 0.02,
+      "permit_strictness": "standard",
+      "special": [
+        "hazchem",
+        "radioactive"
+      ]
+    },
+    {
+      "system_id": "talos",
+      "import_duty_base": 0.01,
+      "export_duty_base": 0.07,
+      "permit_strictness": "inconsistent",
+      "special": [
+        "hazchem"
+      ],
+      "temporary_policy": "Essential construction, water, medical and habitation imports receive reduced duties."
+    },
+    {
+      "system_id": "waystation",
+      "import_duty_base": 0.015,
+      "export_duty_base": 0.01,
+      "permit_strictness": "light",
+      "special": []
+    },
+    {
+      "system_id": "lastlight",
+      "import_duty_base": 0.015,
+      "export_duty_base": 0.01,
+      "permit_strictness": "survey_focused",
+      "special": [
+        "survey_sample",
+        "bio_import"
+      ]
+    }
+  ],
+  "default_system_rule": {
+    "import_duty_base": 0.035,
+    "export_duty_base": 0.015,
+    "permit_strictness": "standard"
+  },
+  "rule": "Commodity-specific rules override base duties. Embargoes and temporary emergency waivers are event data, not permanent assumptions."
+}

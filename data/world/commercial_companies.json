@@ -1,0 +1,169 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "companies": [
+    {
+      "id": "greenline_agricultural",
+      "name": "Greenline Agricultural Cooperative",
+      "type": "producer",
+      "base_system_id": "hesperus",
+      "produces": [
+        "grain",
+        "plant_protein",
+        "fruit",
+        "seed_stock"
+      ],
+      "consumes": [
+        "fertilizer",
+        "agricultural_machinery",
+        "refrigeration_parts"
+      ],
+      "contract_classes": [
+        "ordinary_bulk",
+        "standard_commercial"
+      ]
+    },
+    {
+      "id": "roosevelt_machine",
+      "name": "Roosevelt Machine & Fabrication",
+      "type": "manufacturer",
+      "base_system_id": "new_houston",
+      "produces": [
+        "agricultural_machinery",
+        "industrial_machinery",
+        "structural_modules"
+      ],
+      "consumes": [
+        "metals",
+        "electronics",
+        "ceramics"
+      ],
+      "contract_classes": [
+        "standard_commercial",
+        "high_value"
+      ]
+    },
+    {
+      "id": "carver_metals",
+      "name": "Carver Metals Exchange",
+      "type": "extractor_broker",
+      "base_system_id": "carver",
+      "produces": [
+        "iron_feedstock",
+        "nickel_feedstock",
+        "specialty_metals"
+      ],
+      "consumes": [
+        "machine_parts",
+        "food",
+        "life_support_consumables"
+      ],
+      "contract_classes": [
+        "ordinary_bulk",
+        "standard_commercial"
+      ]
+    },
+    {
+      "id": "meridian_chandlers_union",
+      "name": "Meridian Chandlers Union",
+      "type": "wholesale_distributor",
+      "base_system_id": "port_meridian",
+      "produces": [
+        "provision_packs",
+        "expedition_consumables"
+      ],
+      "consumes": [
+        "food",
+        "filters",
+        "medical_supplies",
+        "tools",
+        "spares"
+      ],
+      "contract_classes": [
+        "standard_commercial"
+      ]
+    },
+    {
+      "id": "hopewell_construction",
+      "name": "Hopewell Construction Combine",
+      "type": "construction",
+      "base_system_id": "talos",
+      "produces": [
+        "site_work",
+        "assembled_habitat"
+      ],
+      "consumes": [
+        "structural_modules",
+        "habitat_modules",
+        "water_processing",
+        "heaters",
+        "vehicles"
+      ],
+      "contract_classes": [
+        "standard_commercial",
+        "high_value"
+      ]
+    },
+    {
+      "id": "beacon_expedition_supply",
+      "name": "Beacon Expedition Supply",
+      "type": "frontier_supplier",
+      "base_system_id": "lastlight",
+      "produces": [
+        "expedition_packs",
+        "survey_loadouts"
+      ],
+      "consumes": [
+        "fuel_components",
+        "food",
+        "medical_supplies",
+        "survey_instruments",
+        "life_support_consumables"
+      ],
+      "contract_classes": [
+        "standard_commercial",
+        "government_survey"
+      ]
+    },
+    {
+      "id": "deepworks_ceramics",
+      "name": "Deepworks Technical Ceramics",
+      "type": "manufacturer",
+      "base_system_id": "foundry",
+      "produces": [
+        "technical_ceramics",
+        "thermal_components"
+      ],
+      "consumes": [
+        "minerals",
+        "industrial_chemicals",
+        "electronics"
+      ],
+      "contract_classes": [
+        "standard_commercial",
+        "high_value"
+      ]
+    },
+    {
+      "id": "nine_currents_bio",
+      "name": "Nine Currents Bioprocessing",
+      "type": "biotech",
+      "base_system_id": "veyara",
+      "produces": [
+        "pharmaceuticals",
+        "biofilters",
+        "nutrient_media"
+      ],
+      "consumes": [
+        "biological_feedstock",
+        "lab_instruments",
+        "sterile_containers"
+      ],
+      "contract_classes": [
+        "high_value",
+        "scientific_sensitive"
+      ]
+    }
+  ]
+}

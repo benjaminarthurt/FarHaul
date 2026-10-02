@@ -1,0 +1,167 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "defaults": {
+    "berth_utilization_target": 0.72,
+    "queue_growth_above": 0.85
+  },
+  "ports": [
+    {
+      "port_id": "earth_orbital_freight",
+      "general_berths": 34,
+      "heavy_berths": 10,
+      "refrigerated_storage_units": 8,
+      "hazardous_storage_units": 12,
+      "cargo_cranes": 18,
+      "tugs": 6,
+      "fuel_storage_units": 120000
+    },
+    {
+      "port_id": "concord_central_exchange",
+      "general_berths": 42,
+      "heavy_berths": 14,
+      "refrigerated_storage_units": 10,
+      "hazardous_storage_units": 16,
+      "cargo_cranes": 24,
+      "tugs": 8,
+      "fuel_storage_units": 150000
+    },
+    {
+      "port_id": "roosevelt_orbital_freight",
+      "general_berths": 26,
+      "heavy_berths": 8,
+      "refrigerated_storage_units": 6,
+      "hazardous_storage_units": 10,
+      "cargo_cranes": 14,
+      "tugs": 4,
+      "fuel_storage_units": 90000
+    },
+    {
+      "port_id": "new_houston_surface_port",
+      "general_berths": 18,
+      "heavy_berths": 4,
+      "refrigerated_storage_units": 4,
+      "hazardous_storage_units": 8,
+      "cargo_cranes": 10,
+      "tugs": 3,
+      "fuel_storage_units": 45000
+    },
+    {
+      "port_id": "hesperus_agricultural_terminal",
+      "general_berths": 22,
+      "heavy_berths": 6,
+      "refrigerated_storage_units": 14,
+      "hazardous_storage_units": 4,
+      "cargo_cranes": 8,
+      "tugs": 2,
+      "fuel_storage_units": 70000
+    },
+    {
+      "port_id": "iron_gate_grand_terminal",
+      "general_berths": 30,
+      "heavy_berths": 12,
+      "refrigerated_storage_units": 4,
+      "hazardous_storage_units": 10,
+      "cargo_cranes": 18,
+      "tugs": 8,
+      "fuel_storage_units": 130000
+    },
+    {
+      "port_id": "carver_habitat_exchange",
+      "general_berths": 14,
+      "heavy_berths": 4,
+      "refrigerated_storage_units": 3,
+      "hazardous_storage_units": 4,
+      "cargo_cranes": 8,
+      "tugs": 3,
+      "fuel_storage_units": 40000
+    },
+    {
+      "port_id": "bradbury_research_port",
+      "general_berths": 12,
+      "heavy_berths": 3,
+      "refrigerated_storage_units": 5,
+      "hazardous_storage_units": 6,
+      "cargo_cranes": 6,
+      "tugs": 2,
+      "fuel_storage_units": 30000
+    },
+    {
+      "port_id": "pelagos_highport",
+      "general_berths": 14,
+      "heavy_berths": 4,
+      "refrigerated_storage_units": 6,
+      "hazardous_storage_units": 6,
+      "cargo_cranes": 7,
+      "tugs": 2,
+      "fuel_storage_units": 35000
+    },
+    {
+      "port_id": "tidemark_platform_exchange",
+      "general_berths": 7,
+      "heavy_berths": 2,
+      "refrigerated_storage_units": 4,
+      "hazardous_storage_units": 3,
+      "cargo_cranes": 4,
+      "tugs": 1,
+      "fuel_storage_units": 16000
+    },
+    {
+      "port_id": "foundry_lift_terminal",
+      "general_berths": 12,
+      "heavy_berths": 4,
+      "refrigerated_storage_units": 3,
+      "hazardous_storage_units": 5,
+      "cargo_cranes": 7,
+      "tugs": 3,
+      "fuel_storage_units": 32000
+    },
+    {
+      "port_id": "port_meridian_main",
+      "general_berths": 38,
+      "heavy_berths": 12,
+      "refrigerated_storage_units": 10,
+      "hazardous_storage_units": 14,
+      "cargo_cranes": 22,
+      "tugs": 7,
+      "fuel_storage_units": 110000
+    },
+    {
+      "port_id": "talos_hopewell_field",
+      "general_berths": 11,
+      "heavy_berths": 2,
+      "refrigerated_storage_units": 3,
+      "hazardous_storage_units": 2,
+      "cargo_cranes": 5,
+      "tugs": 1,
+      "fuel_storage_units": 22000
+    },
+    {
+      "port_id": "waystation_main_dock",
+      "general_berths": 6,
+      "heavy_berths": 1,
+      "refrigerated_storage_units": 1,
+      "hazardous_storage_units": 1,
+      "cargo_cranes": 3,
+      "tugs": 1,
+      "fuel_storage_units": 8000
+    },
+    {
+      "port_id": "lastlight_orbital",
+      "general_berths": 8,
+      "heavy_berths": 2,
+      "refrigerated_storage_units": 2,
+      "hazardous_storage_units": 2,
+      "cargo_cranes": 4,
+      "tugs": 1,
+      "fuel_storage_units": 12000
+    }
+  ],
+  "rules": [
+    "Hull class must fit port maximum and an appropriate berth.",
+    "Hazardous and refrigerated cargo consume specialized capacity.",
+    "Congestion can increase queue time and handling price.",
+    "Damage, weather, labor events or construction can temporarily reduce capacity."
+  ]
+}

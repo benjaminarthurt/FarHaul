@@ -1,0 +1,181 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "relationship_types": [
+    "government_recognition",
+    "commercial_partner",
+    "supplier_customer",
+    "competitor",
+    "data_sharing",
+    "standards_member",
+    "contracting_client"
+  ],
+  "organizations": [
+    {
+      "id": "concord_standards_bureau",
+      "relationships": [
+        {
+          "target_id": "concord_administration",
+          "type": "standards_member",
+          "strength": 90
+        },
+        {
+          "target_id": "roosevelt_independent_yards_cooperative",
+          "type": "standards_member",
+          "strength": 65
+        },
+        {
+          "target_id": "kesh_heavy_systems",
+          "type": "standards_member",
+          "strength": 80
+        },
+        {
+          "target_id": "ilyan_vector_works",
+          "type": "standards_member",
+          "strength": 80
+        }
+      ]
+    },
+    {
+      "id": "roosevelt_independent_yards_cooperative",
+      "relationships": [
+        {
+          "target_id": "new_houston_government",
+          "type": "commercial_partner",
+          "strength": 75
+        },
+        {
+          "target_id": "redline_independent_coop",
+          "type": "supplier_customer",
+          "strength": 70
+        },
+        {
+          "target_id": "meridian_recovery_salvage",
+          "type": "supplier_customer",
+          "strength": 35
+        }
+      ]
+    },
+    {
+      "id": "meridian_recovery_salvage",
+      "relationships": [
+        {
+          "target_id": "meridian_station_authority",
+          "type": "contracting_client",
+          "strength": 70
+        },
+        {
+          "target_id": "lastlight_survey_office",
+          "type": "commercial_partner",
+          "strength": 40
+        }
+      ]
+    },
+    {
+      "id": "lastlight_survey_office",
+      "relationships": [
+        {
+          "target_id": "lastlight_civil_office",
+          "type": "commercial_partner",
+          "strength": 90
+        },
+        {
+          "target_id": "bradbury_institute_consortium",
+          "type": "data_sharing",
+          "strength": 65
+        }
+      ]
+    },
+    {
+      "id": "hesperus_producers_exchange",
+      "relationships": [
+        {
+          "target_id": "concord_interstellar_freight",
+          "type": "supplier_customer",
+          "strength": 60
+        },
+        {
+          "target_id": "redline_independent_coop",
+          "type": "supplier_customer",
+          "strength": 45
+        }
+      ]
+    }
+  ],
+  "government_ids": [
+    {
+      "system_id": "sol",
+      "organization_id": "sol_system_authority"
+    },
+    {
+      "system_id": "keshar",
+      "organization_id": "keshar_civic_directorate"
+    },
+    {
+      "system_id": "ilos",
+      "organization_id": "ilos_system_assembly"
+    },
+    {
+      "system_id": "veyara",
+      "organization_id": "veyara_waters_orbital_council"
+    },
+    {
+      "system_id": "orun",
+      "organization_id": "orun_junction_council"
+    },
+    {
+      "system_id": "concord",
+      "organization_id": "concord_administration"
+    },
+    {
+      "system_id": "new_houston",
+      "organization_id": "new_houston_government"
+    },
+    {
+      "system_id": "hesperus",
+      "organization_id": "hesperus_commonwealth"
+    },
+    {
+      "system_id": "iron_gate",
+      "organization_id": "iron_gate_industrial_authority"
+    },
+    {
+      "system_id": "carver",
+      "organization_id": "carver_habitat_authority"
+    },
+    {
+      "system_id": "bradbury",
+      "organization_id": "bradbury_civil_administration"
+    },
+    {
+      "system_id": "pelagos",
+      "organization_id": "pelagos_joint_authority"
+    },
+    {
+      "system_id": "tidemark",
+      "organization_id": "tidemark_platform_council"
+    },
+    {
+      "system_id": "foundry",
+      "organization_id": "foundry_deepworks_authority"
+    },
+    {
+      "system_id": "port_meridian",
+      "organization_id": "meridian_station_authority"
+    },
+    {
+      "system_id": "talos",
+      "organization_id": "talos_provisional_authority"
+    },
+    {
+      "system_id": "waystation",
+      "organization_id": "waystation_council"
+    },
+    {
+      "system_id": "lastlight",
+      "organization_id": "lastlight_civil_office"
+    }
+  ],
+  "design_rule": "Relationship edges influence information propagation, contract access, discounts, claim cooperation and institutional reactions. They are not alliances in a universal faction-war system."
+}

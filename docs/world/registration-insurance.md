@@ -110,3 +110,42 @@ Each yard has:
 Contracts can impose requirements beyond the port's minimum rules. A port that permits uninsured docking does not imply every contract offered there permits an uninsured carrier.
 
 Narrative files explain why these rules exist. Structured data determines what the game does.
+
+
+## Registration economics
+
+Registration is intended to be a recurring operating decision rather than a negligible menu fee. Initial balance data lives in `data/world/registration_economics.json`.
+
+Smaller commercial ships have lower registration and inspection costs and longer validity periods. Heavy and superheavy ships cost substantially more to certify and renew because inspection burden increases with scale. Individual registries apply local cost and inspection modifiers. New Houston is deliberately attractive to independents; Port Meridian is convenient but expensive; frontier offices can be inexpensive administratively while still charging more for scarce inspection capacity.
+
+Four inspection categories are defined: initial registration, routine renewal, major modification, and post-casualty inspection. Registration violations have explicit fine values and indicate whether the local authority may ground the vessel.
+
+The numbers are balance values and can change without rewriting setting lore.
+
+## Insurance products
+
+Insurance is sold as separate products rather than a single insured/uninsured switch. Initial products include Basic Hull, Comprehensive Hull, Carrier Liability, Cargo Cover, Passenger Liability, Environmental Liability, and a Frontier Endorsement.
+
+Premium calculation can consider insured value, hull class, operating region, claims/compliance history, and configuration risk. Deductibles remain part of the policy, so insurance reduces risk rather than eliminating it.
+
+A financed ship normally needs hull coverage because the lender has money at risk. High-value cargo commonly requires carrier liability and cargo cover. Passenger work normally requires passenger liability. Hazardous cargo can require environmental liability. A frontier expedition can require a frontier endorsement when the base policy excludes the route.
+
+## Contract eligibility
+
+Structured requirements live in `data/world/contract_compliance.json`.
+
+Contract requirements are resolved separately from port requirements. A captain may legally dock at a port while being ineligible for most of its freight board.
+
+Ordinary bulk and speculative frontier work can sometimes be offered to unregistered operators. Reputable commercial, passenger, hazardous, scientific, and government work generally requires current recognized registration. Higher-risk work adds specific insurance products and ship endorsements.
+
+The contract UI should disclose known unmet issuer requirements before acceptance. Insurer exposure is different: a captain may satisfy the cargo issuer while knowingly operating outside some unrelated policy condition.
+
+## Inspections and detection
+
+`data/world/compliance_inspections.json` defines registry checks, customs checks, random safety inspections, incident inspections, and contract-certificate verification.
+
+Enforcement is not omniscient. Strict connected ports perform reliable registry checks and more frequent inspections. Frontier ports inspect less often. Prior violations, recent major modifications, hazardous cargo, and incidents can increase scrutiny.
+
+Possible results include clearance, warning, fines, restricted berths, registration holds, cargo refusal, and insurer notification.
+
+The guiding rule is that detection should follow visible institutions and records. If nobody with access to the information has observed or transmitted a violation, the simulation should not pretend that they have.

@@ -1,0 +1,215 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "principles": [
+    "There is no universal reputation score.",
+    "Reputation belongs to a relationship between an actor and an organization, government, community, or market network.",
+    "Organizations learn through direct experience and information channels they actually participate in.",
+    "Good reputation unlocks trust; it does not replace hard requirements such as registration or insurance."
+  ],
+  "dimensions": [
+    {
+      "id": "reliability",
+      "range": [
+        -100,
+        100
+      ],
+      "examples_positive": [
+        "on_time_delivery",
+        "completed_difficult_contract"
+      ],
+      "examples_negative": [
+        "abandoned_contract",
+        "repeated_delay"
+      ]
+    },
+    {
+      "id": "care",
+      "range": [
+        -100,
+        100
+      ],
+      "examples_positive": [
+        "undamaged_cargo",
+        "good_passenger_service"
+      ],
+      "examples_negative": [
+        "cargo_damage",
+        "unsafe_handling"
+      ]
+    },
+    {
+      "id": "compliance",
+      "range": [
+        -100,
+        100
+      ],
+      "examples_positive": [
+        "clean_inspections",
+        "accurate_manifests"
+      ],
+      "examples_negative": [
+        "customs_violation",
+        "false_documents"
+      ]
+    },
+    {
+      "id": "credit",
+      "range": [
+        -100,
+        100
+      ],
+      "examples_positive": [
+        "paid_debts",
+        "maintained_financed_asset"
+      ],
+      "examples_negative": [
+        "default",
+        "unpaid_yard_bill"
+      ]
+    },
+    {
+      "id": "discretion",
+      "range": [
+        -100,
+        100
+      ],
+      "examples_positive": [
+        "protected_client_information",
+        "handled_sensitive_work"
+      ],
+      "examples_negative": [
+        "leaked_private_contract"
+      ],
+      "note": "Can matter to legitimate research/commercial clients as well as gray-market actors."
+    }
+  ],
+  "tiers": [
+    {
+      "id": "hostile",
+      "max": -61
+    },
+    {
+      "id": "distrusted",
+      "min": -60,
+      "max": -21
+    },
+    {
+      "id": "unknown",
+      "min": -20,
+      "max": 20
+    },
+    {
+      "id": "known",
+      "min": 21,
+      "max": 50
+    },
+    {
+      "id": "trusted",
+      "min": 51,
+      "max": 80
+    },
+    {
+      "id": "preferred",
+      "min": 81,
+      "max": 100
+    }
+  ],
+  "event_examples": [
+    {
+      "id": "contract_complete",
+      "effects": {
+        "reliability": 3,
+        "care": 1
+      }
+    },
+    {
+      "id": "contract_complete_early",
+      "effects": {
+        "reliability": 5
+      }
+    },
+    {
+      "id": "cargo_damage_minor",
+      "effects": {
+        "care": -5
+      }
+    },
+    {
+      "id": "cargo_loss_negligent",
+      "effects": {
+        "care": -18,
+        "reliability": -8
+      }
+    },
+    {
+      "id": "clean_customs_secondary",
+      "effects": {
+        "compliance": 1
+      }
+    },
+    {
+      "id": "customs_civil_violation",
+      "effects": {
+        "compliance": -6
+      }
+    },
+    {
+      "id": "smuggling_conviction",
+      "effects": {
+        "compliance": -30
+      }
+    },
+    {
+      "id": "loan_payment_history",
+      "effects": {
+        "credit": 1
+      }
+    },
+    {
+      "id": "default",
+      "effects": {
+        "credit": -35
+      }
+    },
+    {
+      "id": "sensitive_contract_kept_private",
+      "effects": {
+        "discretion": 4
+      }
+    }
+  ],
+  "propagation": [
+    {
+      "id": "direct",
+      "strength": 1,
+      "description": "Organization directly experienced event."
+    },
+    {
+      "id": "shared_commercial_network",
+      "strength": 0.55,
+      "description": "Partner organizations exchange carrier-performance data."
+    },
+    {
+      "id": "public_legal_record",
+      "strength": 0.75,
+      "description": "Government or court record available to subscribers."
+    },
+    {
+      "id": "informal_word_of_mouth",
+      "strength": 0.2,
+      "description": "Local reputation spreads imperfectly."
+    },
+    {
+      "id": "private",
+      "strength": 0,
+      "description": "Event remains unknown outside participants."
+    }
+  ],
+  "decay": {
+    "rule": "Minor impressions trend toward neutral over long periods; major adjudicated events and defaults persist much longer.",
+    "minor_half_life_days": 720,
+    "major_half_life_days": 3600
+  }
+}
