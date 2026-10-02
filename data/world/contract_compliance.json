@@ -1,0 +1,133 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "requirement_resolution_order": [
+    "Port minimum access rules must be satisfied to enter/use the facility.",
+    "Contract issuer registration requirements are checked.",
+    "Cargo/activity endorsements and insurance certificates are checked.",
+    "Lender requirements apply independently to the vessel.",
+    "Policy restrictions are checked for insurer exposure but do not physically block acceptance unless certificate validation reveals the conflict."
+  ],
+  "contract_classes": [
+    {
+      "id": "ordinary_bulk",
+      "registration": "recognized_current_preferred",
+      "insurance_required": [],
+      "can_offer_to_unregistered": true,
+      "unregistered_weight_multiplier": 0.35,
+      "notes": "Informal and frontier issuers may use unregistered carriers; established brokers usually prefer registered ships."
+    },
+    {
+      "id": "standard_commercial",
+      "registration": "recognized_current",
+      "insurance_required": [
+        "carrier_liability"
+      ],
+      "can_offer_to_unregistered": false,
+      "notes": "Routine reputable commercial work."
+    },
+    {
+      "id": "high_value",
+      "registration": "recognized_current",
+      "insurance_required": [
+        "carrier_liability",
+        "cargo_cover"
+      ],
+      "can_offer_to_unregistered": false,
+      "minimum_coverage_basis": "declared_cargo_value",
+      "notes": "Issuer validates certificate before loading."
+    },
+    {
+      "id": "passenger",
+      "registration": "recognized_current",
+      "insurance_required": [
+        "passenger_liability"
+      ],
+      "can_offer_to_unregistered": false,
+      "required_ship_endorsements": [
+        "certified_passenger_habitation"
+      ],
+      "notes": "Passenger capacity must match registry configuration."
+    },
+    {
+      "id": "hazardous",
+      "registration": "recognized_current",
+      "insurance_required": [
+        "carrier_liability"
+      ],
+      "insurance_conditional": [
+        "environmental_liability"
+      ],
+      "can_offer_to_unregistered": false,
+      "required_ship_endorsements": [
+        "cargo_specific_hazard_endorsement"
+      ],
+      "notes": "Terminal or commodity can elevate environmental coverage to required."
+    },
+    {
+      "id": "scientific_sensitive",
+      "registration": "recognized_current",
+      "insurance_required": [
+        "carrier_liability",
+        "cargo_cover"
+      ],
+      "can_offer_to_unregistered": false,
+      "required_ship_endorsements": [
+        "handling_requirements_met"
+      ],
+      "notes": "Sterility, vibration, temperature or security requirements can be added per cargo."
+    },
+    {
+      "id": "government",
+      "registration": "recognized_current",
+      "insurance_required": [
+        "carrier_liability"
+      ],
+      "can_offer_to_unregistered": false,
+      "notes": "Individual system governments can add requirements."
+    },
+    {
+      "id": "government_survey",
+      "registration": "recognized_current",
+      "insurance_required": [
+        "carrier_liability"
+      ],
+      "insurance_conditional": [
+        "frontier_endorsement"
+      ],
+      "can_offer_to_unregistered": false,
+      "required_ship_endorsements": [
+        "survey_equipment_if_contract_requires"
+      ],
+      "notes": "Frontier endorsement required when route lies outside base policy area."
+    },
+    {
+      "id": "frontier_speculative",
+      "registration": "issuer_defined",
+      "insurance_required": [],
+      "can_offer_to_unregistered": true,
+      "unregistered_weight_multiplier": 0.8,
+      "notes": "Private speculative work may deliberately trade formal protection for speed or access."
+    },
+    {
+      "id": "gray_market",
+      "registration": "not_required",
+      "insurance_required": [],
+      "can_offer_to_unregistered": true,
+      "unregistered_weight_multiplier": 1,
+      "notes": "Not automatically illegal cargo; represents commerce outside reputable brokerage and certificate systems."
+    }
+  ],
+  "failure_reasons": [
+    "port_denied_registration",
+    "registration_expired",
+    "registration_modification_pending",
+    "missing_ship_endorsement",
+    "missing_insurance_product",
+    "coverage_limit_too_low",
+    "policy_excludes_route",
+    "policy_excludes_cargo",
+    "certificate_unverifiable"
+  ],
+  "ui_rule": "Contract board should show unmet requirements before acceptance when the issuer knows them. Hidden insurer exposure is separate from issuer eligibility."
+}
