@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "local_color": [
+    {
+      "location_id": "meridian_station",
+      "name": "The Long Layover",
+      "type": "bar_district",
+      "description": "A dense strip of bars, diners, capsule hotels, laundries and crew services along an old freight concourse. Captains can find a meal at almost any species' preferred humidity and gravity orientation."
+    },
+    {
+      "location_id": "waystation_habitat",
+      "name": "The Spare Room",
+      "type": "bar_and_boarding_house",
+      "description": "Started when a mechanic rented an unused pressure module to stranded crews. Expansion added rooms one module at a time; none match."
+    },
+    {
+      "location_id": "lastlight_settlement",
+      "name": "Survey House",
+      "type": "expedition_office",
+      "description": "Part permit desk, part chart room, part message board. Crews compare route notes here before leaving dependable navigation coverage."
+    },
+    {
+      "location_id": "talos_prime",
+      "name": "Container City",
+      "type": "temporary_district",
+      "description": "Hundreds of freight containers and prefabricated habitat modules converted into housing, clinics, workshops and food stalls while permanent construction lags behind population growth."
+    },
+    {
+      "location_id": "roosevelt",
+      "name": "Manufacturer Row",
+      "type": "commercial_industrial_district",
+      "description": "Showrooms, warehouses, certification shops and parts counters representing manufacturers from across known space. Captains routinely compare components here before committing to a refit."
+    },
+    {
+      "location_id": "carver_habitats",
+      "name": "Second Life Market",
+      "type": "used_goods_market",
+      "description": "A sprawling market for repaired appliances, furniture, suits, tools and ship components. In Carver, throwing away something serviceable is considered financially eccentric."
+    },
+    {
+      "location_id": "keshar_prime",
+      "name": "Old Load Hall",
+      "type": "industrial_landmark",
+      "description": "A still-operating freight hall whose original structural frame predates modern interstellar standards. Successive generations adapted standardized docks around it rather than demolishing it."
+    },
+    {
+      "location_id": "ilos_prime",
+      "name": "The Hanging Works",
+      "type": "industrial_landmark",
+      "description": "A propulsion manufacturing complex suspended across a deep escarpment, exploiting Ilos's low gravity and dense atmosphere for material movement and testing."
+    },
+    {
+      "location_id": "veyara_prime",
+      "name": "Nine Currents Exchange",
+      "type": "market",
+      "description": "A partly submerged commercial district where freight, aquaculture products and environmental technology change hands between surface, floating and underwater transport."
+    },
+    {
+      "location_id": "orun_prime",
+      "name": "Warm Junction",
+      "type": "transit_market",
+      "description": "A crowded underground interchange where public transit, machine access corridors, food stalls and thermal infrastructure occupy the same interconnected volume."
+    }
+  ]
+}
