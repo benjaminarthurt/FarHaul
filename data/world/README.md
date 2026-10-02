@@ -298,3 +298,12 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `daily_city_rhythms.json` | Ordinary weekday traffic and demand schedules |
 | `public_procurement.json` | Government and civic freight contract generation |
 | `city_generation_standard.json` | Required fields and validation for complete cities |
+| `metro_network_expansion.json` | Additional metropolitan regions across known space |
+| `secondary_settlements.json` | Secondary cities, towns, camps and outposts |
+| `infrastructure_capacity.json` | Power, water, waste, data, civic and storage capacities |
+| `population_coverage.json` | Named-versus-aggregate population coverage ledger |
+| `warehousing_distribution.json` | Warehouse classes, capacities and distribution centers |
+| `utility_plants.json` | Individual power, water and heat infrastructure |
+| `ordinary_services.json` | Civilian service-business archetypes |
+| `economic_shocks.json` | Local disruption and dependency propagation |
+| `world_validation_rules.json` | Cross-dataset consistency and completeness rules |
