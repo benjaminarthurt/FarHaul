@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "budget_model": {
+    "revenue_categories": [
+      "assessment",
+      "transaction_tax",
+      "utility_revenue",
+      "port_fees",
+      "business_licenses",
+      "system_transfer",
+      "resource_or_land_lease"
+    ],
+    "expense_categories": [
+      "utilities",
+      "transport",
+      "public_safety",
+      "health",
+      "education",
+      "housing",
+      "waste",
+      "administration",
+      "debt_service"
+    ]
+  },
+  "municipalities": [
+    {
+      "id": "new_houston_city",
+      "metro_id": "new_houston_metro",
+      "annual_budget_mcr": 18600
+    },
+    {
+      "id": "nine_currents_city",
+      "metro_id": "nine_currents_metro",
+      "annual_budget_mcr": 24100
+    },
+    {
+      "id": "central_concord_city",
+      "metro_id": "central_concord_metro",
+      "annual_budget_mcr": 44700
+    },
+    {
+      "id": "hopewell_provisional",
+      "metro_id": "hopewell_metro",
+      "annual_budget_mcr": 164
+    }
+  ],
+  "rule": "Budgets generate procurement and constrain infrastructure response."
+}
