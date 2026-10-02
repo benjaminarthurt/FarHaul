@@ -1,0 +1,230 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "operators": [
+    {
+      "id": "sol_material_recovery",
+      "name": "Sol Material Recovery",
+      "system_id": "sol",
+      "material_recovery_fraction": 0.71,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "keshar_reclamation",
+      "name": "Keshar Reclamation Works",
+      "system_id": "keshar",
+      "material_recovery_fraction": 0.84,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "ilos_mass_recovery",
+      "name": "Ilos Mass Recovery",
+      "system_id": "ilos",
+      "material_recovery_fraction": 0.9,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "veyara_closed_materials",
+      "name": "Veyara Closed Materials",
+      "system_id": "veyara",
+      "material_recovery_fraction": 0.93,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "orun_return_loop",
+      "name": "Orun Return Loop",
+      "system_id": "orun",
+      "material_recovery_fraction": 0.91,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "concord_recovery",
+      "name": "Concord Recovery Authority",
+      "system_id": "concord",
+      "material_recovery_fraction": 0.82,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "roosevelt_scrap",
+      "name": "Roosevelt Scrap & Recovery",
+      "system_id": "new_houston",
+      "material_recovery_fraction": 0.76,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "hesperus_organics",
+      "name": "Hesperus Organics Recovery",
+      "system_id": "hesperus",
+      "material_recovery_fraction": 0.88,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "gate_scrap",
+      "name": "Gate Scrap Exchange",
+      "system_id": "iron_gate",
+      "material_recovery_fraction": 0.8,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "carver_second_life",
+      "name": "Carver Second Life Cooperative",
+      "system_id": "carver",
+      "material_recovery_fraction": 0.95,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "meridian_recovery",
+      "name": "Meridian Recovery & Salvage",
+      "system_id": "port_meridian",
+      "material_recovery_fraction": 0.89,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "talos_recovery",
+      "name": "Talos Recovery Yard",
+      "system_id": "talos",
+      "material_recovery_fraction": 0.67,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "crossroads_reuse",
+      "name": "Crossroads Reuse Cooperative",
+      "system_id": "waystation",
+      "material_recovery_fraction": 0.94,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    },
+    {
+      "id": "beacon_recovery",
+      "name": "Beacon Recovery Shed",
+      "system_id": "lastlight",
+      "material_recovery_fraction": 0.96,
+      "outputs": [
+        "scrap_metals",
+        "reusable_components",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "municipal_waste",
+        "industrial_scrap",
+        "damaged_equipment"
+      ]
+    }
+  ]
+}
