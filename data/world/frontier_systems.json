@@ -1,0 +1,282 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "systems": [
+    {
+      "id": "lantern",
+      "name": "Lantern",
+      "survey_state": "surveyed",
+      "gateway_from": "lastlight",
+      "star": "K-type main sequence",
+      "survey_history": "Repeatedly visited by Lastlight survey crews; navigation solution considered dependable.",
+      "bodies": [
+        {
+          "id": "lantern_b",
+          "name": "Lantern b",
+          "type": "rocky_planet",
+          "summary": "Hot inner rock with little commercial interest."
+        },
+        {
+          "id": "lantern_c",
+          "name": "Lantern c",
+          "type": "cold_desert_planet",
+          "summary": "Thin atmosphere, extensive subsurface water ice and broad equatorial flats suitable for temporary expedition bases.",
+          "resources": [
+            "water ice",
+            "common silicates"
+          ],
+          "hazards": [
+            "dust electrostatics",
+            "cold"
+          ]
+        },
+        {
+          "id": "lantern_outer",
+          "name": "Lantern Outer Belt",
+          "type": "asteroid_belt",
+          "summary": "Sparse belt with useful volatiles but mediocre metal concentrations.",
+          "resources": [
+            "water",
+            "carbon compounds"
+          ]
+        }
+      ],
+      "commercial_outlook": "Useful primarily as a logistics stepping stone. Water makes local propellant production plausible, but no major export justifies permanent settlement yet.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "morrow",
+      "name": "Morrow",
+      "survey_state": "surveyed",
+      "gateway_from": "lantern",
+      "star": "G-type main sequence",
+      "survey_history": "Extensively surveyed after an atmospheric biosignature attracted scientific funding.",
+      "bodies": [
+        {
+          "id": "morrow_b",
+          "name": "Morrow b",
+          "type": "temperate_planet",
+          "summary": "Temperate world with microbial and simple multicellular native life concentrated in shallow inland seas.",
+          "resources": [
+            "scientific biological samples"
+          ],
+          "hazards": [
+            "planetary protection restrictions",
+            "uncharacterized biochemistry"
+          ],
+          "special": "Landing zones are tightly controlled to avoid contamination."
+        },
+        {
+          "id": "morrow_c",
+          "name": "Morrow c",
+          "type": "airless_moon",
+          "summary": "Airless mineral-poor moon used as a clean staging location for biological expeditions."
+        }
+      ],
+      "commercial_outlook": "Scientifically important but deliberately difficult to exploit. Most freight is sterile equipment, laboratories, consumables and sample-return hardware.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "pilgrim",
+      "name": "Pilgrim",
+      "survey_state": "surveyed",
+      "gateway_from": "lantern",
+      "star": "M-type main sequence",
+      "survey_history": "Mapped early because its compact planetary system made a cheap survey target.",
+      "bodies": [
+        {
+          "id": "pilgrim_b",
+          "name": "Pilgrim b",
+          "type": "tidally_locked_rocky_planet",
+          "summary": "Airless and metal-poor."
+        },
+        {
+          "id": "pilgrim_c",
+          "name": "Pilgrim c",
+          "type": "frozen_planet",
+          "summary": "Water-rich but otherwise ordinary frozen world."
+        }
+      ],
+      "commercial_outlook": "A disappointment. Everything Pilgrim contains is available closer to established markets. It survives on charts mostly because it is a useful navigation reference.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "cairn",
+      "name": "Cairn",
+      "survey_state": "partial",
+      "gateway_from": "lantern",
+      "star": "K-type main sequence",
+      "survey_history": "Two major surveys and several commercial prospecting visits disagree about the value of the outer system.",
+      "bodies": [
+        {
+          "id": "cairn_b",
+          "name": "Cairn b",
+          "type": "super_earth",
+          "summary": "High-gravity dry planet with dense atmosphere and severe surface winds.",
+          "hazards": [
+            "1.62g surface gravity",
+            "extreme winds"
+          ]
+        },
+        {
+          "id": "cairn_outer",
+          "name": "Cairn Outer System",
+          "type": "unresolved_outer_bodies",
+          "summary": "Remote observations suggest several icy bodies and a debris concentration; orbital solutions remain incomplete.",
+          "resources": [
+            "possible volatiles",
+            "unconfirmed heavy-element concentration"
+          ]
+        }
+      ],
+      "commercial_outlook": "Interesting enough to revisit, not proven enough to finance a colony. A classic speculative survey destination.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "needle",
+      "name": "Needle",
+      "survey_state": "partial",
+      "gateway_from": "morrow",
+      "star": "F-type main sequence",
+      "survey_history": "Named for the narrow safe approach geometry identified during the first crewed survey.",
+      "bodies": [
+        {
+          "id": "needle_b",
+          "name": "Needle b",
+          "type": "hot_rocky_planet",
+          "summary": "Uninhabitable inner planet."
+        },
+        {
+          "id": "needle_debris",
+          "name": "Needle Debris Plane",
+          "type": "dense_debris_region",
+          "summary": "A broad debris structure complicates high-speed navigation but contains accessible nickel-iron bodies.",
+          "resources": [
+            "iron",
+            "nickel"
+          ],
+          "hazards": [
+            "high debris density",
+            "poor emergency maneuver margins"
+          ]
+        }
+      ],
+      "commercial_outlook": "Potentially profitable extraction, but insurers and carriers dislike the navigation risk. Specialized operators may find opportunity here.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "harbor",
+      "name": "Harbor",
+      "survey_state": "partial",
+      "gateway_from": "cairn",
+      "star": "G-type main sequence",
+      "survey_history": "A remote survey identified an unusually benign outer moon, prompting its optimistic name. Only one crewed expedition has reached it.",
+      "bodies": [
+        {
+          "id": "harbor_giant",
+          "name": "Harbor Giant",
+          "type": "gas_giant",
+          "summary": "Large gas giant with a complex moon system."
+        },
+        {
+          "id": "harbor_moon",
+          "name": "Harbor",
+          "type": "icy_moon",
+          "summary": "Subsurface ocean moon with accessible surface ice, useful volatiles and low radiation compared with neighboring moons.",
+          "resources": [
+            "water ice",
+            "ammonia",
+            "carbon compounds"
+          ],
+          "hazards": [
+            "cryogenic surface",
+            "unknown subsurface chemistry"
+          ]
+        }
+      ],
+      "commercial_outlook": "One of the better candidates for a permanent outward logistics depot, but current traffic does not justify the investment.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "redoubt",
+      "name": "Redoubt",
+      "survey_state": "cataloged",
+      "gateway_from": "cairn",
+      "star": "K-type main sequence",
+      "survey_history": "Cataloged remotely. No confirmed crewed entry.",
+      "bodies": [],
+      "commercial_outlook": "Unknown. Long-range observations suggest multiple rocky planets, but published data is insufficient for commercial planning.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "vesper",
+      "name": "Vesper",
+      "survey_state": "cataloged",
+      "gateway_from": "harbor",
+      "star": "M-type main sequence",
+      "survey_history": "Known from remote astronomy and automated observations. No dependable local navigation solution.",
+      "bodies": [],
+      "commercial_outlook": "No demonstrated economic value. Its position makes it interesting as a possible extension of the outward corridor.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "faraday",
+      "name": "Faraday",
+      "survey_state": "cataloged",
+      "gateway_from": "needle",
+      "star": "active M-type main sequence",
+      "survey_history": "Remote observations show frequent stellar activity. No crewed survey has been funded.",
+      "bodies": [],
+      "commercial_outlook": "Probably hostile to conventional settlement; still of interest to stellar researchers and specialized survey crews.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "blackglass",
+      "name": "Blackglass",
+      "survey_state": "partial",
+      "gateway_from": "needle",
+      "star": "K-type main sequence",
+      "survey_history": "One commercial survey returned unusually promising spectroscopy from a dark inner asteroid family before funding collapsed.",
+      "bodies": [
+        {
+          "id": "blackglass_belt",
+          "name": "Blackglass Family",
+          "type": "asteroid_family",
+          "summary": "Very dark carbonaceous bodies with unusual trace-element signatures.",
+          "resources": [
+            "carbon compounds",
+            "unconfirmed strategic trace elements"
+          ],
+          "hazards": [
+            "poor optical acquisition",
+            "incomplete orbital catalog"
+          ]
+        }
+      ],
+      "commercial_outlook": "Potentially valuable, potentially a costly false positive. Survey data is privately traded and inconsistent.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "holloway",
+      "name": "Holloway",
+      "survey_state": "cataloged",
+      "gateway_from": "redoubt",
+      "star": "G-type main sequence",
+      "survey_history": "Detected and characterized remotely; currently beyond routine commercial support.",
+      "bodies": [],
+      "commercial_outlook": "Unknown. Listed in expedition planning software mostly because it is the next obvious target beyond Redoubt.",
+      "expedition_supplied_from": "lastlight"
+    },
+    {
+      "id": "sable",
+      "name": "Sable",
+      "survey_state": "cataloged",
+      "gateway_from": "vesper",
+      "star": "K-type main sequence",
+      "survey_history": "Sparse remote data only.",
+      "bodies": [],
+      "commercial_outlook": "No established commercial case. It represents the practical edge of what most public charts bother naming.",
+      "expedition_supplied_from": "lastlight"
+    }
+  ]
+}
