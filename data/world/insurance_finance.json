@@ -53,5 +53,11 @@
       "term": "frontier exclusion",
       "meaning": "Insurance clause denying or limiting coverage beyond named supported systems."
     }
-  ]
+  ],
+  "insurance_design": {
+    "required_by_general_law": false,
+    "summary": "Insurance is normally voluntary, but lenders, ports, cargo owners, passenger contracts and hazardous facilities may require certificates as a condition of doing business.",
+    "policy_violation": "Captains can operate outside policy restrictions. Violations may remain undiscovered, be detected through records, or surface during a claim; consequences can include cancellation, nonrenewal, higher premiums or denial of a materially related claim.",
+    "registration_relationship": "Insurers generally expect a recognized current vessel registration and may suspend or restrict coverage after major undocumented configuration changes."
+  }
 }
