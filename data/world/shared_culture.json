@@ -1,0 +1,140 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "common_language": {
+    "name": "Trade Common",
+    "description": "A deliberately practical interstellar working language that grew from Concord freight operations rather than replacing native languages.",
+    "notes": [
+      "Most professional crews speak or machine-assist it.",
+      "Technical vocabulary is highly standardized; humor, family concepts and food terms translate less cleanly.",
+      "Ship systems generally support live transcription and translation, but radio brevity favors shared phrases."
+    ]
+  },
+  "timekeeping": {
+    "standard": "Concord Standard Time",
+    "description": "Used for contracts, navigation logs and interstellar schedules. Local worlds retain civil calendars and day divisions.",
+    "practice": "Freight documents always specify standard time when a deadline crosses systems."
+  },
+  "money": {
+    "unit": "credit",
+    "symbol": "cr",
+    "description": "Common accounting unit used by the game economy. Local currencies and private clearing systems may exist, but ordinary interstellar contracts settle in credits."
+  },
+  "port_etiquette": [
+    "Never block a pressure door, cargo lane or maintenance access point for conversation.",
+    "Environmental zones are labeled by atmosphere, pressure, humidity and gravity rather than by species.",
+    "A berth's posted gravity is treated as safety information, not a comfort preference.",
+    "Crews are expected to declare biological, radiological, chemical and atmospheric cargo hazards before docking.",
+    "Touching another crew's ship without operational reason is broadly considered rude across commercial ports."
+  ],
+  "mixed_species_design": [
+    {
+      "id": "gravity",
+      "problem": "Native gravity preferences range widely.",
+      "solutions": [
+        "Most commercial stations standardize public areas near a compromise gravity.",
+        "Hotels advertise gravity as prominently as room size.",
+        "Some stations maintain high-g and low-g residential sections.",
+        "Workplaces use mechanical assists rather than expecting every species to tolerate local gravity indefinitely."
+      ]
+    },
+    {
+      "id": "humidity",
+      "problem": "Vey prefer substantially higher humidity than many Human/Ilyan environments.",
+      "solutions": [
+        "Vey cabins commonly have independent humidity loops.",
+        "Public stations include humid lounges/immersion facilities.",
+        "Airlocks between humidity zones are designed to control condensation as much as pressure."
+      ]
+    },
+    {
+      "id": "scale",
+      "problem": "Kesh body proportions and mass differ significantly from Ilyan proportions.",
+      "solutions": [
+        "Public seating uses multiple geometries rather than one adjustable chair.",
+        "Handrails occur at several heights.",
+        "Commercial ship bridges use replaceable seat/control pedestals.",
+        "Corridors prioritize clearance for suited bodies rather than average unsuited height."
+      ]
+    },
+    {
+      "id": "privacy",
+      "problem": "Orun communal norms can conflict with Human and Ilyan expectations.",
+      "solutions": [
+        "Mixed-species ships explicitly label private versus common compartments.",
+        "Closed-door conventions are taught during crew onboarding.",
+        "Headphones, privacy curtains and small isolation rooms are common retrofit items."
+      ]
+    },
+    {
+      "id": "food",
+      "problem": "Biological compatibility does not mean identical nutritional requirements.",
+      "solutions": [
+        "Galley storage is compartmented and clearly labeled.",
+        "Universal base ingredients are less common than separate preserved staples.",
+        "Ports sell mixed crew provisioning packs sized by species and trip duration."
+      ]
+    }
+  ],
+  "freight_culture": [
+    {
+      "id": "captains_table",
+      "term": "captain's table",
+      "meaning": "Not necessarily a literal table; informal phrase for the place or channel where a small crew settles route, money and maintenance disagreements."
+    },
+    {
+      "id": "deadhead",
+      "term": "deadhead",
+      "meaning": "Flying a leg with little or no paying cargo. Especially common after delivering to boom colonies such as Talos."
+    },
+    {
+      "id": "red_tag",
+      "term": "red-tag",
+      "meaning": "A component marked unfit for normal service. Usage spread from Kesh maintenance practice into Trade Common."
+    },
+    {
+      "id": "light_manifest",
+      "term": "light manifest",
+      "meaning": "Ilyan-derived expression for discovering that the profitable cargo is much smaller than expected; sometimes approving, sometimes sarcastic."
+    },
+    {
+      "id": "wet_room",
+      "term": "wet room",
+      "meaning": "Originally Vey-specific shipboard environmental space; now a common term for high-humidity hygiene/immersion compartments."
+    },
+    {
+      "id": "crawlway",
+      "term": "crawlway",
+      "meaning": "Orun-derived term for maintenance access routes around machinery. Widely used even on ships no Orun manufacturer touched."
+    },
+    {
+      "id": "last_light",
+      "term": "last light",
+      "meaning": "Frontier expression for the final dependable service point before unsupported travel; now strongly associated with the settlement that took the name."
+    }
+  ],
+  "crew_practices": [
+    "Mixed crews normally include environmental preferences in employment agreements.",
+    "Medical lockers carry species-specific emergency references and medications.",
+    "Captains are legally responsible for knowing whether their life-support plant can sustain every person aboard.",
+    "Passenger contracts specify gravity, atmospheric composition and accessible facilities.",
+    "Long-haul crews often develop hybrid food and holiday traditions unrelated to the ship's registry or manufacturer.",
+    "Small commercial crews usually care more about whether someone can repair a pump at 0300 than where their species originated."
+  ],
+  "holidays": [
+    {
+      "id": "compact_day",
+      "name": "Compact Day",
+      "when": "ICE year anniversary",
+      "origin": "Concord Compact",
+      "practice": "Ports hold standards exhibitions, ship inspections become jokingly ceremonial, and freight companies use it for promotions. Importance varies widely outside Concord."
+    },
+    {
+      "id": "first_departure",
+      "name": "First Departure",
+      "when": "local/custom",
+      "origin": "Freight and exploration tradition",
+      "practice": "Some frontier crews mark the anniversary of a ship's first revenue voyage rather than its launch."
+    }
+  ]
+}
