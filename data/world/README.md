@@ -350,3 +350,44 @@ These should reference existing IDs rather than duplicate entity definitions.
 ## Validation
 
 Run `python tools/validate_world_data.py` from the repository root to validate JSON syntax and critical cross-file references. See `docs/world/data-validation.md` and `docs/world/integrated-world-model.md`.
+| `entity_authority.json` | Canonical system→body→region→settlement→district→site hierarchy |
+| `settlements_authority.json` | Canonical settlement identity registry |
+| `sites_authority.json` | Canonical site identity registry |
+| `organizations_authority.json` | Canonical organization identity registry |
+| `data_registry.json` | Dataset authority and deprecation registry |
+| `geographic_generation.json` | Planet-scale deterministic settlement/infrastructure generation |
+| `world_generation_seeds.json` | Stable inhabited-world procedural seeds |
+| `street_level_generation.json` | District, neighborhood, block and site generation |
+| `business_generation.json` | Ordinary business generation and persistence |
+| `district_templates.json` | Mixed land-use district templates |
+| `addressing_delivery.json` | Environment-specific addresses and receiving constraints |
+| `population_demographics.json` | Population, household, employment and income distributions |
+| `migration_model.json` | Migration and mobility drivers |
+| `npc_generation.json` | Persistent NPC generation, schedules and knowledge |
+| `final_mile_logistics.json` | End-to-end local freight stages |
+| `local_freight_vehicles.json` | Surface/marine/subsurface/vertical freight vehicles |
+| `cargo_custody.json` | Custody transfers and evidence |
+| `manufacturing_bom.json` | Manufacturing dependency graph |
+| `production_processes.json` | Industrial transformations |
+| `component_models.json` | Named ship component models |
+| `parts_aftermarket.json` | OEM, aftermarket and salvaged parts |
+| `used_component_condition.json` | Used component condition and value |
+| `cargo_packaging.json` | Physical pallets, crates and containers |
+| `cargo_handling_classes.json` | Environmental and handling requirements |
+| `cargo_lot_generation.json` | Persistent physical cargo lots |
+| `mundane_demand_baskets.json` | Household and institutional mundane consumption |
+| `frontier_generation.json` | Large ordinary stellar frontier catalogue |
+| `survey_disciplines.json` | Multi-discipline survey model |
+| `survey_data_rights.json` | Survey ownership and licensing |
+| `government_layers.json` | Planetary, regional, municipal and special government |
+| `civic_law_domains.json` | Labor, land-use, tax, residency and court domains |
+| `cultural_domains.json` | Media, sport, food, music, belief, architecture and leisure |
+| `astronomy_schema.json` | Physical stellar/body schema |
+| `orbital_transfer_model.json` | Time-dependent orbital transfer mechanics |
+| `astronomy_examples.json` | Calibrated authored astronomy examples |
+| `economic_identities.json` | Population/economic conservation identities |
+| `entity_promotion.json` | Generated-to-persistent promotion rules |
+| `integration_qa.json` | Integrated QA requirements |
+| `social_systems.json` | Education, healthcare, housing and welfare |
+| `media_information.json` | Media and information propagation |
+| `leisure_events.json` | Leisure and event economy |
