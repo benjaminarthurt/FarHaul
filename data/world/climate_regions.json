@@ -1,0 +1,144 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "zones": [
+    {
+      "id": "roosevelt_midland_continental",
+      "body_id": "roosevelt",
+      "region_ids": [
+        "roosevelt_midlands"
+      ],
+      "mean_temp_c": 6,
+      "seasonal_range_c": 31,
+      "annual_precip_mm": 710,
+      "prevailing_wind": "west_to_east",
+      "weather": [
+        "snow",
+        "summer_rain",
+        "cold_fronts"
+      ],
+      "operational_effects": [
+        "winter_road_delays",
+        "deicing_demand"
+      ]
+    },
+    {
+      "id": "roosevelt_south_maritime",
+      "body_id": "roosevelt",
+      "region_ids": [
+        "roosevelt_southcoast"
+      ],
+      "mean_temp_c": 9,
+      "seasonal_range_c": 18,
+      "annual_precip_mm": 1040,
+      "prevailing_wind": "oceanic_westerly",
+      "weather": [
+        "coastal_storms",
+        "fog"
+      ],
+      "operational_effects": [
+        "port_weather_delays"
+      ]
+    },
+    {
+      "id": "hesperus_green_temperate",
+      "body_id": "hesperus_prime",
+      "region_ids": [
+        "greenline_plain"
+      ],
+      "mean_temp_c": 14,
+      "seasonal_range_c": 21,
+      "annual_precip_mm": 830,
+      "prevailing_wind": "west_southwest",
+      "weather": [
+        "spring_rain",
+        "summer_storm"
+      ],
+      "operational_effects": [
+        "harvest_windows"
+      ]
+    },
+    {
+      "id": "hesperus_west_steppe",
+      "body_id": "hesperus_prime",
+      "region_ids": [
+        "western_drylands"
+      ],
+      "mean_temp_c": 12,
+      "seasonal_range_c": 27,
+      "annual_precip_mm": 310,
+      "prevailing_wind": "west",
+      "weather": [
+        "dust",
+        "drought"
+      ],
+      "operational_effects": [
+        "irrigation_demand"
+      ]
+    },
+    {
+      "id": "iron_gate_basin_arid",
+      "body_id": "iron_gate_prime",
+      "region_ids": [
+        "keel_basin",
+        "hammer_plain"
+      ],
+      "mean_temp_c": 8,
+      "seasonal_range_c": 29,
+      "annual_precip_mm": 190,
+      "prevailing_wind": "northwest",
+      "weather": [
+        "dust",
+        "dry_wind"
+      ],
+      "operational_effects": [
+        "cooling_water_pressure",
+        "dust_maintenance"
+      ]
+    },
+    {
+      "id": "bradbury_plateau",
+      "body_id": "bradbury_prime",
+      "region_ids": [
+        "lowell_plateau"
+      ],
+      "mean_temp_c": 3,
+      "seasonal_range_c": 25,
+      "annual_precip_mm": 260,
+      "prevailing_wind": "west",
+      "weather": [
+        "clear_skies",
+        "high_wind",
+        "snow"
+      ],
+      "operational_effects": [
+        "excellent_observing",
+        "wind_delays"
+      ]
+    },
+    {
+      "id": "talos_high_desert",
+      "body_id": "talos_prime",
+      "region_ids": [
+        "hopewell_basin",
+        "prospect_rim"
+      ],
+      "mean_temp_c": -2,
+      "seasonal_range_c": 34,
+      "annual_precip_mm": 90,
+      "prevailing_wind": "variable_strong",
+      "weather": [
+        "dust",
+        "cold_snap",
+        "rare_snow"
+      ],
+      "operational_effects": [
+        "dust_closure",
+        "water_pressure",
+        "heating_demand"
+      ]
+    }
+  ],
+  "rule": "Climate affects infrastructure, agriculture, hazards, freight timing and consumption. It is not cosmetic biome labeling."
+}
