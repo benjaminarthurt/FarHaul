@@ -1,0 +1,129 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "provinces": [
+    {
+      "id": "toolbox_metal_province",
+      "body_id": "roosevelt",
+      "regions": [
+        "roosevelt_farwest",
+        "roosevelt_northshield"
+      ],
+      "resources": [
+        {
+          "commodity": "iron_feedstock",
+          "grade": "high",
+          "maturity": "developed"
+        },
+        {
+          "commodity": "nickel_feedstock",
+          "grade": "medium",
+          "maturity": "developed"
+        }
+      ],
+      "infrastructure": [
+        "rail",
+        "surface_mines",
+        "processing"
+      ]
+    },
+    {
+      "id": "greenline_soil_province",
+      "body_id": "hesperus_prime",
+      "regions": [
+        "greenline_plain"
+      ],
+      "resources": [
+        {
+          "commodity": "grain",
+          "grade": "exceptional",
+          "maturity": "mature"
+        },
+        {
+          "commodity": "oilseed",
+          "grade": "high",
+          "maturity": "mature"
+        }
+      ],
+      "infrastructure": [
+        "irrigation",
+        "grain_rail",
+        "processing"
+      ]
+    },
+    {
+      "id": "anvil_metals_province",
+      "body_id": "iron_gate_prime",
+      "regions": [
+        "anvil_range",
+        "keel_basin"
+      ],
+      "resources": [
+        {
+          "commodity": "iron_feedstock",
+          "grade": "exceptional",
+          "maturity": "mature"
+        },
+        {
+          "commodity": "chromium_feedstock",
+          "grade": "high",
+          "maturity": "mature"
+        },
+        {
+          "commodity": "ceramic_feedstock",
+          "grade": "high",
+          "maturity": "mature"
+        }
+      ],
+      "infrastructure": [
+        "ore_rail",
+        "smelters",
+        "orbital_lift"
+      ]
+    },
+    {
+      "id": "fahrenheit_chemical_province",
+      "body_id": "bradbury_prime",
+      "regions": [
+        "fahrenheit_basin"
+      ],
+      "resources": [
+        {
+          "commodity": "industrial_salts",
+          "grade": "high",
+          "maturity": "developed"
+        }
+      ],
+      "infrastructure": [
+        "road",
+        "chemical_processing"
+      ]
+    },
+    {
+      "id": "talos_rare_field",
+      "body_id": "talos_prime",
+      "regions": [
+        "hopewell_basin",
+        "prospect_rim"
+      ],
+      "resources": [
+        {
+          "commodity": "rare_mineral_ore",
+          "grade": "exceptional",
+          "maturity": "boom"
+        }
+      ],
+      "infrastructure": [
+        "haul_roads",
+        "concentrator",
+        "surface_pads"
+      ],
+      "constraints": [
+        "water",
+        "housing",
+        "processing_capacity"
+      ]
+    }
+  ]
+}
