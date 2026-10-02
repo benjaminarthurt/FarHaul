@@ -6,7 +6,7 @@
     {
       "id": "fhv_long_road",
       "name": "Long Road",
-      "class_id": "r_61",
+      "class_id": "roosevelt_r61",
       "build_year_ice": 247,
       "history": [
         {
@@ -39,7 +39,7 @@
     {
       "id": "fhv_three_pumps",
       "name": "Three Pumps",
-      "class_id": "mule_40",
+      "class_id": "northstar_mule_40",
       "build_year_ice": 252,
       "history": [
         {
@@ -65,7 +65,7 @@
     {
       "id": "fhv_still_here",
       "name": "Still Here",
-      "class_id": "r_88_roadliner",
+      "class_id": "roosevelt_r88",
       "build_year_ice": 229,
       "history": [
         {
