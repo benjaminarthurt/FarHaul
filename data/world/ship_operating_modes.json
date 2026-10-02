@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "operating_modes": [
+    {
+      "id": "planetary_freighter",
+      "advantages": [
+        "direct_delivery",
+        "small_port_access"
+      ],
+      "costs": [
+        "landing_gear_mass",
+        "atmospheric_structure",
+        "surface_fuel"
+      ]
+    },
+    {
+      "id": "orbital_freighter",
+      "advantages": [
+        "more_payload",
+        "simpler_structure",
+        "large_scale"
+      ],
+      "costs": [
+        "transfer_fees",
+        "shuttle_dependency",
+        "cannot_land"
+      ]
+    },
+    {
+      "id": "hybrid_heavy",
+      "advantages": [
+        "selective_surface_access",
+        "flexibility"
+      ],
+      "costs": [
+        "high_mass",
+        "maintenance",
+        "limited_port_compatibility"
+      ]
+    }
+  ],
+  "rule": "Late-game scale should create logistics choices rather than simply making a larger ship universally better."
+}
