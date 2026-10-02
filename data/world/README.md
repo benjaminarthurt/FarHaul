@@ -23,6 +23,11 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `settlements.json` | Cities, habitat districts and frontier towns that make inhabited worlds recognizable |
 | `organizations.json` | Major manufacturers, standards bodies, survey authorities, cooperatives and salvage firms |
 | `local_color.json` | Bars, markets, industrial landmarks and other memorable place-level details |
+| `cultures.json` | Everyday culture, households, food, names, etiquette, work and death traditions for the five playable species |
+| `shared_culture.json` | Trade Common, timekeeping, mixed-species accommodations, crew practice and freight slang |
+| `civic_issues.json` | Grounded commercial, legal and civic tensions that can generate stories and contracts |
+| `ship_culture.json` | Species-origin shipbuilding philosophies, hybrid commercial traditions and lived-in ship details |
+| `naming.json` | Ship naming patterns and station nickname conventions |
 
 ## Stable IDs
 
