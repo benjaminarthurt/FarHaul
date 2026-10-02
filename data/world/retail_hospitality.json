@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "chains": [
+    {
+      "id": "common_table",
+      "name": "Common Table Markets",
+      "base_system_id": "concord",
+      "sector": "grocery",
+      "footprint": "core_developed"
+    },
+    {
+      "id": "dockside_provisions",
+      "name": "Dockside Provisions",
+      "base_system_id": "port_meridian",
+      "sector": "grocery_chandlery",
+      "footprint": "outer_frontier"
+    },
+    {
+      "id": "greenbasket",
+      "name": "Greenbasket",
+      "base_system_id": "hesperus",
+      "sector": "grocery",
+      "footprint": "developed"
+    },
+    {
+      "id": "loadhouse",
+      "name": "Loadhouse Supply",
+      "base_system_id": "keshar",
+      "sector": "hardware_workwear",
+      "footprint": "core_industrial"
+    },
+    {
+      "id": "spanhome",
+      "name": "SpanHome",
+      "base_system_id": "ilos",
+      "sector": "household_goods",
+      "footprint": "core"
+    },
+    {
+      "id": "current_market",
+      "name": "Current Market",
+      "base_system_id": "veyara",
+      "sector": "grocery_household",
+      "footprint": "core_ocean"
+    },
+    {
+      "id": "junction_stores",
+      "name": "Junction Stores Cooperative",
+      "base_system_id": "orun",
+      "sector": "household_tools",
+      "footprint": "core"
+    },
+    {
+      "id": "yardmart",
+      "name": "YardMart",
+      "base_system_id": "new_houston",
+      "sector": "hardware_grocery",
+      "footprint": "developed"
+    },
+    {
+      "id": "claim_supply",
+      "name": "Claim Supply",
+      "base_system_id": "talos",
+      "sector": "hardware_workwear",
+      "footprint": "frontier"
+    },
+    {
+      "id": "last_shop",
+      "name": "Last Shop Cooperative",
+      "base_system_id": "lastlight",
+      "sector": "general_store",
+      "footprint": "frontier"
+    }
+  ],
+  "hospitality": [
+    {
+      "id": "common_berth",
+      "name": "Common Berth Hotels",
+      "base_system_id": "concord",
+      "type": "hotel"
+    },
+    {
+      "id": "layover_rooms",
+      "name": "Layover Rooms Cooperative",
+      "base_system_id": "port_meridian",
+      "type": "crew_lodging"
+    },
+    {
+      "id": "yardhouse",
+      "name": "Yardhouse Lodging",
+      "base_system_id": "new_houston",
+      "type": "worker_crew_lodging"
+    },
+    {
+      "id": "greenline_inns",
+      "name": "Greenline Inns",
+      "base_system_id": "hesperus",
+      "type": "road_rail_lodging"
+    },
+    {
+      "id": "anchor_rooms",
+      "name": "Anchor Rooms",
+      "base_system_id": "tidemark",
+      "type": "platform_lodging"
+    },
+    {
+      "id": "hopewell_bunks",
+      "name": "Hopewell Bunks",
+      "base_system_id": "talos",
+      "type": "boomtown_lodging"
+    },
+    {
+      "id": "crossroads_berths",
+      "name": "Crossroads Berths",
+      "base_system_id": "waystation",
+      "type": "transit_lodging"
+    },
+    {
+      "id": "beacon_house",
+      "name": "Beacon House",
+      "base_system_id": "lastlight",
+      "type": "expedition_lodging"
+    }
+  ]
+}
