@@ -15,9 +15,9 @@ static var skip_intro := false  ## set when returning to the title so the splash
 static func default_profile() -> Dictionary:
 	return {
 		"name": "Captain",
-		"race": "terran",
+		"species": "human",
 		"difficulty": "normal",
-		"world": "calder",
+		"world": "concord",  # starting system id
 		"ship_name": "",
 		"location": "dock",  # "dock" or "shipyard"
 		"seen_welcome": false,
@@ -52,10 +52,10 @@ static func ship_cost(ship: ShipData, library: ModuleLibrary) -> int:
 
 ## Starts a fresh game in `at_slot`: the starter ship, docked at the chosen world's yard.
 ## Any save already in that slot is parked, not deleted.
-static func begin_new(at_slot: int, name: String, race: String, difficulty: String, world_id: String) -> bool:
+static func begin_new(at_slot: int, name: String, species_id: String, difficulty: String, world_id: String) -> bool:
 	var p := default_profile()
 	p["name"] = name.strip_edges() if name.strip_edges() != "" else "Captain"
-	p["race"] = race
+	p["species"] = species_id
 	p["difficulty"] = difficulty
 	p["world"] = world_id
 	var lib := ModuleLibrary.new()

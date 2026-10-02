@@ -205,8 +205,8 @@ func _on_settings() -> void:
 	_show_panel(settings_panel)
 
 
-func _on_begin(slot: int, player_name: String, race: String, difficulty: String, world_id: String) -> void:
-	if Session.begin_new(slot, player_name, race, difficulty, world_id):
+func _on_begin(slot: int, player_name: String, species_id: String, difficulty: String, world_id: String) -> void:
+	if Session.begin_new(slot, player_name, species_id, difficulty, world_id):
 		_enter_game()
 
 

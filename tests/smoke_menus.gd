@@ -19,21 +19,21 @@ func _run() -> void:
 	print("slots")
 	check(SaveSlots.COUNT == 5, "five slots")
 	check(SaveSlots.latest() == -1 and SaveSlots.first_empty() == 0, "all slots start empty")
-	check(Worlds.WORLDS.size() >= 3 and Worlds.RACES.size() >= 3 and Worlds.DIFFICULTIES.size() == 3, "worlds, races and difficulties are defined")
+	check(Worlds.species_list().size() == 5 and Worlds.start_ids("kesh").size() == 4 and Worlds.DIFFICULTIES.size() == 3, "species, starting systems and difficulties are defined")
 
 	print("new game")
-	check(Session.begin_new(2, "Mara Voss", "martian", "hard", "ketterick"), "begin a new game in slot 3")
+	check(Session.begin_new(2, "Mara Voss", "kesh", "hard", "new_houston"), "begin a new game in slot 3")
 	check(SaveSlots.exists(2) and not SaveSlots.exists(0), "only slot 3 is filled")
 	check(SaveSlots.latest() == 2 and SaveSlots.first_empty() == 0, "latest and first empty")
 	var p := SaveSlots.profile(2)
-	check(p.name == "Mara Voss" and p.race == "martian" and p.world == "ketterick" and p.difficulty == "hard", "profile saved")
+	check(p.name == "Mara Voss" and p.species == "kesh" and p.world == "new_houston" and p.difficulty == "hard", "profile saved")
 	check(p.location == "dock" and Session.scene_path() == Session.DOCK_SCENE, "new games begin at the dock")
 	check(Session.start_funds() == 110000, "hard starts with 110,000 credits")
 	check(int(p.credits) < 110000 and int(p.credits) > 0, "credits are funds minus the starter ship")
-	check(Worlds.world(p.world).yard_name == "Ketterick Slipways", "starting world decides the yard")
+	check(Worlds.world(p.world).yard_name == "Roosevelt Orbital Yards", "starting world decides the yard")
 
 	print("overwrite keeps the old save")
-	check(Session.begin_new(2, "Second", "terran", "easy", "calder"), "start over in slot 3")
+	check(Session.begin_new(2, "Second", "human", "easy", "concord"), "start over in slot 3")
 	var parked := 0
 	for f in DirAccess.get_files_at(SaveSlots.dir):
 		if f.contains("replaced"):
@@ -55,7 +55,7 @@ func _run() -> void:
 	root.add_child(scene)
 	await process_frame
 	check(scene._credits() == 220000 - scene._ship_cost(), "builder uses this game's starting funds")
-	check(scene.yard_label.text.contains("Calder Yard"), "builder shows which yard you are at")
+	check(scene.yard_label.text.contains("Concord Open Docks"), "builder shows which yard you are at")
 	check(Session.profile.location == "shipyard", "entering the builder records the shipyard")
 	scene.name_edit.text = "Dunlin"
 	scene._on_ship_name("Dunlin")

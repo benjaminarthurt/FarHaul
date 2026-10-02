@@ -106,10 +106,12 @@ func _build_ui() -> void:
 	col.add_child(where)
 	var yard := Label.new()
 	yard.text = "%s  ·  %s" % [w.yard_name, w.yard_type]
+	var at := Brand.note("%s. Population %s." % [String(w.yard_at).substr(0, 1).to_upper() + String(w.yard_at).substr(1), w.population], 14)
 	yard.add_theme_font_size_override("font_size", 18)
 	yard.add_theme_color_override("font_color", Brand.AMBER)
 	col.add_child(yard)
-	col.add_child(_gap(14))
+	col.add_child(at)
+	col.add_child(_gap(10))
 
 	var p := Session.profile
 	var grid := GridContainer.new()
@@ -117,11 +119,11 @@ func _build_ui() -> void:
 	grid.add_theme_constant_override("h_separation", 24)
 	grid.add_theme_constant_override("v_separation", 4)
 	col.add_child(grid)
-	_row(grid, "Captain", "%s, %s" % [p.name, Worlds.race(p.race).name])
+	_row(grid, "Captain", "%s, %s" % [p.name, Worlds.species(p.species).name])
 	_row(grid, "Ship", Session.ship_label())
 	_row(grid, "Credits", "%s cr" % ShipStats.commas(int(p.credits)))
 	_row(grid, "Difficulty", Worlds.difficulty(p.difficulty).name)
-	col.add_child(_gap(18))
+	col.add_child(_gap(10))
 
 	var menu := VBoxContainer.new()
 	menu.add_theme_constant_override("separation", 8)
@@ -137,9 +139,22 @@ func _build_ui() -> void:
 	status.add_theme_color_override("font_color", Brand.MUTED)
 	status.add_theme_font_size_override("font_size", 13)
 	col.add_child(status)
-	var note := Brand.note("The shipyard is where you build and fit your ship. It is only open at a yard like this one.")
-	note.custom_minimum_size = Vector2(380, 0)
-	col.add_child(note)
+	yard_btn.tooltip_text = "The shipyard is where you build and fit your ship. It is only open at a yard like this one."
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", Brand.panel_box())
+	layer.add_child(card)
+	card.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 40)
+	card.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	card.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	var info := VBoxContainer.new()
+	info.add_theme_constant_override("separation", 6)
+	info.custom_minimum_size = Vector2(400, 0)
+	card.add_child(info)
+	info.add_child(Brand.heading("ABOUT " + String(w.name).to_upper()))
+	info.add_child(Brand.note(w.blurb, 15))
+	info.add_child(Brand.note("Sells: %s.\nNeeds: %s." % [_few(w.exports), _few(w.imports)], 14))
+	if not w.neighbours.is_empty():
+		info.add_child(Brand.note("Direct routes to %s." % ", ".join(PackedStringArray(w.neighbours)), 14))
 	yard_btn.grab_focus()
 
 	fade = ColorRect.new()
@@ -151,6 +166,10 @@ func _build_ui() -> void:
 	fl.add_child(fade)
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	create_tween().tween_property(fade, "color:a", 0.0, 0.5)
+
+
+static func _few(list: Array) -> String:
+	return ", ".join(PackedStringArray(list.slice(0, 3)))
 
 
 func _gap(h: int) -> Control:
