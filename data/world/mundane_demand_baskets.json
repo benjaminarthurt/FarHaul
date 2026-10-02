@@ -1,0 +1,88 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "consumer_groups": [
+    {
+      "id": "household_basic",
+      "basket": [
+        "food",
+        "packaged_food",
+        "beverages",
+        "clothing",
+        "detergents",
+        "paper_products",
+        "consumer_goods"
+      ],
+      "replacement_cycles_days": {
+        "clothing": 240,
+        "appliances": 2100,
+        "furniture": 3200
+      }
+    },
+    {
+      "id": "construction",
+      "basket": [
+        "cement",
+        "glass",
+        "insulation",
+        "pipe",
+        "wire_cable",
+        "fasteners",
+        "paint_coatings",
+        "structural_materials"
+      ],
+      "replacement_cycles_days": {}
+    },
+    {
+      "id": "maintenance_shop",
+      "basket": [
+        "bearings",
+        "pumps",
+        "electric_motors",
+        "valves",
+        "filters",
+        "lubricants",
+        "fasteners",
+        "replacement_parts"
+      ],
+      "replacement_cycles_days": {}
+    },
+    {
+      "id": "hospital",
+      "basket": [
+        "medical_consumables",
+        "sterile_goods",
+        "medical_gases",
+        "pharmaceuticals",
+        "cleaning_supplies",
+        "food"
+      ],
+      "replacement_cycles_days": {}
+    },
+    {
+      "id": "school_office",
+      "basket": [
+        "office_supplies",
+        "paper_products",
+        "electronics",
+        "furniture",
+        "cleaning_supplies",
+        "food"
+      ],
+      "replacement_cycles_days": {}
+    },
+    {
+      "id": "laboratory",
+      "basket": [
+        "lab_supplies",
+        "specialty_chemicals",
+        "medical_gases",
+        "electronics",
+        "filters"
+      ],
+      "replacement_cycles_days": {}
+    }
+  ],
+  "locality_rule": "Core worlds produce most mundane goods locally; interstellar trade primarily covers imbalance, specialization, disruption and frontier dependence."
+}
