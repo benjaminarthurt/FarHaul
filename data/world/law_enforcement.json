@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "institution_types": [
+    {
+      "id": "customs",
+      "role": "imports exports manifests duties quarantine"
+    },
+    {
+      "id": "port_security",
+      "role": "facility safety access immediate incidents"
+    },
+    {
+      "id": "civil_police",
+      "role": "general criminal investigation inside jurisdiction"
+    },
+    {
+      "id": "commercial_investigator",
+      "role": "fraud cargo theft registry and financial investigations"
+    },
+    {
+      "id": "rescue_authority",
+      "role": "distress coordination rescue and casualty records"
+    },
+    {
+      "id": "registry_office",
+      "role": "vessel identity configuration ownership and liens"
+    }
+  ],
+  "system_examples": [
+    {
+      "system_id": "sol",
+      "institutions": [
+        "Sol Customs Service",
+        "Orbital Port Security",
+        "Sol Commercial Investigations Bureau",
+        "Sol Rescue Coordination"
+      ]
+    },
+    {
+      "system_id": "concord",
+      "institutions": [
+        "Concord Customs",
+        "Exchange Security",
+        "Commercial Integrity Office",
+        "Concord Rescue Service"
+      ]
+    },
+    {
+      "system_id": "new_houston",
+      "institutions": [
+        "Roosevelt Customs",
+        "Yard District Security",
+        "Roosevelt Commercial Enforcement",
+        "System Rescue"
+      ]
+    },
+    {
+      "system_id": "port_meridian",
+      "institutions": [
+        "Meridian Customs",
+        "Ring Security",
+        "Meridian Commercial Office",
+        "Meridian Rescue Coordination"
+      ]
+    },
+    {
+      "system_id": "talos",
+      "institutions": [
+        "Talos Customs Desk",
+        "Hopewell Field Security",
+        "Provisional Claims Office",
+        "Talos Rescue"
+      ]
+    },
+    {
+      "system_id": "waystation",
+      "institutions": [
+        "Waystation Dock Office",
+        "Dock Watch",
+        "Council Claims Desk",
+        "Waystation Rescue"
+      ]
+    },
+    {
+      "system_id": "lastlight",
+      "institutions": [
+        "Lastlight Customs Desk",
+        "Orbital Watch",
+        "Civil Office Investigator",
+        "Lastlight Rescue and Survey Coordination"
+      ]
+    }
+  ],
+  "jurisdiction_rule": "The responsible institution depends on physical location, offense, vessel registry, contract venue and applicable intersystem agreements."
+}
