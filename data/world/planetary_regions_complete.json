@@ -1,0 +1,310 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "worlds": [
+    {
+      "body_id": "earth",
+      "regions": [
+        {
+          "id": "earth_north_atlantic",
+          "name": "North Atlantic Corridor",
+          "climate": "temperate_maritime",
+          "population_share": 0.13
+        },
+        {
+          "id": "earth_pacific_arc",
+          "name": "Pacific Arc",
+          "climate": "mixed_maritime",
+          "population_share": 0.17
+        },
+        {
+          "id": "earth_indian_ocean_arc",
+          "name": "Indian Ocean Arc",
+          "climate": "tropical_subtropical",
+          "population_share": 0.21
+        },
+        {
+          "id": "earth_continental_interiors",
+          "name": "Continental Interiors",
+          "climate": "mixed_continental",
+          "population_share": 0.24
+        },
+        {
+          "id": "earth_southern_oceanic",
+          "name": "Southern Oceanic Regions",
+          "climate": "cool_maritime",
+          "population_share": 0.09
+        },
+        {
+          "id": "earth_other_regions",
+          "name": "Other Earth Regions",
+          "climate": "mixed",
+          "population_share": 0.16
+        }
+      ]
+    },
+    {
+      "body_id": "keshar_prime",
+      "regions": [
+        {
+          "id": "keshar_prime_old_load_shelf",
+          "name": "Old Load Shelf",
+          "climate": "dense_storm_maritime",
+          "population_share": 0.19
+        },
+        {
+          "id": "keshar_prime_seawall_coast",
+          "name": "Seawall Coast",
+          "climate": "storm_maritime",
+          "population_share": 0.16
+        },
+        {
+          "id": "keshar_prime_central_uplands",
+          "name": "Central Uplands",
+          "climate": "cool_dense_air",
+          "population_share": 0.27
+        },
+        {
+          "id": "keshar_prime_shallow_seas",
+          "name": "Shallow Sea Settlements",
+          "climate": "marine",
+          "population_share": 0.21
+        },
+        {
+          "id": "keshar_prime_outer_shelves",
+          "name": "Outer Shelves",
+          "climate": "windy_maritime",
+          "population_share": 0.17
+        }
+      ]
+    },
+    {
+      "body_id": "ilos_prime",
+      "regions": [
+        {
+          "id": "ilos_prime_hanging_escarpment",
+          "name": "Hanging Escarpment",
+          "climate": "dense_air_temperate",
+          "population_share": 0.22
+        },
+        {
+          "id": "ilos_prime_sixth_horizon",
+          "name": "Sixth Horizon",
+          "climate": "upland_temperate",
+          "population_share": 0.18
+        },
+        {
+          "id": "ilos_prime_deep_basins",
+          "name": "Deep Basins",
+          "climate": "warm_dense_air",
+          "population_share": 0.31
+        },
+        {
+          "id": "ilos_prime_western_steps",
+          "name": "Western Steps",
+          "climate": "cool_windy",
+          "population_share": 0.17
+        },
+        {
+          "id": "ilos_prime_remote_verticals",
+          "name": "Remote Verticals",
+          "climate": "alpine",
+          "population_share": 0.12
+        }
+      ]
+    },
+    {
+      "body_id": "veyara_prime",
+      "regions": [
+        {
+          "id": "veyara_prime_nine_currents",
+          "name": "Nine Currents Basin",
+          "climate": "warm_oceanic",
+          "population_share": 0.18
+        },
+        {
+          "id": "veyara_prime_deep_morning",
+          "name": "Deep Morning Basin",
+          "climate": "humid_oceanic",
+          "population_share": 0.21
+        },
+        {
+          "id": "veyara_prime_open_estuary",
+          "name": "Open Estuary Region",
+          "climate": "tropical_oceanic",
+          "population_share": 0.17
+        },
+        {
+          "id": "veyara_prime_southern_archipelagos",
+          "name": "Southern Archipelagos",
+          "climate": "storm_oceanic",
+          "population_share": 0.16
+        },
+        {
+          "id": "veyara_prime_pelagic_networks",
+          "name": "Pelagic Settlement Networks",
+          "climate": "open_ocean",
+          "population_share": 0.28
+        }
+      ]
+    },
+    {
+      "body_id": "orun_prime",
+      "regions": [
+        {
+          "id": "orun_prime_warm_junction",
+          "name": "Warm Junction Network",
+          "climate": "subsurface_temperate",
+          "population_share": 0.19
+        },
+        {
+          "id": "orun_prime_common_wall",
+          "name": "Common Wall Network",
+          "climate": "subsurface_warm",
+          "population_share": 0.25
+        },
+        {
+          "id": "orun_prime_east_return",
+          "name": "East Return Network",
+          "climate": "subsurface_cool",
+          "population_share": 0.18
+        },
+        {
+          "id": "orun_prime_var_deep",
+          "name": "Var Deep Network",
+          "climate": "geothermal",
+          "population_share": 0.22
+        },
+        {
+          "id": "orun_prime_surface_interface",
+          "name": "Surface Interface Regions",
+          "climate": "extreme_surface",
+          "population_share": 0.16
+        }
+      ]
+    },
+    {
+      "body_id": "concord_prime",
+      "regions": [
+        {
+          "id": "concord_prime_central_exchange",
+          "name": "Central Exchange Region",
+          "climate": "temperate",
+          "population_share": 0.26
+        },
+        {
+          "id": "concord_prime_freeport",
+          "name": "Freeport Region",
+          "climate": "temperate_coastal",
+          "population_share": 0.18
+        },
+        {
+          "id": "concord_prime_compact_basin",
+          "name": "Compact Basin",
+          "climate": "continental",
+          "population_share": 0.22
+        },
+        {
+          "id": "concord_prime_north_exchange",
+          "name": "North Exchange Belt",
+          "climate": "cool_temperate",
+          "population_share": 0.17
+        },
+        {
+          "id": "concord_prime_outer_regions",
+          "name": "Outer Concord Regions",
+          "climate": "mixed",
+          "population_share": 0.17
+        }
+      ]
+    },
+    {
+      "body_id": "pelagos_prime",
+      "regions": [
+        {
+          "id": "pelagos_prime_crosswater",
+          "name": "Crosswater Region",
+          "climate": "warm_oceanic",
+          "population_share": 0.31
+        },
+        {
+          "id": "pelagos_prime_shoal",
+          "name": "Shoal Region",
+          "climate": "shallow_ocean",
+          "population_share": 0.24
+        },
+        {
+          "id": "pelagos_prime_breaker",
+          "name": "Breaker Archipelago",
+          "climate": "storm_oceanic",
+          "population_share": 0.18
+        },
+        {
+          "id": "pelagos_prime_outer_pelagic",
+          "name": "Outer Pelagic Communities",
+          "climate": "open_ocean",
+          "population_share": 0.27
+        }
+      ]
+    },
+    {
+      "body_id": "tidemark_prime",
+      "regions": [
+        {
+          "id": "tidemark_prime_anchor_chain",
+          "name": "Anchor Platform Chain",
+          "climate": "storm_oceanic",
+          "population_share": 0.44
+        },
+        {
+          "id": "tidemark_prime_stormhold",
+          "name": "Stormhold Region",
+          "climate": "extreme_oceanic",
+          "population_share": 0.21
+        },
+        {
+          "id": "tidemark_prime_deep_extraction",
+          "name": "Deep Extraction Fields",
+          "climate": "open_ocean",
+          "population_share": 0.25
+        },
+        {
+          "id": "tidemark_prime_remote_platforms",
+          "name": "Remote Platforms",
+          "climate": "open_ocean",
+          "population_share": 0.1
+        }
+      ]
+    },
+    {
+      "body_id": "foundry_prime",
+      "regions": [
+        {
+          "id": "foundry_prime_deepworks",
+          "name": "Deepworks Network",
+          "climate": "subsurface_hot",
+          "population_share": 0.43
+        },
+        {
+          "id": "foundry_prime_liftmouth",
+          "name": "Liftmouth Region",
+          "climate": "subsurface_industrial",
+          "population_share": 0.19
+        },
+        {
+          "id": "foundry_prime_geothermal_arc",
+          "name": "Geothermal Arc",
+          "climate": "volcanic",
+          "population_share": 0.26
+        },
+        {
+          "id": "foundry_prime_outer_excavations",
+          "name": "Outer Excavations",
+          "climate": "subsurface",
+          "population_share": 0.12
+        }
+      ]
+    }
+  ]
+}
