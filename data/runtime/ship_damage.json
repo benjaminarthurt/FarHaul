@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "damage_types": [
+    "impact",
+    "thermal",
+    "electrical",
+    "pressure",
+    "corrosion",
+    "fatigue",
+    "contamination",
+    "overload"
+  ],
+  "repair_states": [
+    "temporary_patch",
+    "field_repair",
+    "service_repair",
+    "rebuild",
+    "replacement"
+  ],
+  "rules": [
+    "Damage is localized to modules and network segments.",
+    "Temporary repairs restore limited function and retain history.",
+    "Inspection can reveal hidden or progressive damage.",
+    "Failure probability depends on condition, load, environment and maintenance rather than a scripted timer."
+  ]
+}
