@@ -1,0 +1,133 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "templates": [
+    {
+      "id": "yard_worker",
+      "blocks": [
+        [
+          "05:30",
+          "commute"
+        ],
+        [
+          "06:30",
+          "work"
+        ],
+        [
+          "14:30",
+          "commute"
+        ],
+        [
+          "15:30",
+          "errands_or_home"
+        ],
+        [
+          "22:00",
+          "sleep"
+        ]
+      ]
+    },
+    {
+      "id": "office_worker",
+      "blocks": [
+        [
+          "07:00",
+          "home"
+        ],
+        [
+          "08:00",
+          "commute"
+        ],
+        [
+          "09:00",
+          "work"
+        ],
+        [
+          "17:00",
+          "commute"
+        ],
+        [
+          "18:00",
+          "home_or_leisure"
+        ],
+        [
+          "23:00",
+          "sleep"
+        ]
+      ]
+    },
+    {
+      "id": "shift_medical",
+      "blocks": [
+        [
+          "18:00",
+          "commute"
+        ],
+        [
+          "19:00",
+          "work"
+        ],
+        [
+          "07:00",
+          "commute"
+        ],
+        [
+          "08:00",
+          "sleep"
+        ]
+      ]
+    },
+    {
+      "id": "frontier_miner",
+      "blocks": [
+        [
+          "05:00",
+          "crew_transport"
+        ],
+        [
+          "06:00",
+          "work"
+        ],
+        [
+          "18:00",
+          "crew_transport"
+        ],
+        [
+          "19:00",
+          "meal_recreation"
+        ],
+        [
+          "22:00",
+          "sleep"
+        ]
+      ]
+    },
+    {
+      "id": "freight_captain",
+      "blocks": [
+        [
+          "variable",
+          "ship_operations"
+        ],
+        [
+          "variable",
+          "sleep"
+        ],
+        [
+          "variable",
+          "port_business"
+        ]
+      ]
+    }
+  ],
+  "variation": [
+    "weekday",
+    "rest_day",
+    "season",
+    "overtime",
+    "incident",
+    "travel",
+    "caregiving"
+  ]
+}
