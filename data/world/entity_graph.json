@@ -1,0 +1,106 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "entity_types": [
+    "system",
+    "government",
+    "port",
+    "yard",
+    "settlement",
+    "organization",
+    "company",
+    "person",
+    "ship",
+    "ship_class",
+    "commodity",
+    "product",
+    "contract",
+    "insurance_policy",
+    "registry_record",
+    "salvage_claim",
+    "survey_dataset"
+  ],
+  "relationship_types": [
+    "located_in",
+    "governed_by",
+    "operates",
+    "owns",
+    "secured_by",
+    "registered_with",
+    "insured_by",
+    "employs",
+    "crew_of",
+    "manufactured_by",
+    "issues_contract",
+    "owns_cargo",
+    "produces",
+    "consumes",
+    "ships_to",
+    "requires",
+    "recognized_by",
+    "member_of",
+    "data_shares_with",
+    "claims",
+    "derived_from"
+  ],
+  "id_rules": [
+    "IDs are stable lowercase snake_case.",
+    "A mechanics file should reference an existing entity ID rather than duplicate a display name when possible.",
+    "Narrative display names may change without changing stable IDs.",
+    "New gameplay-affecting entities should be added to the graph or to a graph-indexed source dataset."
+  ],
+  "core_edges": [
+    {
+      "from": "earth_orbital_freight",
+      "relation": "located_in",
+      "to": "sol"
+    },
+    {
+      "from": "concord_central_exchange",
+      "relation": "located_in",
+      "to": "concord"
+    },
+    {
+      "from": "port_meridian_main",
+      "relation": "located_in",
+      "to": "port_meridian"
+    },
+    {
+      "from": "lastlight_survey_office",
+      "relation": "located_in",
+      "to": "lastlight"
+    },
+    {
+      "from": "northstar_mule_40",
+      "relation": "manufactured_by",
+      "to": "northstar_commercial"
+    },
+    {
+      "from": "roosevelt_r88",
+      "relation": "manufactured_by",
+      "to": "roosevelt_modular"
+    },
+    {
+      "from": "kesh_bastion",
+      "relation": "manufactured_by",
+      "to": "kesh_heavy_systems"
+    },
+    {
+      "from": "greenline_agricultural",
+      "relation": "located_in",
+      "to": "hesperus"
+    },
+    {
+      "from": "roosevelt_machine",
+      "relation": "located_in",
+      "to": "new_houston"
+    },
+    {
+      "from": "beacon_expedition_supply",
+      "relation": "located_in",
+      "to": "lastlight"
+    }
+  ],
+  "runtime_note": "Dynamic entities such as player ships, people, policies, contracts and claims use the same relationship vocabulary but live in save/runtime state rather than static world data."
+}
