@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "vehicle_classes": [
+    {
+      "id": "urban_delivery_van",
+      "capacity_scu": 0.8,
+      "roles": [
+        "parcel",
+        "food",
+        "service"
+      ]
+    },
+    {
+      "id": "rigid_freight_truck",
+      "capacity_scu": 4,
+      "roles": [
+        "retail_restock",
+        "industrial"
+      ]
+    },
+    {
+      "id": "heavy_surface_tractor",
+      "capacity_scu": 12,
+      "roles": [
+        "container",
+        "bulk"
+      ]
+    },
+    {
+      "id": "sealed_habitat_truck",
+      "capacity_scu": 5,
+      "roles": [
+        "airless_or_hostile_surface"
+      ]
+    },
+    {
+      "id": "marine_freighter_small",
+      "capacity_scu": 35,
+      "roles": [
+        "island_platform_distribution"
+      ]
+    },
+    {
+      "id": "freight_train_unit",
+      "capacity_scu": 240,
+      "roles": [
+        "bulk",
+        "intermodal"
+      ]
+    },
+    {
+      "id": "utility_crawler",
+      "capacity_scu": 3,
+      "roles": [
+        "frontier",
+        "maintenance"
+      ]
+    }
+  ],
+  "fleet_profiles": [
+    {
+      "id": "new_houston",
+      "vehicles": {
+        "urban_delivery_van": 210000,
+        "rigid_freight_truck": 88000,
+        "heavy_surface_tractor": 31000,
+        "freight_train_unit": 9400
+      }
+    },
+    {
+      "id": "nine_currents",
+      "vehicles": {
+        "urban_delivery_van": 76000,
+        "marine_freighter_small": 48000,
+        "rigid_freight_truck": 19000
+      }
+    },
+    {
+      "id": "central_concord",
+      "vehicles": {
+        "urban_delivery_van": 430000,
+        "rigid_freight_truck": 141000,
+        "heavy_surface_tractor": 38000,
+        "freight_train_unit": 12200
+      }
+    },
+    {
+      "id": "hopewell",
+      "vehicles": {
+        "rigid_freight_truck": 760,
+        "heavy_surface_tractor": 490,
+        "utility_crawler": 1120
+      }
+    }
+  ]
+}
