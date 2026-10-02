@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "processes": [
+    {
+      "id": "ore_to_metal",
+      "inputs": [
+        "iron",
+        "nickel",
+        "titanium"
+      ],
+      "outputs": [
+        "structural_materials",
+        "machine_feedstock"
+      ],
+      "requirements": [
+        "power",
+        "process_water",
+        "smelter_capacity"
+      ]
+    },
+    {
+      "id": "grain_to_food",
+      "inputs": [
+        "grain"
+      ],
+      "outputs": [
+        "food"
+      ],
+      "requirements": [
+        "processing",
+        "packaging",
+        "water"
+      ]
+    },
+    {
+      "id": "chemicals_to_pharma",
+      "inputs": [
+        "specialty_chemicals",
+        "biological_feedstock"
+      ],
+      "outputs": [
+        "pharmaceuticals"
+      ],
+      "requirements": [
+        "clean_process",
+        "cold_chain",
+        "quality_control"
+      ]
+    },
+    {
+      "id": "metal_to_machine_components",
+      "inputs": [
+        "structural_materials"
+      ],
+      "outputs": [
+        "machine_components"
+      ],
+      "requirements": [
+        "machine_tools",
+        "power",
+        "skilled_labor"
+      ]
+    },
+    {
+      "id": "components_to_machinery",
+      "inputs": [
+        "machine_components",
+        "electronics"
+      ],
+      "outputs": [
+        "machinery"
+      ],
+      "requirements": [
+        "assembly",
+        "testing",
+        "labor"
+      ]
+    },
+    {
+      "id": "precision_to_engines",
+      "inputs": [
+        "precision_equipment",
+        "machine_components",
+        "electronics"
+      ],
+      "outputs": [
+        "engines"
+      ],
+      "requirements": [
+        "precision_assembly",
+        "testing",
+        "thermal_systems"
+      ]
+    }
+  ]
+}
