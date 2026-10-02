@@ -1,0 +1,131 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "classes": [
+    {
+      "id": "neighborhood_distribution",
+      "capacity_scu": [
+        500,
+        8000
+      ],
+      "turnover_days": [
+        1,
+        5
+      ]
+    },
+    {
+      "id": "regional_distribution",
+      "capacity_scu": [
+        10000,
+        250000
+      ],
+      "turnover_days": [
+        3,
+        18
+      ]
+    },
+    {
+      "id": "bonded_port_warehouse",
+      "capacity_scu": [
+        5000,
+        500000
+      ],
+      "turnover_days": [
+        2,
+        30
+      ]
+    },
+    {
+      "id": "cold_storage",
+      "capacity_scu": [
+        1000,
+        180000
+      ],
+      "turnover_days": [
+        1,
+        12
+      ]
+    },
+    {
+      "id": "industrial_buffer",
+      "capacity_scu": [
+        2000,
+        400000
+      ],
+      "turnover_days": [
+        2,
+        45
+      ]
+    },
+    {
+      "id": "frontier_reserve",
+      "capacity_scu": [
+        500,
+        50000
+      ],
+      "turnover_days": [
+        15,
+        120
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "id": "new_houston_central_dc",
+      "body_id": "roosevelt",
+      "name": "New Houston Central Distribution Campus",
+      "class": "regional_distribution",
+      "capacity_scu": 680000,
+      "operators": 14
+    },
+    {
+      "id": "greenline_cold_chain",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Cold Chain District",
+      "class": "cold_storage",
+      "capacity_scu": 940000,
+      "operators": 22
+    },
+    {
+      "id": "keelward_industrial_buffer",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward Industrial Buffer Yards",
+      "class": "industrial_buffer",
+      "capacity_scu": 1700000,
+      "operators": 31
+    },
+    {
+      "id": "concord_bonded_basin",
+      "body_id": "concord_prime",
+      "name": "Concord Bonded Basin",
+      "class": "bonded_port_warehouse",
+      "capacity_scu": 2200000,
+      "operators": 46
+    },
+    {
+      "id": "meridian_outer_storage",
+      "body_id": "meridian_station",
+      "name": "Meridian Outer Storage Ring",
+      "class": "bonded_port_warehouse",
+      "capacity_scu": 810000,
+      "operators": 38
+    },
+    {
+      "id": "hopewell_reserve_yard",
+      "body_id": "talos_prime",
+      "name": "Hopewell Reserve Yard",
+      "class": "frontier_reserve",
+      "capacity_scu": 67000,
+      "operators": 9
+    },
+    {
+      "id": "beacon_reserve",
+      "body_id": "lastlight_settlement",
+      "name": "Beacon Reserve Stores",
+      "class": "frontier_reserve",
+      "capacity_scu": 18000,
+      "operators": 3
+    }
+  ]
+}
