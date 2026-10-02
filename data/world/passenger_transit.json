@@ -1,0 +1,105 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "systems": [
+    {
+      "id": "new_houston_transit",
+      "metro_id": "new_houston_metro",
+      "operators": [
+        "New Houston Metro Rail",
+        "Yard Shuttle Cooperative",
+        "Roosevelt Regional Rail"
+      ],
+      "lines": 14,
+      "stations": 286,
+      "daily_riders": 4100000,
+      "freight_conflicts": [
+        "yard_shift_change",
+        "oversize_moves"
+      ],
+      "service": [
+        "rail",
+        "bus",
+        "employer_shuttle"
+      ]
+    },
+    {
+      "id": "nine_currents_transit",
+      "metro_id": "nine_currents_metro",
+      "operators": [
+        "Nine Currents Water Transit",
+        "Blue Tube Authority"
+      ],
+      "lines": 31,
+      "stations": 418,
+      "daily_riders": 6900000,
+      "freight_conflicts": [
+        "storm_routing",
+        "market_basin_congestion"
+      ],
+      "service": [
+        "ferry",
+        "subsurface_tube",
+        "water_taxi"
+      ]
+    },
+    {
+      "id": "central_concord_transit",
+      "metro_id": "central_concord_metro",
+      "operators": [
+        "Concord Metropolitan Transit",
+        "Exchange Rail"
+      ],
+      "lines": 27,
+      "stations": 512,
+      "daily_riders": 11800000,
+      "freight_conflicts": [
+        "conference_peaks",
+        "freight_basin_windows"
+      ],
+      "service": [
+        "rail",
+        "tram",
+        "bus",
+        "airport_orbital_feeder"
+      ]
+    },
+    {
+      "id": "warm_junction_transit",
+      "metro_id": "warm_junction_metro",
+      "operators": [
+        "Junction Rail Commons"
+      ],
+      "lines": 22,
+      "stations": 371,
+      "daily_riders": 6300000,
+      "freight_conflicts": [
+        "shared_tunnel_maintenance"
+      ],
+      "service": [
+        "tunnel_rail",
+        "walkway",
+        "lift"
+      ]
+    },
+    {
+      "id": "hopewell_transit",
+      "metro_id": "hopewell_metro",
+      "operators": [
+        "Hopewell Shuttle Cooperative"
+      ],
+      "lines": 5,
+      "stations": 34,
+      "daily_riders": 8900,
+      "freight_conflicts": [
+        "haul_road_priority",
+        "dust_closure"
+      ],
+      "service": [
+        "shuttle",
+        "crew_bus"
+      ]
+    }
+  ]
+}
