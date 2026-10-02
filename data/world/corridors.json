@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "corridors": [
+    {
+      "id": "sol_concord",
+      "name": "Sol–Concord Corridor",
+      "system_ids": [
+        "sol",
+        "new_houston",
+        "concord"
+      ],
+      "description": "Heavy commercial traffic, extensive support infrastructure, intense competition and predictable freight. Effectively an interstellar interstate."
+    },
+    {
+      "id": "agricultural_loop",
+      "name": "Agricultural Loop",
+      "system_ids": [
+        "hesperus",
+        "new_houston",
+        "concord",
+        "bradbury"
+      ],
+      "description": "Food moves toward population and industry while machinery, technology and high-value goods move back."
+    },
+    {
+      "id": "heavy_industrial",
+      "name": "Heavy Industrial Route",
+      "system_ids": [
+        "keshar",
+        "iron_gate",
+        "carver",
+        "concord"
+      ],
+      "description": "Ore and bulk resources move inward while machinery and industrial systems move outward. Large bulk carriers dominate."
+    },
+    {
+      "id": "ocean_route",
+      "name": "Ocean Route",
+      "system_ids": [
+        "veyara",
+        "tidemark",
+        "pelagos",
+        "port_meridian"
+      ],
+      "description": "Biological products, food, chemicals and environmental technology. Specialized cargo is common."
+    },
+    {
+      "id": "orun_industrial",
+      "name": "Orun Industrial Route",
+      "system_ids": [
+        "orun",
+        "foundry",
+        "port_meridian"
+      ],
+      "description": "Industrial components and thermal technology flow outward while food and biological goods flow back."
+    },
+    {
+      "id": "frontier_run",
+      "name": "Frontier Run",
+      "system_ids": [
+        "concord",
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ],
+      "description": "The corridor where established commerce thins into frontier logistics and eventually unsupported exploration."
+    }
+  ]
+}
