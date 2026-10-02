@@ -1,0 +1,64 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "setting": {
+    "name": "Known Space",
+    "description": "The launch-era inhabited and commercially connected region of Far Haul. Route links represent gameplay/trade connectivity, not literal map geometry.",
+    "design_rules": [
+      "Every populated location must answer why people settled there, why they remain, and what they need from somewhere else.",
+      "Political borders and trade regions do not map cleanly to species.",
+      "First contact occurred generations before game start; multispecies commerce is ordinary.",
+      "Exploration extends the freight network rather than replacing it."
+    ]
+  },
+  "system_ids": [
+    "sol",
+    "keshar",
+    "ilos",
+    "veyara",
+    "orun",
+    "concord",
+    "new_houston",
+    "hesperus",
+    "iron_gate",
+    "carver",
+    "bradbury",
+    "pelagos",
+    "tidemark",
+    "foundry",
+    "port_meridian",
+    "talos",
+    "waystation",
+    "lastlight"
+  ],
+  "route_ids": [
+    "sol_new_houston",
+    "new_houston_concord",
+    "new_houston_hesperus",
+    "concord_bradbury",
+    "keshar_iron_gate",
+    "iron_gate_carver",
+    "carver_concord",
+    "ilos_bradbury",
+    "bradbury_concord",
+    "veyara_tidemark",
+    "tidemark_pelagos",
+    "pelagos_port_meridian",
+    "orun_foundry",
+    "foundry_port_meridian",
+    "concord_port_meridian",
+    "port_meridian_talos",
+    "port_meridian_waystation",
+    "waystation_lastlight",
+    "port_meridian_lastlight"
+  ],
+  "frontier": {
+    "principal_gateway_system_id": "lastlight",
+    "beyond_known_space": [
+      "surveyed uninhabited systems",
+      "partially surveyed systems",
+      "cataloged but unvisited stars",
+      "unmapped space"
+    ]
+  }
+}
