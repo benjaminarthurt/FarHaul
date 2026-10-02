@@ -1,0 +1,76 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "products": [
+    {
+      "id": "ivw_v72",
+      "name": "V-72 Vector Drive",
+      "manufacturer_id": "ilyan_vector_works",
+      "type": "main_engine",
+      "introduced_ice": 244,
+      "status": "current",
+      "reputation": "Efficient medium-freighter engine with excellent throttle response.",
+      "quirk": "Mount alignment outside specification causes bearing wear far sooner than captains expect."
+    },
+    {
+      "id": "ivw_v55",
+      "name": "V-55",
+      "manufacturer_id": "ilyan_vector_works",
+      "type": "main_engine",
+      "introduced_ice": 187,
+      "status": "legacy",
+      "reputation": "Older, less efficient drive with huge aftermarket support.",
+      "quirk": "Many supposedly stock V-55s contain almost no original factory internals."
+    },
+    {
+      "id": "khs_rugged_6",
+      "name": "Rugged-6 Reactor",
+      "manufacturer_id": "kesh_heavy_systems",
+      "type": "reactor",
+      "introduced_ice": 201,
+      "status": "current",
+      "reputation": "Heavy reactor famous for operating through poor maintenance and ugly load transients.",
+      "quirk": "Mass penalty makes it unpopular on Ilyan-designed hulls."
+    },
+    {
+      "id": "vcc_cascade_4",
+      "name": "Cascade 4 Closed-Cycle Plant",
+      "manufacturer_id": "vey_closed_cycle",
+      "type": "life_support",
+      "introduced_ice": 252,
+      "status": "current",
+      "reputation": "Mixed-species life-support package with configurable humidity zones.",
+      "quirk": "Filter cartridges are compact but proprietary enough to annoy remote operators."
+    },
+    {
+      "id": "otc_coldwall_18",
+      "name": "Coldwall 18",
+      "manufacturer_id": "orun_thermal_collective",
+      "type": "thermal_system",
+      "introduced_ice": 229,
+      "status": "current",
+      "reputation": "Modular heat exchanger bank whose individual cells can be isolated while underway.",
+      "quirk": "External plumbing looks improvised even when installed exactly to specification."
+    },
+    {
+      "id": "djm_lifter_30",
+      "name": "Lifter-30 Cargo Arm",
+      "manufacturer_id": "deepjunction_machine",
+      "type": "cargo_handling",
+      "introduced_ice": 238,
+      "status": "current",
+      "reputation": "Slow but extremely tolerant of dust, ice and careless loading crews.",
+      "quirk": "Hydraulic knock at low temperature is normal and has caused countless unnecessary maintenance calls."
+    },
+    {
+      "id": "northstar_gearbox_7",
+      "name": "Gearbox 7 Landing Set",
+      "manufacturer_id": "northstar_commercial",
+      "type": "landing_gear",
+      "introduced_ice": 190,
+      "status": "legacy",
+      "reputation": "Common landing assembly with parts available almost anywhere.",
+      "quirk": "Frontier crews carry the same two bushings because those are what actually wear."
+    }
+  ]
+}
