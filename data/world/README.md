@@ -225,3 +225,5 @@ The current structure deliberately leaves room for:
 - changing populations and development states
 
 These should reference existing IDs rather than duplicate entity definitions.
+
+| `compliance_rules.json` | **Mechanics source of truth** for per-port and per-yard registration, insurance, enforcement, unregistered access, and insurer detection rules |
