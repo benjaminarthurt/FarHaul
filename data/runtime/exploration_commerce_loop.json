@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "chain": [
+    {
+      "id": "survey",
+      "creates": "information"
+    },
+    {
+      "id": "license_or_sale",
+      "creates": "commercial_access_to_data"
+    },
+    {
+      "id": "claim_application",
+      "creates": "jurisdictional_claim_record"
+    },
+    {
+      "id": "investment",
+      "creates": "equipment_and_employment"
+    },
+    {
+      "id": "expedition",
+      "creates": "physical_presence"
+    },
+    {
+      "id": "outpost",
+      "creates": "persistent_demand"
+    },
+    {
+      "id": "settlement",
+      "creates": "local_economy"
+    },
+    {
+      "id": "trade_route",
+      "creates": "recurring_freight"
+    }
+  ],
+  "principle": "Commerce pushes exploration; exploration creates settlement; settlement creates commerce."
+}
