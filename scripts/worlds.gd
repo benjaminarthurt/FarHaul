@@ -7,6 +7,7 @@ const YARDS_PATH := "res://data/world/yards.json"
 const COORDINATES_PATH := "res://data/world/coordinates.json"
 const MARKETS_PATH := "res://data/world/markets.json"
 const COMMODITIES_PATH := "res://data/world/commodities.json"
+const PORTS_PATH := "res://data/world/ports.json"
 
 const RACES := [
 	{"id": "human", "name": "Human", "blurb": "Adaptable, commercially diverse and comfortable with mixed engineering standards."},
@@ -27,6 +28,7 @@ static var _yard_tiers: Dictionary = {}
 static var _coordinates: Dictionary = {}
 static var _markets: Dictionary = {}
 static var _commodities: Dictionary = {}
+static var _ports: Dictionary = {}
 
 
 static func _load_yards() -> void:
@@ -112,6 +114,25 @@ static func market(system_id: String) -> Dictionary:
 static func commodity(id: String) -> Dictionary:
 	_load_indexed(COMMODITIES_PATH, "commodities", _commodities)
 	return _commodities.get(id, {})
+
+
+static func port(id: String) -> Dictionary:
+	_load_indexed(PORTS_PATH, "ports", _ports)
+	return _ports.get(id, {})
+
+
+static func ports_in_system(system_id: String) -> Array:
+	_load_indexed(PORTS_PATH, "ports", _ports)
+	var out: Array = []
+	for p in _ports.values():
+		if String(p.system_id) == system_id:
+			out.append(p)
+	return out
+
+
+static func primary_port(system_id: String) -> Dictionary:
+	var found := ports_in_system(system_id)
+	return found[0] if not found.is_empty() else {}
 
 
 static func yard_system(yard_id: String) -> String:
