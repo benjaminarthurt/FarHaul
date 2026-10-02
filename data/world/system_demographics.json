@@ -1,0 +1,321 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "scope": "complete connected commercial region",
+  "systems": [
+    {
+      "system_id": "sol",
+      "development": "core",
+      "population": 18400000000,
+      "major_body_ids": [
+        "earth",
+        "luna",
+        "mars",
+        "main_belt",
+        "jupiter",
+        "saturn"
+      ],
+      "economic_sectors": [
+        "diversified",
+        "finance",
+        "manufacturing",
+        "services"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "keshar",
+      "development": "core",
+      "population": 11800000000,
+      "major_body_ids": [
+        "dorr",
+        "keshar_prime",
+        "venn",
+        "tor",
+        "outer_stone"
+      ],
+      "economic_sectors": [
+        "heavy_industry",
+        "machinery",
+        "pressure_systems"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "ilos",
+      "development": "core",
+      "population": 7200000000,
+      "major_body_ids": [
+        "serrin",
+        "ilos_prime",
+        "ari",
+        "elen",
+        "glass_reach"
+      ],
+      "economic_sectors": [
+        "precision",
+        "propulsion",
+        "lightweight_structures"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "veyara",
+      "development": "core",
+      "population": 9600000000,
+      "major_body_ids": [
+        "shaal",
+        "veyara_prime",
+        "neris",
+        "oruvai"
+      ],
+      "economic_sectors": [
+        "biotech",
+        "environmental_systems",
+        "aquaculture"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "orun",
+      "development": "core",
+      "population": 6700000000,
+      "major_body_ids": [
+        "kes",
+        "orun_prime",
+        "var",
+        "junction_belt"
+      ],
+      "economic_sectors": [
+        "thermal",
+        "automation",
+        "ceramics"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "concord",
+      "development": "core",
+      "population": 2800000000,
+      "major_body_ids": [
+        "accord",
+        "concord_prime",
+        "compact",
+        "arbitrator",
+        "freeport_cluster"
+      ],
+      "economic_sectors": [
+        "trade",
+        "finance",
+        "standards",
+        "services"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "new_houston",
+      "development": "developed",
+      "population": 640000000,
+      "major_body_ids": [
+        "boiler",
+        "roosevelt",
+        "truman",
+        "toolbox",
+        "longhorn"
+      ],
+      "economic_sectors": [
+        "shipbuilding",
+        "fabrication",
+        "machinery"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "hesperus",
+      "development": "developed",
+      "population": 84000000,
+      "major_body_ids": [
+        "hesperus_prime",
+        "shepherd",
+        "thresh",
+        "rainmaker"
+      ],
+      "economic_sectors": [
+        "agriculture",
+        "food_processing"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "iron_gate",
+      "development": "developed",
+      "population": 310000000,
+      "major_body_ids": [
+        "iron_gate_prime",
+        "anvil",
+        "keel_belt",
+        "hammer"
+      ],
+      "economic_sectors": [
+        "shipbuilding",
+        "metals",
+        "heavy_industry"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "carver",
+      "development": "developed",
+      "population": 9400000,
+      "major_body_ids": [
+        "cinder",
+        "carver_belt",
+        "carver_habitats",
+        "prospector"
+      ],
+      "economic_sectors": [
+        "extraction",
+        "refining",
+        "salvage"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "bradbury",
+      "development": "developed",
+      "population": 155000000,
+      "major_body_ids": [
+        "fahrenheit",
+        "bradbury_prime",
+        "lowell",
+        "mariner"
+      ],
+      "economic_sectors": [
+        "research",
+        "instruments",
+        "pharma"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "pelagos",
+      "development": "developed",
+      "population": 46000000,
+      "major_body_ids": [
+        "pelagos_prime",
+        "shoal",
+        "breaker",
+        "drift"
+      ],
+      "economic_sectors": [
+        "aquaculture",
+        "biotech",
+        "marine_industry"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "tidemark",
+      "development": "outer",
+      "population": 3100000,
+      "major_body_ids": [
+        "drymark",
+        "tidemark_prime",
+        "anchor",
+        "stormhold"
+      ],
+      "economic_sectors": [
+        "mineral_extraction",
+        "biochemistry"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "foundry",
+      "development": "developed",
+      "population": 22000000,
+      "major_body_ids": [
+        "slag",
+        "foundry_prime",
+        "lift",
+        "feedstock_belt"
+      ],
+      "economic_sectors": [
+        "ceramics",
+        "thermal",
+        "machine_parts"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "port_meridian",
+      "development": "outer",
+      "population": 2400000,
+      "major_body_ids": [
+        "scorch",
+        "meridian_station",
+        "meridian",
+        "layover",
+        "outbound_belt"
+      ],
+      "economic_sectors": [
+        "transshipment",
+        "repair",
+        "frontier_services"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "talos",
+      "development": "frontier",
+      "population": 74000,
+      "major_body_ids": [
+        "prospect",
+        "talos_prime",
+        "claim",
+        "second_chance"
+      ],
+      "economic_sectors": [
+        "rare_minerals",
+        "construction"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "waystation",
+      "development": "frontier",
+      "population": 38000,
+      "major_body_ids": [
+        "burnt_rock",
+        "crossroads",
+        "waystation_habitat",
+        "tank_farm"
+      ],
+      "economic_sectors": [
+        "repair",
+        "fuel",
+        "transit"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    },
+    {
+      "system_id": "lastlight",
+      "development": "frontier",
+      "population": 11400,
+      "major_body_ids": [
+        "ash",
+        "lastlight_settlement",
+        "beacon_moon",
+        "lastlight_orbital",
+        "reserve"
+      ],
+      "economic_sectors": [
+        "survey",
+        "expedition_support",
+        "limited_mining"
+      ],
+      "aggregate_population_rule": "Population not assigned to named settlements remains represented by system and body regional aggregates."
+    }
+  ]
+}
