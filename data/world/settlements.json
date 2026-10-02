@@ -1,0 +1,186 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "settlements": [
+    {
+      "id": "earth_rotterdam_orbital",
+      "name": "Rotterdam Orbital",
+      "system_id": "sol",
+      "world_id": "earth",
+      "type": "orbital_freight_complex",
+      "population": 420000,
+      "identity": "One of Earth's largest bulk orbital transfer complexes; efficient, regulated and relentlessly busy.",
+      "notable": [
+        "continent-scale freight scheduling",
+        "oldest sections repeatedly rebuilt around active docks"
+      ]
+    },
+    {
+      "id": "roosevelt_new_houston",
+      "name": "New Houston",
+      "system_id": "new_houston",
+      "world_id": "roosevelt",
+      "type": "industrial_city",
+      "population": 11800000,
+      "identity": "Roosevelt's best-known shipbuilding city and namesake of the system's common name.",
+      "notable": [
+        "Independent Yard District",
+        "manufacturer row",
+        "cold-weather surface freight terminal"
+      ]
+    },
+    {
+      "id": "hesperus_greenline",
+      "name": "Greenline",
+      "system_id": "hesperus",
+      "world_id": "hesperus_prime",
+      "type": "agricultural_logistics_city",
+      "population": 1900000,
+      "identity": "Rail, grain, refrigeration and machinery hub serving enormous surrounding agricultural districts.",
+      "notable": [
+        "harvest freight exchange",
+        "refrigerated container yards"
+      ]
+    },
+    {
+      "id": "iron_gate_keelward",
+      "name": "Keelward",
+      "system_id": "iron_gate",
+      "world_id": "iron_gate_prime",
+      "type": "industrial_city",
+      "population": 7400000,
+      "identity": "Surface support city beneath the system's largest orbital construction zone.",
+      "notable": [
+        "heavy-lift launch fields",
+        "Kesh Founders Hall",
+        "yard-worker districts"
+      ]
+    },
+    {
+      "id": "carver_habitat_12",
+      "name": "Twelve",
+      "system_id": "carver",
+      "world_id": "carver_habitats",
+      "type": "rotating_habitat",
+      "population": 610000,
+      "identity": "Old mining habitat whose numeric construction designation became its permanent name.",
+      "notable": [
+        "used-goods markets",
+        "ore brokerage floor",
+        "patched original spin section"
+      ]
+    },
+    {
+      "id": "bradbury_lowell",
+      "name": "Lowell",
+      "system_id": "bradbury",
+      "world_id": "bradbury_prime",
+      "type": "research_city",
+      "population": 4300000,
+      "identity": "Dense university and laboratory city where scientific cargo can be worth more than the ship carrying it.",
+      "notable": [
+        "Bradbury Institute Consortium",
+        "secure sample port",
+        "instrument makers district"
+      ]
+    },
+    {
+      "id": "pelagos_crosswater",
+      "name": "Crosswater",
+      "system_id": "pelagos",
+      "world_id": "pelagos_prime",
+      "type": "floating_island_city",
+      "population": 2600000,
+      "identity": "Mixed Vey-Human city spanning natural volcanic islands and floating districts.",
+      "notable": [
+        "subsurface transit",
+        "aquaculture exchange",
+        "joint charter hall"
+      ]
+    },
+    {
+      "id": "tidemark_anchor_7",
+      "name": "Anchor Seven",
+      "system_id": "tidemark",
+      "world_id": "tidemark_prime",
+      "type": "floating_industrial_settlement",
+      "population": 184000,
+      "identity": "Largest permanent platform cluster on Tidemark and the closest thing the planet has to a capital.",
+      "notable": [
+        "storm refuge docks",
+        "dissolved-mineral works",
+        "platform-to-platform cargo cranes"
+      ]
+    },
+    {
+      "id": "foundry_deepworks",
+      "name": "Deepworks",
+      "system_id": "foundry",
+      "world_id": "foundry_prime",
+      "type": "subterranean_industrial_city",
+      "population": 5100000,
+      "identity": "Factory city kilometers below the surface, organized around process heat and freight shafts.",
+      "notable": [
+        "Central Lift",
+        "ceramic works",
+        "public galleries overlooking active machinery"
+      ]
+    },
+    {
+      "id": "meridian_old_ring",
+      "name": "Old Ring",
+      "system_id": "port_meridian",
+      "world_id": "meridian_station",
+      "type": "station_district",
+      "population": 310000,
+      "identity": "The surviving core of the original fuel depot, now cheap, crowded and culturally central.",
+      "notable": [
+        "Dock 3 market",
+        "The Long Layover bar district",
+        "original fuel-control room preserved behind a restaurant"
+      ]
+    },
+    {
+      "id": "talos_hopewell",
+      "name": "Hopewell",
+      "system_id": "talos",
+      "world_id": "talos_prime",
+      "type": "boomtown",
+      "population": 51000,
+      "identity": "Primary Talos settlement; construction camp, mining headquarters and freight jam simultaneously.",
+      "notable": [
+        "Hopewell Field",
+        "Container City temporary housing",
+        "assay houses"
+      ]
+    },
+    {
+      "id": "waystation_crossroads",
+      "name": "Crossroads",
+      "system_id": "waystation",
+      "world_id": "waystation_habitat",
+      "type": "habitat_core",
+      "population": 23000,
+      "identity": "Oldest connected cluster of the accidental town.",
+      "notable": [
+        "original pump room",
+        "Dockside machine shops",
+        "The Spare Room bar"
+      ]
+    },
+    {
+      "id": "lastlight_beacon",
+      "name": "Beacon",
+      "system_id": "lastlight",
+      "world_id": "lastlight_settlement",
+      "type": "frontier_town",
+      "population": 7900,
+      "identity": "The surface settlement most outward-bound crews mean when they say Lastlight.",
+      "notable": [
+        "Survey House",
+        "expedition warehouses",
+        "memorial wall for overdue and lost survey crews"
+      ]
+    }
+  ]
+}
