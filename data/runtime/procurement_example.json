@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "example": {
+    "trigger": {
+      "entity": "hopewell_water_one",
+      "commodity": "filters",
+      "available_units": 47,
+      "reorder_point": 120,
+      "target_stock": 310,
+      "daily_demand": 13.4
+    },
+    "action": {
+      "requested_units": 263,
+      "supplier_selection": "landed_cost+lead_time+reliability",
+      "delivery_window_days": [
+        5,
+        12
+      ]
+    },
+    "result": "Supplier allocates physical lots; freight requirement enters contract pipeline."
+  }
+}
