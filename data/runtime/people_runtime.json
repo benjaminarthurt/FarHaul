@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "runtime_fields": [
+    "location",
+    "activity",
+    "schedule",
+    "employer",
+    "household",
+    "cash_band",
+    "obligations",
+    "relationships",
+    "memories",
+    "known_facts",
+    "current_needs"
+  ],
+  "relationship_dimensions": [
+    "familiarity",
+    "trust",
+    "professional_respect",
+    "affection",
+    "resentment",
+    "debt_or_obligation"
+  ],
+  "memory_types": [
+    "transaction",
+    "delivery",
+    "damage",
+    "favor",
+    "rescue",
+    "employment",
+    "voyage",
+    "dispute",
+    "conversation",
+    "witnessed_incident"
+  ],
+  "decay": "Routine memories compress over time; consequential memories persist.",
+  "knowledge_rule": "Facts propagate by observation, conversation, media, employer systems or institutional records."
+}
