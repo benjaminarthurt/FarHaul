@@ -1,0 +1,55 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "services": [
+    {
+      "id": "new_houston_emergency",
+      "metro_id": "new_houston_metro",
+      "fire_stations": 214,
+      "ambulance_posts": 286,
+      "rescue_units": 41,
+      "specialties": [
+        "industrial_fire",
+        "cold_weather",
+        "yard_rescue"
+      ]
+    },
+    {
+      "id": "nine_currents_emergency",
+      "metro_id": "nine_currents_metro",
+      "fire_rescue_stations": 331,
+      "medical_posts": 412,
+      "rescue_units": 88,
+      "specialties": [
+        "marine_rescue",
+        "storm",
+        "submerged_structure"
+      ]
+    },
+    {
+      "id": "central_concord_emergency",
+      "metro_id": "central_concord_metro",
+      "fire_stations": 402,
+      "ambulance_posts": 510,
+      "rescue_units": 76,
+      "specialties": [
+        "dense_urban",
+        "multispecies",
+        "transport"
+      ]
+    },
+    {
+      "id": "hopewell_emergency",
+      "metro_id": "hopewell_metro",
+      "fire_stations": 4,
+      "ambulance_posts": 5,
+      "rescue_units": 3,
+      "specialties": [
+        "mine_rescue",
+        "dust",
+        "vehicle_extraction"
+      ],
+      "note": "Capacity is thin relative to growth."
+    }
+  ]
+}
