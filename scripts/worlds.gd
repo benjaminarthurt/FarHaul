@@ -4,6 +4,9 @@ extends RefCounted
 ## Canonical yards live in data/world/yards.json; this class keeps menu code independent of JSON parsing.
 
 const YARDS_PATH := "res://data/world/yards.json"
+const COORDINATES_PATH := "res://data/world/coordinates.json"
+const MARKETS_PATH := "res://data/world/markets.json"
+const COMMODITIES_PATH := "res://data/world/commodities.json"
 
 const RACES := [
 	{"id": "human", "name": "Human", "blurb": "Adaptable, commercially diverse and comfortable with mixed engineering standards."},
@@ -21,6 +24,9 @@ const DIFFICULTIES := [
 
 static var _yards: Array = []
 static var _yard_tiers: Dictionary = {}
+static var _coordinates: Dictionary = {}
+static var _markets: Dictionary = {}
+static var _commodities: Dictionary = {}
 
 
 static func _load_yards() -> void:
@@ -63,6 +69,53 @@ static func yard(id: String) -> Dictionary:
 static func yard_tier(id: String) -> Dictionary:
 	_load_yards()
 	return _yard_tiers.get(id, {"name": id})
+
+
+static func _load_indexed(path: String, array_key: String, cache: Dictionary) -> void:
+	if not cache.is_empty():
+		return
+	if not FileAccess.file_exists(path):
+		push_error("Missing world data: %s" % path)
+		return
+	var parsed = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_error("Invalid world JSON: %s" % path)
+		return
+	for record in parsed.get(array_key, []):
+		cache[String(record.id)] = record
+
+
+static func coordinate(system_id: String) -> Dictionary:
+	_load_indexed(COORDINATES_PATH, "systems", _coordinates)
+	return _coordinates.get(system_id, {})
+
+
+static func distance_ly(a: String, b: String) -> float:
+	var ca := coordinate(a)
+	var cb := coordinate(b)
+	if ca.is_empty() or cb.is_empty():
+		return -1.0
+	var dx := float(ca.x) - float(cb.x)
+	var dy := float(ca.y) - float(cb.y)
+	var dz := float(ca.z) - float(cb.z)
+	return sqrt(dx * dx + dy * dy + dz * dz)
+
+
+static func market(system_id: String) -> Dictionary:
+	_load_indexed(MARKETS_PATH, "markets", _markets)
+	for m in _markets.values():
+		if String(m.system_id) == system_id:
+			return m
+	return {}
+
+
+static func commodity(id: String) -> Dictionary:
+	_load_indexed(COMMODITIES_PATH, "commodities", _commodities)
+	return _commodities.get(id, {})
+
+
+static func yard_system(yard_id: String) -> String:
+	return String(yard(yard_id).get("system_id", ""))
 
 
 static func _find(list: Array, id: String) -> Dictionary:
