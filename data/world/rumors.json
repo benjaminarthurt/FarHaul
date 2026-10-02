@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "rumors": [
+    {
+      "id": "blackglass_assay",
+      "region": "frontier",
+      "text": "A private Blackglass assay supposedly shows concentrations far above the published survey.",
+      "truth_status": "unresolved",
+      "grounding": "Conflicting survey datasets genuinely exist; no hidden ancient technology or conspiracy is implied."
+    },
+    {
+      "id": "pilgrim_land",
+      "region": "frontier",
+      "text": "Someone is buying Pilgrim land claims despite the system having no known economic value.",
+      "truth_status": "probably_speculation",
+      "grounding": "Claims can be cheap precisely because nobody wants them."
+    },
+    {
+      "id": "accord_signal",
+      "region": "lastlight",
+      "text": "A survey crew says it heard an automated carrier near Accord's planned route.",
+      "truth_status": "unverified",
+      "grounding": "Could be equipment, another expedition, propagation error or wishful interpretation."
+    },
+    {
+      "id": "r61_factory",
+      "region": "new_houston",
+      "text": "Roosevelt Modular still has tooling to build a new R-61 if a customer pays enough.",
+      "truth_status": "false_but_persistent",
+      "grounding": "The company manufactures legacy structural replacements, which sustains the rumor."
+    },
+    {
+      "id": "old_ring_deck",
+      "region": "port_meridian",
+      "text": "There is an entire sealed depot deck inside Old Ring that never reopened after Black Week.",
+      "truth_status": "exaggerated",
+      "grounding": "Several inaccessible service volumes exist, but records account for them."
+    },
+    {
+      "id": "talos_second_field",
+      "region": "talos",
+      "text": "Prospectors found another Talos-grade mineral field and are sitting on the coordinates.",
+      "truth_status": "plausible_unconfirmed",
+      "grounding": "Commercial secrecy around claims is routine."
+    }
+  ]
+}
