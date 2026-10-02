@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "facility_types": [
+    {
+      "id": "regional_dc",
+      "stock_days": [
+        7,
+        30
+      ],
+      "functions": [
+        "receive",
+        "store",
+        "pick",
+        "consolidate",
+        "dispatch"
+      ]
+    },
+    {
+      "id": "cold_store",
+      "stock_days": [
+        2,
+        18
+      ],
+      "functions": [
+        "temperature_control",
+        "crossdock"
+      ]
+    },
+    {
+      "id": "bonded",
+      "stock_days": [
+        1,
+        45
+      ],
+      "functions": [
+        "customs_hold",
+        "secure_storage"
+      ]
+    },
+    {
+      "id": "industrial_stores",
+      "stock_days": [
+        10,
+        60
+      ],
+      "functions": [
+        "maintenance_stock",
+        "issue"
+      ]
+    },
+    {
+      "id": "emergency_reserve",
+      "stock_days": [
+        30,
+        180
+      ],
+      "functions": [
+        "strategic_stock",
+        "controlled_release"
+      ]
+    },
+    {
+      "id": "parcel_hub",
+      "stock_days": [
+        0,
+        2
+      ],
+      "functions": [
+        "sort",
+        "crossdock"
+      ]
+    }
+  ],
+  "constraints": [
+    "volume",
+    "mass",
+    "temperature",
+    "hazard_segregation",
+    "handling_rate",
+    "dock_capacity"
+  ]
+}
