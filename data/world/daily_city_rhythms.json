@@ -1,0 +1,112 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "scenarios": [
+    {
+      "id": "new_houston_tuesday",
+      "metro_id": "new_houston_metro",
+      "day_type": "ordinary_weekday",
+      "events": [
+        {
+          "time": "05:00",
+          "event": "First yard shift transit and food deliveries begin."
+        },
+        {
+          "time": "06:30",
+          "event": "Regional rail reaches morning freight/passenger conflict window."
+        },
+        {
+          "time": "08:00",
+          "event": "Schools, offices and certification halls open; commercial power demand rises."
+        },
+        {
+          "time": "10:00",
+          "event": "Port drayage peaks as overnight orbital arrivals clear customs."
+        },
+        {
+          "time": "12:00",
+          "event": "Industrial canteens and retail districts peak."
+        },
+        {
+          "time": "15:00",
+          "event": "Outbound container consolidation begins for evening launch slots."
+        },
+        {
+          "time": "17:00",
+          "event": "Second major commuter peak overlaps yard shift change."
+        },
+        {
+          "time": "20:00",
+          "event": "Heavy road movements increase as daytime restrictions ease."
+        },
+        {
+          "time": "23:00",
+          "event": "Retail deliveries and municipal maintenance dominate local freight."
+        }
+      ]
+    },
+    {
+      "id": "nine_currents_tuesday",
+      "metro_id": "nine_currents_metro",
+      "day_type": "ordinary_weekday",
+      "events": [
+        {
+          "time": "04:30",
+          "event": "Market boats and aquaculture freight enter central basins."
+        },
+        {
+          "time": "07:00",
+          "event": "Water transit commuter peak."
+        },
+        {
+          "time": "09:00",
+          "event": "Dry Quarter customs and visitor services reach full staffing."
+        },
+        {
+          "time": "13:00",
+          "event": "Biological sample and cold-chain transfers peak."
+        },
+        {
+          "time": "17:30",
+          "event": "Commuter ferries and neighborhood markets peak together."
+        },
+        {
+          "time": "22:00",
+          "event": "Storm-maintenance and utility crews take priority on selected channels."
+        }
+      ]
+    },
+    {
+      "id": "hopewell_tuesday",
+      "metro_id": "hopewell_metro",
+      "day_type": "ordinary_weekday",
+      "events": [
+        {
+          "time": "05:30",
+          "event": "Mine crews depart camps; haul roads become freight-priority."
+        },
+        {
+          "time": "07:00",
+          "event": "Water, food and fuel deliveries spread from freight yard."
+        },
+        {
+          "time": "09:00",
+          "event": "Claim offices, assay labs and construction suppliers open."
+        },
+        {
+          "time": "14:00",
+          "event": "Inbound landers create short bursts of pad congestion."
+        },
+        {
+          "time": "18:00",
+          "event": "Crew buses return; Container City food and service demand spikes."
+        },
+        {
+          "time": "21:00",
+          "event": "Repair shops work late because idle equipment loses claim revenue."
+        }
+      ]
+    }
+  ],
+  "rule": "Daily schedules provide deterministic baseline traffic and demand; incidents and weather modify rather than replace them."
+}
