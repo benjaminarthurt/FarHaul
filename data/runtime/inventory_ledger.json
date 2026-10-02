@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "ledger_fields": [
+    "entity_id",
+    "commodity_id",
+    "on_hand",
+    "reserved",
+    "in_transit",
+    "damaged",
+    "safety_stock",
+    "reorder_point",
+    "target_stock",
+    "daily_demand_ema",
+    "lead_time_days",
+    "last_count"
+  ],
+  "events": [
+    "produce",
+    "consume",
+    "receive",
+    "ship",
+    "reserve",
+    "release",
+    "damage",
+    "recover",
+    "adjust"
+  ],
+  "invariant": "on_hand >= reserved >= 0; available = on_hand - reserved; material changes only through ledger events."
+}
