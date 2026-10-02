@@ -12,7 +12,9 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `species.json` | Playable species, home systems, biology, culture and engineering identity |
 | `systems.json` | Known populated systems, destinations, population, economy and narrative identity |
 | `routes.json` | Direct trade/navigation relationships between systems |
-| `corridors.json` | Named multi-system commercial corridors |\n| `yards.json` | Orbital shipyards, build tiers, service costs, hangars and starting-yard choices |\n| `commodities.json` | Freight goods, physical loading data, base values and handling requirements |
+| `corridors.json` | Named multi-system commercial corridors |
+| `yards.json` | Orbital shipyards, build tiers, service costs, hangars and starting-yard choices |
+| `commodities.json` | Freight goods, physical loading data, base values and handling requirements |
 | `coordinates.json` | Draft 3D gameplay coordinates and travel/fuel model inputs |
 | `markets.json` | Per-system commodity stock, demand and baseline local price multipliers |
 | `ports.json` | Physical freight terminals, docks and spaceports with hull limits, fees and services |
@@ -318,3 +320,28 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `rural_regions.json` | Rural population, economies and service-access geography |
 | `suburban_belts.json` | Commuter belts, housing and metropolitan edge logistics |
 | `region_generation_standard.json` | Required physical/economic fields for dense planetary regions |
+| `planetary_regions_complete.json` | Complete regional coverage for inhabited worlds |
+| `planetary_service_profiles.json` | World-scale civic and infrastructure coverage |
+| `system_infrastructure.json` | Orbital depots, relays and transfer facilities |
+| `system_traffic.json` | System traffic, support and information density |
+| `navigation_infrastructure.json` | Navigation, market relay and rescue-reference infrastructure |
+| `interstellar_routes.json` | Mechanics-facing route legs, navigation quality and traffic |
+| `rescue_network.json` | Commercial/public rescue coverage and priorities |
+| `scheduled_services.json` | Baseline scheduled carrier services |
+| `commodity_provenance.json` | Commodity origins, producers and normal destinations |
+| `cargo_documents.json` | Origin, custody, biosecurity and controlled-cargo records |
+| `commercial_entities_expanded.json` | Insurers, lenders, warehouses and logistics firms |
+| `commercial_relationships_expanded.json` | Expanded institutional relationship graph |
+| `underwriting_profiles.json` | Insurer preferences and exclusions |
+| `baseline_freight_flows.json` | Recurring system-to-system commodity volumes |
+| `market_dynamics.json` | Inventory-driven pricing and shortage states |
+| `system_trade_balance.json` | System-level structural surpluses and deficits |
+| `orbital_interfaces.json` | Surface-to-orbit costs, access and transfer modes |
+| `cargo_transfer_services.json` | Crossdock, shuttle, heavy-lift and specialist transfers |
+| `ship_operating_modes.json` | Planetary versus orbital freighter tradeoffs |
+| `calendar_cycles.json` | Shared calendar, seasons and recurring economic cycles |
+| `active_projects.json` | Long-lived projects consuming freight and adding capacity |
+| `world_evolution.json` | Simulation update cadence and autonomous world change |
+| `asset_histories.json` | Persistent infrastructure histories |
+| `sample_vessel_histories.json` | Individual vessel provenance examples |
+| `urban_histories.json` | District and neighborhood evolution |
