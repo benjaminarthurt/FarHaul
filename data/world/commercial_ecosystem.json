@@ -1,0 +1,618 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "companies": [
+    {
+      "id": "sol_orbital_logistics",
+      "name": "Sol Orbital Logistics",
+      "base_system_id": "sol",
+      "type": "logistics",
+      "outputs": [
+        "container_handling",
+        "orbital_transfer"
+      ],
+      "inputs": [
+        "fuel",
+        "parts",
+        "labor"
+      ],
+      "scale": "large",
+      "contract_issuer": true
+    },
+    {
+      "id": "terran_medical_export",
+      "name": "Terran Medical Export Cooperative",
+      "base_system_id": "sol",
+      "type": "medical",
+      "outputs": [
+        "medical_supplies",
+        "pharmaceuticals"
+      ],
+      "inputs": [
+        "biological_feedstock",
+        "precision_instruments"
+      ],
+      "scale": "large",
+      "contract_issuer": true
+    },
+    {
+      "id": "luna_vacuum_products",
+      "name": "Luna Vacuum Products",
+      "base_system_id": "sol",
+      "type": "manufacturing",
+      "outputs": [
+        "electronics",
+        "precision_components"
+      ],
+      "inputs": [
+        "metals",
+        "ceramics"
+      ],
+      "scale": "large",
+      "contract_issuer": true
+    },
+    {
+      "id": "mars_pressureworks",
+      "name": "Mars Pressureworks",
+      "base_system_id": "sol",
+      "type": "manufacturing",
+      "outputs": [
+        "habitat_modules",
+        "pressure_vessels"
+      ],
+      "inputs": [
+        "metals",
+        "polymers",
+        "life_support_equipment"
+      ],
+      "scale": "large",
+      "contract_issuer": true
+    },
+    {
+      "id": "dorr_metals",
+      "name": "Dorr Metals Combine",
+      "base_system_id": "keshar",
+      "type": "extraction",
+      "outputs": [
+        "metals",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "machinery",
+        "replacement_parts"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "venn_pressure",
+      "name": "Venn Pressure Systems",
+      "base_system_id": "keshar",
+      "type": "manufacturing",
+      "outputs": [
+        "pressure_vessels",
+        "hazard_tanks"
+      ],
+      "inputs": [
+        "metals",
+        "ceramics"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "serrin_materials",
+      "name": "Serrin Materials Laboratory",
+      "base_system_id": "ilos",
+      "type": "manufacturing",
+      "outputs": [
+        "lightweight_materials",
+        "precision_components"
+      ],
+      "inputs": [
+        "metals",
+        "chemicals"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "ari_drive_test",
+      "name": "Ari Drive Test Cooperative",
+      "base_system_id": "ilos",
+      "type": "services",
+      "outputs": [
+        "propulsion_certification"
+      ],
+      "inputs": [
+        "engines",
+        "sensors"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "shaal_minerals",
+      "name": "Shaal Mineral Export",
+      "base_system_id": "veyara",
+      "type": "extraction",
+      "outputs": [
+        "minerals",
+        "salts"
+      ],
+      "inputs": [
+        "machinery",
+        "water"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "neris_science",
+      "name": "Neris Oceanic Research",
+      "base_system_id": "veyara",
+      "type": "research",
+      "outputs": [
+        "biological_samples",
+        "research_data"
+      ],
+      "inputs": [
+        "lab_instruments",
+        "sterile_containers"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "kes_ceramics",
+      "name": "Kes Ceramic Works",
+      "base_system_id": "orun",
+      "type": "manufacturing",
+      "outputs": [
+        "technical_ceramics"
+      ],
+      "inputs": [
+        "minerals",
+        "industrial_chemicals"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "var_automation",
+      "name": "Var Automation Cooperative",
+      "base_system_id": "orun",
+      "type": "manufacturing",
+      "outputs": [
+        "automation",
+        "cargo_machinery"
+      ],
+      "inputs": [
+        "electronics",
+        "metals"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "compact_warehouse",
+      "name": "Compact Bonded Warehousing",
+      "base_system_id": "concord",
+      "type": "logistics",
+      "outputs": [
+        "bonded_storage",
+        "certified_transfer"
+      ],
+      "inputs": [
+        "labor",
+        "automation"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "freeport_brokers",
+      "name": "Freeport Brokers Association",
+      "base_system_id": "concord",
+      "type": "brokerage",
+      "outputs": [
+        "freight_brokerage",
+        "trade_finance"
+      ],
+      "inputs": [
+        "market_data"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "truman_recovery",
+      "name": "Truman Recovery Works",
+      "base_system_id": "new_houston",
+      "type": "industrial",
+      "outputs": [
+        "used_components",
+        "reclaimed_metals"
+      ],
+      "inputs": [
+        "derelicts",
+        "damaged_ships"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "toolbox_extractives",
+      "name": "Toolbox Extractives",
+      "base_system_id": "new_houston",
+      "type": "extraction",
+      "outputs": [
+        "metals",
+        "industrial_minerals"
+      ],
+      "inputs": [
+        "machinery",
+        "fuel"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "shepherd_coldchain",
+      "name": "Shepherd Cold Chain",
+      "base_system_id": "hesperus",
+      "type": "logistics",
+      "outputs": [
+        "refrigerated_storage",
+        "seed_storage"
+      ],
+      "inputs": [
+        "refrigeration_parts",
+        "power_systems"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "thresh_fertilizer",
+      "name": "Thresh Nutrients",
+      "base_system_id": "hesperus",
+      "type": "manufacturing",
+      "outputs": [
+        "fertilizer"
+      ],
+      "inputs": [
+        "chemical_feedstock",
+        "industrial_gases"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "anvil_vacuum",
+      "name": "Anvil Zero Foundry Cooperative",
+      "base_system_id": "iron_gate",
+      "type": "manufacturing",
+      "outputs": [
+        "large_castings",
+        "structural_members"
+      ],
+      "inputs": [
+        "ore",
+        "energy",
+        "ceramics"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "keel_belt_mining",
+      "name": "Keel Belt Mining Union",
+      "base_system_id": "iron_gate",
+      "type": "extraction",
+      "outputs": [
+        "iron_feedstock",
+        "nickel_feedstock"
+      ],
+      "inputs": [
+        "machinery",
+        "food"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "carver_refining",
+      "name": "Carver Refining Group",
+      "base_system_id": "carver",
+      "type": "refining",
+      "outputs": [
+        "refined_metals",
+        "industrial_feedstock"
+      ],
+      "inputs": [
+        "ore",
+        "reactor_fuel",
+        "replacement_parts"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "twelve_provisioners",
+      "name": "Twelve Provisioners Cooperative",
+      "base_system_id": "carver",
+      "type": "distribution",
+      "outputs": [
+        "food",
+        "consumer_goods",
+        "workwear"
+      ],
+      "inputs": [
+        "imported_goods"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "lowell_instruments",
+      "name": "Lowell Instrument Works",
+      "base_system_id": "bradbury",
+      "type": "manufacturing",
+      "outputs": [
+        "survey_instruments",
+        "lab_instruments",
+        "sensors"
+      ],
+      "inputs": [
+        "electronics",
+        "precision_components"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "mariner_cryogenics",
+      "name": "Mariner Cryogenic Research Supply",
+      "base_system_id": "bradbury",
+      "type": "services",
+      "outputs": [
+        "cryogenic_equipment",
+        "sample_containers"
+      ],
+      "inputs": [
+        "technical_ceramics",
+        "electronics"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "crosswater_aquaculture",
+      "name": "Crosswater Aquaculture Union",
+      "base_system_id": "pelagos",
+      "type": "producer",
+      "outputs": [
+        "aquatic_food",
+        "biological_feedstock"
+      ],
+      "inputs": [
+        "nutrients",
+        "machinery"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "shoal_heavy",
+      "name": "Shoal Heavy Services",
+      "base_system_id": "pelagos",
+      "type": "industrial",
+      "outputs": [
+        "marine_machinery",
+        "ship_repair"
+      ],
+      "inputs": [
+        "metals",
+        "replacement_parts"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "anchor_seven_minerals",
+      "name": "Anchor Seven Mineral Works",
+      "base_system_id": "tidemark",
+      "type": "extraction",
+      "outputs": [
+        "dissolved_minerals",
+        "chemical_feedstock"
+      ],
+      "inputs": [
+        "machinery",
+        "filters"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "stormhold_atmospherics",
+      "name": "Stormhold Atmospheric Products",
+      "base_system_id": "tidemark",
+      "type": "industrial",
+      "outputs": [
+        "industrial_gases"
+      ],
+      "inputs": [
+        "power",
+        "equipment"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "deepworks_machine",
+      "name": "Deepworks Machine Cooperative",
+      "base_system_id": "foundry",
+      "type": "manufacturing",
+      "outputs": [
+        "machine_parts",
+        "cargo_machinery"
+      ],
+      "inputs": [
+        "metals",
+        "ceramics",
+        "electronics"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "lift_freight",
+      "name": "Lift Mass Transfer Cooperative",
+      "base_system_id": "foundry",
+      "type": "logistics",
+      "outputs": [
+        "surface_orbit_transfer"
+      ],
+      "inputs": [
+        "power",
+        "maintenance_parts"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "layover_water",
+      "name": "Layover Water & Volatiles",
+      "base_system_id": "port_meridian",
+      "type": "extractor",
+      "outputs": [
+        "water",
+        "reaction_mass"
+      ],
+      "inputs": [
+        "mining_equipment",
+        "replacement_parts"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "old_ring_freight",
+      "name": "Old Ring Freight Services",
+      "base_system_id": "port_meridian",
+      "type": "logistics",
+      "outputs": [
+        "warehousing",
+        "cargo_handling",
+        "crew_services"
+      ],
+      "inputs": [
+        "food",
+        "parts",
+        "labor"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "talos_rare",
+      "name": "Talos Rare Materials",
+      "base_system_id": "talos",
+      "type": "extraction",
+      "outputs": [
+        "rare_mineral_concentrate"
+      ],
+      "inputs": [
+        "mining_equipment",
+        "power",
+        "water",
+        "food"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "claim_assay",
+      "name": "Claim Assay Cooperative",
+      "base_system_id": "talos",
+      "type": "services",
+      "outputs": [
+        "assay_services",
+        "certified_samples"
+      ],
+      "inputs": [
+        "lab_instruments",
+        "sample_containers"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "tank_farm_coop",
+      "name": "Tank Farm Cooperative",
+      "base_system_id": "waystation",
+      "type": "producer",
+      "outputs": [
+        "water",
+        "reaction_mass"
+      ],
+      "inputs": [
+        "pumps",
+        "filters",
+        "power_components"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "crossroads_fabrication",
+      "name": "Crossroads Fabrication",
+      "base_system_id": "waystation",
+      "type": "manufacturing",
+      "outputs": [
+        "substitute_parts",
+        "field_repairs"
+      ],
+      "inputs": [
+        "metals",
+        "used_components"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "reserve_ice",
+      "name": "Reserve Ice Operations",
+      "base_system_id": "lastlight",
+      "type": "extraction",
+      "outputs": [
+        "water",
+        "reaction_mass"
+      ],
+      "inputs": [
+        "mining_equipment",
+        "spares"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    },
+    {
+      "id": "beacon_data",
+      "name": "Beacon Survey Data Exchange",
+      "base_system_id": "lastlight",
+      "type": "brokerage",
+      "outputs": [
+        "survey_data",
+        "route_data"
+      ],
+      "inputs": [
+        "survey_datasets"
+      ],
+      "scale": "regional",
+      "contract_issuer": true
+    }
+  ]
+}
