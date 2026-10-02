@@ -1,0 +1,119 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "world_seeds": [
+    {
+      "body_id": "earth",
+      "population": 18400000000,
+      "profile": "core_homeworld",
+      "seed": 381194,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "keshar_prime",
+      "population": 11800000000,
+      "profile": "core_homeworld",
+      "seed": 741205,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "ilos_prime",
+      "population": 7200000000,
+      "profile": "core_homeworld",
+      "seed": 553821,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "veyara_prime",
+      "population": 9600000000,
+      "profile": "core_homeworld",
+      "seed": 908144,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "orun_prime",
+      "population": 6700000000,
+      "profile": "core_homeworld",
+      "seed": 220613,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "concord_prime",
+      "population": 2800000000,
+      "profile": "core_homeworld",
+      "seed": 661402,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "roosevelt",
+      "population": 640000000,
+      "profile": "developed_colony",
+      "seed": 415891,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "hesperus_prime",
+      "population": 84000000,
+      "profile": "developed_colony",
+      "seed": 830176,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "iron_gate_prime",
+      "population": 310000000,
+      "profile": "developed_colony",
+      "seed": 174022,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "bradbury_prime",
+      "population": 155000000,
+      "profile": "developed_colony",
+      "seed": 991304,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "pelagos_prime",
+      "population": 46000000,
+      "profile": "developed_colony",
+      "seed": 602717,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "tidemark_prime",
+      "population": 3100000,
+      "profile": "outer_world",
+      "seed": 771225,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "foundry_prime",
+      "population": 22000000,
+      "profile": "developed_colony",
+      "seed": 340166,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "talos_prime",
+      "population": 74000,
+      "profile": "frontier",
+      "seed": 480912,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "waystation_habitat",
+      "population": 38000,
+      "profile": "frontier",
+      "seed": 512040,
+      "determinism": "seed+region_id+entity_index"
+    },
+    {
+      "body_id": "lastlight_settlement",
+      "population": 11400,
+      "profile": "frontier",
+      "seed": 702188,
+      "determinism": "seed+region_id+entity_index"
+    }
+  ]
+}
