@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "services": [
+    {
+      "id": "container_crossdock",
+      "time_hours": [
+        1,
+        8
+      ],
+      "requires": [
+        "cargo_handling"
+      ],
+      "cost_cr_per_scu": 18
+    },
+    {
+      "id": "surface_orbit_transfer",
+      "time_hours": [
+        3,
+        18
+      ],
+      "requires": [
+        "shuttle_capacity"
+      ],
+      "cost_cr_per_scu": 38
+    },
+    {
+      "id": "heavy_lift_transfer",
+      "time_hours": [
+        6,
+        36
+      ],
+      "requires": [
+        "heavy_berth",
+        "tug_or_crane"
+      ],
+      "cost_cr_per_scu": 72
+    },
+    {
+      "id": "cold_chain_transfer",
+      "time_hours": [
+        2,
+        10
+      ],
+      "requires": [
+        "refrigerated_storage"
+      ],
+      "cost_cr_per_scu": 31
+    },
+    {
+      "id": "hazardous_transfer",
+      "time_hours": [
+        4,
+        20
+      ],
+      "requires": [
+        "hazardous_berth",
+        "declaration"
+      ],
+      "cost_cr_per_scu": 55
+    }
+  ],
+  "rules": [
+    "Cargo can be consolidated from many local shipments into one interstellar load.",
+    "Space-only freighters depend on transfer craft and orbital storage.",
+    "Transfer delay consumes contract time and cold-chain margin.",
+    "Oversized cargo may bypass containers and require dedicated lifts."
+  ]
+}
