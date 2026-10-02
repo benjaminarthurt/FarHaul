@@ -10,6 +10,9 @@ func check(cond: bool, label: String) -> void:
 		ok = false
 
 func _initialize() -> void:
+	SaveSlots.dir = "user://test_saves_boot"
+	for f in DirAccess.get_files_at(SaveSlots.dir):
+		DirAccess.remove_absolute(SaveSlots.dir + "/" + f)
 	print("assets")
 	for p in [Brand.LOGO, Brand.WORDMARK, Brand.SPLASH, Brand.INTRO_VIDEO, "res://assets/brand/icon.png"]:
 		check(ResourceLoader.exists(p), p)
@@ -29,10 +32,20 @@ func _run(boot: Node) -> void:
 	boot._unhandled_input(_key())
 	check(boot.stage == 2 and not boot.player.is_playing(), "any key skips the intro to the title screen")
 	check(boot.title_layer.visible and boot.world.visible, "title screen is showing")
-	check(boot.continue_btn.disabled == not FileAccess.file_exists(boot.AUTOSAVE), "continue only enabled with a save")
-	boot._start_game()
-	await create_timer(0.8).timeout
-	check(current_scene != null and current_scene.name != "Boot", "START hands over to the game scene")
+	check(boot.continue_btn.disabled == (SaveSlots.latest() < 0), "continue only enabled with a save")
+	boot._on_new()
+	check(boot.new_panel.visible and not boot.load_panel.visible, "NEW GAME opens the new game panel")
+	boot._on_load()
+	check(boot.load_panel.visible and not boot.new_panel.visible, "LOAD GAME opens the load panel")
+	boot._on_settings()
+	check(boot.settings_panel.visible, "SETTINGS opens the settings panel")
+	boot._show_menu()
+	check(not boot.settings_panel.visible and boot.menu_box.visible, "back returns to the menu")
+	check(Session.begin_new(4, "Test Pilot", "belter", "hard", "marrow"), "new game writes slot 5")
+	check(Session.scene_path() == Session.DOCK_SCENE, "a new game starts at the dock")
+	boot._enter_game()
+	await create_timer(0.9).timeout
+	check(current_scene != null and current_scene.name == "Dock", "starting a game opens the dock")
 	print("OK" if ok else "FAILED")
 	quit(0 if ok else 1)
 

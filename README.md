@@ -19,20 +19,25 @@ Or from the editor:
 1. Open Godot, click Import, and choose `project.godot` in this folder.
 2. Press F5.
 
-The game opens with a splash screen, a placeholder intro video, and a title screen (Continue, Start or
-New game, Quit). Any key skips the splash and the intro. Set `FARHAUL_SKIP_INTRO=1` to go straight to the title.
+The game opens with a splash screen, a placeholder intro video, and a title screen (Continue, New game,
+Load game, Settings, Quit). Any key skips the splash and the intro. Set `FARHAUL_SKIP_INTRO=1` to go straight to the title.
 
 ## How to play
 
-The builder is a ship designer. You start with a small hauler and 150,000 credits. Contracts and flight belong to the game proper and are not in the builder.
-
-1. **Build.** Parts cost credits (refunded in full if you remove them). The ghost is green if a part fits and red with the reason if not. If your current rotation
-   doesn't fit, it turns to one that does. Cyan rings mark open doorways: cap them so the hull is sealed.
-2. **Check.** The panel on the right shows power, cooling, thrust-to-weight and warnings.
-3. **Cargo preview.** Fill the hold to see and weigh the ship loaded. It does not buy or sell anything.
+1. **New game.** Choose a name, race, difficulty, starting world and one of five save slots. Difficulty sets
+   your starting credits. Race and Settings are placeholders for now. Replacing a used slot moves the old
+   save aside; nothing is deleted.
+2. **The dock.** You arrive at the yard of your starting world. The ship builder only opens from here.
+   Continue and Load game return you to wherever you last saved: the dock or the shipyard.
+3. **Build.** Name your ship (top right). Parts cost credits (refunded in full if you remove them). The ghost
+   is green if a part fits and red with the reason if not. If your current rotation doesn't fit, it turns to
+   one that does. Cyan rings mark open doorways: cap them so the hull is sealed.
+4. **Check.** The panel on the right shows power, cooling, thrust-to-weight and warnings.
+5. **Cargo preview.** Fill the hold to see and weigh the ship loaded. It does not buy or sell anything.
+6. **Leave shipyard** (Esc) saves and returns you to the dock. Contracts and flight belong to the game proper.
 
 A ship needs a cockpit, an engine, a sealed hull, an airlock, enough power and cooling, and enough
-thrust-to-weight when loaded. Your progress autosaves.
+thrust-to-weight when loaded. Your game autosaves into its slot.
 
 ## Controls
 
@@ -113,6 +118,8 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/cargo_manifest.gd` | What is aboard, per container: load, unload, capacity, value |
 | `scripts/surface_textures.gd` | Procedural plating and hazard-stripe textures (no image assets) |
 | `scripts/space_sky.gd` | Procedural star and nebula sky shader |
+| `scripts/session.gd`, `save_slots.gd`, `worlds.gd` | The current game (profile, location), the five save slots, and the starting worlds, races and difficulties |
+| `scripts/new_game_panel.gd`, `load_panel.gd`, `settings_panel.gd`, `dock.gd` | Title-screen panels and the dock scene |
 | `scripts/contracts.gd` | Freight jobs and the checklist a ship must pass to run one (for the game proper; the builder does not use it) |
 | `scripts/ship_history.gd` | Undo and redo snapshots |
 | `scripts/ship_presets.gd` | Ready-made ships (the starter hauler) |

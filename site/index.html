@@ -44,7 +44,7 @@
       <p class="note">Runs in your browser with no install. About 10 MB on the first load. Works best on a laptop or desktop with a mouse.</p>
       <dl class="slip">
         <div><dt>Version</dt><dd>0.1.0, ship builder prototype</dd></div>
-        <div><dt>You can</dt><dd>Design a ship with a credit budget, check it, preview it loaded with cargo</dd></div>
+        <div><dt>You can</dt><dd>Start a game, save in five slots, build and name a ship at your world's yard</dd></div>
         <div><dt>Not yet</dt><dd>Flying, walking the ship, planets, space walks</dd></div>
       </dl>
     </div>
@@ -81,6 +81,7 @@
         <thead><tr><th scope="col">Area</th><th scope="col">What the game will be</th><th scope="col">Today</th><th scope="col">Status</th></tr></thead>
         <tbody>
           <tr><th scope="row">Ship building</th><td>Ships assembled from physical modules: cockpit, hull, cargo holds, tanks, engines, radiators. Every compartment exists in the world. Balance, power, heat and thrust all matter.</td><td>A 3 m grid builder with 13 parts. Parts snap together at doors and mounts. Live checks for sealed hull, airlock, power, cooling, thrust-to-weight and centre of mass. Undo, redo, autosave.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Menus, saves and the dock</th><td>A proper start: pick who you are and where you begin, keep several games, and always return to the last place you stood.</td><td>New game with name, race, difficulty and starting world. Five save slots. A dock at your starting world's yard, with the shipyard opening from it. Settings are placeholders. Race has no effect yet.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Interiors</th><td>Cramped, practical, lived-in. Cabins, galleys, engine rooms and cockpits that look like they were built to do a job.</td><td>Each part has its own fitted interior: cockpit seats and controls, a reactor room, crew quarters with bunks and a galley, an airlock with suit lockers. You can see them from the builder camera.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>Not in the builder, which is design only. The rules for five placeholder contracts exist in the code, but nothing in the game uses them yet. The builder has a cargo preview so you can see a loaded ship.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>You cannot fly yet.</td><td><span class="chip planned">Planned</span></td></tr>
@@ -109,7 +110,19 @@
       </figure>
       <figure>
         <button class="shot" data-full="img/title.jpg" data-cap="The title screen." aria-label="Open the title screen full size"><img src="img/title.jpg" width="1280" height="720" loading="lazy" alt="The title screen with the Far Haul logo and a starter ship flying past."></button>
-        <figcaption><strong>Title screen.</strong> The starter ship drifts past while you pick Continue, Start or Quit.</figcaption>
+        <figcaption><strong>Title screen.</strong> The starter ship drifts past while you pick Continue, New game, Load game, Settings or Quit.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/newgame.jpg" data-cap="Starting a new game." aria-label="Open the new game screenshot full size"><img src="img/newgame.jpg" width="1280" height="720" loading="lazy" alt="The new game screen with name, race, difficulty, starting world and save slot choices."></button>
+        <figcaption><strong>New game.</strong> Choose a name, race, difficulty, starting world and save slot.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/load.jpg" data-cap="The load screen with five save slots." aria-label="Open the load screen full size"><img src="img/load.jpg" width="1280" height="720" loading="lazy" alt="Five save slots, two of them filled, each showing the captain, place, ship and credits."></button>
+        <figcaption><strong>Load game.</strong> Five save slots. Each shows who, where, which ship and how much money.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/dock.jpg" data-cap="Docked at the starting world." aria-label="Open the dock screenshot full size"><img src="img/dock.jpg" width="1280" height="720" loading="lazy" alt="The dock screen for Port Ketterick with the captain, ship, credits and the way into the shipyard."></button>
+        <figcaption><strong>The dock.</strong> Your starting world decides which yard you begin at. The shipyard opens from here.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/cockpit.jpg" data-cap="Inside the cockpit." aria-label="Open the cockpit screenshot full size"><img src="img/cockpit.jpg" width="1280" height="720" loading="lazy" alt="Inside a cockpit: two pilot seats facing a windscreen and a dash with glowing screens and switch rows."></button>
@@ -132,8 +145,8 @@
         <figcaption><strong>Crew quarters, other end.</strong> A desk with a screen sits beside the table.</figcaption>
       </figure>
       <figure>
-        <button class="shot" data-full="img/builder.jpg" data-cap="The starter ship before any cargo is loaded." aria-label="Open the starter ship screenshot full size"><img src="img/builder.jpg" width="1280" height="720" loading="lazy" alt="The ship builder showing the starter ship with an empty hold."></button>
-        <figcaption><strong>Starter ship.</strong> Every new game begins with this hauler and 150,000 credits.</figcaption>
+        <button class="shot" data-full="img/yard.jpg" data-cap="The shipyard, with a named ship." aria-label="Open the starter ship screenshot full size"><img src="img/yard.jpg" width="1280" height="720" loading="lazy" alt="The ship builder at Ketterick Slipways with the ship named Dunlin and an empty hold."></button>
+        <figcaption><strong>Starter ship.</strong> Every new game begins with this hauler. Name it in the box at the top right. Starting credits depend on difficulty.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/intro.jpg" data-cap="A frame from the placeholder intro video." aria-label="Open the intro frame full size"><img src="img/intro.jpg" width="1280" height="720" loading="lazy" alt="The end of the intro video: the Far Haul logo and tagline on a starfield."></button>
@@ -148,17 +161,18 @@
   <div class="band"></div>
   <div class="body">
     <h2 id="help-h">Help</h2>
-    <p class="lede">You start with a ready-made hauler and 150,000 credits. Change it, check it, save it.</p>
+    <p class="lede">You start with a ready-made hauler and 110,000 to 220,000 credits, depending on difficulty. Change it, check it, name it, save it.</p>
 
     <div class="cols">
       <div>
         <h3>Your first ship</h3>
         <ol class="steps">
-          <li>Press <strong>Launch game</strong>, then <strong>Start</strong> on the title screen.</li>
+          <li>Press <strong>Launch game</strong>, then <strong>New game</strong>. Pick a name, race, difficulty, starting world and save slot, then <strong>Begin</strong>. Later, use <strong>Continue</strong> or <strong>Load game</strong> to return.</li>
+          <li>You arrive at the dock. Press <strong>Enter shipyard</strong> to open the ship builder.</li>
           <li>Look at the ship. Click a part in the palette on the left, then click next to the ship to place it. Green means it fits. Red tells you why not.</li>
           <li>Watch the power, cooling and cargo meters and the warnings on the right. Each warning says what is missing.</li>
           <li>Use <strong>Cargo preview</strong> to fill the hold and see the ship loaded. This only changes how the ship looks and weighs. It does not buy or sell anything.</li>
-          <li>Press <kbd>S</kbd> to save. Your ship also autosaves.</li>
+          <li>Type a name in <strong>Ship name</strong>. Press <kbd>S</kbd> to save. Your game also autosaves. <strong>Leave shipyard</strong> (<kbd>Esc</kbd>) saves and takes you back to the dock.</li>
         </ol>
 
         <h3>What makes a ship valid</h3>
@@ -188,7 +202,8 @@
             <tr><th scope="row">Pan</th><td>Middle-drag</td></tr>
             <tr><th scope="row">Frame the whole ship</th><td><kbd>F</kbd></td></tr>
             <tr><th scope="row">Hide the decks above</th><td><kbd>H</kbd></td></tr>
-            <tr><th scope="row">Save, load, clear</th><td><kbd>S</kbd>, <kbd>L</kbd>, <kbd>C</kbd></td></tr>
+            <tr><th scope="row">Save, clear</th><td><kbd>S</kbd>, <kbd>C</kbd></td></tr>
+            <tr><th scope="row">Leave the shipyard</th><td><kbd>Esc</kbd></td></tr>
             <tr><th scope="row">Mute sound</th><td><kbd>M</kbd></td></tr>
             <tr><th scope="row">Show the help text</th><td><kbd>F1</kbd></td></tr>
           </tbody>

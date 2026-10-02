@@ -36,13 +36,13 @@ static func container_code(seed_value: int) -> String:
 
 
 ## Flat industrial button look: dark plate, amber bar on the left when hovered or focused.
-static func style_button(b: Button) -> void:
+static func style_button(b: Button, size: int = 22) -> void:
 	b.add_theme_color_override("font_color", OFFWHITE)
 	b.add_theme_color_override("font_hover_color", AMBER)
 	b.add_theme_color_override("font_focus_color", AMBER)
 	b.add_theme_color_override("font_pressed_color", AMBER)
 	b.add_theme_color_override("font_disabled_color", Color(MUTED, 0.5))
-	b.add_theme_font_size_override("font_size", 22)
+	b.add_theme_font_size_override("font_size", size)
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.focus_mode = Control.FOCUS_ALL
 	b.add_theme_stylebox_override("normal", _plate(STEEL, 0))
@@ -62,3 +62,50 @@ static func _plate(fill: Color, bar: int) -> StyleBoxFlat:
 	s.content_margin_top = 11
 	s.content_margin_bottom = 11
 	return s
+
+
+## Dark steel panel used by the menu screens.
+static func panel_box() -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = Color(STEEL_DARK, 0.94)
+	s.border_color = STEEL_LIGHT
+	s.set_border_width_all(2)
+	s.border_width_top = 4
+	s.border_color = AMBER
+	s.content_margin_left = 26
+	s.content_margin_right = 26
+	s.content_margin_top = 18
+	s.content_margin_bottom = 18
+	return s
+
+
+static func heading(text: String, size: int = 14) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", AMBER)
+	return l
+
+
+static func note(text: String, size: int = 13) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", MUTED)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return l
+
+
+## A button that stays selected, for choosing one option from a group.
+static func toggle(text: String, group: ButtonGroup, size: int = 16) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.toggle_mode = true
+	b.button_group = group
+	style_button(b, size)
+	b.add_theme_stylebox_override("normal", _plate(STEEL, 0))
+	b.add_theme_stylebox_override("pressed", _plate(STEEL_LIGHT, 6))
+	b.add_theme_color_override("font_pressed_color", AMBER)
+	b.add_theme_color_override("font_hover_pressed_color", AMBER)
+	b.add_theme_stylebox_override("hover_pressed", _plate(STEEL_LIGHT, 6))
+	return b

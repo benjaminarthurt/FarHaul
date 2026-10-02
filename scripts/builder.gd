@@ -8,7 +8,6 @@ const BAD := Color(1.0, 0.25, 0.25, 0.45)
 const GRID_HALF := 12  # grid extends this many cells each way from the origin
 const SAVE_PATH := "user://ship.json"
 const AUTOSAVE_PATH := "user://autosave.json"
-const START_FUNDS := 150000
 const OK_COLOR := Color(0.35, 0.85, 0.45)
 const BAD_COLOR := Color(0.95, 0.35, 0.3)
 const WARN_COLOR := Color(1.0, 0.7, 0.25)
@@ -20,7 +19,7 @@ var ship_view: ShipView
 var history := ShipHistory.new()
 
 # Progress
-var earned := 0  ## profit from the game so far; credits = START_FUNDS + earned - cost of the ship
+var earned := 0  ## profit from the game so far; credits = start funds + earned - cost of the ship
 var busy := false  ## reserved for animations that should freeze editing
 var muted := false
 var autosave_enabled := not OS.has_environment("FARHAUL_NOSAVE")
@@ -69,6 +68,8 @@ var redo_button: Button
 var tip_panel: PanelContainer
 var tip_label: Label
 var welcome_panel: PanelContainer
+var name_edit: LineEdit
+var yard_label: Label
 var sfx_players: Array[AudioStreamPlayer] = []
 var sfx_next := 0
 
@@ -89,10 +90,13 @@ func _ready() -> void:
 
 	_select(0)
 	_set_level(0)
-	var resumed := autosave_enabled and FileAccess.file_exists(AUTOSAVE_PATH) and _load_from(AUTOSAVE_PATH)
+	if Session.slot >= 0:
+		Session.profile["location"] = "shipyard"
+	var in_game := Session.slot >= 0 and FileAccess.file_exists(_save_path())
+	var resumed := (in_game or (autosave_enabled and FileAccess.file_exists(AUTOSAVE_PATH))) and _load_from(_save_path())
 	if not resumed:
 		ShipPresets.build(ship)
-		welcome_panel.visible = true
+	welcome_panel.visible = not bool(Session.profile.get("seen_welcome", false))
 	_refresh_ship()
 	_frame_ship(true)
 
@@ -292,7 +296,6 @@ func _build_palette(ui: Control) -> void:
 	box.add_child(row)
 	_add_action_button(row, "Rotate (R)", _rotate)
 	_add_action_button(row, "Save (S)", _save)
-	_add_action_button(row, "Load (L)", _load)
 	_add_action_button(row, "Clear (C)", _clear)
 	var row2 := HBoxContainer.new()
 	box.add_child(row2)
@@ -300,6 +303,9 @@ func _build_palette(ui: Control) -> void:
 	redo_button = _add_action_button(row2, "Redo", _redo)
 	_add_action_button(row2, "Starter ship", _load_starter)
 	_add_action_button(row2, "Frame (F)", _frame_ship)
+	var row3 := HBoxContainer.new()
+	box.add_child(row3)
+	_add_action_button(row3, "Leave shipyard (Esc)", _leave)
 
 	info_label = Label.new()
 	info_label.custom_minimum_size = Vector2(270, 0)
@@ -311,9 +317,20 @@ func _build_top_bar(ui: Control) -> void:
 	var panel := PanelContainer.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.add_child(panel)
+	var tbox := VBoxContainer.new()
+	tbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(tbox)
+	yard_label = Label.new()
+	yard_label.add_theme_font_size_override("font_size", 13)
+	yard_label.modulate = Color(0.7, 0.8, 1.0)
+	yard_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var w := Session.world()
+	yard_label.text = "%s  ·  %s  ·  %s" % [w.yard_name, w.yard_type, w.name]
+	tbox.add_child(yard_label)
 	top_label = Label.new()
 	top_label.add_theme_font_size_override("font_size", 16)
-	panel.add_child(top_label)
+	top_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tbox.add_child(top_label)
 	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE, 12)
 	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 
@@ -327,6 +344,14 @@ func _build_right_column(ui: Control) -> void:
 	right.add_child(stats_panel)
 	var stats_box := VBoxContainer.new()
 	stats_panel.add_child(stats_box)
+	stats_box.add_child(_header("SHIP NAME"))
+	name_edit = LineEdit.new()
+	name_edit.placeholder_text = "Name your ship"
+	name_edit.max_length = 28
+	name_edit.text = String(Session.profile.get("ship_name", ""))
+	name_edit.text_changed.connect(_on_ship_name)
+	name_edit.text_submitted.connect(func(_t: String) -> void: name_edit.release_focus())
+	stats_box.add_child(name_edit)
 	stats_label = Label.new()
 	stats_label.custom_minimum_size = Vector2(330, 0)
 	stats_box.add_child(stats_label)
@@ -392,12 +417,14 @@ func _build_welcome(ui: Control) -> void:
 	var body := Label.new()
 	body.custom_minimum_size = Vector2(460, 0)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.text = "You start with a small hauler and %s credits.\n\n1. Build. Click to place a part, Shift+click to remove it. Green ghost means it fits, red tells you why not. Cyan rings are open doorways: cap them so the hull is sealed.\n2. Watch the power, cooling and cargo meters on the right.\n3. Use Cargo preview to see how the ship looks fully loaded. Save when you are happy." % ShipStats.commas(START_FUNDS)
+	body.text = "You start with a small hauler and %s credits.\n\n1. Build. Click to place a part, Shift+click to remove it. Green ghost means it fits, red tells you why not. Cyan rings are open doorways: cap them so the hull is sealed.\n2. Watch the power, cooling and cargo meters on the right.\n3. Use Cargo preview to see how the ship looks fully loaded. Save when you are happy." % ShipStats.commas(_start_funds())
 	box.add_child(body)
 	var go := Button.new()
 	go.text = "Start building"
 	go.focus_mode = Control.FOCUS_NONE
-	go.pressed.connect(func() -> void: welcome_panel.visible = false)
+	go.pressed.connect(func() -> void:
+		welcome_panel.visible = false
+		Session.profile["seen_welcome"] = true)
 	box.add_child(go)
 	welcome_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE, 0)
 	welcome_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -527,8 +554,8 @@ func _on_key(key: Key) -> void:
 			_set_level(level + 1)
 		KEY_S:
 			_save()
-		KEY_L:
-			_load()
+		KEY_ESCAPE:
+			_leave()
 		KEY_C:
 			_clear()
 		KEY_F:
@@ -779,8 +806,12 @@ func _on_click() -> void:
 
 # --- Money -----------------------------------------------------------------------------------
 
+func _start_funds() -> int:
+	return Session.start_funds()
+
+
 func _credits() -> int:
-	return START_FUNDS + earned - _ship_cost()
+	return _start_funds() + earned - _ship_cost()
 
 
 func _ship_cost() -> int:
@@ -854,7 +885,7 @@ func _refresh_ship() -> void:
 	_update_ghost()
 	_refresh_info()
 	if autosave_enabled and not busy:
-		_write_save(AUTOSAVE_PATH)
+		_write_save(_save_path())
 
 
 func _refresh_top() -> void:
@@ -937,14 +968,23 @@ func _unload_all() -> void:
 
 # --- Save / load / clear -------------------------------------------------------------------
 
+## Where this game saves: its slot, or the old single autosave when the builder is opened on its own.
+func _save_path() -> String:
+	return SaveSlots.path(Session.slot) if Session.slot >= 0 else AUTOSAVE_PATH
+
+
 func _save_dict() -> Dictionary:
 	var data: Dictionary = JSON.parse_string(ship.to_json())
 	data["cargo"] = manifest.to_dict()
 	data["earned"] = earned
+	Session.profile["credits"] = _credits()
+	data["profile"] = Session.profile
 	return data
 
 
 func _write_save(path: String) -> bool:
+	if Session.slot >= 0 and path == SaveSlots.path(Session.slot):
+		return SaveSlots.write(Session.slot, _save_dict())
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f == null:
 		return false
@@ -965,27 +1005,28 @@ func _load_from(path: String) -> bool:
 
 
 func _save() -> void:
-	if _write_save(SAVE_PATH):
-		message = "Saved to " + ProjectSettings.globalize_path(SAVE_PATH)
+	var path := _save_path() if Session.slot >= 0 else SAVE_PATH
+	if _write_save(path):
+		message = "Saved to slot %d" % (Session.slot + 1) if Session.slot >= 0 else "Saved to " + ProjectSettings.globalize_path(path)
 	else:
 		message = "Could not save (error %d)" % FileAccess.get_open_error()
 	_refresh_info()
 
 
-func _load() -> void:
-	if busy:
+func _on_ship_name(text: String) -> void:
+	Session.profile["ship_name"] = text.strip_edges()
+	if autosave_enabled or Session.slot >= 0:
+		_write_save(_save_path())
+
+
+## Saves and goes back to the dock. The shipyard is only open while you are at a yard.
+func _leave() -> void:
+	if busy or name_edit.has_focus():
 		return
-	if not FileAccess.file_exists(SAVE_PATH):
-		message = "No saved ship yet (press S first)"
-	else:
-		var before := _snapshot()
-		if _load_from(SAVE_PATH):
-			message = "Loaded"
-			_commit(before)
-			_frame_ship()
-		else:
-			message = "Save file couldn't be loaded"
-	_refresh_ship()
+	Session.profile["location"] = "dock"
+	_write_save(_save_path())
+	busy = true
+	get_tree().change_scene_to_file(Session.DOCK_SCENE)
 
 
 func _clear() -> void:

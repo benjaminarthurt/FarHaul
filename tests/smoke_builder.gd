@@ -66,7 +66,8 @@ func _run(scene: Node3D) -> void:
 	scene._save()
 	scene._clear()
 	check(scene.ship.modules.is_empty(), "cleared")
-	scene._load()
+	check(scene._load_from(scene.SAVE_PATH), "save file loads back")
+	scene._refresh_ship()
 	check(scene.ship.modules.size() == before_n and scene.manifest.total() > 0.0, "loaded ship and cargo")
 
 	print(scene.stats_label.text)

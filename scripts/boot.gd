@@ -1,12 +1,11 @@
 extends Node
-## Start-up flow: splash, then the intro video, then the title screen, then the builder.
+## Start-up flow: splash, then the intro video, then the title screen (continue, new game, load,
+## settings). A game then opens at the dock or shipyard where it was saved.
 ## Any key, click or tap skips the splash and the intro. Missing or broken video is skipped.
 ## Env vars for testing: FARHAUL_SKIP_INTRO=1 goes straight to the title screen.
 
 enum Stage { SPLASH, INTRO, TITLE }
 
-const MAIN_SCENE := "res://scenes/main.tscn"
-const AUTOSAVE := "user://autosave.json"
 const SPLASH_HOLD := 1.8
 
 var stage := Stage.SPLASH
@@ -26,13 +25,19 @@ var camera: Camera3D
 var orbit := 0.0
 var orbit_centre := Vector3.ZERO
 var continue_btn: Button
-var new_btn: Button
+var last_label: Label
+var menu_box: Control
+var brand_bits: Array[Control] = []  ## logo and tagline, hidden while a panel is open
+var new_panel: NewGamePanel
+var load_panel: LoadPanel
+var settings_panel: SettingsPanel
 
 
 func _ready() -> void:
 	DisplayServer.window_set_title(Brand.NAME)
 	_build_world()
 	_build_title()
+	_build_panels()
 	_build_splash()
 	_build_intro()
 	fade = ColorRect.new()
@@ -43,7 +48,8 @@ func _ready() -> void:
 	add_child(fl)
 	fl.add_child(fade)
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	if OS.has_environment("FARHAUL_SKIP_INTRO"):
+	if OS.has_environment("FARHAUL_SKIP_INTRO") or Session.skip_intro:
+		Session.skip_intro = false
 		_enter_title(false)
 	else:
 		_enter_splash()
@@ -116,10 +122,8 @@ func _enter_title(animate: bool) -> void:
 		create_tween().tween_property(fade, "color:a", 0.0, 0.8)
 	else:
 		fade.color.a = 0.0
-	var has_save := FileAccess.file_exists(AUTOSAVE)
-	continue_btn.disabled = not has_save
-	new_btn.text = "NEW GAME" if has_save else "START"
-	(continue_btn if has_save else new_btn).grab_focus()
+	SaveSlots.import_legacy()
+	_show_menu()
 
 
 func _kill_splash_tween() -> void:
@@ -155,26 +159,70 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # --- Title actions ---------------------------------------------------------------------------
 
+func _show_menu() -> void:
+	new_panel.visible = false
+	load_panel.visible = false
+	settings_panel.visible = false
+	menu_box.visible = true
+	for b in brand_bits:
+		b.modulate.a = 1.0
+	var latest := SaveSlots.latest()
+	continue_btn.disabled = latest < 0
+	if latest >= 0:
+		var p := SaveSlots.profile(latest)
+		last_label.text = "Slot %d: %s, %s" % [latest + 1, p.name, Worlds.world(p.world).name]
+	else:
+		last_label.text = "No saved games yet"
+	(continue_btn if latest >= 0 else menu_box.get_child(1)).grab_focus()
+
+
+func _show_panel(panel: Control) -> void:
+	new_panel.visible = false
+	load_panel.visible = false
+	settings_panel.visible = false
+	panel.visible = true
+	for b in brand_bits:
+		b.modulate.a = 0.0
+
+
 func _on_continue() -> void:
-	_start_game()
+	var latest := SaveSlots.latest()
+	if latest >= 0 and Session.load_slot(latest):
+		_enter_game()
 
 
 func _on_new() -> void:
-	# Never throw a save away: park it under a timestamped name so it can be restored by hand.
-	if FileAccess.file_exists(AUTOSAVE):
-		var stamp := Time.get_datetime_string_from_system().replace(":", "-")
-		DirAccess.rename_absolute(ProjectSettings.globalize_path(AUTOSAVE),
-			ProjectSettings.globalize_path("user://autosave-before-new-%s.json" % stamp))
-	_start_game()
+	new_panel.reset()
+	_show_panel(new_panel)
 
 
-func _start_game() -> void:
+func _on_load() -> void:
+	load_panel.refresh()
+	_show_panel(load_panel)
+
+
+func _on_settings() -> void:
+	_show_panel(settings_panel)
+
+
+func _on_begin(slot: int, player_name: String, race: String, difficulty: String, world_id: String) -> void:
+	if Session.begin_new(slot, player_name, race, difficulty, world_id):
+		_enter_game()
+
+
+func _on_load_chosen(slot: int) -> void:
+	if Session.load_slot(slot):
+		_enter_game()
+
+
+## Fades out and opens the saved game at its last place: the dock, or the shipyard.
+func _enter_game() -> void:
 	if leaving:
 		return
 	leaving = true
 	var tw := create_tween()
 	tw.tween_property(fade, "color:a", 1.0, 0.4)
-	tw.tween_callback(func() -> void: get_tree().change_scene_to_file(MAIN_SCENE))
+	tw.tween_callback(func() -> void: get_tree().change_scene_to_file(Session.scene_path()))
 
 
 func _on_quit() -> void:
@@ -303,12 +351,14 @@ func _build_title() -> void:
 	logo.custom_minimum_size = Vector2(520, 150)
 	logo.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	col.add_child(logo)
+	brand_bits.append(logo)
 
 	var tag := Label.new()
 	tag.text = Brand.TAGLINE
 	tag.add_theme_color_override("font_color", Brand.MUTED)
 	tag.add_theme_font_size_override("font_size", 13)
 	col.add_child(tag)
+	brand_bits.append(tag)
 
 	var gap := Control.new()
 	gap.custom_minimum_size = Vector2(0, 36)
@@ -319,9 +369,17 @@ func _build_title() -> void:
 	menu.custom_minimum_size = Vector2(330, 0)
 	menu.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	col.add_child(menu)
+	menu_box = menu
 	continue_btn = _menu_button(menu, "CONTINUE", _on_continue)
-	new_btn = _menu_button(menu, "START", _on_new)
+	_menu_button(menu, "NEW GAME", _on_new)
+	_menu_button(menu, "LOAD GAME", _on_load)
+	_menu_button(menu, "SETTINGS", _on_settings)
 	_menu_button(menu, "QUIT", _on_quit)
+	last_label = Label.new()
+	last_label.add_theme_color_override("font_color", Brand.MUTED)
+	last_label.add_theme_font_size_override("font_size", 13)
+	col.add_child(last_label)
+	col.move_child(last_label, menu.get_index() + 1)
 
 	var spacer := Control.new()
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -332,6 +390,30 @@ func _build_title() -> void:
 	foot.add_theme_color_override("font_color", Color(Brand.MUTED, 0.7))
 	foot.add_theme_font_size_override("font_size", 12)
 	col.add_child(foot)
+
+
+func _build_panels() -> void:
+	new_panel = NewGamePanel.new()
+	new_panel.begin.connect(_on_begin)
+	new_panel.back.connect(_show_menu)
+	load_panel = LoadPanel.new()
+	load_panel.chosen.connect(_on_load_chosen)
+	load_panel.back.connect(_show_menu)
+	settings_panel = SettingsPanel.new()
+	settings_panel.back.connect(_show_menu)
+	for p in [new_panel, load_panel, settings_panel]:
+		p.visible = false
+		title_layer.add_child(p)
+		p.anchor_left = 0.0
+		p.anchor_right = 0.0
+		p.anchor_top = 0.5
+		p.anchor_bottom = 0.5
+		p.offset_left = 440
+		p.offset_right = 440
+		p.offset_top = 0
+		p.offset_bottom = 0
+		p.grow_horizontal = Control.GROW_DIRECTION_END
+		p.grow_vertical = Control.GROW_DIRECTION_BOTH
 
 
 func _menu_button(parent: Control, text: String, cb: Callable) -> Button:
