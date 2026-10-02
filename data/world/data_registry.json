@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "authorities": {
+    "system": "system_demographics.json",
+    "body": "system_bodies.json",
+    "region": "planetary_regions_complete.json",
+    "settlement": "settlements_authority.json",
+    "district": "districts.json",
+    "site": "sites_authority.json",
+    "organization": "organizations_authority.json",
+    "commodity": "commodities.json",
+    "ship_class": "ship_classes.json"
+  },
+  "deprecated_identity_sources": [
+    "settlements.json",
+    "settlement_network.json",
+    "commercial_companies.json",
+    "commercial_entities_expanded.json"
+  ],
+  "rule": "Deprecated identity sources remain content references until migrated; new foreign keys target authority files."
+}
