@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "update_cadence": {
+    "inventory": "hourly_or_event",
+    "market_price": "daily_or_market_event",
+    "population": "monthly",
+    "construction": "daily",
+    "company_finance": "monthly",
+    "settlement_stage": "monthly_review",
+    "infrastructure_condition": "daily_or_usage",
+    "reputation": "event_and_decay"
+  },
+  "rules": [
+    "World state changes without player action.",
+    "Scheduled services consume and replenish capacity.",
+    "Population responds slowly to employment, housing and services.",
+    "Projects consume physical inputs before producing capacity.",
+    "Information latency delays some market reactions between systems.",
+    "Historical records retain completed projects, casualties, ownership and policy changes."
+  ]
+}
