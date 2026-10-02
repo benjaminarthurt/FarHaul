@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "units": {
+    "distance": "m",
+    "mass": "kg",
+    "time": "s",
+    "energy": "MJ",
+    "power": "MW",
+    "currency": "cr",
+    "cargo_volume": "SCU"
+  },
+  "scu": {
+    "external_dimensions_m": [
+      2.5,
+      2.5,
+      2.5
+    ],
+    "gross_volume_m3": 15.625,
+    "nominal_usable_volume_m3": 13.5,
+    "standard_max_gross_mass_kg": 12000
+  },
+  "simulation": {
+    "standard_gravity_m_s2": 9.80665,
+    "credit_precision": 0.01,
+    "market_tick_hours": 24,
+    "inventory_tick_hours": 1,
+    "company_tick_hours": 24,
+    "population_tick_days": 30
+  },
+  "rules": [
+    "SI units are authoritative internally.",
+    "UI may display convenient derived units.",
+    "Mass and volume are independent cargo constraints.",
+    "Money is stored in credits with centicredit precision."
+  ]
+}
