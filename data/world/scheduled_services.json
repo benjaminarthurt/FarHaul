@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "services": [
+    {
+      "id": "cif_sol_concord",
+      "carrier": "Concord Interstellar Freight",
+      "route": [
+        "sol",
+        "new_houston",
+        "concord"
+      ],
+      "departures_per_30d": 48,
+      "cargo": "mixed_container"
+    },
+    {
+      "id": "stonehaul_heavy",
+      "carrier": "Stonehaul",
+      "route": [
+        "keshar",
+        "iron_gate",
+        "carver",
+        "concord"
+      ],
+      "departures_per_30d": 34,
+      "cargo": "heavy_bulk"
+    },
+    {
+      "id": "bluewater_ocean",
+      "carrier": "Bluewater Logistics",
+      "route": [
+        "veyara",
+        "tidemark",
+        "pelagos",
+        "port_meridian"
+      ],
+      "departures_per_30d": 22,
+      "cargo": "cold_chain_biological"
+    },
+    {
+      "id": "meridian_outbound_talos",
+      "carrier": "Meridian Outbound",
+      "route": [
+        "port_meridian",
+        "talos"
+      ],
+      "departures_per_30d": 16,
+      "cargo": "mixed_frontier"
+    },
+    {
+      "id": "redline_lastlight",
+      "carrier": "Redline Independent Cooperative",
+      "route": [
+        "port_meridian",
+        "waystation",
+        "lastlight"
+      ],
+      "departures_per_30d": 8,
+      "cargo": "mixed_frontier_mail"
+    }
+  ]
+}
