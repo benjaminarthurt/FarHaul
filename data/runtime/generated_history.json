@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "generated_place_history": {
+    "steps": [
+      "founding_reason",
+      "initial_infrastructure",
+      "first_growth",
+      "industry_shift",
+      "major_incident_or_none",
+      "rebuild_or_decline",
+      "transport_change",
+      "demographic_change",
+      "current_condition"
+    ],
+    "effects": [
+      "building_age",
+      "street_pattern",
+      "abandoned_sites",
+      "company_age",
+      "infrastructure_condition",
+      "local_memory",
+      "current_bottlenecks"
+    ]
+  },
+  "rule": "History is generated causally from place type and economic trajectory, not as disconnected random trivia."
+}
