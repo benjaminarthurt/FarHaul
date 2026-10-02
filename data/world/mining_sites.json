@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "sites": [
+    {
+      "id": "toolbox_mining_complex",
+      "body_id": "toolbox",
+      "name": "Toolbox Mining Complex",
+      "type": "mixed_mineral",
+      "workers": 39000,
+      "outputs": [
+        "metals",
+        "industrial_minerals"
+      ],
+      "daily_output_scu": 12400
+    },
+    {
+      "id": "keel_belt_operations",
+      "body_id": "keel_belt",
+      "name": "Keel Belt Operations",
+      "type": "asteroid_mining",
+      "workers": 118000,
+      "outputs": [
+        "iron_feedstock",
+        "nickel_feedstock"
+      ],
+      "daily_output_scu": 48200
+    },
+    {
+      "id": "carver_distributed_mines",
+      "body_id": "carver_belt",
+      "name": "Carver Distributed Mines",
+      "type": "asteroid_mining",
+      "workers": 620000,
+      "outputs": [
+        "ore",
+        "metals",
+        "volatiles"
+      ],
+      "daily_output_scu": 91000
+    },
+    {
+      "id": "talos_claim_fields",
+      "body_id": "talos_prime",
+      "name": "Talos Claim Fields",
+      "type": "surface_mining",
+      "workers": 17100,
+      "outputs": [
+        "rare_mineral_ore"
+      ],
+      "daily_output_scu": 12600
+    },
+    {
+      "id": "reserve_ice_field",
+      "body_id": "reserve",
+      "name": "Reserve Twelve Ice Field",
+      "type": "ice_extraction",
+      "workers": 380,
+      "outputs": [
+        "water",
+        "reaction_mass"
+      ],
+      "daily_output_scu": 1800
+    }
+  ]
+}
