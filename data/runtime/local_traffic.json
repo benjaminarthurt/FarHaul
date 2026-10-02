@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "flows": [
+    "commute",
+    "school",
+    "shopping",
+    "freight",
+    "service",
+    "leisure",
+    "event",
+    "emergency"
+  ],
+  "generation": "population * trip_rate * schedule_distribution * mode_share",
+  "effects": [
+    "travel_time",
+    "delivery_delay",
+    "transit_load",
+    "road_access",
+    "ambient_density"
+  ],
+  "abstraction": "Only nearby or consequential agents require individual movement; distant traffic is aggregate flow."
+}
