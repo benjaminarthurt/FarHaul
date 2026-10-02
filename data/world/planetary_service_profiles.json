@@ -1,0 +1,151 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "world_profiles": [
+    {
+      "body_id": "earth",
+      "development": "mature_dense",
+      "infrastructure_redundancy": "redundant",
+      "settlement_pattern": "global_regional",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    },
+    {
+      "body_id": "keshar_prime",
+      "development": "mature_dense",
+      "infrastructure_redundancy": "very_redundant",
+      "settlement_pattern": "shelf_upland",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    },
+    {
+      "body_id": "ilos_prime",
+      "development": "mature_dense",
+      "infrastructure_redundancy": "high",
+      "settlement_pattern": "vertical_basin",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    },
+    {
+      "body_id": "veyara_prime",
+      "development": "mature_dense",
+      "infrastructure_redundancy": "high",
+      "settlement_pattern": "basin_pelagic",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    },
+    {
+      "body_id": "orun_prime",
+      "development": "mature_dense",
+      "infrastructure_redundancy": "very_high",
+      "settlement_pattern": "junction_network",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    },
+    {
+      "body_id": "concord_prime",
+      "development": "mature_dense",
+      "infrastructure_redundancy": "very_high",
+      "settlement_pattern": "metro_regional",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    },
+    {
+      "body_id": "pelagos_prime",
+      "development": "developed",
+      "infrastructure_redundancy": "high",
+      "settlement_pattern": "marine",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    },
+    {
+      "body_id": "tidemark_prime",
+      "development": "outer_industrial",
+      "infrastructure_redundancy": "medium",
+      "settlement_pattern": "platform_chain",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    },
+    {
+      "body_id": "foundry_prime",
+      "development": "developed_industrial",
+      "infrastructure_redundancy": "high",
+      "settlement_pattern": "subsurface",
+      "required_networks": [
+        "power",
+        "water",
+        "waste",
+        "health",
+        "education",
+        "communications",
+        "surface_or_local_transport",
+        "freight_distribution"
+      ]
+    }
+  ]
+}
