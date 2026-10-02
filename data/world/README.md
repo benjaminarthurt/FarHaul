@@ -254,3 +254,11 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `survey_mechanics.json` | Multidiscipline survey progress, data quality, value and publication state |
 | `settlement_development.json` | Frontier development stages, needs, advancement and regression |
 | `entity_graph.json` | Stable entity types, IDs and relationship vocabulary connecting world and runtime systems |
+| `density_manifest.json` | World-density expansion marker |
+| `coverage_requirements.json` | Required fields at each geographic and economic scale |
+| `system_demographics.json` | Population, major bodies and sectors for inhabited systems |
+| `planetary_regions.json` | Regional population and industry aggregates |
+| `financial_institutions.json` | Commercial finance providers |
+| `port_compliance_profiles.json` | Port operating requirement profiles |
+| `commercial_ecosystem.json` | Producers, manufacturers, services and logistics firms |
+| `settlement_network.json` | Expanded cities, habitats and frontier settlements |
