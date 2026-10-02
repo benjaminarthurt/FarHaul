@@ -15,6 +15,7 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `corridors.json` | Named multi-system commercial corridors |\n| `yards.json` | Orbital shipyards, build tiers, service costs, hangars and starting-yard choices |\n| `commodities.json` | Freight goods, physical loading data, base values and handling requirements |
 | `coordinates.json` | Draft 3D gameplay coordinates and travel/fuel model inputs |
 | `markets.json` | Per-system commodity stock, demand and baseline local price multipliers |
+| `ports.json` | Physical freight terminals, docks and spaceports with hull limits, fees and services |
 
 ## Stable IDs
 
