@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "relationships": [
+    {
+      "from": "roosevelt_equipment_credit",
+      "to": "roosevelt_independent_yards",
+      "type": "commercial_partner"
+    },
+    {
+      "from": "roosevelt_equipment_credit",
+      "to": "concord_underwriters",
+      "type": "data_sharing"
+    },
+    {
+      "from": "concord_commercial_bank",
+      "to": "concord_underwriters",
+      "type": "commercial_partner"
+    },
+    {
+      "from": "meridian_captains_credit",
+      "to": "outer_reach_assurance",
+      "type": "commercial_partner"
+    },
+    {
+      "from": "gateworks_finance",
+      "to": "kesh_heavy_systems",
+      "type": "supplier_customer"
+    },
+    {
+      "from": "greenline_cold_storage",
+      "to": "hesperus_producers_exchange",
+      "type": "supplier_customer"
+    },
+    {
+      "from": "current_cold_chain",
+      "to": "nine_currents_bioprocessing",
+      "type": "supplier_customer"
+    },
+    {
+      "from": "lowell_secure_receiving",
+      "to": "bradbury_institute_consortium",
+      "type": "supplier_customer"
+    },
+    {
+      "from": "hopewell_freight_coop",
+      "to": "hopewell_construction_combine",
+      "type": "supplier_customer"
+    },
+    {
+      "from": "outer_reach_assurance",
+      "to": "lastlight_survey_office",
+      "type": "data_sharing"
+    },
+    {
+      "from": "sol_intermodal",
+      "to": "concord_interstellar_freight",
+      "type": "commercial_partner"
+    },
+    {
+      "from": "old_load_logistics",
+      "to": "stonehaul",
+      "type": "commercial_partner"
+    },
+    {
+      "from": "span_cargo_services",
+      "to": "ilyan_vector_works",
+      "type": "supplier_customer"
+    },
+    {
+      "from": "junction_machine_logistics",
+      "to": "orun_thermal_collective",
+      "type": "supplier_customer"
+    }
+  ]
+}
