@@ -1,0 +1,94 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "systems": [
+    {
+      "id": "education",
+      "levels": [
+        "early",
+        "primary",
+        "secondary",
+        "technical",
+        "university",
+        "professional"
+      ],
+      "freight": [
+        "food",
+        "furniture",
+        "electronics",
+        "lab_supplies"
+      ],
+      "effects": [
+        "credentials",
+        "labor_supply",
+        "migration"
+      ]
+    },
+    {
+      "id": "healthcare",
+      "levels": [
+        "clinic",
+        "general_hospital",
+        "regional_specialty",
+        "system_referral"
+      ],
+      "freight": [
+        "pharmaceuticals",
+        "medical_consumables",
+        "sterile_goods",
+        "medical_gases"
+      ],
+      "effects": [
+        "health_outcomes",
+        "migration",
+        "emergency_capacity"
+      ]
+    },
+    {
+      "id": "housing",
+      "types": [
+        "public",
+        "cooperative",
+        "private_rental",
+        "owner",
+        "employer",
+        "temporary"
+      ],
+      "freight": [
+        "construction_materials",
+        "furniture",
+        "appliances"
+      ],
+      "effects": [
+        "migration",
+        "cost_of_living",
+        "labor_availability"
+      ]
+    },
+    {
+      "id": "welfare",
+      "programs": [
+        "unemployment",
+        "disability",
+        "housing_support",
+        "food_support"
+      ],
+      "effects": [
+        "household_consumption_floor",
+        "municipal_budget"
+      ]
+    },
+    {
+      "id": "pension",
+      "programs": [
+        "public_basic",
+        "employer",
+        "private"
+      ],
+      "effects": [
+        "retirement_income",
+        "finance"
+      ]
+    }
+  ]
+}
