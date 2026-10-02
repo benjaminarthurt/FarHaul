@@ -1,0 +1,466 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "flows": [
+    {
+      "commodity_id": "grain",
+      "primary_origins": [
+        "hesperus"
+      ],
+      "producer_entities": [
+        "greenline_producers_exchange"
+      ],
+      "major_destinations": [
+        "concord",
+        "new_houston",
+        "port_meridian",
+        "talos",
+        "lastlight"
+      ]
+    },
+    {
+      "commodity_id": "protein_products",
+      "primary_origins": [
+        "hesperus",
+        "pelagos"
+      ],
+      "producer_entities": [
+        "greenline_producers_exchange"
+      ],
+      "major_destinations": [
+        "new_houston",
+        "concord",
+        "port_meridian"
+      ]
+    },
+    {
+      "commodity_id": "aquatic_food_products",
+      "primary_origins": [
+        "veyara",
+        "pelagos"
+      ],
+      "producer_entities": [
+        "nine_currents_bioprocessing"
+      ],
+      "major_destinations": [
+        "concord",
+        "port_meridian",
+        "new_houston"
+      ]
+    },
+    {
+      "commodity_id": "pharmaceuticals",
+      "primary_origins": [
+        "veyara",
+        "bradbury"
+      ],
+      "producer_entities": [
+        "nine_currents_bioprocessing",
+        "bradbury_institute_consortium"
+      ],
+      "major_destinations": [
+        "all_inhabited"
+      ]
+    },
+    {
+      "commodity_id": "medical_supplies",
+      "primary_origins": [
+        "sol",
+        "concord",
+        "new_houston"
+      ],
+      "producer_entities": [
+        "distributed_manufacturers"
+      ],
+      "major_destinations": [
+        "outer_and_frontier"
+      ]
+    },
+    {
+      "commodity_id": "electronics",
+      "primary_origins": [
+        "sol",
+        "concord",
+        "ilos",
+        "bradbury"
+      ],
+      "producer_entities": [
+        "distributed_manufacturers"
+      ],
+      "major_destinations": [
+        "industrial_and_frontier"
+      ]
+    },
+    {
+      "commodity_id": "precision_equipment",
+      "primary_origins": [
+        "ilos",
+        "bradbury"
+      ],
+      "producer_entities": [
+        "ilyan_vector_works",
+        "distributed_precision_firms"
+      ],
+      "major_destinations": [
+        "research_industry"
+      ]
+    },
+    {
+      "commodity_id": "scientific_instruments",
+      "primary_origins": [
+        "bradbury",
+        "ilos"
+      ],
+      "producer_entities": [
+        "bradbury_institute_consortium"
+      ],
+      "major_destinations": [
+        "lastlight",
+        "concord",
+        "survey_markets"
+      ]
+    },
+    {
+      "commodity_id": "specialty_chemicals",
+      "primary_origins": [
+        "foundry",
+        "bradbury",
+        "veyara"
+      ],
+      "producer_entities": [
+        "distributed_processors"
+      ],
+      "major_destinations": [
+        "industry_agriculture"
+      ]
+    },
+    {
+      "commodity_id": "fertilizer_precursors",
+      "primary_origins": [
+        "foundry",
+        "carver"
+      ],
+      "producer_entities": [
+        "distributed_processors"
+      ],
+      "major_destinations": [
+        "hesperus"
+      ]
+    },
+    {
+      "commodity_id": "iron",
+      "primary_origins": [
+        "carver",
+        "iron_gate",
+        "new_houston"
+      ],
+      "producer_entities": [
+        "carver_metals_exchange"
+      ],
+      "major_destinations": [
+        "shipbuilding_manufacturing"
+      ]
+    },
+    {
+      "commodity_id": "nickel",
+      "primary_origins": [
+        "carver",
+        "iron_gate"
+      ],
+      "producer_entities": [
+        "carver_metals_exchange"
+      ],
+      "major_destinations": [
+        "shipbuilding_manufacturing"
+      ]
+    },
+    {
+      "commodity_id": "titanium",
+      "primary_origins": [
+        "carver",
+        "ilos"
+      ],
+      "producer_entities": [
+        "carver_metals_exchange"
+      ],
+      "major_destinations": [
+        "precision_shipbuilding"
+      ]
+    },
+    {
+      "commodity_id": "rare_minerals",
+      "primary_origins": [
+        "talos"
+      ],
+      "producer_entities": [
+        "hopewell_claim_exchange"
+      ],
+      "major_destinations": [
+        "concord",
+        "bradbury",
+        "ilos",
+        "new_houston"
+      ]
+    },
+    {
+      "commodity_id": "structural_materials",
+      "primary_origins": [
+        "iron_gate",
+        "new_houston",
+        "carver"
+      ],
+      "producer_entities": [
+        "roosevelt_machine_fabrication"
+      ],
+      "major_destinations": [
+        "construction_shipbuilding"
+      ]
+    },
+    {
+      "commodity_id": "ceramics",
+      "primary_origins": [
+        "foundry",
+        "orun"
+      ],
+      "producer_entities": [
+        "deepworks_technical_ceramics"
+      ],
+      "major_destinations": [
+        "shipbuilding_thermal_industry"
+      ]
+    },
+    {
+      "commodity_id": "machine_components",
+      "primary_origins": [
+        "new_houston",
+        "foundry",
+        "keshar"
+      ],
+      "producer_entities": [
+        "roosevelt_machine_fabrication"
+      ],
+      "major_destinations": [
+        "all_industrial"
+      ]
+    },
+    {
+      "commodity_id": "machinery",
+      "primary_origins": [
+        "new_houston",
+        "keshar",
+        "foundry"
+      ],
+      "producer_entities": [
+        "roosevelt_machine_fabrication"
+      ],
+      "major_destinations": [
+        "mining_agriculture_construction"
+      ]
+    },
+    {
+      "commodity_id": "mining_equipment",
+      "primary_origins": [
+        "keshar",
+        "iron_gate",
+        "new_houston"
+      ],
+      "producer_entities": [
+        "kesh_heavy_systems"
+      ],
+      "major_destinations": [
+        "carver",
+        "talos",
+        "frontier"
+      ]
+    },
+    {
+      "commodity_id": "agricultural_machinery",
+      "primary_origins": [
+        "new_houston",
+        "keshar"
+      ],
+      "producer_entities": [
+        "roosevelt_machine_fabrication"
+      ],
+      "major_destinations": [
+        "hesperus"
+      ]
+    },
+    {
+      "commodity_id": "reactors",
+      "primary_origins": [
+        "keshar",
+        "orun",
+        "new_houston"
+      ],
+      "producer_entities": [
+        "kesh_heavy_systems"
+      ],
+      "major_destinations": [
+        "shipyards"
+      ]
+    },
+    {
+      "commodity_id": "ship_modules",
+      "primary_origins": [
+        "new_houston",
+        "iron_gate",
+        "keshar",
+        "ilos",
+        "veyara",
+        "orun"
+      ],
+      "producer_entities": [
+        "major_ship_manufacturers"
+      ],
+      "major_destinations": [
+        "shipyards_ports"
+      ]
+    },
+    {
+      "commodity_id": "engines",
+      "primary_origins": [
+        "ilos",
+        "new_houston"
+      ],
+      "producer_entities": [
+        "ilyan_vector_works"
+      ],
+      "major_destinations": [
+        "shipyards"
+      ]
+    },
+    {
+      "commodity_id": "replacement_parts",
+      "primary_origins": [
+        "all_developed"
+      ],
+      "producer_entities": [
+        "distributed_oem_aftermarket"
+      ],
+      "major_destinations": [
+        "all_inhabited"
+      ]
+    },
+    {
+      "commodity_id": "life_support_equipment",
+      "primary_origins": [
+        "veyara",
+        "orun",
+        "concord"
+      ],
+      "producer_entities": [
+        "vey_closed_cycle"
+      ],
+      "major_destinations": [
+        "habitats_ships_frontier"
+      ]
+    },
+    {
+      "commodity_id": "water_processing_equipment",
+      "primary_origins": [
+        "veyara",
+        "orun"
+      ],
+      "producer_entities": [
+        "vey_closed_cycle"
+      ],
+      "major_destinations": [
+        "dry_frontier_industrial"
+      ]
+    },
+    {
+      "commodity_id": "thermal_equipment",
+      "primary_origins": [
+        "orun",
+        "foundry"
+      ],
+      "producer_entities": [
+        "orun_thermal_collective"
+      ],
+      "major_destinations": [
+        "industry_ships_habitats"
+      ]
+    },
+    {
+      "commodity_id": "automation_systems",
+      "primary_origins": [
+        "orun",
+        "bradbury",
+        "concord"
+      ],
+      "producer_entities": [
+        "distributed_automation_firms"
+      ],
+      "major_destinations": [
+        "industry_logistics"
+      ]
+    },
+    {
+      "commodity_id": "habitation_modules",
+      "primary_origins": [
+        "new_houston",
+        "orun",
+        "concord"
+      ],
+      "producer_entities": [
+        "distributed_habitat_builders"
+      ],
+      "major_destinations": [
+        "talos",
+        "lastlight",
+        "expanding_settlements"
+      ]
+    },
+    {
+      "commodity_id": "consumer_goods",
+      "primary_origins": [
+        "sol",
+        "concord",
+        "new_houston",
+        "keshar",
+        "ilos",
+        "veyara",
+        "orun"
+      ],
+      "producer_entities": [
+        "distributed_consumer_industry"
+      ],
+      "major_destinations": [
+        "all_inhabited"
+      ]
+    },
+    {
+      "commodity_id": "food",
+      "primary_origins": [
+        "hesperus",
+        "pelagos",
+        "veyara",
+        "sol"
+      ],
+      "producer_entities": [
+        "distributed_food_processors"
+      ],
+      "major_destinations": [
+        "all_inhabited"
+      ]
+    },
+    {
+      "commodity_id": "survey_data",
+      "primary_origins": [
+        "lastlight",
+        "bradbury",
+        "frontier"
+      ],
+      "producer_entities": [
+        "survey_operators"
+      ],
+      "major_destinations": [
+        "lastlight_survey_office",
+        "bradbury_institute_consortium",
+        "commercial_buyers"
+      ]
+    }
+  ]
+}
