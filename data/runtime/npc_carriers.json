@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "carrier_decisions": [
+    "eligible_contracts",
+    "expected_margin",
+    "route_fit",
+    "schedule_fit",
+    "risk_tolerance",
+    "return_load_probability",
+    "relationship",
+    "cash_need"
+  ],
+  "service_rule": "NPC carriers consume route/berth/warehouse capacity and can win freight the player ignores.",
+  "empty_equipment": "Containers and specialized equipment create reposition demand when trade is imbalanced."
+}
