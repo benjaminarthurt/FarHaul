@@ -1,0 +1,99 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "principles": [
+    "Insurance is optional by general law unless a specific local rule says otherwise.",
+    "Ports, lenders, cargo owners, passenger services and contract issuers may independently require proof of coverage.",
+    "Policies contain operating restrictions. Violating one does not magically stop the ship; it creates financial and detection risk.",
+    "Insurers exchange enough records with reputable ports, registries, repair yards and claims investigators that undisclosed violations can be discovered."
+  ],
+  "certificate": {
+    "name": "Certificate of Insurance",
+    "fields": [
+      "insurer",
+      "policy number",
+      "insured vessel registry/transponder identity",
+      "coverage types",
+      "coverage limits",
+      "effective dates",
+      "material operating restrictions"
+    ],
+    "verification": "Reputable ports and contract issuers can validate certificates through commercial/registry data networks when connectivity permits."
+  },
+  "requirements": [
+    {
+      "party": "ordinary government port",
+      "typical": "registration commonly required; insurance varies by system/berth"
+    },
+    {
+      "party": "high-value cargo owner",
+      "typical": "cargo and carrier-liability coverage commonly required"
+    },
+    {
+      "party": "passenger contract",
+      "typical": "liability coverage commonly required by contract or port operator"
+    },
+    {
+      "party": "hazardous cargo terminal",
+      "typical": "liability and sometimes pollution/environmental coverage required"
+    },
+    {
+      "party": "ship lender",
+      "typical": "hull coverage normally required while lender retains financial interest"
+    },
+    {
+      "party": "frontier informal dock",
+      "typical": "may require neither registration nor insurance"
+    }
+  ],
+  "restrictions": [
+    {
+      "id": "operating_area",
+      "example": "Coverage valid through Lastlight but excludes travel beyond supported frontier."
+    },
+    {
+      "id": "cargo_class",
+      "example": "No radioactive or high-hazard chemical cargo."
+    },
+    {
+      "id": "crew_qualification",
+      "example": "Named captain or appropriately licensed operator required."
+    },
+    {
+      "id": "configuration",
+      "example": "Coverage applies only while vessel remains in registered/certified configuration."
+    },
+    {
+      "id": "maintenance",
+      "example": "Required inspections and maintenance intervals must remain current."
+    }
+  ],
+  "violation_model": {
+    "description": "A captain can knowingly operate outside policy terms. The insurer does not necessarily learn immediately.",
+    "detection_sources": [
+      "port entry/exit records",
+      "registry configuration updates",
+      "yard repair records",
+      "cargo manifests supplied during contract verification",
+      "claims investigation",
+      "inspection records",
+      "distress/rescue records"
+    ],
+    "possible_outcomes": [
+      "warning or demand for documentation",
+      "premium increase",
+      "restriction endorsement",
+      "policy cancellation/nonrenewal",
+      "claim denial when violation is material to the loss",
+      "fraud investigation if the captain intentionally submitted false information"
+    ],
+    "gameplay_rule": "Detection should be probabilistic where appropriate and strongly influenced by how visible the violating activity is. Filing a hazardous manifest at a major Concord terminal is far easier for an insurer to discover than an undocumented frontier trip from an informal dock."
+  },
+  "market_effects": [
+    "Insured operators gain access to higher-value contracts and reputable facilities.",
+    "Uninsured operation reduces fixed cost but shifts loss risk entirely to the captain.",
+    "Cheap policies can carry restrictive operating areas or high deductibles.",
+    "A cancelled policy can make replacement coverage more expensive.",
+    "Strong maintenance and claims history can improve rates over time."
+  ]
+}
