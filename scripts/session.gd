@@ -30,8 +30,12 @@ static func start_funds() -> int:
 	return int(Worlds.difficulty(profile.difficulty).funds)
 
 
+static func yard() -> Dictionary:
+	return Worlds.yard(String(profile.world))
+
+
 static func world() -> Dictionary:
-	return Worlds.world(profile.world)
+	return yard()
 
 
 static func ship_label() -> String:
