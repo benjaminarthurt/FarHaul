@@ -1,0 +1,168 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "program": "second_generation_world_depth",
+  "status": "complete",
+  "areas": [
+    {
+      "id": "schema_consolidation",
+      "structured": [
+        "entity_authority.json",
+        "settlements_authority.json",
+        "sites_authority.json",
+        "organizations_authority.json",
+        "data_registry.json"
+      ],
+      "narrative": [
+        "entity-authority.md"
+      ]
+    },
+    {
+      "id": "geographic_density",
+      "structured": [
+        "geographic_generation.json",
+        "world_generation_seeds.json"
+      ],
+      "narrative": [
+        "geographic-scale.md"
+      ]
+    },
+    {
+      "id": "street_level",
+      "structured": [
+        "street_level_generation.json",
+        "district_templates.json",
+        "addressing_delivery.json"
+      ],
+      "narrative": [
+        "businesses-and-addresses.md"
+      ]
+    },
+    {
+      "id": "ordinary_businesses",
+      "structured": [
+        "business_generation.json"
+      ],
+      "narrative": [
+        "businesses-and-addresses.md"
+      ]
+    },
+    {
+      "id": "population_npcs",
+      "structured": [
+        "population_demographics.json",
+        "migration_model.json",
+        "npc_generation.json"
+      ],
+      "narrative": [
+        "population-and-npcs.md"
+      ]
+    },
+    {
+      "id": "local_logistics",
+      "structured": [
+        "final_mile_logistics.json",
+        "local_freight_vehicles.json",
+        "cargo_custody.json"
+      ],
+      "narrative": [
+        "final-mile-logistics.md"
+      ]
+    },
+    {
+      "id": "manufacturing_bom",
+      "structured": [
+        "manufacturing_bom.json",
+        "production_processes.json"
+      ],
+      "narrative": [
+        "manufacturing.md"
+      ]
+    },
+    {
+      "id": "component_ecosystem",
+      "structured": [
+        "component_models.json",
+        "parts_aftermarket.json",
+        "used_component_condition.json"
+      ],
+      "narrative": [
+        "components-and-aftermarket.md"
+      ]
+    },
+    {
+      "id": "physical_cargo",
+      "structured": [
+        "cargo_packaging.json",
+        "cargo_handling_classes.json",
+        "cargo_lot_generation.json"
+      ],
+      "narrative": [
+        "physical-cargo.md"
+      ]
+    },
+    {
+      "id": "mundane_goods",
+      "structured": [
+        "commodities.json",
+        "mundane_demand_baskets.json"
+      ],
+      "narrative": [
+        "mundane-economy.md"
+      ]
+    },
+    {
+      "id": "exploration_density",
+      "structured": [
+        "frontier_generation.json",
+        "survey_disciplines.json",
+        "survey_data_rights.json"
+      ],
+      "narrative": [
+        "exploration-at-scale.md"
+      ]
+    },
+    {
+      "id": "government_society_culture",
+      "structured": [
+        "government_layers.json",
+        "civic_law_domains.json",
+        "cultural_domains.json",
+        "social_systems.json",
+        "media_information.json",
+        "leisure_events.json"
+      ],
+      "narrative": [
+        "civic-society.md",
+        "social-life.md"
+      ]
+    },
+    {
+      "id": "physical_astronomy",
+      "structured": [
+        "astronomy_schema.json",
+        "orbital_transfer_model.json",
+        "astronomy_examples.json"
+      ],
+      "narrative": [
+        "physical-astronomy.md"
+      ]
+    },
+    {
+      "id": "integration_validation",
+      "structured": [
+        "economic_identities.json",
+        "entity_promotion.json",
+        "integration_qa.json"
+      ],
+      "narrative": [
+        "simulation-integrity.md"
+      ],
+      "tools": [
+        "tools/validate_world_data.py"
+      ]
+    }
+  ],
+  "completion_definition": "Every area requested in the expansion list has mechanics-facing structured representation, narrative design documentation, authority/integration rules where needed, and is indexed in the repository. Procedural catalogs intentionally define scalable populations of ordinary entities rather than hand-authoring millions of records."
+}
