@@ -1,0 +1,256 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "principles": [
+    "Customs is administered by each system government; ports execute local policy.",
+    "Customs knows declarations, inspections and records available to it, not hidden cargo by fiat.",
+    "Legal cargo can still require declaration, duties, quarantine, biosecurity or permits.",
+    "Smuggling is an act of concealment or false declaration, not a special cargo category."
+  ],
+  "clearance_states": [
+    "prearrival_filed",
+    "awaiting_clearance",
+    "cleared",
+    "secondary_inspection",
+    "cargo_hold",
+    "vessel_hold"
+  ],
+  "declaration_fields": [
+    "vessel_registry_id",
+    "origin_system_id",
+    "last_port_id",
+    "crew_and_passengers",
+    "cargo_items",
+    "cargo_owner",
+    "declared_value",
+    "hazard_classes",
+    "biological_origin",
+    "permits"
+  ],
+  "inspection_methods": [
+    {
+      "id": "document_check",
+      "detects": [
+        "manifest_mismatch",
+        "permit_failure",
+        "known_identity_flags"
+      ],
+      "intrusiveness": 0.1
+    },
+    {
+      "id": "mass_balance",
+      "detects": [
+        "undeclared_mass",
+        "false_quantity"
+      ],
+      "intrusiveness": 0.25
+    },
+    {
+      "id": "container_scan",
+      "detects": [
+        "concealed_compartments",
+        "density_anomaly",
+        "undeclared_hazard"
+      ],
+      "intrusiveness": 0.45
+    },
+    {
+      "id": "atmospheric_trace",
+      "detects": [
+        "chemical_residue",
+        "biological_trace"
+      ],
+      "intrusiveness": 0.35
+    },
+    {
+      "id": "physical_search",
+      "detects": [
+        "concealed_cargo",
+        "false_compartment",
+        "tampered_seal"
+      ],
+      "intrusiveness": 0.9
+    },
+    {
+      "id": "crew_interview",
+      "detects": [
+        "document_inconsistency",
+        "identity_issue"
+      ],
+      "intrusiveness": 0.5
+    }
+  ],
+  "system_profiles": [
+    {
+      "system_id": "sol",
+      "enforcement": "strict",
+      "document_verification_probability": 0.95,
+      "base_secondary_inspection_probability": 0.12,
+      "duty_cost_multiplier": 1.15
+    },
+    {
+      "system_id": "keshar",
+      "enforcement": "strict",
+      "document_verification_probability": 0.92,
+      "base_secondary_inspection_probability": 0.1,
+      "duty_cost_multiplier": 1
+    },
+    {
+      "system_id": "ilos",
+      "enforcement": "strict",
+      "document_verification_probability": 0.9,
+      "base_secondary_inspection_probability": 0.09,
+      "duty_cost_multiplier": 1.05
+    },
+    {
+      "system_id": "veyara",
+      "enforcement": "standard",
+      "document_verification_probability": 0.86,
+      "base_secondary_inspection_probability": 0.07,
+      "duty_cost_multiplier": 1
+    },
+    {
+      "system_id": "orun",
+      "enforcement": "standard",
+      "document_verification_probability": 0.84,
+      "base_secondary_inspection_probability": 0.06,
+      "duty_cost_multiplier": 0.95
+    },
+    {
+      "system_id": "concord",
+      "enforcement": "strict",
+      "document_verification_probability": 0.97,
+      "base_secondary_inspection_probability": 0.13,
+      "duty_cost_multiplier": 1.1
+    },
+    {
+      "system_id": "new_houston",
+      "enforcement": "standard",
+      "document_verification_probability": 0.86,
+      "base_secondary_inspection_probability": 0.06,
+      "duty_cost_multiplier": 0.9
+    },
+    {
+      "system_id": "hesperus",
+      "enforcement": "standard",
+      "document_verification_probability": 0.88,
+      "base_secondary_inspection_probability": 0.07,
+      "duty_cost_multiplier": 0.9
+    },
+    {
+      "system_id": "iron_gate",
+      "enforcement": "strict",
+      "document_verification_probability": 0.93,
+      "base_secondary_inspection_probability": 0.09,
+      "duty_cost_multiplier": 1
+    },
+    {
+      "system_id": "carver",
+      "enforcement": "pragmatic",
+      "document_verification_probability": 0.76,
+      "base_secondary_inspection_probability": 0.05,
+      "duty_cost_multiplier": 0.8
+    },
+    {
+      "system_id": "bradbury",
+      "enforcement": "standard",
+      "document_verification_probability": 0.9,
+      "base_secondary_inspection_probability": 0.08,
+      "duty_cost_multiplier": 1.05
+    },
+    {
+      "system_id": "pelagos",
+      "enforcement": "standard",
+      "document_verification_probability": 0.87,
+      "base_secondary_inspection_probability": 0.07,
+      "duty_cost_multiplier": 1
+    },
+    {
+      "system_id": "tidemark",
+      "enforcement": "light",
+      "document_verification_probability": 0.68,
+      "base_secondary_inspection_probability": 0.04,
+      "duty_cost_multiplier": 0.85
+    },
+    {
+      "system_id": "foundry",
+      "enforcement": "standard",
+      "document_verification_probability": 0.82,
+      "base_secondary_inspection_probability": 0.06,
+      "duty_cost_multiplier": 0.9
+    },
+    {
+      "system_id": "port_meridian",
+      "enforcement": "pragmatic",
+      "document_verification_probability": 0.82,
+      "base_secondary_inspection_probability": 0.07,
+      "duty_cost_multiplier": 1.2
+    },
+    {
+      "system_id": "talos",
+      "enforcement": "inconsistent",
+      "document_verification_probability": 0.58,
+      "base_secondary_inspection_probability": 0.05,
+      "duty_cost_multiplier": 1
+    },
+    {
+      "system_id": "waystation",
+      "enforcement": "light",
+      "document_verification_probability": 0.38,
+      "base_secondary_inspection_probability": 0.025,
+      "duty_cost_multiplier": 0.65
+    },
+    {
+      "system_id": "lastlight",
+      "enforcement": "light",
+      "document_verification_probability": 0.48,
+      "base_secondary_inspection_probability": 0.035,
+      "duty_cost_multiplier": 0.75
+    }
+  ],
+  "scrutiny_modifiers": [
+    {
+      "id": "clean_recent_history",
+      "multiplier": 0.7
+    },
+    {
+      "id": "prior_customs_violation",
+      "multiplier": 1.8
+    },
+    {
+      "id": "manifest_amended_after_arrival",
+      "multiplier": 1.35
+    },
+    {
+      "id": "unregistered_vessel",
+      "multiplier": 2
+    },
+    {
+      "id": "hazardous_cargo",
+      "multiplier": 1.45
+    },
+    {
+      "id": "biological_cargo",
+      "multiplier": 1.5
+    },
+    {
+      "id": "mass_anomaly",
+      "multiplier": 3
+    },
+    {
+      "id": "trusted_carrier",
+      "multiplier": 0.65
+    }
+  ],
+  "outcomes": [
+    "clearance",
+    "duty_assessed",
+    "permit_required",
+    "secondary_inspection",
+    "cargo_seizure",
+    "fine",
+    "vessel_hold",
+    "criminal_referral"
+  ]
+}
