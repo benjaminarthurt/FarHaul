@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "promotion_triggers": [
+    {
+      "id": "generated_place_to_persistent",
+      "when": [
+        "player_visit",
+        "contract_destination",
+        "incident",
+        "ownership",
+        "story_reference"
+      ]
+    },
+    {
+      "id": "generated_business_to_persistent",
+      "when": [
+        "transaction",
+        "contract",
+        "debt",
+        "repeated_visit",
+        "incident"
+      ]
+    },
+    {
+      "id": "generated_npc_to_persistent",
+      "when": [
+        "conversation",
+        "crew",
+        "passenger",
+        "contract_contact",
+        "relationship",
+        "witness"
+      ]
+    },
+    {
+      "id": "generated_cargo_to_persistent",
+      "when": [
+        "accepted_contract",
+        "inspection",
+        "damage",
+        "custody_dispute"
+      ]
+    }
+  ],
+  "rule": "Promotion preserves deterministic origin seed and generated attributes, then assigns mutable history."
+}
