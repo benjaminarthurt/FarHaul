@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "price_model": {
+    "reference": "replacement_cost",
+    "factors": {
+      "inventory_cover_days": [
+        -0.18,
+        0.55
+      ],
+      "backlog": [
+        0,
+        0.4
+      ],
+      "local_surplus": [
+        -0.25,
+        0
+      ],
+      "urgency": [
+        0,
+        0.5
+      ],
+      "information_age": [
+        -0.08,
+        0.12
+      ]
+    },
+    "anti_magic": "Prices react to locally known inventory, orders and expected receipts; remote events affect price only after information or cargo arrives."
+  },
+  "shortage_states": [
+    {
+      "id": "normal",
+      "cover_days": [
+        14,
+        null
+      ]
+    },
+    {
+      "id": "tight",
+      "cover_days": [
+        7,
+        14
+      ]
+    },
+    {
+      "id": "short",
+      "cover_days": [
+        3,
+        7
+      ]
+    },
+    {
+      "id": "critical",
+      "cover_days": [
+        0,
+        3
+      ]
+    },
+    {
+      "id": "out",
+      "cover_days": [
+        0,
+        0
+      ]
+    }
+  ]
+}
