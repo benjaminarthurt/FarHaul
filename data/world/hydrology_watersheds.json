@@ -1,0 +1,137 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "basins": [
+    {
+      "id": "truman_watershed",
+      "body_id": "roosevelt",
+      "name": "Truman Watershed",
+      "area_km2": 4100000,
+      "outlet": "Houston Gulf",
+      "rivers": [
+        "Truman River",
+        "Coldwater River"
+      ],
+      "reservoirs": [
+        "Central Lakes"
+      ],
+      "uses": [
+        "municipal_water",
+        "industry",
+        "transport_limited"
+      ],
+      "risks": [
+        "spring_flood",
+        "freeze"
+      ]
+    },
+    {
+      "id": "green_watershed",
+      "body_id": "hesperus_prime",
+      "name": "Green Watershed",
+      "area_km2": 6800000,
+      "outlet": "Eastern Shallow Sea",
+      "rivers": [
+        "Green River",
+        "Thresh River"
+      ],
+      "reservoirs": [
+        "Thresh Lakes"
+      ],
+      "uses": [
+        "irrigation",
+        "municipal_water",
+        "food_processing"
+      ],
+      "risks": [
+        "seasonal_flood",
+        "drought"
+      ]
+    },
+    {
+      "id": "rainmaker_watershed",
+      "body_id": "hesperus_prime",
+      "name": "Rainmaker Watershed",
+      "area_km2": 3700000,
+      "outlet": "Green River",
+      "rivers": [
+        "Rainmaker River"
+      ],
+      "reservoirs": [
+        "Rainmaker Reservoir Chain"
+      ],
+      "uses": [
+        "irrigation",
+        "municipal_water"
+      ],
+      "risks": [
+        "drought"
+      ]
+    },
+    {
+      "id": "gate_coastal_basin",
+      "body_id": "iron_gate_prime",
+      "name": "Gate Coastal Basin",
+      "area_km2": 1200000,
+      "outlet": "Gate Sea",
+      "rivers": [
+        "Anvil Run"
+      ],
+      "reservoirs": [
+        "Keel Industrial Reservoirs"
+      ],
+      "uses": [
+        "process_water",
+        "municipal_water"
+      ],
+      "risks": [
+        "industrial_contamination",
+        "scarcity"
+      ]
+    },
+    {
+      "id": "mariner_watershed",
+      "body_id": "bradbury_prime",
+      "name": "Mariner Watershed",
+      "area_km2": 2100000,
+      "outlet": "South Inland Sea",
+      "rivers": [
+        "Mariner River"
+      ],
+      "reservoirs": [
+        "Lowell Reservoir"
+      ],
+      "uses": [
+        "municipal_water",
+        "research",
+        "agriculture"
+      ],
+      "risks": [
+        "low_flow"
+      ]
+    },
+    {
+      "id": "hopewell_closed_basin",
+      "body_id": "talos_prime",
+      "name": "Hopewell Closed Basin",
+      "area_km2": 1900000,
+      "outlet": null,
+      "rivers": [
+        "seasonal_washes"
+      ],
+      "reservoirs": [
+        "Hopewell Process Reservoir"
+      ],
+      "uses": [
+        "mining",
+        "municipal_water"
+      ],
+      "risks": [
+        "depletion",
+        "dust_contamination"
+      ],
+      "note": "Most usable water is recovered, imported, or extracted from deep deposits; surface flow is episodic."
+    }
+  ]
+}
