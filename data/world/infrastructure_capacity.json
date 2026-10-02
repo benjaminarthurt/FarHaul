@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "capacity_types": [
+    "electric_power",
+    "potable_water",
+    "wastewater",
+    "solid_waste",
+    "data",
+    "hospital_beds",
+    "school_seats",
+    "freight_storage",
+    "cold_storage"
+  ],
+  "profiles": [
+    {
+      "id": "new_houston",
+      "body_id": "roosevelt",
+      "electric_power_gw": 48,
+      "potable_water_ml_day": 6900,
+      "wastewater_ml_day": 6100,
+      "solid_waste_t_day": 28400,
+      "data_backbone_tbps": 84,
+      "hospital_beds": 36100,
+      "school_seats": 2050000,
+      "freight_storage_scu": 4800000,
+      "cold_storage_scu": 620000
+    },
+    {
+      "id": "central_concord",
+      "body_id": "concord_prime",
+      "electric_power_gw": 121,
+      "potable_water_ml_day": 15400,
+      "wastewater_ml_day": 14100,
+      "solid_waste_t_day": 59200,
+      "data_backbone_tbps": 310,
+      "hospital_beds": 91000,
+      "school_seats": 4650000,
+      "freight_storage_scu": 9100000,
+      "cold_storage_scu": 1100000
+    },
+    {
+      "id": "nine_currents",
+      "body_id": "veyara_prime",
+      "electric_power_gw": 66,
+      "potable_water_ml_day": 22800,
+      "wastewater_ml_day": 20200,
+      "solid_waste_t_day": 34700,
+      "data_backbone_tbps": 142,
+      "hospital_beds": 58400,
+      "school_seats": 3260000,
+      "freight_storage_scu": 5200000,
+      "cold_storage_scu": 1700000
+    },
+    {
+      "id": "keelward",
+      "body_id": "iron_gate_prime",
+      "electric_power_gw": 93,
+      "potable_water_ml_day": 8800,
+      "wastewater_ml_day": 7900,
+      "solid_waste_t_day": 42100,
+      "data_backbone_tbps": 71,
+      "hospital_beds": 74400,
+      "school_seats": 4100000,
+      "freight_storage_scu": 12400000,
+      "cold_storage_scu": 510000
+    },
+    {
+      "id": "hopewell",
+      "body_id": "talos_prime",
+      "electric_power_gw": 0.42,
+      "potable_water_ml_day": 21,
+      "wastewater_ml_day": 17,
+      "solid_waste_t_day": 144,
+      "data_backbone_tbps": 0.18,
+      "hospital_beds": 96,
+      "school_seats": 6900,
+      "freight_storage_scu": 67000,
+      "cold_storage_scu": 8400,
+      "capacity_pressure": [
+        "water",
+        "housing",
+        "medical",
+        "cold_storage"
+      ]
+    },
+    {
+      "id": "beacon",
+      "body_id": "lastlight_settlement",
+      "electric_power_gw": 0.11,
+      "potable_water_ml_day": 4.1,
+      "wastewater_ml_day": 3.6,
+      "solid_waste_t_day": 21,
+      "data_backbone_tbps": 0.05,
+      "hospital_beds": 24,
+      "school_seats": 910,
+      "freight_storage_scu": 18000,
+      "cold_storage_scu": 2600
+    }
+  ]
+}
