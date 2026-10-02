@@ -1,0 +1,148 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "manufacturers": [
+    {
+      "id": "northstar_commercial",
+      "name": "Northstar Commercial Vehicle",
+      "origin_system_id": "sol",
+      "founded_ice": 61,
+      "specialties": [
+        "medium freighters",
+        "cockpit modules",
+        "landing gear"
+      ],
+      "reputation": "Conservative Human commercial designs, huge parts availability and few surprises.",
+      "design_language": "Boxy cab-forward hulls, external service doors and standardized rectangular module bays.",
+      "market_position": "The fleet-van manufacturer of known space: rarely prestigious, almost always serviceable."
+    },
+    {
+      "id": "roosevelt_modular",
+      "name": "Roosevelt Modular Shipworks",
+      "origin_system_id": "new_houston",
+      "founded_ice": 88,
+      "specialties": [
+        "modular freighters",
+        "conversion hulls",
+        "structural frames"
+      ],
+      "reputation": "Ships designed to change jobs repeatedly over long working lives.",
+      "design_language": "Exposed frame rails, bolt-on tanks, interchangeable cargo bodies and obvious retrofit space.",
+      "market_position": "Favorite of independent operators and small carriers."
+    },
+    {
+      "id": "kesh_heavy_systems",
+      "name": "Kesh Heavy Systems",
+      "origin_system_id": "keshar",
+      "founded_ice": -18,
+      "specialties": [
+        "heavy hulls",
+        "reactors",
+        "pressure systems",
+        "landing structures"
+      ],
+      "reputation": "Heavy, expensive and notoriously difficult to kill.",
+      "design_language": "Deep frames, protected machinery, massive gear and redundant plumbing.",
+      "market_position": "Premium durability; common in dangerous bulk and industrial work."
+    },
+    {
+      "id": "gateworks",
+      "name": "Gateworks Heavy Orbital",
+      "origin_system_id": "iron_gate",
+      "founded_ice": 67,
+      "specialties": [
+        "large freighters",
+        "superheavy hulls",
+        "orbital-only carriers"
+      ],
+      "reputation": "Builds ships that make ordinary freighters look like cargo.",
+      "design_language": "Long structural spines, detachable container blocks, multiple tug hardpoints and enormous drive sections.",
+      "market_position": "Dominant in very large bulk commercial construction."
+    },
+    {
+      "id": "ilyan_vector_works",
+      "name": "Ilyan Vector Works",
+      "origin_system_id": "ilos",
+      "founded_ice": 22,
+      "specialties": [
+        "engines",
+        "maneuvering thrusters",
+        "drive structures"
+      ],
+      "reputation": "Exceptional specific performance with strict maintenance tolerances.",
+      "design_language": "Compact machinery, skeletal mounts and carefully balanced thrust geometry.",
+      "market_position": "Premium propulsion found aboard ships from almost every builder."
+    },
+    {
+      "id": "aerial_massworks",
+      "name": "Aerial Massworks",
+      "origin_system_id": "ilos",
+      "founded_ice": 79,
+      "specialties": [
+        "lightweight hull modules",
+        "pressure cabins",
+        "radiators"
+      ],
+      "reputation": "Makes large volumes weigh surprisingly little; repair requires correct materials and technique.",
+      "design_language": "Thin trusses, tension structures and minimal exterior cladding.",
+      "market_position": "Popular with range-focused operators and survey ships."
+    },
+    {
+      "id": "vey_closed_cycle",
+      "name": "Vey Closed Cycle",
+      "origin_system_id": "veyara",
+      "founded_ice": 31,
+      "specialties": [
+        "life support",
+        "water recovery",
+        "habitation"
+      ],
+      "reputation": "Environmental plants crews trust with their lives.",
+      "design_language": "Accessible fluid manifolds, redundant treatment loops and conspicuous status windows.",
+      "market_position": "Near-default environmental supplier on mixed-species long-haul ships."
+    },
+    {
+      "id": "bluecurrent_marine",
+      "name": "Bluecurrent Marine & Orbital",
+      "origin_system_id": "pelagos",
+      "founded_ice": 111,
+      "specialties": [
+        "amphibious cargo craft",
+        "ocean landing systems",
+        "sealed freight modules"
+      ],
+      "reputation": "Unfashionable anywhere dry and indispensable where there is nowhere dry to land.",
+      "design_language": "Broad flotation bodies, corrosion-resistant surfaces and high-mounted engines.",
+      "market_position": "Specialist ocean-world logistics."
+    },
+    {
+      "id": "orun_thermal_collective",
+      "name": "Orun Thermal Collective",
+      "origin_system_id": "orun",
+      "founded_ice": 9,
+      "specialties": [
+        "cooling",
+        "heat exchangers",
+        "thermal storage"
+      ],
+      "reputation": "Repairable, modular thermal equipment with exceptional documentation.",
+      "design_language": "Dense serviceable assemblies with every valve reachable.",
+      "market_position": "Common across industrial ships and hot-world operations."
+    },
+    {
+      "id": "deepjunction_machine",
+      "name": "Deep Junction Machine Cooperative",
+      "origin_system_id": "foundry",
+      "founded_ice": 194,
+      "specialties": [
+        "automation",
+        "cargo machinery",
+        "industrial pumps",
+        "compact fabrication"
+      ],
+      "reputation": "Ugly machinery that mechanics enjoy working on.",
+      "design_language": "Removable panels, mechanical indicators and standardized service clearances.",
+      "market_position": "Outer-region industrial workhorse supplier."
+    }
+  ]
+}
