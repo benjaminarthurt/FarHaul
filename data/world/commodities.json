@@ -1,0 +1,545 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "unit_definition": {
+    "name": "freight_unit",
+    "description": "A market quantity used for pricing and contracts. Physical loading converts units into mass and SCU capacity."
+  },
+  "commodities": [
+    {
+      "id": "grain",
+      "name": "Grain",
+      "category": "food",
+      "mass_kg_per_unit": 1000,
+      "scu_per_unit": 1,
+      "container_type": "dry_bulk",
+      "base_value": 420,
+      "handling": []
+    },
+    {
+      "id": "protein_products",
+      "name": "Protein Products",
+      "category": "food",
+      "mass_kg_per_unit": 800,
+      "scu_per_unit": 1,
+      "container_type": "refrigerated",
+      "base_value": 1450,
+      "handling": [
+        "cold"
+      ]
+    },
+    {
+      "id": "fruit",
+      "name": "Fresh Fruit",
+      "category": "food",
+      "mass_kg_per_unit": 650,
+      "scu_per_unit": 1,
+      "container_type": "refrigerated",
+      "base_value": 1900,
+      "handling": [
+        "cold",
+        "fragile"
+      ]
+    },
+    {
+      "id": "aquatic_food_products",
+      "name": "Aquatic Food Products",
+      "category": "food",
+      "mass_kg_per_unit": 750,
+      "scu_per_unit": 1,
+      "container_type": "refrigerated",
+      "base_value": 2100,
+      "handling": [
+        "cold"
+      ]
+    },
+    {
+      "id": "livestock_products",
+      "name": "Livestock Products",
+      "category": "food",
+      "mass_kg_per_unit": 700,
+      "scu_per_unit": 1,
+      "container_type": "refrigerated",
+      "base_value": 1750,
+      "handling": [
+        "cold"
+      ]
+    },
+    {
+      "id": "live_animals",
+      "name": "Live Animals",
+      "category": "agriculture",
+      "mass_kg_per_unit": 500,
+      "scu_per_unit": 2,
+      "container_type": "livestock",
+      "base_value": 4800,
+      "handling": [
+        "live",
+        "environmental_control"
+      ]
+    },
+    {
+      "id": "biological_feedstocks",
+      "name": "Biological Feedstocks",
+      "category": "biological",
+      "mass_kg_per_unit": 900,
+      "scu_per_unit": 1,
+      "container_type": "sealed",
+      "base_value": 2400,
+      "handling": [
+        "temperature_control"
+      ]
+    },
+    {
+      "id": "biological_materials",
+      "name": "Biological Materials",
+      "category": "biological",
+      "mass_kg_per_unit": 500,
+      "scu_per_unit": 1,
+      "container_type": "sealed",
+      "base_value": 6200,
+      "handling": [
+        "temperature_control",
+        "fragile"
+      ]
+    },
+    {
+      "id": "pharmaceuticals",
+      "name": "Pharmaceuticals",
+      "category": "medical",
+      "mass_kg_per_unit": 180,
+      "scu_per_unit": 1,
+      "container_type": "secure_refrigerated",
+      "base_value": 18000,
+      "handling": [
+        "cold",
+        "fragile",
+        "secure"
+      ]
+    },
+    {
+      "id": "medical_supplies",
+      "name": "Medical Supplies",
+      "category": "medical",
+      "mass_kg_per_unit": 350,
+      "scu_per_unit": 1,
+      "container_type": "sealed",
+      "base_value": 7200,
+      "handling": [
+        "fragile"
+      ]
+    },
+    {
+      "id": "electronics",
+      "name": "Electronics",
+      "category": "manufactured",
+      "mass_kg_per_unit": 400,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 8500,
+      "handling": [
+        "fragile",
+        "dry"
+      ]
+    },
+    {
+      "id": "precision_equipment",
+      "name": "Precision Equipment",
+      "category": "manufactured",
+      "mass_kg_per_unit": 450,
+      "scu_per_unit": 1,
+      "container_type": "shock_isolated",
+      "base_value": 12500,
+      "handling": [
+        "fragile"
+      ]
+    },
+    {
+      "id": "scientific_instruments",
+      "name": "Scientific Instruments",
+      "category": "research",
+      "mass_kg_per_unit": 300,
+      "scu_per_unit": 1,
+      "container_type": "shock_isolated",
+      "base_value": 24000,
+      "handling": [
+        "fragile",
+        "secure"
+      ]
+    },
+    {
+      "id": "sensors",
+      "name": "Sensors",
+      "category": "manufactured",
+      "mass_kg_per_unit": 250,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 11000,
+      "handling": [
+        "fragile"
+      ]
+    },
+    {
+      "id": "specialty_chemicals",
+      "name": "Specialty Chemicals",
+      "category": "chemical",
+      "mass_kg_per_unit": 900,
+      "scu_per_unit": 1,
+      "container_type": "chemical_tank",
+      "base_value": 5400,
+      "handling": [
+        "hazardous"
+      ]
+    },
+    {
+      "id": "chemical_feedstocks",
+      "name": "Chemical Feedstocks",
+      "category": "chemical",
+      "mass_kg_per_unit": 1000,
+      "scu_per_unit": 1,
+      "container_type": "chemical_tank",
+      "base_value": 2300,
+      "handling": [
+        "hazardous"
+      ]
+    },
+    {
+      "id": "fertilizer_precursors",
+      "name": "Fertilizer Precursors",
+      "category": "chemical",
+      "mass_kg_per_unit": 1000,
+      "scu_per_unit": 1,
+      "container_type": "dry_bulk",
+      "base_value": 1300,
+      "handling": [
+        "hazardous"
+      ]
+    },
+    {
+      "id": "industrial_gases",
+      "name": "Industrial Gases",
+      "category": "industrial",
+      "mass_kg_per_unit": 700,
+      "scu_per_unit": 1,
+      "container_type": "pressure_tank",
+      "base_value": 1600,
+      "handling": [
+        "pressurized",
+        "hazardous"
+      ]
+    },
+    {
+      "id": "iron",
+      "name": "Iron",
+      "category": "raw_material",
+      "mass_kg_per_unit": 2000,
+      "scu_per_unit": 1,
+      "container_type": "bulk",
+      "base_value": 600,
+      "handling": []
+    },
+    {
+      "id": "nickel",
+      "name": "Nickel",
+      "category": "raw_material",
+      "mass_kg_per_unit": 2000,
+      "scu_per_unit": 1,
+      "container_type": "bulk",
+      "base_value": 1150,
+      "handling": []
+    },
+    {
+      "id": "titanium",
+      "name": "Titanium",
+      "category": "raw_material",
+      "mass_kg_per_unit": 1600,
+      "scu_per_unit": 1,
+      "container_type": "bulk",
+      "base_value": 3200,
+      "handling": []
+    },
+    {
+      "id": "platinum_group_metals",
+      "name": "Platinum-Group Metals",
+      "category": "raw_material",
+      "mass_kg_per_unit": 500,
+      "scu_per_unit": 1,
+      "container_type": "secure_bulk",
+      "base_value": 28000,
+      "handling": [
+        "secure"
+      ]
+    },
+    {
+      "id": "rare_minerals",
+      "name": "Rare Minerals",
+      "category": "raw_material",
+      "mass_kg_per_unit": 1200,
+      "scu_per_unit": 1,
+      "container_type": "bulk",
+      "base_value": 9500,
+      "handling": [
+        "secure"
+      ]
+    },
+    {
+      "id": "rare_dissolved_minerals",
+      "name": "Rare Dissolved Minerals",
+      "category": "raw_material",
+      "mass_kg_per_unit": 900,
+      "scu_per_unit": 1,
+      "container_type": "sealed_tank",
+      "base_value": 7800,
+      "handling": [
+        "corrosive"
+      ]
+    },
+    {
+      "id": "structural_materials",
+      "name": "Structural Materials",
+      "category": "industrial",
+      "mass_kg_per_unit": 1800,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 1700,
+      "handling": []
+    },
+    {
+      "id": "structural_components",
+      "name": "Structural Components",
+      "category": "industrial",
+      "mass_kg_per_unit": 1500,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 3600,
+      "handling": []
+    },
+    {
+      "id": "lightweight_structural_materials",
+      "name": "Lightweight Structural Materials",
+      "category": "industrial",
+      "mass_kg_per_unit": 900,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 6200,
+      "handling": []
+    },
+    {
+      "id": "ceramics",
+      "name": "Industrial Ceramics",
+      "category": "industrial",
+      "mass_kg_per_unit": 1100,
+      "scu_per_unit": 1,
+      "container_type": "shock_isolated",
+      "base_value": 4100,
+      "handling": [
+        "fragile"
+      ]
+    },
+    {
+      "id": "machine_components",
+      "name": "Machine Components",
+      "category": "industrial",
+      "mass_kg_per_unit": 1000,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 4600,
+      "handling": []
+    },
+    {
+      "id": "machinery",
+      "name": "Machinery",
+      "category": "industrial",
+      "mass_kg_per_unit": 2200,
+      "scu_per_unit": 2,
+      "container_type": "oversized",
+      "base_value": 7200,
+      "handling": [
+        "oversized"
+      ]
+    },
+    {
+      "id": "mining_equipment",
+      "name": "Mining Equipment",
+      "category": "industrial",
+      "mass_kg_per_unit": 3500,
+      "scu_per_unit": 3,
+      "container_type": "oversized",
+      "base_value": 14500,
+      "handling": [
+        "oversized"
+      ]
+    },
+    {
+      "id": "agricultural_machinery",
+      "name": "Agricultural Machinery",
+      "category": "industrial",
+      "mass_kg_per_unit": 2800,
+      "scu_per_unit": 2,
+      "container_type": "oversized",
+      "base_value": 9800,
+      "handling": [
+        "oversized"
+      ]
+    },
+    {
+      "id": "vehicles",
+      "name": "Vehicles",
+      "category": "industrial",
+      "mass_kg_per_unit": 2500,
+      "scu_per_unit": 3,
+      "container_type": "vehicle_rack",
+      "base_value": 16000,
+      "handling": [
+        "oversized"
+      ]
+    },
+    {
+      "id": "reactors",
+      "name": "Commercial Reactors",
+      "category": "ship_industrial",
+      "mass_kg_per_unit": 4000,
+      "scu_per_unit": 3,
+      "container_type": "shielded_oversized",
+      "base_value": 52000,
+      "handling": [
+        "oversized",
+        "hazardous"
+      ]
+    },
+    {
+      "id": "ship_modules",
+      "name": "Ship Modules",
+      "category": "ship_industrial",
+      "mass_kg_per_unit": 2400,
+      "scu_per_unit": 2,
+      "container_type": "module_rack",
+      "base_value": 22000,
+      "handling": [
+        "oversized"
+      ]
+    },
+    {
+      "id": "engines",
+      "name": "Ship Engines",
+      "category": "ship_industrial",
+      "mass_kg_per_unit": 3000,
+      "scu_per_unit": 2,
+      "container_type": "module_rack",
+      "base_value": 38000,
+      "handling": [
+        "oversized"
+      ]
+    },
+    {
+      "id": "replacement_parts",
+      "name": "Replacement Parts",
+      "category": "ship_industrial",
+      "mass_kg_per_unit": 800,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 6800,
+      "handling": []
+    },
+    {
+      "id": "life_support_equipment",
+      "name": "Life-Support Equipment",
+      "category": "environmental",
+      "mass_kg_per_unit": 950,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 12000,
+      "handling": [
+        "fragile"
+      ]
+    },
+    {
+      "id": "water_processing_equipment",
+      "name": "Water-Processing Equipment",
+      "category": "environmental",
+      "mass_kg_per_unit": 1600,
+      "scu_per_unit": 2,
+      "container_type": "standard",
+      "base_value": 13500,
+      "handling": []
+    },
+    {
+      "id": "thermal_equipment",
+      "name": "Thermal Equipment",
+      "category": "industrial",
+      "mass_kg_per_unit": 1300,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 9000,
+      "handling": []
+    },
+    {
+      "id": "automation_systems",
+      "name": "Automation Systems",
+      "category": "manufactured",
+      "mass_kg_per_unit": 500,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 10500,
+      "handling": [
+        "fragile"
+      ]
+    },
+    {
+      "id": "habitation_modules",
+      "name": "Habitation Modules",
+      "category": "infrastructure",
+      "mass_kg_per_unit": 4500,
+      "scu_per_unit": 4,
+      "container_type": "oversized",
+      "base_value": 26000,
+      "handling": [
+        "oversized"
+      ]
+    },
+    {
+      "id": "consumer_goods",
+      "name": "Consumer Goods",
+      "category": "consumer",
+      "mass_kg_per_unit": 600,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 2600,
+      "handling": []
+    },
+    {
+      "id": "food",
+      "name": "General Food Supplies",
+      "category": "food",
+      "mass_kg_per_unit": 800,
+      "scu_per_unit": 1,
+      "container_type": "mixed_food",
+      "base_value": 1200,
+      "handling": [
+        "temperature_control"
+      ]
+    },
+    {
+      "id": "manufactured_goods",
+      "name": "Manufactured Goods",
+      "category": "manufactured",
+      "mass_kg_per_unit": 850,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 3400,
+      "handling": []
+    },
+    {
+      "id": "survey_data",
+      "name": "Survey Data",
+      "category": "information",
+      "mass_kg_per_unit": 1,
+      "scu_per_unit": 0,
+      "container_type": "secure_data",
+      "base_value": 15000,
+      "handling": [
+        "secure"
+      ]
+    }
+  ]
+}
