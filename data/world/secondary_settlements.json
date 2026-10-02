@@ -1,0 +1,149 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "settlements": [
+    {
+      "id": "truman_junction",
+      "body_id": "roosevelt",
+      "name": "Truman Junction",
+      "population": 620000,
+      "type": "industrial_town",
+      "functions": [
+        "breakers",
+        "rail",
+        "parts"
+      ]
+    },
+    {
+      "id": "coldwater",
+      "body_id": "roosevelt",
+      "name": "Coldwater",
+      "population": 410000,
+      "type": "service_town",
+      "functions": [
+        "food_processing",
+        "housing",
+        "cold_storage"
+      ]
+    },
+    {
+      "id": "thresh_city",
+      "body_id": "hesperus_prime",
+      "name": "Thresh City",
+      "population": 740000,
+      "type": "agricultural_city",
+      "functions": [
+        "livestock",
+        "processing",
+        "rail"
+      ]
+    },
+    {
+      "id": "rainmaker",
+      "body_id": "hesperus_prime",
+      "name": "Rainmaker",
+      "population": 380000,
+      "type": "agricultural_town",
+      "functions": [
+        "irrigation",
+        "seed",
+        "machinery"
+      ]
+    },
+    {
+      "id": "anvil_city",
+      "body_id": "iron_gate_prime",
+      "name": "Anvil City",
+      "population": 2100000,
+      "type": "industrial_city",
+      "functions": [
+        "casting",
+        "orbital_support",
+        "housing"
+      ]
+    },
+    {
+      "id": "hammer_junction",
+      "body_id": "iron_gate_prime",
+      "name": "Hammer Junction",
+      "population": 870000,
+      "type": "industrial_town",
+      "functions": [
+        "ore_transfer",
+        "machine_shops"
+      ]
+    },
+    {
+      "id": "mariner_city",
+      "body_id": "bradbury_prime",
+      "name": "Mariner City",
+      "population": 1600000,
+      "type": "research_city",
+      "functions": [
+        "instruments",
+        "education",
+        "medical"
+      ]
+    },
+    {
+      "id": "shoal_city",
+      "body_id": "pelagos_prime",
+      "name": "Shoal City",
+      "population": 930000,
+      "type": "marine_city",
+      "functions": [
+        "aquaculture",
+        "ferries",
+        "processing"
+      ]
+    },
+    {
+      "id": "liftmouth",
+      "body_id": "foundry_prime",
+      "name": "Liftmouth",
+      "population": 690000,
+      "type": "industrial_town",
+      "functions": [
+        "mass_lift",
+        "warehousing",
+        "surface_services"
+      ]
+    },
+    {
+      "id": "claim_four",
+      "body_id": "talos_prime",
+      "name": "Claim Camp Four",
+      "population": 4300,
+      "type": "mining_camp",
+      "functions": [
+        "mining",
+        "repair",
+        "lodging"
+      ]
+    },
+    {
+      "id": "prospect_junction",
+      "body_id": "talos_prime",
+      "name": "Prospect Junction",
+      "population": 2900,
+      "type": "service_camp",
+      "functions": [
+        "fuel",
+        "haulage",
+        "food"
+      ]
+    },
+    {
+      "id": "reserve_post",
+      "body_id": "lastlight_settlement",
+      "name": "Reserve Post",
+      "population": 340,
+      "type": "remote_outpost",
+      "functions": [
+        "fuel_cache",
+        "weather",
+        "rescue"
+      ]
+    }
+  ]
+}
