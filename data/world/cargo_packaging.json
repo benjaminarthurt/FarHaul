@@ -1,0 +1,121 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "packaging": [
+    {
+      "id": "standard_pallet",
+      "dimensions_m": [
+        1.2,
+        1,
+        1.4
+      ],
+      "tare_kg": 42,
+      "max_gross_kg": 1800,
+      "handling": [
+        "fork",
+        "pallet_jack"
+      ]
+    },
+    {
+      "id": "sealed_crate_small",
+      "dimensions_m": [
+        1,
+        0.8,
+        0.8
+      ],
+      "tare_kg": 38,
+      "max_gross_kg": 900,
+      "handling": [
+        "fork",
+        "hand_lift"
+      ]
+    },
+    {
+      "id": "sealed_crate_large",
+      "dimensions_m": [
+        2.4,
+        1.2,
+        1.4
+      ],
+      "tare_kg": 180,
+      "max_gross_kg": 5200,
+      "handling": [
+        "fork",
+        "crane"
+      ]
+    },
+    {
+      "id": "standard_scu_container",
+      "dimensions_m": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "tare_kg": 620,
+      "max_gross_kg": 12000,
+      "handling": [
+        "container_lock",
+        "crane"
+      ]
+    },
+    {
+      "id": "refrigerated_scu",
+      "dimensions_m": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "tare_kg": 910,
+      "max_gross_kg": 10500,
+      "handling": [
+        "powered_lock",
+        "crane"
+      ],
+      "power_kw": 4.2
+    },
+    {
+      "id": "liquid_tank_scu",
+      "dimensions_m": [
+        2.5,
+        2.5,
+        2.5
+      ],
+      "tare_kg": 840,
+      "max_gross_kg": 13000,
+      "handling": [
+        "tank_lock",
+        "pump"
+      ]
+    },
+    {
+      "id": "oversize_frame",
+      "dimensions_m": null,
+      "tare_kg": null,
+      "max_gross_kg": 80000,
+      "handling": [
+        "heavy_crane",
+        "custom_tie_down"
+      ]
+    }
+  ],
+  "lot_fields": [
+    "commodity_id",
+    "producer_id",
+    "origin",
+    "batch",
+    "gross_mass_kg",
+    "package_type",
+    "package_count",
+    "dimensions",
+    "temperature_range_c",
+    "humidity_range",
+    "shock_limit_g",
+    "shelf_life_days",
+    "hazard_class",
+    "seal_ids",
+    "documents",
+    "owner",
+    "custodian"
+  ]
+}
