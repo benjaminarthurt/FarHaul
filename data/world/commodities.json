@@ -540,6 +540,16 @@
       "handling": [
         "secure"
       ]
+    },
+    {
+      "id": "metals",
+      "name": "Mixed Industrial Metals",
+      "category": "raw_material",
+      "mass_kg_per_unit": 1800,
+      "scu_per_unit": 1,
+      "container_type": "bulk",
+      "base_value": 1800,
+      "handling": []
     }
   ]
 }
