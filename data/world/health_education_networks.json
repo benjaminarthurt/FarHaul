@@ -1,0 +1,355 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "networks": [
+    {
+      "id": "sol_health",
+      "name": "Sol Health Networks",
+      "system_id": "sol",
+      "sector": "medical",
+      "facilities": [
+        "tertiary_hospitals",
+        "clinics",
+        "trauma",
+        "species_specialists"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "sol_education",
+      "name": "Sol Education Systems",
+      "system_id": "sol",
+      "sector": "education",
+      "facilities": [
+        "schools",
+        "universities",
+        "trade_schools"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "kesh_health",
+      "name": "Keshar Civic Health",
+      "system_id": "keshar",
+      "sector": "medical",
+      "facilities": [
+        "hospitals",
+        "industrial_medicine",
+        "storm_response"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "kesh_training",
+      "name": "Kesh Apprenticeship Network",
+      "system_id": "keshar",
+      "sector": "education",
+      "facilities": [
+        "schools",
+        "apprenticeship",
+        "engineering"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "ilos_health",
+      "name": "Ilos Vertical Health",
+      "system_id": "ilos",
+      "sector": "medical",
+      "facilities": [
+        "hospitals",
+        "vertical_rescue",
+        "clinics"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "ilos_academies",
+      "name": "Ilos Technical Academies",
+      "system_id": "ilos",
+      "sector": "education",
+      "facilities": [
+        "schools",
+        "engineering",
+        "research"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "vey_health",
+      "name": "Veyara Waters Health",
+      "system_id": "veyara",
+      "sector": "medical",
+      "facilities": [
+        "aquatic_medicine",
+        "dry_medicine",
+        "clinics"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "vey_schools",
+      "name": "Veyara Learning Currents",
+      "system_id": "veyara",
+      "sector": "education",
+      "facilities": [
+        "schools",
+        "marine_science",
+        "technical"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "orun_health",
+      "name": "Orun Junction Health",
+      "system_id": "orun",
+      "sector": "medical",
+      "facilities": [
+        "junction_clinics",
+        "hospitals"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "orun_learning",
+      "name": "Orun Learning Commons",
+      "system_id": "orun",
+      "sector": "education",
+      "facilities": [
+        "community_schools",
+        "technical"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "concord_health",
+      "name": "Concord Multispecies Health",
+      "system_id": "concord",
+      "sector": "medical",
+      "facilities": [
+        "multispecies_hospitals",
+        "clinics",
+        "travel_medicine"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "concord_education",
+      "name": "Concord Education Consortium",
+      "system_id": "concord",
+      "sector": "education",
+      "facilities": [
+        "schools",
+        "universities",
+        "commercial_training"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "roosevelt_health",
+      "name": "Roosevelt Health Cooperative",
+      "system_id": "new_houston",
+      "sector": "medical",
+      "facilities": [
+        "hospitals",
+        "industrial_medicine"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "yard_schools",
+      "name": "Roosevelt Yard Schools",
+      "system_id": "new_houston",
+      "sector": "education",
+      "facilities": [
+        "trade_schools",
+        "engineering"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "hesperus_health",
+      "name": "Hesperus Regional Health",
+      "system_id": "hesperus",
+      "sector": "medical",
+      "facilities": [
+        "regional_hospitals",
+        "rural_clinics"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "hesperus_schools",
+      "name": "Hesperus Schools Network",
+      "system_id": "hesperus",
+      "sector": "education",
+      "facilities": [
+        "rural_schools",
+        "agricultural_college"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "gate_health",
+      "name": "Iron Gate Industrial Health",
+      "system_id": "iron_gate",
+      "sector": "medical",
+      "facilities": [
+        "industrial_hospitals",
+        "trauma"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "gate_training",
+      "name": "Gate Trades Network",
+      "system_id": "iron_gate",
+      "sector": "education",
+      "facilities": [
+        "trade_schools",
+        "heavy_engineering"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "bradbury_health",
+      "name": "Bradbury Health System",
+      "system_id": "bradbury",
+      "sector": "medical",
+      "facilities": [
+        "research_hospitals",
+        "clinics"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    },
+    {
+      "id": "bradbury_academic",
+      "name": "Bradbury Academic Consortium",
+      "system_id": "bradbury",
+      "sector": "education",
+      "facilities": [
+        "universities",
+        "research_institutes"
+      ],
+      "freight_demand": [
+        "electronics",
+        "furniture",
+        "lab_supplies",
+        "food"
+      ]
+    },
+    {
+      "id": "frontier_medical",
+      "name": "Outer Systems Medical Cooperative",
+      "system_id": "port_meridian",
+      "sector": "medical",
+      "facilities": [
+        "meridian_hospital",
+        "talos_clinic_support",
+        "waystation_support",
+        "lastlight_support"
+      ],
+      "freight_demand": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "sterile_goods",
+        "equipment"
+      ]
+    }
+  ]
+}
