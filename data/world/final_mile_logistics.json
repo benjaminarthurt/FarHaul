@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "stages": [
+    {
+      "id": "interstellar_arrival",
+      "node": "orbital_or_surface_port",
+      "cost_basis": "berth+handling",
+      "delay_hours": [
+        1,
+        18
+      ]
+    },
+    {
+      "id": "customs_release",
+      "node": "bonded_terminal",
+      "cost_basis": "inspection+storage",
+      "delay_hours": [
+        0.5,
+        36
+      ]
+    },
+    {
+      "id": "orbital_surface",
+      "node": "shuttle_lift_or_lander",
+      "cost_basis": "per_scu+mass+special_handling",
+      "delay_hours": [
+        2,
+        24
+      ]
+    },
+    {
+      "id": "regional_linehaul",
+      "node": "rail_road_marine_or_tube",
+      "cost_basis": "distance+capacity",
+      "delay_hours": [
+        1,
+        48
+      ]
+    },
+    {
+      "id": "distribution_center",
+      "node": "regional_dc",
+      "cost_basis": "handling+storage",
+      "delay_hours": [
+        1,
+        24
+      ]
+    },
+    {
+      "id": "local_delivery",
+      "node": "truck_crawler_boat_or_service_vehicle",
+      "cost_basis": "distance+access+time_window",
+      "delay_hours": [
+        0.25,
+        12
+      ]
+    },
+    {
+      "id": "receiving",
+      "node": "business_or_site",
+      "cost_basis": "unload+wait",
+      "delay_hours": [
+        0.1,
+        8
+      ]
+    }
+  ],
+  "failure_modes": [
+    "missed_connection",
+    "customs_hold",
+    "equipment_failure",
+    "weather",
+    "warehouse_full",
+    "address_access",
+    "receiving_closed",
+    "cold_chain_excursion",
+    "damage"
+  ],
+  "rule": "Contracts may cover one stage or end-to-end carriage; responsibility transfers are recorded at custody changes."
+}
