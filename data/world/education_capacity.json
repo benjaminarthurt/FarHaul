@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "institutions": [
+    {
+      "id": "new_houston_public_schools",
+      "metro_id": "new_houston_metro",
+      "type": "school_system",
+      "students": 1720000,
+      "staff": 164000,
+      "campuses": 2380
+    },
+    {
+      "id": "roosevelt_yard_institute",
+      "metro_id": "new_houston_metro",
+      "type": "technical_college",
+      "students": 86000,
+      "staff": 9400,
+      "campuses": 11
+    },
+    {
+      "id": "nine_currents_learning_network",
+      "metro_id": "nine_currents_metro",
+      "type": "school_system",
+      "students": 2710000,
+      "staff": 251000,
+      "campuses": 3210
+    },
+    {
+      "id": "nine_currents_university",
+      "metro_id": "nine_currents_metro",
+      "type": "university",
+      "students": 164000,
+      "staff": 28000,
+      "campuses": 7
+    },
+    {
+      "id": "concord_metropolitan_schools",
+      "metro_id": "central_concord_metro",
+      "type": "school_system",
+      "students": 3890000,
+      "staff": 368000,
+      "campuses": 4170
+    },
+    {
+      "id": "concord_commercial_university",
+      "metro_id": "central_concord_metro",
+      "type": "university",
+      "students": 228000,
+      "staff": 41000,
+      "campuses": 9
+    },
+    {
+      "id": "hopewell_school_district",
+      "metro_id": "hopewell_metro",
+      "type": "school_system",
+      "students": 5900,
+      "staff": 610,
+      "campuses": 12
+    },
+    {
+      "id": "hopewell_trades_annex",
+      "metro_id": "hopewell_metro",
+      "type": "technical_college",
+      "students": 2100,
+      "staff": 260,
+      "campuses": 2
+    }
+  ],
+  "freight_inputs": [
+    "food",
+    "furniture",
+    "electronics",
+    "lab_supplies",
+    "cleaning_supplies",
+    "maintenance_parts"
+  ]
+}
