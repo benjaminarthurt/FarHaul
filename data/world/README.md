@@ -28,6 +28,14 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `civic_issues.json` | Grounded commercial, legal and civic tensions that can generate stories and contracts |
 | `ship_culture.json` | Species-origin shipbuilding philosophies, hybrid commercial traditions and lived-in ship details |
 | `naming.json` | Ship naming patterns and station nickname conventions |
+| `manufacturers.json` | Spacecraft and equipment manufacturers with industrial histories and reputations |
+| `ship_classes.json` | Recognizable current and legacy commercial freighter families |
+| `equipment_brands.json` | Named engines, reactors, life-support, thermal and cargo equipment |
+| `carriers.json` | Major, regional and cooperative freight operators |
+| `incidents.json` | Industrial accidents, rescues, shortages and famous freight events |
+| `notable_people.json` | Historic engineers, captains, surveyors and working frontier figures |
+| `flavor_text.json` | In-world advertising, port signs, used-ship listings and freight-board copy |
+| `rumors.json` | Grounded, explicitly uncertain rumors suitable for ambient dialogue and leads |
 
 ## Stable IDs
 
