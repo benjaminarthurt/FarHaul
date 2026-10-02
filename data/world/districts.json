@@ -1,0 +1,359 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "districts": [
+    {
+      "id": "earth_rotterdam_docklands",
+      "body_id": "earth",
+      "name": "Rotterdam Docklands",
+      "type": "freight",
+      "population": 180000,
+      "functions": [
+        "warehouses",
+        "customs",
+        "crew_lodging",
+        "container_repair"
+      ]
+    },
+    {
+      "id": "earth_orbital_link_city",
+      "body_id": "earth",
+      "name": "Orbital Link City",
+      "type": "mixed",
+      "population": 2400000,
+      "functions": [
+        "passenger_transfer",
+        "finance",
+        "hotels",
+        "cargo_brokers"
+      ]
+    },
+    {
+      "id": "luna_old_excavations",
+      "body_id": "luna",
+      "name": "Old Excavations",
+      "type": "mixed",
+      "population": 1700000,
+      "functions": [
+        "housing",
+        "repair",
+        "retail",
+        "legacy_industry"
+      ]
+    },
+    {
+      "id": "mars_north_rail_yards",
+      "body_id": "mars",
+      "name": "North Rail Yards",
+      "type": "industrial",
+      "population": 860000,
+      "functions": [
+        "rail_freight",
+        "cold_storage",
+        "fabrication"
+      ]
+    },
+    {
+      "id": "keshar_old_load",
+      "body_id": "keshar_prime",
+      "name": "Old Load",
+      "type": "freight",
+      "population": 3600000,
+      "functions": [
+        "heavy_freight",
+        "machine_shops",
+        "wholesale"
+      ]
+    },
+    {
+      "id": "keshar_seawall_eight",
+      "body_id": "keshar_prime",
+      "name": "Seawall Eight",
+      "type": "mixed",
+      "population": 2100000,
+      "functions": [
+        "housing",
+        "storm_services",
+        "marine_freight"
+      ]
+    },
+    {
+      "id": "ilos_upper_span",
+      "body_id": "ilos_prime",
+      "name": "Upper Span",
+      "type": "residential_commercial",
+      "population": 4400000,
+      "functions": [
+        "housing",
+        "education",
+        "retail",
+        "vertical_transit"
+      ]
+    },
+    {
+      "id": "ilos_lower_works",
+      "body_id": "ilos_prime",
+      "name": "Lower Works",
+      "type": "industrial",
+      "population": 2700000,
+      "functions": [
+        "propulsion",
+        "freight_lifts",
+        "precision_fabrication"
+      ]
+    },
+    {
+      "id": "veyara_nine_currents_exchange",
+      "body_id": "veyara_prime",
+      "name": "Nine Currents Exchange",
+      "type": "commercial",
+      "population": 5200000,
+      "functions": [
+        "markets",
+        "water_transit",
+        "hospitality",
+        "biotech"
+      ]
+    },
+    {
+      "id": "veyara_dry_quarter",
+      "body_id": "veyara_prime",
+      "name": "Dry Quarter",
+      "type": "visitor_commercial",
+      "population": 1100000,
+      "functions": [
+        "offworld_housing",
+        "customs",
+        "dry_storage"
+      ]
+    },
+    {
+      "id": "orun_warm_junction",
+      "body_id": "orun_prime",
+      "name": "Warm Junction",
+      "type": "mixed",
+      "population": 6800000,
+      "functions": [
+        "transit",
+        "markets",
+        "repair",
+        "housing"
+      ]
+    },
+    {
+      "id": "orun_quiet_cells",
+      "body_id": "orun_prime",
+      "name": "Quiet Cells",
+      "type": "residential",
+      "population": 1900000,
+      "functions": [
+        "private_housing",
+        "schools",
+        "clinics"
+      ]
+    },
+    {
+      "id": "concord_standards_quarter",
+      "body_id": "concord_prime",
+      "name": "Standards Quarter",
+      "type": "institutional",
+      "population": 6100000,
+      "functions": [
+        "standards",
+        "arbitration",
+        "finance",
+        "hotels"
+      ]
+    },
+    {
+      "id": "concord_freight_basin",
+      "body_id": "concord_prime",
+      "name": "Freight Basin",
+      "type": "industrial",
+      "population": 8300000,
+      "functions": [
+        "intermodal_freight",
+        "bonded_storage",
+        "brokers"
+      ]
+    },
+    {
+      "id": "roosevelt_independent_yard_district",
+      "body_id": "roosevelt",
+      "name": "Independent Yard District",
+      "type": "industrial",
+      "population": 4100000,
+      "functions": [
+        "shipyards",
+        "parts",
+        "crew_housing",
+        "training"
+      ]
+    },
+    {
+      "id": "roosevelt_manufacturer_row",
+      "body_id": "roosevelt",
+      "name": "Manufacturer Row",
+      "type": "commercial_industrial",
+      "population": 1800000,
+      "functions": [
+        "showrooms",
+        "warehouses",
+        "certification"
+      ]
+    },
+    {
+      "id": "hesperus_greenline_terminal",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Terminal District",
+      "type": "industrial",
+      "population": 620000,
+      "functions": [
+        "grain",
+        "cold_storage",
+        "livestock",
+        "rail"
+      ]
+    },
+    {
+      "id": "iron_gate_keelward_yards",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward Yards District",
+      "type": "industrial",
+      "population": 7500000,
+      "functions": [
+        "foundries",
+        "yard_labor",
+        "heavy_transport"
+      ]
+    },
+    {
+      "id": "bradbury_secure_receiving",
+      "body_id": "bradbury_prime",
+      "name": "Secure Receiving District",
+      "type": "research_industrial",
+      "population": 940000,
+      "functions": [
+        "sample_handling",
+        "instruments",
+        "customs"
+      ]
+    },
+    {
+      "id": "pelagos_crosswater_market",
+      "body_id": "pelagos_prime",
+      "name": "Crosswater Market Basin",
+      "type": "commercial",
+      "population": 720000,
+      "functions": [
+        "food",
+        "marine_services",
+        "passenger_ferries"
+      ]
+    },
+    {
+      "id": "tidemark_anchor_core",
+      "body_id": "tidemark_prime",
+      "name": "Anchor Seven Core",
+      "type": "mixed",
+      "population": 98000,
+      "functions": [
+        "housing",
+        "storm_shelter",
+        "processing",
+        "clinic"
+      ]
+    },
+    {
+      "id": "foundry_central_lift",
+      "body_id": "foundry_prime",
+      "name": "Central Lift District",
+      "type": "industrial",
+      "population": 760000,
+      "functions": [
+        "mass_lift",
+        "warehousing",
+        "machine_shops"
+      ]
+    },
+    {
+      "id": "meridian_long_layover",
+      "body_id": "meridian_station",
+      "name": "Long Layover",
+      "type": "commercial",
+      "population": 84000,
+      "functions": [
+        "lodging",
+        "food",
+        "laundry",
+        "crew_services"
+      ]
+    },
+    {
+      "id": "meridian_dock_three",
+      "body_id": "meridian_station",
+      "name": "Dock Three Market",
+      "type": "commercial",
+      "population": 46000,
+      "functions": [
+        "parts",
+        "adapters",
+        "brokers",
+        "used_goods"
+      ]
+    },
+    {
+      "id": "talos_container_city",
+      "body_id": "talos_prime",
+      "name": "Container City",
+      "type": "mixed",
+      "population": 12600,
+      "functions": [
+        "housing",
+        "food",
+        "clinic",
+        "workshops"
+      ]
+    },
+    {
+      "id": "talos_claim_row",
+      "body_id": "talos_prime",
+      "name": "Claim Row",
+      "type": "commercial",
+      "population": 4100,
+      "functions": [
+        "assay",
+        "legal_services",
+        "brokers",
+        "equipment"
+      ]
+    },
+    {
+      "id": "waystation_pump_core",
+      "body_id": "waystation_habitat",
+      "name": "Pump Core",
+      "type": "mixed",
+      "population": 6700,
+      "functions": [
+        "repair",
+        "utilities",
+        "food",
+        "council"
+      ]
+    },
+    {
+      "id": "lastlight_survey_quarter",
+      "body_id": "lastlight_settlement",
+      "name": "Survey Quarter",
+      "type": "institutional",
+      "population": 1300,
+      "functions": [
+        "survey_office",
+        "expedition_supply",
+        "communications",
+        "lodging"
+      ]
+    }
+  ]
+}
