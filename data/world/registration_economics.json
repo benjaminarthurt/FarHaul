@@ -1,0 +1,256 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "currency": "cr",
+  "hull_classes": {
+    "small_freighter": {
+      "base_registration_fee": 650,
+      "renewal_fee": 260,
+      "inspection_fee": 180,
+      "validity_days": 540
+    },
+    "medium_freighter": {
+      "base_registration_fee": 1200,
+      "renewal_fee": 480,
+      "inspection_fee": 350,
+      "validity_days": 540
+    },
+    "large_freighter": {
+      "base_registration_fee": 2600,
+      "renewal_fee": 1050,
+      "inspection_fee": 800,
+      "validity_days": 450
+    },
+    "heavy_freighter": {
+      "base_registration_fee": 5200,
+      "renewal_fee": 2100,
+      "inspection_fee": 1700,
+      "validity_days": 360
+    },
+    "superheavy_freighter": {
+      "base_registration_fee": 12000,
+      "renewal_fee": 5000,
+      "inspection_fee": 4200,
+      "validity_days": 300
+    }
+  },
+  "registry_modifiers": [
+    {
+      "system_id": "sol",
+      "fee_multiplier": 1.25,
+      "inspection_multiplier": 1.2,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "keshar",
+      "fee_multiplier": 1.05,
+      "inspection_multiplier": 1.25,
+      "processing_days": 3,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "ilos",
+      "fee_multiplier": 1.1,
+      "inspection_multiplier": 1.15,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "veyara",
+      "fee_multiplier": 1.05,
+      "inspection_multiplier": 1.1,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "orun",
+      "fee_multiplier": 0.95,
+      "inspection_multiplier": 1,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "concord",
+      "fee_multiplier": 1.2,
+      "inspection_multiplier": 1.1,
+      "processing_days": 1,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "new_houston",
+      "fee_multiplier": 0.9,
+      "inspection_multiplier": 0.9,
+      "processing_days": 1,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "hesperus",
+      "fee_multiplier": 0.9,
+      "inspection_multiplier": 0.95,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "iron_gate",
+      "fee_multiplier": 1,
+      "inspection_multiplier": 1.15,
+      "processing_days": 3,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "carver",
+      "fee_multiplier": 0.85,
+      "inspection_multiplier": 0.9,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "bradbury",
+      "fee_multiplier": 1.1,
+      "inspection_multiplier": 1.1,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "pelagos",
+      "fee_multiplier": 1,
+      "inspection_multiplier": 1,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "tidemark",
+      "fee_multiplier": 0.9,
+      "inspection_multiplier": 1.05,
+      "processing_days": 3,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "foundry",
+      "fee_multiplier": 0.9,
+      "inspection_multiplier": 1,
+      "processing_days": 2,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "port_meridian",
+      "fee_multiplier": 1.35,
+      "inspection_multiplier": 1.25,
+      "processing_days": 1,
+      "remote_renewal": true
+    },
+    {
+      "system_id": "talos",
+      "fee_multiplier": 1.15,
+      "inspection_multiplier": 1.3,
+      "processing_days": 4,
+      "remote_renewal": false
+    },
+    {
+      "system_id": "waystation",
+      "fee_multiplier": 0.8,
+      "inspection_multiplier": 1.35,
+      "processing_days": 5,
+      "remote_renewal": false
+    },
+    {
+      "system_id": "lastlight",
+      "fee_multiplier": 0.9,
+      "inspection_multiplier": 1.4,
+      "processing_days": 5,
+      "remote_renewal": false
+    }
+  ],
+  "inspection_types": [
+    {
+      "id": "initial_registration",
+      "required_for": [
+        "new_build",
+        "previously_unregistered"
+      ],
+      "checks": [
+        "identity",
+        "ownership",
+        "structure",
+        "propulsion",
+        "reactor",
+        "life_support",
+        "declared_mass",
+        "transponder"
+      ]
+    },
+    {
+      "id": "renewal",
+      "required_for": [
+        "registration_expiry"
+      ],
+      "checks": [
+        "identity",
+        "maintenance_status",
+        "safety_systems",
+        "declared_configuration"
+      ]
+    },
+    {
+      "id": "major_modification",
+      "required_for": [
+        "major_configuration_change"
+      ],
+      "checks": [
+        "affected_systems",
+        "mass_balance",
+        "power_balance",
+        "thermal_balance",
+        "structural_effects",
+        "updated_configuration"
+      ]
+    },
+    {
+      "id": "post_casualty",
+      "required_for": [
+        "major_collision",
+        "fire",
+        "reactor_event",
+        "pressure_hull_failure"
+      ],
+      "checks": [
+        "repair_quality",
+        "affected_structure",
+        "safety_systems"
+      ]
+    }
+  ],
+  "violations": [
+    {
+      "id": "expired_registration",
+      "base_fine": 900,
+      "can_ground_ship": true
+    },
+    {
+      "id": "false_configuration",
+      "base_fine": 3500,
+      "can_ground_ship": true
+    },
+    {
+      "id": "false_transponder_identity",
+      "base_fine": 12000,
+      "can_ground_ship": true
+    },
+    {
+      "id": "operating_modification_pending",
+      "base_fine": 1800,
+      "can_ground_ship": true
+    },
+    {
+      "id": "undeclared_hazardous_conversion",
+      "base_fine": 6000,
+      "can_ground_ship": true
+    }
+  ],
+  "design_notes": [
+    "Numbers are initial balance values, not real-world analogues.",
+    "Registration cost should matter to a struggling owner-operator without dominating profitable freight economics.",
+    "Frontier registries are not necessarily cheaper once scarce inspection capacity is considered."
+  ]
+}
