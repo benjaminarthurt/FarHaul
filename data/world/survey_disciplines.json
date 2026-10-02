@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "disciplines": [
+    {
+      "id": "navigation",
+      "tasks": [
+        "stellar_fix",
+        "major_body_ephemeris",
+        "hazard_mapping"
+      ],
+      "outputs": [
+        "navigation_package"
+      ]
+    },
+    {
+      "id": "orbital",
+      "tasks": [
+        "body_mapping",
+        "mass_estimate",
+        "orbit_refinement"
+      ],
+      "outputs": [
+        "orbital_catalog"
+      ]
+    },
+    {
+      "id": "atmospheric",
+      "tasks": [
+        "composition",
+        "pressure",
+        "weather",
+        "entry_risk"
+      ],
+      "outputs": [
+        "atmosphere_package"
+      ]
+    },
+    {
+      "id": "geological",
+      "tasks": [
+        "spectroscopy",
+        "surface_sample",
+        "resource_assay"
+      ],
+      "outputs": [
+        "geology_package",
+        "resource_claim_evidence"
+      ]
+    },
+    {
+      "id": "landing",
+      "tasks": [
+        "terrain",
+        "bearing_strength",
+        "approach",
+        "hazards"
+      ],
+      "outputs": [
+        "landing_site_certificate"
+      ]
+    },
+    {
+      "id": "biological",
+      "tasks": [
+        "biosignature",
+        "sampling",
+        "contamination_control"
+      ],
+      "outputs": [
+        "biology_package"
+      ]
+    },
+    {
+      "id": "communications",
+      "tasks": [
+        "relay_geometry",
+        "signal_environment"
+      ],
+      "outputs": [
+        "communications_plan"
+      ]
+    }
+  ],
+  "coverage_rule": "A system's survey state is derived from discipline coverage and confidence, not one progress bar."
+}
