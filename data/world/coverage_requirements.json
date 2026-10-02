@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "levels": {
+    "region": [
+      "systems",
+      "route_corridors",
+      "population_total",
+      "trade_flows",
+      "support_boundary"
+    ],
+    "system": [
+      "population",
+      "major_bodies",
+      "population_centers",
+      "industries",
+      "imports",
+      "exports",
+      "ports",
+      "service_yards",
+      "markets",
+      "communications",
+      "local_routes",
+      "hazards"
+    ],
+    "body": [
+      "environment",
+      "population",
+      "regions",
+      "settlements",
+      "transport",
+      "industries",
+      "imports",
+      "exports",
+      "services"
+    ],
+    "settlement": [
+      "population",
+      "districts",
+      "employers",
+      "housing",
+      "utilities",
+      "food",
+      "healthcare",
+      "training",
+      "freight_interface",
+      "transport",
+      "culture"
+    ],
+    "port": [
+      "capacity",
+      "entry_requirements",
+      "cargo_specialties",
+      "berths",
+      "fuel",
+      "repair",
+      "labor",
+      "businesses",
+      "approach_conditions"
+    ],
+    "company": [
+      "headquarters",
+      "facilities",
+      "employees_band",
+      "inputs",
+      "outputs",
+      "customers",
+      "contract_classes",
+      "relationships"
+    ]
+  },
+  "rules": [
+    "Named locations are representative anchors, not the entire population.",
+    "Regional aggregates represent unnamed cities, towns, facilities and ordinary commerce.",
+    "Missing services are explicit values, not omitted fields.",
+    "Every major export has a producing sector; every major import has a demand source.",
+    "All cross-file references use stable IDs."
+  ]
+}
