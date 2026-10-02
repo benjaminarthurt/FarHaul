@@ -1,0 +1,206 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "design_rules": [
+    "Species describe biological constraints and broad historical traditions, not individual personality.",
+    "No civilization is culturally uniform; these entries describe widespread patterns recognizable across known space.",
+    "Modern port culture has been shaped by generations of multispecies contact.",
+    "Translation is mature but names, technical jargon, humor and social assumptions still carry cultural differences."
+  ],
+  "cultures": [
+    {
+      "id": "human",
+      "species_id": "human",
+      "identity": "Highly pluralistic; outsiders often find the absence of one authoritative Human way of doing something more characteristic than any particular custom.",
+      "names": {
+        "pattern": "Naming traditions remain extremely diverse and usually reflect inherited Earth cultures, colonial history or family preference.",
+        "usage": "Given name plus family name is common in interstellar commercial records, but software must support many other structures."
+      },
+      "households": "Nuclear families, extended families, communal households and chosen-family arrangements all occur. Offworld colonies often revive multigenerational households because housing and childcare are expensive.",
+      "food": [
+        "Enormous regional diversity survives.",
+        "Portable breads, coffee/tea traditions and preserved comfort foods spread unusually well through freight culture.",
+        "Human food is widely available at multispecies ports because Human carriers expanded aggressively."
+      ],
+      "clothing": "Work clothing tends toward pockets, layered climate protection and standardized PPE. Fashion varies too much for a single recognizable civilian style.",
+      "architecture": "Human commercial construction is modular but inconsistent. Additions, retrofits and competing manufacturers are normal.",
+      "work_culture": "Strong tradition of independent contractors, small carriers and improvisation alongside enormous corporations.",
+      "shipboard_customs": [
+        "Naming ships is nearly universal but naming conventions vary wildly.",
+        "Captains frequently personalize bridges and common areas with objects that have no operational purpose.",
+        "Improvised repairs may remain installed long after the emergency ends."
+      ],
+      "etiquette": [
+        "Eye contact has culturally variable meanings even among Humans.",
+        "Visitors are often expected to ask rather than assume household rules."
+      ],
+      "death": "Practices remain culturally and religiously diverse. Space settlements commonly support memorial services even when remains are returned elsewhere.",
+      "views_of_others": {
+        "kesh": "Admiration for durability, jokes about mass.",
+        "ilyan": "Admiration for elegant engineering, occasional frustration with tolerances.",
+        "vey": "Strong association with excellent environmental systems.",
+        "orun": "Respect for maintainability mixed with Human discomfort about some communal-space norms."
+      }
+    },
+    {
+      "id": "kesh",
+      "species_id": "kesh",
+      "identity": "A high-gravity civilization whose institutions tend to value demonstrated reliability, continuity and responsibility for things placed in one's care.",
+      "names": {
+        "pattern": "Most Kesh use a personal name followed by a lineage or household identifier in formal contexts.",
+        "examples": [
+          "Darak Venn",
+          "Kora Tem",
+          "Hesh Varun",
+          "Merek Tal"
+        ],
+        "usage": "Commercial acquaintances generally shorten to the personal name after introduction."
+      },
+      "households": "Extended households are common and may include several generations plus long-term non-kin members. A household is partly a social unit and partly a network of obligations.",
+      "food": [
+        "Dense high-calorie meals are common on Keshar.",
+        "Stews, pressed grain dishes, shallow-sea proteins and heavily roasted foods travel well.",
+        "Kesh often find low-gravity portions visually generous but nutritionally unsatisfying."
+      ],
+      "clothing": "Close-fitting durable garments avoid snagging around heavy machinery. Ceremonial clothing uses layered textiles and metal or ceramic household pieces.",
+      "architecture": "Broad spans, low centers of mass, obvious load paths and extremely robust handholds. Furniture built for Kesh can be comically heavy elsewhere.",
+      "work_culture": "Maintenance is a moral as well as technical responsibility. Signing off unsafe work carries serious stigma. Apprenticeship traditions remain strong even in advanced industries.",
+      "shipboard_customs": [
+        "A new chief engineer traditionally performs a complete physical walk-through rather than accepting records alone.",
+        "Temporary repairs are marked conspicuously until properly resolved.",
+        "Kesh crews dislike inaccessible equipment even when reliability statistics say access is rarely needed."
+      ],
+      "etiquette": [
+        "Promises stated plainly are treated seriously; casual overpromising reads as irresponsibility.",
+        "Offering physical assistance without being asked can imply that someone appears incapable, though frontier practice is looser."
+      ],
+      "death": "Households commonly preserve an object associated with the deceased's work or daily responsibilities. Industrial communities maintain unusually detailed memorial records of fatal accidents.",
+      "views_of_others": {
+        "human": "Resourceful and occasionally alarmingly willing to improvise.",
+        "ilyan": "Technically impressive but sometimes designed too close to minimum margins.",
+        "vey": "Trusted in environmental systems where failure is unacceptable.",
+        "orun": "Familiar respect for maintainability, though Kesh prefer more physical separation between living and machinery."
+      }
+    },
+    {
+      "id": "ilyan",
+      "species_id": "ilyan",
+      "identity": "Low gravity shaped a civilization attentive to mass, balance, spatial efficiency and the cost of carrying unnecessary things.",
+      "names": {
+        "pattern": "Personal names are typically short; a second name often indicates family, place or professional lineage.",
+        "examples": [
+          "Seli Ar",
+          "Tovan Eri",
+          "Nae Vesh",
+          "Iri Cal"
+        ],
+        "usage": "Titles are used sparingly outside formal institutions."
+      },
+      "households": "Households often occupy vertically distributed spaces that other species perceive as inconveniently separated. Kinship is important, but young adults commonly spend extended periods in educational or professional residences.",
+      "food": [
+        "Light meals eaten frequently are common.",
+        "Aerated breads, climbing vines, fruiting plants and small cultivated proteins feature prominently.",
+        "Heavy high-fat Kesh food has a devoted minority following and a reputation for ending productivity for the day."
+      ],
+      "clothing": "Light layered garments and harness-compatible workwear. Decorative textiles emphasize motion and drape in low gravity.",
+      "architecture": "Height is cheap. Cities use towers, suspended walkways and long vertical transit shafts. Rooms designed for Ilyan often feel narrow to Kesh.",
+      "work_culture": "Precision and preparation are valued because unnecessary mass and rework are seen as avoidable costs. Tool control aboard spacecraft is particularly strict.",
+      "shipboard_customs": [
+        "Mass manifests are treated with near-accounting seriousness.",
+        "Loose personal objects underway are considered poor seamanship.",
+        "Engine rooms tend to be visually sparse but densely instrumented."
+      ],
+      "etiquette": [
+        "Interrupting a careful technical explanation is often taken more negatively than open disagreement.",
+        "Complimenting efficiency is more meaningful than calling something beautiful in many professional settings."
+      ],
+      "death": "Memorial traditions frequently emphasize what a person taught, designed or enabled others to accomplish rather than preservation of possessions.",
+      "views_of_others": {
+        "human": "Inventive, adaptable and astonishingly tolerant of redundant objects.",
+        "kesh": "Dependable but mass-profligate.",
+        "vey": "Excellent systems thinkers.",
+        "orun": "Ingenious packaging; sometimes socially intense for Ilyan accustomed to more spatial separation."
+      }
+    },
+    {
+      "id": "vey",
+      "species_id": "vey",
+      "identity": "A semi-aquatic civilization in which environmental stewardship, water systems and shared ecological consequences became foundational social assumptions.",
+      "names": {
+        "pattern": "Names commonly have a personal form and a longer formal form associated with family/community waters.",
+        "examples": [
+          "Sava",
+          "Terei",
+          "Mava Kel",
+          "Oru Neshai"
+        ],
+        "usage": "Offworld records usually use a shortened two-part form because full traditional forms can encode geographic relationships."
+      },
+      "households": "Households historically clustered around shared water access and remain somewhat more communal than typical Human households. Childcare and meals often cross household boundaries.",
+      "food": [
+        "Aquatic proteins, algae, fermented marine plants and broth-like dishes are common.",
+        "Texture and freshness matter strongly.",
+        "Vey cuisine adapted well to shipboard hydroponics and closed-cycle aquaculture."
+      ],
+      "clothing": "Quick-drying fabrics, wraps and garments that tolerate high humidity. Offworld work clothing includes skin-moisture management layers in dry environments.",
+      "architecture": "Water circulation is visible rather than hidden. Public spaces may include shallow channels, humid gardens and immersion areas alongside dry visitor routes.",
+      "work_culture": "Environmental systems are treated as infrastructure everyone should understand at least minimally. Waste streams are routinely considered inputs to another process.",
+      "shipboard_customs": [
+        "Water-quality status is commonly displayed as prominently as reactor status.",
+        "Vey crews tend to notice smells, humidity shifts and airflow changes before instrumentation alarms.",
+        "Shared wash/immersion facilities can surprise species with stronger privacy conventions."
+      ],
+      "etiquette": [
+        "Offering water is a basic hospitality gesture with more social weight than it carries in many Human cultures.",
+        "Wastefulness involving clean water can provoke a surprisingly emotional response even where water is abundant."
+      ],
+      "death": "Many traditions return biological material to managed ecosystems after ceremonial treatment; offworld communities maintain symbolic equivalents where local biosphere rules prevent it.",
+      "views_of_others": {
+        "human": "Energetic and adaptable, but historically careless with environmental externalities.",
+        "kesh": "Reliable partners whose systems are easy to trust.",
+        "ilyan": "Elegant use of resources.",
+        "orun": "Strong shared understanding that habitation and infrastructure are one system."
+      }
+    },
+    {
+      "id": "orun",
+      "species_id": "orun",
+      "identity": "Descended from communal burrowers, Orun civilization generally treats proximity, shared infrastructure and visible maintenance as ordinary rather than intrusive.",
+      "names": {
+        "pattern": "Personal names are commonly paired with a community or junction name rather than a hereditary family surname.",
+        "examples": [
+          "Ruun of Keshet",
+          "Mara of Deep East",
+          "Tekk of Var Junction",
+          "Olan of Sere"
+        ],
+        "usage": "Offworld forms often compress the connector, producing records such as Ruun Keshet."
+      },
+      "households": "The boundary between household and neighborhood is less rigid than for most species. Private sleeping spaces exist, but cooking, work and recreation are frequently communal.",
+      "food": [
+        "Roasted tubers, fungi, subterranean-grown greens and mineral-rich broths are common.",
+        "Communal cooking vessels remain culturally important.",
+        "Strong temperature contrasts in food are popular."
+      ],
+      "clothing": "Compact durable garments suited to crawling, climbing and working in tight service spaces. Personal decoration often appears on belts, tool carriers and collars rather than loose garments.",
+      "architecture": "Networks rather than rooms. Habitation, transit and machinery interpenetrate; dead-end corridors are uncommon. Acoustic privacy requires deliberate construction.",
+      "work_culture": "Maintenance knowledge is widely distributed. A worker saying 'not my system' during an obvious failure is viewed poorly even outside their formal job.",
+      "shipboard_customs": [
+        "Access panels are expected to open without dismantling finished interiors.",
+        "Crew commonly perform minor maintenance while socializing.",
+        "Orun-built ships often have multiple crawl routes around critical machinery."
+      ],
+      "etiquette": [
+        "Silence in a shared space does not imply a desire to be left alone.",
+        "Closing a door can carry a stronger privacy signal than other species expect; polite visitors take it seriously."
+      ],
+      "death": "Communities often preserve maps or diagrams marking places a deceased member built, repaired or inhabited. Names may remain attached to junctions for generations.",
+      "views_of_others": {
+        "human": "Entertainingly unpredictable builders.",
+        "kesh": "Easy to work beside; both cultures respect physical infrastructure.",
+        "ilyan": "Excellent design discipline but too much empty separation in some habitats.",
+        "vey": "Deeply compatible ideas about shared systems and collective maintenance."
+      }
+    }
+  ]
+}
