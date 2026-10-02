@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "projects": [
+    {
+      "id": "hopewell_water_two",
+      "location": "talos",
+      "start_day": 286030,
+      "duration_days": 240,
+      "status": "planned",
+      "inputs": {
+        "water_processing_equipment": 320,
+        "machinery": 210,
+        "structural_materials": 740,
+        "electronics": 90
+      },
+      "effects_on_completion": [
+        "water_capacity_up",
+        "settlement_growth_capacity_up"
+      ]
+    },
+    {
+      "id": "meridian_outer_berths",
+      "location": "port_meridian",
+      "start_day": 286060,
+      "duration_days": 420,
+      "status": "planned",
+      "inputs": {
+        "structural_components": 1800,
+        "machinery": 460,
+        "electronics": 180
+      },
+      "effects_on_completion": [
+        "berth_capacity_up",
+        "queue_pressure_down"
+      ]
+    },
+    {
+      "id": "greenline_cold_expansion",
+      "location": "hesperus",
+      "start_day": 286015,
+      "duration_days": 180,
+      "status": "active",
+      "inputs": {
+        "structural_materials": 520,
+        "thermal_equipment": 280,
+        "electronics": 75
+      },
+      "effects_on_completion": [
+        "cold_storage_up"
+      ]
+    },
+    {
+      "id": "lastlight_relay_upgrade",
+      "location": "lastlight",
+      "start_day": 286090,
+      "duration_days": 150,
+      "status": "planned",
+      "inputs": {
+        "electronics": 140,
+        "sensors": 90,
+        "structural_components": 55
+      },
+      "effects_on_completion": [
+        "relay_reliability_up",
+        "market_data_age_down"
+      ]
+    }
+  ]
+}
