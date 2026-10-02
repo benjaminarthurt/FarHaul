@@ -36,6 +36,11 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `notable_people.json` | Historic engineers, captains, surveyors and working frontier figures |
 | `flavor_text.json` | In-world advertising, port signs, used-ship listings and freight-board copy |
 | `rumors.json` | Grounded, explicitly uncertain rumors suitable for ambient dialogue and leads |
+| `system_bodies.json` | Secondary planets, moons, belts and orbital geography for all 18 inhabited systems |
+| `local_routes.json` | Intra-system freight lanes and the cargo flows that sustain local economies |
+| `industrial_sites.json` | Named shipbreakers, test ranges, observatories, warehouses, mines and other working sites |
+| `derelicts.json` | Retired infrastructure and ordinary salvage/legacy sites without mystery-box assumptions |
+| `port_services_lore.json` | Dockers, surveyors, chandlers, brokers, tug crews, inspectors and frontier service availability |
 
 ## Stable IDs
 
