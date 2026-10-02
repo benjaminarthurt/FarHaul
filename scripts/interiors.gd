@@ -79,12 +79,10 @@ static func _cockpit(root: Node3D) -> void:
 	var trim := flat(Color(0.24, 0.27, 0.32), 0.6, 0.3)
 	var metal := flat(Color(0.16, 0.17, 0.2), 0.5, 0.5)
 
-	# Windscreen: big glass panel with mullions on the front wall.
-	_b(root, Vector3(0, 0.3, -WALL_IN + 0.03), Vector3(2.7, 1.25, 0.04), glass(Color(0.35, 0.6, 0.9), 0.45))
-	for x in [-1.35, -0.45, 0.45, 1.35]:
-		_b(root, Vector3(x, 0.3, -WALL_IN + 0.07), Vector3(0.1, 1.38, 0.1), trim)
-	for y in [-0.38, 0.98]:
-		_b(root, Vector3(0, y, -WALL_IN + 0.07), Vector3(2.8, 0.1, 0.1), trim)
+	# Windscreen: the glass is part of the hull wall (see ModuleDef); these are the inner mullions.
+	for x in [-0.4, 0.4]:
+		_b(root, Vector3(x, 0.4, -WALL_IN + 0.06), Vector3(0.08, 1.2, 0.08), trim)
+	_b(root, Vector3(0, 1.02, -WALL_IN + 0.06), Vector3(2.5, 0.08, 0.08), trim)
 
 	# Dash: solid body, sloped top carrying screens and rows of switches.
 	_b(root, Vector3(0, FLOOR + 0.42, -1.12), Vector3(2.8, 0.84, 0.7), dark)
