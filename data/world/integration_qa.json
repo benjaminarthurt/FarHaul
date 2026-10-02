@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "required_checks": [
+    "all_json_parses",
+    "authority_ids_unique",
+    "foreign_keys_resolve",
+    "population_nonnegative",
+    "named_population_not_above_parent",
+    "commodity_ids_resolve",
+    "ship_class_manufacturer_resolves",
+    "bom_inputs_resolve_or_are_intermediate_items",
+    "freight_flows_use_known_commodities",
+    "no_negative_inventory",
+    "utility_load_within_modeled_capacity_or_shortage_flagged",
+    "generated_seed_unique_per_world",
+    "deprecated_identity_files_not_used_by_new_foreign_keys"
+  ],
+  "release_rule": "Draft lore can contain warnings; mechanics-breaking reference or conservation errors block promotion to canon."
+}
