@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "part_classes": [
+    {
+      "id": "oem_current",
+      "availability": {
+        "core": "high",
+        "developed": "high",
+        "outer": "medium",
+        "frontier": "low"
+      },
+      "price_factor": 1
+    },
+    {
+      "id": "oem_legacy",
+      "availability": {
+        "core": "medium",
+        "developed": "medium",
+        "outer": "low",
+        "frontier": "rare"
+      },
+      "price_factor": 1.25
+    },
+    {
+      "id": "certified_aftermarket",
+      "availability": {
+        "core": "high",
+        "developed": "medium",
+        "outer": "medium",
+        "frontier": "low"
+      },
+      "price_factor": 0.82
+    },
+    {
+      "id": "reconditioned",
+      "availability": {
+        "core": "medium",
+        "developed": "high",
+        "outer": "high",
+        "frontier": "medium"
+      },
+      "price_factor": 0.62
+    },
+    {
+      "id": "salvaged",
+      "availability": {
+        "core": "low",
+        "developed": "medium",
+        "outer": "medium",
+        "frontier": "variable"
+      },
+      "price_factor": 0.45
+    }
+  ],
+  "compatibility_rules": [
+    "Exact model fit is simplest.",
+    "Family-compatible parts may require adapters or software configuration.",
+    "Improvised substitutions can restore function with reduced performance or reliability.",
+    "Safety-critical substitutions can affect inspection, contract and insurance status."
+  ]
+}
