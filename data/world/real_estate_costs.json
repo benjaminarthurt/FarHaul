@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "unit": "cr_per_month",
+  "markets": [
+    {
+      "id": "new_houston",
+      "body_id": "roosevelt",
+      "studio": 980,
+      "family_unit": 1760,
+      "worker_bunk": 510,
+      "small_shop": 3200,
+      "warehouse": 14200,
+      "vacancy": 0.047
+    },
+    {
+      "id": "central_concord",
+      "body_id": "concord_prime",
+      "studio": 1680,
+      "family_unit": 2890,
+      "worker_bunk": 740,
+      "small_shop": 6100,
+      "warehouse": 22800,
+      "vacancy": 0.032
+    },
+    {
+      "id": "nine_currents",
+      "body_id": "veyara_prime",
+      "studio": 1210,
+      "family_unit": 2140,
+      "worker_bunk": 590,
+      "small_shop": 4100,
+      "warehouse": 17600,
+      "vacancy": 0.041
+    },
+    {
+      "id": "keelward",
+      "body_id": "iron_gate_prime",
+      "studio": 910,
+      "family_unit": 1610,
+      "worker_bunk": 470,
+      "small_shop": 2800,
+      "warehouse": 11900,
+      "vacancy": 0.058
+    },
+    {
+      "id": "hopewell",
+      "body_id": "talos_prime",
+      "studio": 2260,
+      "family_unit": 3910,
+      "worker_bunk": 980,
+      "small_shop": 7900,
+      "warehouse": 33700,
+      "vacancy": 0.011
+    },
+    {
+      "id": "beacon",
+      "body_id": "lastlight_settlement",
+      "studio": 1320,
+      "family_unit": 2310,
+      "worker_bunk": 680,
+      "small_shop": 3800,
+      "warehouse": 16100,
+      "vacancy": 0.036
+    }
+  ]
+}
