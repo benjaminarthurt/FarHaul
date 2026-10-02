@@ -1,0 +1,221 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "systems": [
+    {
+      "id": "sol",
+      "local_share": 0.88,
+      "sources": [
+        "earth_agriculture",
+        "mars_controlled_agriculture",
+        "orbital_hydroponics"
+      ],
+      "imports": [
+        "specialty_foods"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "keshar",
+      "local_share": 0.91,
+      "sources": [
+        "keshar_agriculture",
+        "aquaculture"
+      ],
+      "imports": [
+        "specialty_foods"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "ilos",
+      "local_share": 0.72,
+      "sources": [
+        "ilos_controlled_agriculture"
+      ],
+      "imports": [
+        "bulk_food",
+        "specialty_foods"
+      ],
+      "waste_recovery": "very_high"
+    },
+    {
+      "id": "veyara",
+      "local_share": 0.97,
+      "sources": [
+        "aquaculture",
+        "marine_agriculture"
+      ],
+      "imports": [
+        "dry_specialties"
+      ],
+      "waste_recovery": "very_high"
+    },
+    {
+      "id": "orun",
+      "local_share": 0.78,
+      "sources": [
+        "subsurface_agriculture",
+        "fungal_protein"
+      ],
+      "imports": [
+        "fresh_specialties"
+      ],
+      "waste_recovery": "very_high"
+    },
+    {
+      "id": "concord",
+      "local_share": 0.54,
+      "sources": [
+        "regional_agriculture",
+        "controlled_agriculture"
+      ],
+      "imports": [
+        "bulk_food",
+        "specialty_foods"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "new_houston",
+      "local_share": 0.41,
+      "sources": [
+        "controlled_agriculture"
+      ],
+      "imports": [
+        "bulk_food"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "hesperus",
+      "local_share": 1.65,
+      "sources": [
+        "field_agriculture",
+        "livestock",
+        "controlled_agriculture"
+      ],
+      "exports": [
+        "bulk_food",
+        "seed_stock"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "iron_gate",
+      "local_share": 0.29,
+      "sources": [
+        "controlled_agriculture"
+      ],
+      "imports": [
+        "bulk_food"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "carver",
+      "local_share": 0.12,
+      "sources": [
+        "habitat_hydroponics"
+      ],
+      "imports": [
+        "bulk_food"
+      ],
+      "waste_recovery": "very_high"
+    },
+    {
+      "id": "bradbury",
+      "local_share": 0.58,
+      "sources": [
+        "controlled_agriculture"
+      ],
+      "imports": [
+        "bulk_food",
+        "specialty_foods"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "pelagos",
+      "local_share": 1.18,
+      "sources": [
+        "aquaculture",
+        "island_agriculture"
+      ],
+      "exports": [
+        "aquatic_food"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "tidemark",
+      "local_share": 0.19,
+      "sources": [
+        "platform_culture"
+      ],
+      "imports": [
+        "bulk_food"
+      ],
+      "waste_recovery": "very_high"
+    },
+    {
+      "id": "foundry",
+      "local_share": 0.23,
+      "sources": [
+        "subsurface_agriculture"
+      ],
+      "imports": [
+        "bulk_food"
+      ],
+      "waste_recovery": "very_high"
+    },
+    {
+      "id": "port_meridian",
+      "local_share": 0.08,
+      "sources": [
+        "station_hydroponics"
+      ],
+      "imports": [
+        "bulk_food",
+        "fresh_food"
+      ],
+      "waste_recovery": "very_high"
+    },
+    {
+      "id": "talos",
+      "local_share": 0.07,
+      "sources": [
+        "small_greenhouses"
+      ],
+      "imports": [
+        "bulk_food",
+        "fresh_food"
+      ],
+      "waste_recovery": "high"
+    },
+    {
+      "id": "waystation",
+      "local_share": 0.11,
+      "sources": [
+        "habitat_hydroponics"
+      ],
+      "imports": [
+        "bulk_food"
+      ],
+      "waste_recovery": "very_high"
+    },
+    {
+      "id": "lastlight",
+      "local_share": 0.16,
+      "sources": [
+        "heated_greenhouses"
+      ],
+      "imports": [
+        "bulk_food",
+        "fresh_food"
+      ],
+      "waste_recovery": "very_high"
+    }
+  ],
+  "note": "local_share above 1.0 indicates net export capacity relative to local consumption."
+}
