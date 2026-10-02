@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "generation_profiles": [
+    {
+      "id": "core_homeworld",
+      "city_count_band": [
+        8000,
+        30000
+      ],
+      "town_count_band": [
+        30000,
+        120000
+      ],
+      "industrial_site_band": [
+        100000,
+        600000
+      ],
+      "named_fraction": 0.0005,
+      "aggregate_rule": "Most settlements are generated deterministically from region seed and demographics."
+    },
+    {
+      "id": "developed_colony",
+      "city_count_band": [
+        80,
+        1200
+      ],
+      "town_count_band": [
+        600,
+        12000
+      ],
+      "industrial_site_band": [
+        2000,
+        50000
+      ],
+      "named_fraction": 0.01,
+      "aggregate_rule": "Regional anchors are named; ordinary nodes generated."
+    },
+    {
+      "id": "outer_world",
+      "city_count_band": [
+        5,
+        120
+      ],
+      "town_count_band": [
+        30,
+        1000
+      ],
+      "industrial_site_band": [
+        100,
+        5000
+      ],
+      "named_fraction": 0.05,
+      "aggregate_rule": "More individual sites persist because population is smaller."
+    },
+    {
+      "id": "frontier",
+      "city_count_band": [
+        0,
+        3
+      ],
+      "town_count_band": [
+        1,
+        30
+      ],
+      "industrial_site_band": [
+        5,
+        300
+      ],
+      "named_fraction": 0.5,
+      "aggregate_rule": "Most settlements and infrastructure can be individually persistent."
+    }
+  ],
+  "feature_classes": [
+    "city",
+    "town",
+    "village",
+    "farm_cluster",
+    "mine",
+    "industrial_park",
+    "power_station",
+    "reservoir",
+    "rail_junction",
+    "highway_interchange",
+    "marine_port",
+    "airport",
+    "surface_spaceport",
+    "orbital_interface",
+    "research_site"
+  ]
+}
