@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "stages": [
+    {
+      "id": "survey_target",
+      "requirements": [
+        "survey_interest"
+      ]
+    },
+    {
+      "id": "expedition_camp",
+      "requirements": [
+        "transport",
+        "temporary_power",
+        "life_support",
+        "funding"
+      ]
+    },
+    {
+      "id": "outpost",
+      "requirements": [
+        "repeat_activity",
+        "reliable_supply",
+        "basic_rescue_plan"
+      ]
+    },
+    {
+      "id": "permanent_settlement",
+      "requirements": [
+        "housing",
+        "utilities",
+        "food_plan",
+        "medical",
+        "governance",
+        "freight_link"
+      ]
+    },
+    {
+      "id": "town",
+      "requirements": [
+        "diverse_employment",
+        "schooling",
+        "local_services",
+        "maintenance_capacity"
+      ]
+    },
+    {
+      "id": "regional_hub",
+      "requirements": [
+        "trade_surplus_or_transfer_role",
+        "specialized_services",
+        "transport_capacity"
+      ]
+    }
+  ],
+  "regression": [
+    "funding_loss",
+    "resource_failure",
+    "route_loss",
+    "disaster",
+    "population_outflow"
+  ],
+  "rule": "Stages are earned from sustained population and infrastructure; founding does not guarantee growth."
+}
