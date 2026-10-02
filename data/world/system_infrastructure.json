@@ -1,0 +1,529 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "systems": [
+    {
+      "system_id": "sol",
+      "facilities": [
+        {
+          "id": "sol_system_facility_1",
+          "name": "Earth High Orbit Transfer",
+          "type": "transfer_station"
+        },
+        {
+          "id": "sol_system_facility_2",
+          "name": "Luna Freight Ring",
+          "type": "depot"
+        },
+        {
+          "id": "sol_system_facility_3",
+          "name": "Mars Transfer Crown",
+          "type": "relay"
+        },
+        {
+          "id": "sol_system_facility_4",
+          "name": "Ceres Consolidation",
+          "type": "service_station"
+        },
+        {
+          "id": "sol_system_facility_5",
+          "name": "Jupiter Volatiles Depot",
+          "type": "transfer_station"
+        },
+        {
+          "id": "sol_system_facility_6",
+          "name": "Saturn Research Relay",
+          "type": "depot"
+        }
+      ],
+      "local_corridors": [
+        "earth_luna",
+        "earth_mars",
+        "inner_belt",
+        "outer_system"
+      ]
+    },
+    {
+      "system_id": "keshar",
+      "facilities": [
+        {
+          "id": "keshar_system_facility_1",
+          "name": "Keshar Highport",
+          "type": "transfer_station"
+        },
+        {
+          "id": "keshar_system_facility_2",
+          "name": "Dorr Bulk Station",
+          "type": "depot"
+        },
+        {
+          "id": "keshar_system_facility_3",
+          "name": "Tor Weather Relay",
+          "type": "relay"
+        },
+        {
+          "id": "keshar_system_facility_4",
+          "name": "Outer Stone Depot",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "dorr_keshar",
+        "keshar_tor",
+        "outer_stone"
+      ]
+    },
+    {
+      "system_id": "ilos",
+      "facilities": [
+        {
+          "id": "ilos_system_facility_1",
+          "name": "Ilos Lattice Port",
+          "type": "transfer_station"
+        },
+        {
+          "id": "ilos_system_facility_2",
+          "name": "Ari Transfer Frame",
+          "type": "depot"
+        },
+        {
+          "id": "ilos_system_facility_3",
+          "name": "Elen Research Relay",
+          "type": "relay"
+        },
+        {
+          "id": "ilos_system_facility_4",
+          "name": "Glass Reach Fuel Cache",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "ilos_ari",
+        "ilos_elen",
+        "glass_reach"
+      ]
+    },
+    {
+      "system_id": "veyara",
+      "facilities": [
+        {
+          "id": "veyara_system_facility_1",
+          "name": "Bluewater Orbital",
+          "type": "transfer_station"
+        },
+        {
+          "id": "veyara_system_facility_2",
+          "name": "Shaal Processing Ring",
+          "type": "depot"
+        },
+        {
+          "id": "veyara_system_facility_3",
+          "name": "Neris Marine Transfer",
+          "type": "relay"
+        },
+        {
+          "id": "veyara_system_facility_4",
+          "name": "Oruvai Relay",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "shaal_veyara",
+        "veyara_neris",
+        "outer_relay"
+      ]
+    },
+    {
+      "system_id": "orun",
+      "facilities": [
+        {
+          "id": "orun_system_facility_1",
+          "name": "Orun Transfer Crown",
+          "type": "transfer_station"
+        },
+        {
+          "id": "orun_system_facility_2",
+          "name": "Var Industrial Ring",
+          "type": "depot"
+        },
+        {
+          "id": "orun_system_facility_3",
+          "name": "Junction Belt Depots",
+          "type": "relay"
+        },
+        {
+          "id": "orun_system_facility_4",
+          "name": "Kes Solar Service",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "orun_var",
+        "junction_belt",
+        "kes_orun"
+      ]
+    },
+    {
+      "system_id": "concord",
+      "facilities": [
+        {
+          "id": "concord_system_facility_1",
+          "name": "Central Exchange Orbital",
+          "type": "transfer_station"
+        },
+        {
+          "id": "concord_system_facility_2",
+          "name": "Compact Certification Range",
+          "type": "depot"
+        },
+        {
+          "id": "concord_system_facility_3",
+          "name": "Freeport Cluster",
+          "type": "relay"
+        },
+        {
+          "id": "concord_system_facility_4",
+          "name": "Arbitrator Relay",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "accord_concord",
+        "compact_concord",
+        "freeport"
+      ]
+    },
+    {
+      "system_id": "new_houston",
+      "facilities": [
+        {
+          "id": "new_houston_system_facility_1",
+          "name": "Roosevelt Orbital Freight",
+          "type": "transfer_station"
+        },
+        {
+          "id": "new_houston_system_facility_2",
+          "name": "Truman Breakers",
+          "type": "depot"
+        },
+        {
+          "id": "new_houston_system_facility_3",
+          "name": "Toolbox Ore Transfer",
+          "type": "relay"
+        },
+        {
+          "id": "new_houston_system_facility_4",
+          "name": "Longhorn Fuel Depot",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "toolbox_roosevelt",
+        "roosevelt_truman",
+        "longhorn"
+      ]
+    },
+    {
+      "system_id": "hesperus",
+      "facilities": [
+        {
+          "id": "hesperus_system_facility_1",
+          "name": "Hesperus Agricultural Terminal",
+          "type": "transfer_station"
+        },
+        {
+          "id": "hesperus_system_facility_2",
+          "name": "Thresh Cold Ring",
+          "type": "depot"
+        },
+        {
+          "id": "hesperus_system_facility_3",
+          "name": "Shepherd Seed Transfer",
+          "type": "relay"
+        },
+        {
+          "id": "hesperus_system_facility_4",
+          "name": "Rainmaker Relay",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "thresh_hesperus",
+        "shepherd_hesperus"
+      ]
+    },
+    {
+      "system_id": "iron_gate",
+      "facilities": [
+        {
+          "id": "iron_gate_system_facility_1",
+          "name": "Grand Terminal",
+          "type": "transfer_station"
+        },
+        {
+          "id": "iron_gate_system_facility_2",
+          "name": "Anvil Zero",
+          "type": "depot"
+        },
+        {
+          "id": "iron_gate_system_facility_3",
+          "name": "Keel Belt Transfer",
+          "type": "relay"
+        },
+        {
+          "id": "iron_gate_system_facility_4",
+          "name": "Hammer Bulk Depot",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "keel_belt_gate",
+        "anvil_gate",
+        "hammer_gate"
+      ]
+    },
+    {
+      "system_id": "carver",
+      "facilities": [
+        {
+          "id": "carver_system_facility_1",
+          "name": "Habitat Twelve Exchange",
+          "type": "transfer_station"
+        },
+        {
+          "id": "carver_system_facility_2",
+          "name": "Prospector Transfer",
+          "type": "depot"
+        },
+        {
+          "id": "carver_system_facility_3",
+          "name": "Dirty Dock",
+          "type": "relay"
+        },
+        {
+          "id": "carver_system_facility_4",
+          "name": "Distributed Ore Buoys",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "belt_habitats",
+        "prospector",
+        "dirty_dock"
+      ]
+    },
+    {
+      "system_id": "bradbury",
+      "facilities": [
+        {
+          "id": "bradbury_system_facility_1",
+          "name": "Bradbury Research Port",
+          "type": "transfer_station"
+        },
+        {
+          "id": "bradbury_system_facility_2",
+          "name": "Lowell Orbital",
+          "type": "depot"
+        },
+        {
+          "id": "bradbury_system_facility_3",
+          "name": "Mariner Relay",
+          "type": "relay"
+        },
+        {
+          "id": "bradbury_system_facility_4",
+          "name": "Quiet Side Data Station",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "lowell_bradbury",
+        "mariner",
+        "quiet_side"
+      ]
+    },
+    {
+      "system_id": "pelagos",
+      "facilities": [
+        {
+          "id": "pelagos_system_facility_1",
+          "name": "Pelagos Highport",
+          "type": "transfer_station"
+        },
+        {
+          "id": "pelagos_system_facility_2",
+          "name": "Shoal Transfer",
+          "type": "depot"
+        },
+        {
+          "id": "pelagos_system_facility_3",
+          "name": "Breaker Weather Ring",
+          "type": "relay"
+        },
+        {
+          "id": "pelagos_system_facility_4",
+          "name": "Drift Relay",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "shoal_pelagos",
+        "breaker"
+      ]
+    },
+    {
+      "system_id": "tidemark",
+      "facilities": [
+        {
+          "id": "tidemark_system_facility_1",
+          "name": "Anchor Seven Orbital",
+          "type": "transfer_station"
+        },
+        {
+          "id": "tidemark_system_facility_2",
+          "name": "Stormhold Relay",
+          "type": "depot"
+        },
+        {
+          "id": "tidemark_system_facility_3",
+          "name": "Drymark Supply Depot",
+          "type": "relay"
+        }
+      ],
+      "local_corridors": [
+        "anchor_tidemark",
+        "drymark"
+      ]
+    },
+    {
+      "system_id": "foundry",
+      "facilities": [
+        {
+          "id": "foundry_system_facility_1",
+          "name": "Foundry Lift Crown",
+          "type": "transfer_station"
+        },
+        {
+          "id": "foundry_system_facility_2",
+          "name": "Feedstock Transfer",
+          "type": "depot"
+        },
+        {
+          "id": "foundry_system_facility_3",
+          "name": "Slag Service Station",
+          "type": "relay"
+        }
+      ],
+      "local_corridors": [
+        "feedstock_foundry",
+        "slag"
+      ]
+    },
+    {
+      "system_id": "port_meridian",
+      "facilities": [
+        {
+          "id": "port_meridian_system_facility_1",
+          "name": "Meridian Station",
+          "type": "transfer_station"
+        },
+        {
+          "id": "port_meridian_system_facility_2",
+          "name": "Layover Fuel Annex",
+          "type": "depot"
+        },
+        {
+          "id": "port_meridian_system_facility_3",
+          "name": "Outbound Belt Warehouses",
+          "type": "relay"
+        },
+        {
+          "id": "port_meridian_system_facility_4",
+          "name": "Outer Rescue Anchorage",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "layover_meridian",
+        "outbound_belt"
+      ]
+    },
+    {
+      "system_id": "talos",
+      "facilities": [
+        {
+          "id": "talos_system_facility_1",
+          "name": "Hopewell Orbital Transfer",
+          "type": "transfer_station"
+        },
+        {
+          "id": "talos_system_facility_2",
+          "name": "Claim Ore Anchorage",
+          "type": "depot"
+        },
+        {
+          "id": "talos_system_facility_3",
+          "name": "Second Chance Relay",
+          "type": "relay"
+        }
+      ],
+      "local_corridors": [
+        "talos_claim",
+        "hopewell_orbit"
+      ]
+    },
+    {
+      "system_id": "waystation",
+      "facilities": [
+        {
+          "id": "waystation_system_facility_1",
+          "name": "Crossroads Dock",
+          "type": "transfer_station"
+        },
+        {
+          "id": "waystation_system_facility_2",
+          "name": "Tank Farm",
+          "type": "depot"
+        },
+        {
+          "id": "waystation_system_facility_3",
+          "name": "Burnt Rock Relay",
+          "type": "relay"
+        }
+      ],
+      "local_corridors": [
+        "tank_farm_crossroads"
+      ]
+    },
+    {
+      "system_id": "lastlight",
+      "facilities": [
+        {
+          "id": "lastlight_system_facility_1",
+          "name": "Lastlight Orbital",
+          "type": "transfer_station"
+        },
+        {
+          "id": "lastlight_system_facility_2",
+          "name": "Beacon Array",
+          "type": "depot"
+        },
+        {
+          "id": "lastlight_system_facility_3",
+          "name": "Reserve Twelve",
+          "type": "relay"
+        },
+        {
+          "id": "lastlight_system_facility_4",
+          "name": "Outbound Survey Buoy",
+          "type": "service_station"
+        }
+      ],
+      "local_corridors": [
+        "reserve_orbital",
+        "beacon_outbound"
+      ]
+    }
+  ]
+}
