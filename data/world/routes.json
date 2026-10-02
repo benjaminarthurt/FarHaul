@@ -15,7 +15,9 @@
         "manufactured goods",
         "technology",
         "raw materials"
-      ]
+      ],
+      "distance_ly": 5.94,
+      "base_jump_fuel_units_per_mass_unit": 0.757
     },
     {
       "id": "new_houston_concord",
@@ -26,7 +28,9 @@
         "agricultural_loop"
       ],
       "traffic": "heavy",
-      "development": "core"
+      "development": "core",
+      "distance_ly": 6.01,
+      "base_jump_fuel_units_per_mass_unit": 0.761
     },
     {
       "id": "new_houston_hesperus",
@@ -39,7 +43,9 @@
       "cargo_patterns": [
         "machinery outbound to Hesperus",
         "food outbound to New Houston"
-      ]
+      ],
+      "distance_ly": 4.58,
+      "base_jump_fuel_units_per_mass_unit": 0.675
     },
     {
       "id": "concord_bradbury",
@@ -51,7 +57,9 @@
       "traffic": "regular",
       "cargo_patterns": [
         "high-value scientific and medical freight"
-      ]
+      ],
+      "distance_ly": 4.36,
+      "base_jump_fuel_units_per_mass_unit": 0.662
     },
     {
       "id": "keshar_iron_gate",
@@ -60,7 +68,9 @@
       "corridors": [
         "heavy_industrial"
       ],
-      "traffic": "heavy"
+      "traffic": "heavy",
+      "distance_ly": 4.62,
+      "base_jump_fuel_units_per_mass_unit": 0.677
     },
     {
       "id": "iron_gate_carver",
@@ -73,7 +83,9 @@
       "cargo_patterns": [
         "mining machinery to Carver",
         "ore and metals toward Iron Gate"
-      ]
+      ],
+      "distance_ly": 3.41,
+      "base_jump_fuel_units_per_mass_unit": 0.604
     },
     {
       "id": "carver_concord",
@@ -86,7 +98,9 @@
       "cargo_patterns": [
         "bulk resources toward Concord",
         "consumer and manufactured goods toward Carver"
-      ]
+      ],
+      "distance_ly": 3.54,
+      "base_jump_fuel_units_per_mass_unit": 0.612
     },
     {
       "id": "ilos_bradbury",
@@ -95,7 +109,9 @@
       "corridors": [
         "ilyan_research"
       ],
-      "traffic": "regular"
+      "traffic": "regular",
+      "distance_ly": 5.34,
+      "base_jump_fuel_units_per_mass_unit": 0.721
     },
     {
       "id": "bradbury_concord",
@@ -104,7 +120,9 @@
       "corridors": [
         "ilyan_research"
       ],
-      "traffic": "regular"
+      "traffic": "regular",
+      "distance_ly": 4.36,
+      "base_jump_fuel_units_per_mass_unit": 0.662
     },
     {
       "id": "veyara_tidemark",
@@ -113,7 +131,9 @@
       "corridors": [
         "ocean_route"
       ],
-      "traffic": "regular"
+      "traffic": "regular",
+      "distance_ly": 3.95,
+      "base_jump_fuel_units_per_mass_unit": 0.637
     },
     {
       "id": "tidemark_pelagos",
@@ -122,7 +142,9 @@
       "corridors": [
         "ocean_route"
       ],
-      "traffic": "regular"
+      "traffic": "regular",
+      "distance_ly": 4.06,
+      "base_jump_fuel_units_per_mass_unit": 0.644
     },
     {
       "id": "pelagos_port_meridian",
@@ -131,7 +153,9 @@
       "corridors": [
         "ocean_route"
       ],
-      "traffic": "regular"
+      "traffic": "regular",
+      "distance_ly": 6.24,
+      "base_jump_fuel_units_per_mass_unit": 0.775
     },
     {
       "id": "orun_foundry",
@@ -140,7 +164,9 @@
       "corridors": [
         "orun_industrial"
       ],
-      "traffic": "regular"
+      "traffic": "regular",
+      "distance_ly": 5,
+      "base_jump_fuel_units_per_mass_unit": 0.7
     },
     {
       "id": "foundry_port_meridian",
@@ -149,7 +175,9 @@
       "corridors": [
         "orun_industrial"
       ],
-      "traffic": "regular"
+      "traffic": "regular",
+      "distance_ly": 8.72,
+      "base_jump_fuel_units_per_mass_unit": 0.923
     },
     {
       "id": "concord_port_meridian",
@@ -159,7 +187,9 @@
         "frontier_run"
       ],
       "traffic": "heavy",
-      "development": "outer"
+      "development": "outer",
+      "distance_ly": 15.44,
+      "base_jump_fuel_units_per_mass_unit": 1.327
     },
     {
       "id": "port_meridian_talos",
@@ -172,7 +202,9 @@
       "cargo_patterns": [
         "construction and support cargo outbound",
         "limited mineral backhaul"
-      ]
+      ],
+      "distance_ly": 6.38,
+      "base_jump_fuel_units_per_mass_unit": 0.783
     },
     {
       "id": "port_meridian_waystation",
@@ -181,7 +213,9 @@
       "corridors": [
         "frontier_run"
       ],
-      "traffic": "regular"
+      "traffic": "regular",
+      "distance_ly": 7.02,
+      "base_jump_fuel_units_per_mass_unit": 0.821
     },
     {
       "id": "waystation_lastlight",
@@ -191,7 +225,9 @@
         "frontier_run"
       ],
       "traffic": "light",
-      "development": "frontier"
+      "development": "frontier",
+      "distance_ly": 6.75,
+      "base_jump_fuel_units_per_mass_unit": 0.805
     },
     {
       "id": "port_meridian_lastlight",
@@ -201,7 +237,15 @@
         "frontier_run"
       ],
       "traffic": "light",
-      "notes": "Longer direct service used by capable vessels; Waystation remains the normal support stop."
+      "notes": "Longer direct service used by capable vessels; Waystation remains the normal support stop.",
+      "distance_ly": 13.75,
+      "base_jump_fuel_units_per_mass_unit": 1.225
     }
-  ]
+  ],
+  "distance_model": {
+    "source": "coordinates.json",
+    "distance_units": "light_years",
+    "fuel_field": "base_jump_fuel_units_per_mass_unit",
+    "note": "Route values are derived from draft coordinates. Final ship fuel cost multiplies this by the ship mass/fuel scaling model."
+  }
 }
