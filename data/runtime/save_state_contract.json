@@ -1,0 +1,30 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "state_domains": [
+    "clock",
+    "player",
+    "ships",
+    "cargo_lots",
+    "inventories",
+    "companies",
+    "contracts",
+    "people",
+    "relationships",
+    "events",
+    "projects",
+    "settlements",
+    "survey",
+    "claims",
+    "markets",
+    "persistent_generated_entities"
+  ],
+  "requirements": [
+    "versioned_schema",
+    "stable_ids",
+    "migration_support",
+    "deterministic_seed_state",
+    "appendable_history_for_major_assets"
+  ]
+}
