@@ -1,7 +1,7 @@
 extends Node3D
 ## The dock: where a saved game rests between jobs. It is the way into the shipyard (ship builder),
 ## which only exists at a yard, so which one you reach depends on your starting world.
-## Contract board and departure are placeholders until those parts of the game exist.
+## Freight contracts can be accepted, loaded, departed and delivered here while physical flight is built.
 
 var camera: Camera3D
 var centre := Vector3.ZERO
@@ -10,6 +10,8 @@ var fade: ColorRect
 var status: Label
 var contract_panel: PanelContainer
 var contract_list: VBoxContainer
+var depart_btn: Button
+var deliver_btn: Button
 var leaving := false
 
 
@@ -101,13 +103,14 @@ func _build_ui() -> void:
 	margin.add_child(col)
 
 	var w := Session.world()
+	var current_port := Session.port()
 	var where := Label.new()
-	where.text = String(w.name).to_upper()
+	where.text = String(current_port.get("name", w.name)).to_upper()
 	where.add_theme_font_size_override("font_size", 40)
 	where.add_theme_color_override("font_color", Brand.OFFWHITE)
 	col.add_child(where)
 	var yard := Label.new()
-	yard.text = "%s  ·  %s  ·  %s" % [w.name, Worlds.yard_tier(String(w.tier)).name, String(w.system_id).replace("_", " ").capitalize()]
+	yard.text = "%s  ·  %s" % [String(Session.system_id()).replace("_", " ").capitalize(), String(current_port.get("type", "port")).replace("_", " ").capitalize()]
 	yard.add_theme_font_size_override("font_size", 18)
 	yard.add_theme_color_override("font_color", Brand.AMBER)
 	col.add_child(yard)
@@ -132,7 +135,8 @@ func _build_ui() -> void:
 	col.add_child(menu)
 	var yard_btn := _button(menu, "ENTER SHIPYARD", _enter_yard)
 	_button(menu, "CONTRACT BOARD", _show_contracts)
-	_button(menu, "DEPART  (coming soon)", Callable()).disabled = true
+	depart_btn = _button(menu, "DEPART", _depart)
+	deliver_btn = _button(menu, "DELIVER FREIGHT", _deliver)
 	_button(menu, "SAVE GAME", _save)
 	_button(menu, "MAIN MENU", _main_menu)
 	status = Label.new()
@@ -150,6 +154,7 @@ func _build_ui() -> void:
 	var note := Brand.note("The shipyard is where you build and fit your ship. It is only open at a yard like this one.")
 	note.custom_minimum_size = Vector2(380, 0)
 	col.add_child(note)
+	_refresh_actions()
 	yard_btn.grab_focus()
 
 	fade = ColorRect.new()
@@ -205,23 +210,63 @@ func _show_contracts() -> void:
 		child.queue_free()
 	if not contract_panel.visible:
 		return
-	var system_id := Worlds.yard_system(String(Session.profile.world))
-	var port := Worlds.primary_port(system_id)
+	var system_id := Session.system_id()
+	var port := Session.port()
 	var heading := Brand.heading("FREIGHT BOARD — %s" % String(port.get("name", system_id)).to_upper(), 15)
 	contract_list.add_child(heading)
 	var offers := Contracts.offers_from(system_id)
 	if offers.is_empty():
 		contract_list.add_child(Brand.note("No profitable scheduled freight is posted here right now."))
 		return
+	var active := Session.active_contract()
+	if not active.is_empty():
+		contract_list.add_child(Brand.note("ACTIVE: %s — %.1f t loaded for %s" % [active.title, float(active.accepted_tonnes), Worlds.port(String(active.destination_port_id)).name]))
+		return
 	for c in offers:
 		var goods := Worlds.commodity(String(c.commodity))
 		var destination := Worlds.port(String(c.destination_port_id))
-		var line := Label.new()
-		line.text = "%s  →  %s\n%.1f t available  ·  %.2f ly  ·  %s cr/t  ·  up to %s cr" % [
+		var line := Button.new()
+		line.text = "%s  →  %s\n%.1f t available  ·  %.2f ly  ·  %s cr/t  ·  up to %s cr\nACCEPT & LOAD" % [
 			goods.name, destination.get("name", c.destination_system_id), float(c.offer), float(c.distance_ly),
 			ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate)))]
-		line.add_theme_color_override("font_color", Brand.OFFWHITE)
+		Brand.style_button(line, 14)
+		line.pressed.connect(func() -> void: _accept(c))
 		contract_list.add_child(line)
+
+
+func _accept(c: Dictionary) -> void:
+	var result := Session.accept_contract(c)
+	status.text = result.message
+	_refresh_actions()
+	if bool(result.ok):
+		_show_contracts()
+		_show_contracts()
+
+
+func _refresh_actions() -> void:
+	if depart_btn == null or deliver_btn == null:
+		return
+	var c := Session.active_contract()
+	depart_btn.disabled = c.is_empty() or String(c.get("origin_system_id", "")) != Session.system_id()
+	deliver_btn.disabled = c.is_empty() or String(c.get("destination_system_id", "")) != Session.system_id()
+
+
+func _depart() -> void:
+	var result := Session.depart_active_contract()
+	status.text = result.message
+	if bool(result.ok):
+		get_tree().reload_current_scene()
+	else:
+		_refresh_actions()
+
+
+func _deliver() -> void:
+	var result := Session.deliver_active_contract()
+	status.text = result.message
+	if bool(result.ok):
+		get_tree().reload_current_scene()
+	else:
+		_refresh_actions()
 
 
 func _enter_yard() -> void:
