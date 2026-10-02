@@ -1,0 +1,156 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "metros": [
+    {
+      "id": "new_houston_metro",
+      "body_id": "roosevelt",
+      "name": "New Houston Metropolitan Region",
+      "population": 11800000,
+      "core_population": 4200000,
+      "commuter_belt_population": 5100000,
+      "satellite_population": 2500000,
+      "districts": [
+        "independent_yard_district",
+        "manufacturer_row",
+        "central_exchange",
+        "north_rail",
+        "coldwater_residential"
+      ],
+      "satellites": [
+        "Truman Junction",
+        "East Fabrication",
+        "Coldwater",
+        "Longhorn Transfer"
+      ],
+      "daily_freight_scu": 146000,
+      "commute_mode_share": {
+        "rail": 0.38,
+        "road": 0.31,
+        "walk_local": 0.12,
+        "employer_transit": 0.11,
+        "air_other": 0.08
+      }
+    },
+    {
+      "id": "nine_currents_metro",
+      "body_id": "veyara_prime",
+      "name": "Nine Currents Metropolitan Basin",
+      "population": 18400000,
+      "core_population": 6700000,
+      "commuter_belt_population": 7900000,
+      "satellite_population": 3800000,
+      "districts": [
+        "exchange_basin",
+        "dry_quarter",
+        "south_current",
+        "reefside",
+        "deep_market"
+      ],
+      "satellites": [
+        "Third Current",
+        "South Shoal",
+        "Neris Gate",
+        "Blue Reach"
+      ],
+      "daily_freight_scu": 132000,
+      "commute_mode_share": {
+        "water_transit": 0.44,
+        "subsurface": 0.25,
+        "walk_local": 0.14,
+        "air": 0.08,
+        "other": 0.09
+      }
+    },
+    {
+      "id": "central_concord_metro",
+      "body_id": "concord_prime",
+      "name": "Central Concord Metropolitan Region",
+      "population": 27000000,
+      "core_population": 9800000,
+      "commuter_belt_population": 12100000,
+      "satellite_population": 5100000,
+      "districts": [
+        "standards_quarter",
+        "freight_basin",
+        "financial_exchange",
+        "mixed_habitat_belt",
+        "university_arc"
+      ],
+      "satellites": [
+        "Compact Gate",
+        "North Exchange",
+        "Arbitration City",
+        "Freeport Landing"
+      ],
+      "daily_freight_scu": 310000,
+      "commute_mode_share": {
+        "rail": 0.41,
+        "road": 0.18,
+        "walk_local": 0.16,
+        "air": 0.09,
+        "orbital_feeder": 0.06,
+        "other": 0.1
+      }
+    },
+    {
+      "id": "warm_junction_metro",
+      "body_id": "orun_prime",
+      "name": "Warm Junction Network",
+      "population": 12200000,
+      "core_population": 5100000,
+      "commuter_belt_population": 6100000,
+      "satellite_population": 1000000,
+      "districts": [
+        "warm_junction",
+        "quiet_cells",
+        "machine_arc",
+        "deep_market",
+        "thermal_commons"
+      ],
+      "satellites": [
+        "East Return",
+        "Var Gate",
+        "Common Wall"
+      ],
+      "daily_freight_scu": 91000,
+      "commute_mode_share": {
+        "tunnel_rail": 0.48,
+        "walk": 0.27,
+        "cargo_passenger_mixed": 0.13,
+        "lift": 0.07,
+        "other": 0.05
+      }
+    },
+    {
+      "id": "hopewell_metro",
+      "body_id": "talos_prime",
+      "name": "Hopewell Growth Area",
+      "population": 51000,
+      "core_population": 22300,
+      "commuter_belt_population": 8700,
+      "satellite_population": 20000,
+      "districts": [
+        "container_city",
+        "claim_row",
+        "old_pad",
+        "north_camp",
+        "utility_strip"
+      ],
+      "satellites": [
+        "Claim Camp 4",
+        "Prospect Junction",
+        "Second Chance Camp"
+      ],
+      "daily_freight_scu": 8200,
+      "commute_mode_share": {
+        "utility_vehicle": 0.46,
+        "walk": 0.21,
+        "employer_transport": 0.19,
+        "haul_vehicle": 0.08,
+        "other": 0.06
+      }
+    }
+  ]
+}
