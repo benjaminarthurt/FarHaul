@@ -227,3 +227,7 @@ The current structure deliberately leaves room for:
 These should reference existing IDs rather than duplicate entity definitions.
 
 | `compliance_rules.json` | **Mechanics source of truth** for per-port and per-yard registration, insurance, enforcement, unregistered access, and insurer detection rules |
+| `registration_economics.json` | Registration fees, validity periods, registry modifiers, inspection types and violation fines |
+| `insurance_products.json` | Insurance products, premiums, deductibles, region/history factors and certificate requirements |
+| `contract_compliance.json` | Machine-readable registration, insurance and ship-endorsement requirements by contract class |
+| `compliance_inspections.json` | Inspection triggers, detection probabilities, scrutiny modifiers and enforcement outcomes |
