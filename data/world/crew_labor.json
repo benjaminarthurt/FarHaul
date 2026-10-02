@@ -1,0 +1,153 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "roles": [
+    {
+      "id": "captain",
+      "base_daily_pay": 260,
+      "credentials_preferred": [
+        "commercial_operator_medium"
+      ],
+      "functions": [
+        "command",
+        "contracts",
+        "legal responsibility"
+      ]
+    },
+    {
+      "id": "pilot",
+      "base_daily_pay": 220,
+      "credentials_preferred": [
+        "commercial_operator_medium"
+      ],
+      "functions": [
+        "flight watch",
+        "navigation execution"
+      ]
+    },
+    {
+      "id": "engineer",
+      "base_daily_pay": 240,
+      "credentials_preferred": [
+        "reactor_engineer"
+      ],
+      "functions": [
+        "power",
+        "propulsion",
+        "maintenance"
+      ]
+    },
+    {
+      "id": "loadmaster",
+      "base_daily_pay": 190,
+      "credentials_preferred": [
+        "hazmat_loadmaster"
+      ],
+      "functions": [
+        "cargo plan",
+        "restraint",
+        "hazard segregation"
+      ]
+    },
+    {
+      "id": "navigator_surveyor",
+      "base_daily_pay": 230,
+      "credentials_preferred": [
+        "survey_field"
+      ],
+      "functions": [
+        "route planning",
+        "survey",
+        "sensor operations"
+      ]
+    },
+    {
+      "id": "deck_tech",
+      "base_daily_pay": 165,
+      "credentials_preferred": [
+        "eva_industrial"
+      ],
+      "functions": [
+        "EVA",
+        "cargo",
+        "general repair"
+      ]
+    },
+    {
+      "id": "steward",
+      "base_daily_pay": 155,
+      "credentials_preferred": [],
+      "functions": [
+        "passengers",
+        "provisions",
+        "habitation"
+      ]
+    }
+  ],
+  "contract_terms": [
+    "daily_rate",
+    "voyage_rate",
+    "profit_share",
+    "rotation_length",
+    "environmental_accommodation",
+    "return_transport",
+    "hazard_bonus"
+  ],
+  "labor_markets": [
+    {
+      "system_id": "new_houston",
+      "availability": "high",
+      "strengths": [
+        "engineer",
+        "deck_tech",
+        "pilot"
+      ]
+    },
+    {
+      "system_id": "concord",
+      "availability": "high",
+      "strengths": [
+        "captain",
+        "loadmaster",
+        "steward"
+      ]
+    },
+    {
+      "system_id": "port_meridian",
+      "availability": "high",
+      "strengths": [
+        "all_frontier_roles"
+      ],
+      "pay_factor": 1.2
+    },
+    {
+      "system_id": "talos",
+      "availability": "strained",
+      "strengths": [
+        "deck_tech",
+        "loadmaster"
+      ],
+      "pay_factor": 1.35
+    },
+    {
+      "system_id": "waystation",
+      "availability": "low",
+      "strengths": [
+        "engineer",
+        "deck_tech"
+      ],
+      "pay_factor": 1.4
+    },
+    {
+      "system_id": "lastlight",
+      "availability": "low",
+      "strengths": [
+        "navigator_surveyor",
+        "engineer"
+      ],
+      "pay_factor": 1.5
+    }
+  ],
+  "relationship_rule": "Crew remember pay, safety, living conditions, abandoned voyages and captain behavior. Experienced crew can refuse future contracts."
+}
