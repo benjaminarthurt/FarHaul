@@ -19,10 +19,10 @@ func _run() -> void:
 	print("slots")
 	check(SaveSlots.COUNT == 5, "five slots")
 	check(SaveSlots.latest() == -1 and SaveSlots.first_empty() == 0, "all slots start empty")
-	check(Worlds.WORLDS.size() >= 3 and Worlds.RACES.size() >= 3 and Worlds.DIFFICULTIES.size() == 3, "worlds, races and difficulties are defined")
+	check(Worlds.starting_yards().size() >= 3 and Worlds.RACES.size() == 5 and Worlds.DIFFICULTIES.size() == 3, "yards, species and difficulties are defined")
 
 	print("new game")
-	check(Session.begin_new(2, "Mara Voss", "martian", "hard", "ketterick"), "begin a new game in slot 3")
+	check(Session.begin_new(2, "Mara Voss", "human", "hard", "roosevelt_independent_yards"), "begin a new game in slot 3")
 	check(SaveSlots.exists(2) and not SaveSlots.exists(0), "only slot 3 is filled")
 	check(SaveSlots.latest() == 2 and SaveSlots.first_empty() == 0, "latest and first empty")
 	var p := SaveSlots.profile(2)
