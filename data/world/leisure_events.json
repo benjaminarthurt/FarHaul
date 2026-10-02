@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "activities": [
+    {
+      "id": "team_sport",
+      "demand": [
+        "venues",
+        "passenger_travel",
+        "food",
+        "merchandise"
+      ]
+    },
+    {
+      "id": "vehicle_racing",
+      "demand": [
+        "parts",
+        "fuel",
+        "transport",
+        "venues"
+      ]
+    },
+    {
+      "id": "marine_racing",
+      "demand": [
+        "boats",
+        "parts",
+        "hospitality"
+      ]
+    },
+    {
+      "id": "live_music",
+      "demand": [
+        "venues",
+        "equipment",
+        "hospitality"
+      ]
+    },
+    {
+      "id": "outdoor_recreation",
+      "demand": [
+        "transport",
+        "equipment",
+        "lodging"
+      ]
+    },
+    {
+      "id": "gaming",
+      "demand": [
+        "electronics",
+        "data_services"
+      ]
+    },
+    {
+      "id": "maker_hobby",
+      "demand": [
+        "tools",
+        "parts",
+        "materials"
+      ]
+    }
+  ],
+  "seasonal_effects": [
+    "event_passenger_spikes",
+    "hotel_demand",
+    "temporary_food_and_beverage_freight"
+  ]
+}
