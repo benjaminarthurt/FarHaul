@@ -1,0 +1,101 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "belts": [
+    {
+      "id": "greenline_grain_belt",
+      "body_id": "hesperus_prime",
+      "regions": [
+        "greenline_plain"
+      ],
+      "area_km2": 9100000,
+      "products": [
+        "grain",
+        "oilseed",
+        "protein_crop"
+      ],
+      "yield_index": 1.42,
+      "irrigation_share": 0.28,
+      "seasonality": "strong",
+      "freight_nodes": [
+        "greenline_collection_terminal",
+        "greenline_cold_chain"
+      ]
+    },
+    {
+      "id": "rainmaker_mixed_belt",
+      "body_id": "hesperus_prime",
+      "regions": [
+        "rainmaker_basin"
+      ],
+      "area_km2": 3800000,
+      "products": [
+        "produce",
+        "seed_stock",
+        "feed"
+      ],
+      "yield_index": 1.18,
+      "irrigation_share": 0.61,
+      "seasonality": "medium",
+      "freight_nodes": [
+        "rainmaker",
+        "greenline_collection_terminal"
+      ]
+    },
+    {
+      "id": "roosevelt_south_agriculture",
+      "body_id": "roosevelt",
+      "regions": [
+        "roosevelt_southcoast"
+      ],
+      "area_km2": 1900000,
+      "products": [
+        "cold_climate_grain",
+        "greenhouse_produce",
+        "livestock"
+      ],
+      "yield_index": 0.72,
+      "irrigation_share": 0.12,
+      "seasonality": "medium",
+      "freight_nodes": [
+        "new_houston_railport"
+      ]
+    },
+    {
+      "id": "mariner_agriculture",
+      "body_id": "bradbury_prime",
+      "regions": [
+        "mariner_valleys"
+      ],
+      "area_km2": 640000,
+      "products": [
+        "produce",
+        "specialty_crops"
+      ],
+      "yield_index": 0.81,
+      "irrigation_share": 0.44,
+      "seasonality": "medium",
+      "freight_nodes": [
+        "lowell_secure_terminal"
+      ]
+    },
+    {
+      "id": "hopewell_greenhouse_cluster",
+      "body_id": "talos_prime",
+      "regions": [
+        "hopewell_basin"
+      ],
+      "area_km2": 18,
+      "products": [
+        "fresh_produce"
+      ],
+      "yield_index": null,
+      "irrigation_share": 1,
+      "seasonality": "low",
+      "freight_nodes": [
+        "hopewell_freight_yard"
+      ],
+      "note": "Controlled agriculture supplies only a small fraction of total food demand."
+    }
+  ]
+}
