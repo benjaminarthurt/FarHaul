@@ -1,0 +1,85 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "businesses": [
+    {
+      "id": "cold_start_chandlery",
+      "name": "Cold Start Chandlery",
+      "system_id": "new_houston",
+      "settlement_id": "roosevelt_new_houston",
+      "type": "ship_chandler",
+      "description": "Independent parts and provisions shop near the yards, known for stocking adapters and cold-weather consumables."
+    },
+    {
+      "id": "frame_truth",
+      "name": "Frame Truth Survey",
+      "system_id": "new_houston",
+      "settlement_id": "roosevelt_new_houston",
+      "type": "marine_surveyor",
+      "description": "Used-ship inspection firm with a reputation for finding expensive problems before buyers do."
+    },
+    {
+      "id": "twelve_second_life",
+      "name": "Second Life Cooperative",
+      "system_id": "carver",
+      "settlement_id": "carver_habitat_12",
+      "type": "used_equipment",
+      "description": "Dealer cooperative selling tested used ship components, habitat equipment and tools."
+    },
+    {
+      "id": "quiet_freight",
+      "name": "Quiet Freight Services",
+      "system_id": "bradbury",
+      "settlement_id": "bradbury_lowell",
+      "type": "specialty_logistics",
+      "description": "Handles vibration-sensitive, sterile and high-security scientific cargo."
+    },
+    {
+      "id": "nine_currents_provisioning",
+      "name": "Nine Currents Provisioning",
+      "system_id": "veyara",
+      "type": "provisioner",
+      "description": "Mixed-species long-haul food and environmental consumables supplier."
+    },
+    {
+      "id": "old_ring_adapters",
+      "name": "Old Ring Adapter & Hose",
+      "system_id": "port_meridian",
+      "settlement_id": "meridian_old_ring",
+      "type": "parts_shop",
+      "description": "Cramped shop claiming to have a fitting for anything built after the Concord Compact and several things built before it."
+    },
+    {
+      "id": "meridian_bunk_6",
+      "name": "Bunk Six",
+      "system_id": "port_meridian",
+      "settlement_id": "meridian_old_ring",
+      "type": "berthhouse",
+      "description": "Cheap configurable-gravity crew lodging above a noisy freight concourse."
+    },
+    {
+      "id": "hopewell_filters",
+      "name": "Hopewell Filter & Seal",
+      "system_id": "talos",
+      "settlement_id": "talos_hopewell",
+      "type": "maintenance_supply",
+      "description": "Started as a container full of dust filters and became a profitable business almost immediately."
+    },
+    {
+      "id": "crossroads_machine",
+      "name": "Crossroads Machine",
+      "system_id": "waystation",
+      "settlement_id": "waystation_crossroads",
+      "type": "repair_shop",
+      "description": "Small machine shop capable of fabricating substitutes for parts that would take weeks to arrive."
+    },
+    {
+      "id": "beacon_outfitters",
+      "name": "Beacon Outfitters",
+      "system_id": "lastlight",
+      "settlement_id": "lastlight_beacon",
+      "type": "expedition_supplier",
+      "description": "Sells reserve tanks, survey packages, emergency stores and the uncomfortable advice that accompanies them."
+    }
+  ]
+}
