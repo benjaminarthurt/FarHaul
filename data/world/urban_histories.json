@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "places": [
+    {
+      "id": "manufacturer_row",
+      "location": "new_houston",
+      "origin_ice": 44,
+      "history": [
+        "grew beside first independent fabrication yards",
+        "converted warehouses became supplier storefronts",
+        "later transit improvements preserved mixed workshop-retail character"
+      ],
+      "current_character": "old industrial frontage, parts counters, small fabricators, apartments above older commercial blocks"
+    },
+    {
+      "id": "old_ring",
+      "location": "port_meridian",
+      "origin_ice": 189,
+      "history": [
+        "original fuel-depot habitation ring",
+        "expanded piecemeal around docks",
+        "Black Week made several old service corridors emergency shelters"
+      ],
+      "current_character": "cheap lodging, adapters, bars, chandlers and infrastructure older than current district maps"
+    },
+    {
+      "id": "container_city",
+      "location": "talos",
+      "origin_ice": 279,
+      "history": [
+        "temporary worker containers near first pads",
+        "shops and services filled gaps between camps",
+        "utilities gradually formalized"
+      ],
+      "current_character": "dense improvised mixed-use district whose temporary structures keep becoming permanent"
+    }
+  ]
+}
