@@ -1,0 +1,338 @@
+{
+  "schema_version": "0.2.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "metros": [
+    {
+      "id": "earth_north_atlantic",
+      "body_id": "earth",
+      "name": "North Atlantic Urban Corridor",
+      "population": 412000000,
+      "type": "megaregion",
+      "specialties": [
+        "finance",
+        "government",
+        "education",
+        "manufacturing",
+        "orbital_logistics"
+      ],
+      "daily_external_freight_scu": 920000
+    },
+    {
+      "id": "earth_pacific_arc",
+      "body_id": "earth",
+      "name": "Pacific Urban Arc",
+      "population": 536000000,
+      "type": "megaregion",
+      "specialties": [
+        "manufacturing",
+        "technology",
+        "trade",
+        "orbital_logistics"
+      ],
+      "daily_external_freight_scu": 1180000
+    },
+    {
+      "id": "earth_indian_ocean_arc",
+      "body_id": "earth",
+      "name": "Indian Ocean Urban Arc",
+      "population": 684000000,
+      "type": "megaregion",
+      "specialties": [
+        "manufacturing",
+        "services",
+        "food_processing",
+        "trade"
+      ],
+      "daily_external_freight_scu": 1010000
+    },
+    {
+      "id": "luna_copernicus",
+      "body_id": "luna",
+      "name": "Copernicus Metropolitan Excavations",
+      "population": 18400000,
+      "type": "sealed_metro",
+      "specialties": [
+        "industry",
+        "science",
+        "orbital_logistics"
+      ],
+      "daily_external_freight_scu": 82000
+    },
+    {
+      "id": "mars_lowell",
+      "body_id": "mars",
+      "name": "Lowell Crossing Metropolitan Region",
+      "population": 26300000,
+      "type": "sealed_metro",
+      "specialties": [
+        "manufacturing",
+        "research",
+        "surface_logistics"
+      ],
+      "daily_external_freight_scu": 94000
+    },
+    {
+      "id": "keshar_old_load",
+      "body_id": "keshar_prime",
+      "name": "Old Load Metropolitan Shelf",
+      "population": 48600000,
+      "type": "heavy_industrial_metro",
+      "specialties": [
+        "heavy_manufacturing",
+        "marine_trade",
+        "government"
+      ],
+      "daily_external_freight_scu": 286000
+    },
+    {
+      "id": "keshar_seawall",
+      "body_id": "keshar_prime",
+      "name": "Seawall Eight Region",
+      "population": 31700000,
+      "type": "coastal_metro",
+      "specialties": [
+        "marine_industry",
+        "storm_engineering",
+        "food"
+      ],
+      "daily_external_freight_scu": 151000
+    },
+    {
+      "id": "ilos_hanging_works",
+      "body_id": "ilos_prime",
+      "name": "Hanging Works Conurbation",
+      "population": 39200000,
+      "type": "vertical_metro",
+      "specialties": [
+        "propulsion",
+        "precision_manufacturing",
+        "education"
+      ],
+      "daily_external_freight_scu": 188000
+    },
+    {
+      "id": "ilos_sixth_horizon",
+      "body_id": "ilos_prime",
+      "name": "Sixth Horizon Region",
+      "population": 21400000,
+      "type": "vertical_metro",
+      "specialties": [
+        "services",
+        "light_manufacturing",
+        "research"
+      ],
+      "daily_external_freight_scu": 91000
+    },
+    {
+      "id": "veyara_nine_currents",
+      "body_id": "veyara_prime",
+      "name": "Nine Currents Basin",
+      "population": 18400000,
+      "type": "marine_metro",
+      "specialties": [
+        "commerce",
+        "biotech",
+        "marine_services"
+      ],
+      "daily_external_freight_scu": 132000
+    },
+    {
+      "id": "veyara_deep_morning",
+      "body_id": "veyara_prime",
+      "name": "Deep Morning Basin",
+      "population": 24100000,
+      "type": "marine_metro",
+      "specialties": [
+        "aquaculture",
+        "environmental_systems",
+        "manufacturing"
+      ],
+      "daily_external_freight_scu": 149000
+    },
+    {
+      "id": "orun_warm_junction",
+      "body_id": "orun_prime",
+      "name": "Warm Junction Network",
+      "population": 12200000,
+      "type": "subsurface_metro",
+      "specialties": [
+        "machinery",
+        "thermal_systems",
+        "commerce"
+      ],
+      "daily_external_freight_scu": 91000
+    },
+    {
+      "id": "orun_common_wall",
+      "body_id": "orun_prime",
+      "name": "Common Wall Network",
+      "population": 19700000,
+      "type": "subsurface_metro",
+      "specialties": [
+        "ceramics",
+        "automation",
+        "housing_systems"
+      ],
+      "daily_external_freight_scu": 118000
+    },
+    {
+      "id": "concord_central",
+      "body_id": "concord_prime",
+      "name": "Central Concord",
+      "population": 27000000,
+      "type": "multispecies_metro",
+      "specialties": [
+        "finance",
+        "standards",
+        "trade",
+        "education"
+      ],
+      "daily_external_freight_scu": 310000
+    },
+    {
+      "id": "concord_freeport",
+      "body_id": "concord_prime",
+      "name": "Freeport Region",
+      "population": 16800000,
+      "type": "trade_metro",
+      "specialties": [
+        "warehousing",
+        "manufacturing",
+        "brokerage"
+      ],
+      "daily_external_freight_scu": 246000
+    },
+    {
+      "id": "hesperus_greenline",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Region",
+      "population": 6800000,
+      "type": "agricultural_metro",
+      "specialties": [
+        "food_processing",
+        "agriculture",
+        "rail_logistics"
+      ],
+      "daily_external_freight_scu": 174000
+    },
+    {
+      "id": "iron_gate_keelward",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward Industrial Region",
+      "population": 27400000,
+      "type": "industrial_metro",
+      "specialties": [
+        "shipbuilding",
+        "metals",
+        "heavy_transport"
+      ],
+      "daily_external_freight_scu": 365000
+    },
+    {
+      "id": "carver_twelve",
+      "body_id": "carver_habitats",
+      "name": "Twelve Habitat Cluster",
+      "population": 610000,
+      "type": "habitat_cluster",
+      "specialties": [
+        "mining_services",
+        "recycling",
+        "trade"
+      ],
+      "daily_external_freight_scu": 33000
+    },
+    {
+      "id": "bradbury_lowell",
+      "body_id": "bradbury_prime",
+      "name": "Lowell Research Region",
+      "population": 11200000,
+      "type": "research_metro",
+      "specialties": [
+        "research",
+        "precision_manufacturing",
+        "education"
+      ],
+      "daily_external_freight_scu": 76000
+    },
+    {
+      "id": "pelagos_crosswater",
+      "body_id": "pelagos_prime",
+      "name": "Crosswater Region",
+      "population": 8200000,
+      "type": "marine_metro",
+      "specialties": [
+        "aquaculture",
+        "biotech",
+        "trade"
+      ],
+      "daily_external_freight_scu": 71000
+    },
+    {
+      "id": "foundry_deepworks",
+      "body_id": "foundry_prime",
+      "name": "Deepworks Metropolitan Network",
+      "population": 9600000,
+      "type": "subsurface_industrial",
+      "specialties": [
+        "machinery",
+        "ceramics",
+        "geothermal"
+      ],
+      "daily_external_freight_scu": 121000
+    },
+    {
+      "id": "meridian_station_city",
+      "body_id": "meridian_station",
+      "name": "Meridian Station City",
+      "population": 2400000,
+      "type": "station_metro",
+      "specialties": [
+        "trade",
+        "repair",
+        "hospitality",
+        "expedition_services"
+      ],
+      "daily_external_freight_scu": 202000
+    },
+    {
+      "id": "talos_hopewell",
+      "body_id": "talos_prime",
+      "name": "Hopewell Growth Area",
+      "population": 51000,
+      "type": "boomtown",
+      "specialties": [
+        "mining",
+        "construction",
+        "services"
+      ],
+      "daily_external_freight_scu": 8200
+    },
+    {
+      "id": "waystation_crossroads",
+      "body_id": "waystation_habitat",
+      "name": "Crossroads Habitat",
+      "population": 23000,
+      "type": "transit_habitat",
+      "specialties": [
+        "repair",
+        "fuel",
+        "lodging"
+      ],
+      "daily_external_freight_scu": 3900
+    },
+    {
+      "id": "lastlight_beacon",
+      "body_id": "lastlight_settlement",
+      "name": "Beacon Region",
+      "population": 7900,
+      "type": "frontier_town",
+      "specialties": [
+        "survey",
+        "expedition_support",
+        "communications"
+      ],
+      "daily_external_freight_scu": 1800
+    }
+  ]
+}
