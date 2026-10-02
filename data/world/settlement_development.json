@@ -1,0 +1,127 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "stages": [
+    {
+      "id": "survey_target",
+      "population_range": [
+        0,
+        0
+      ],
+      "needs": [
+        "survey_equipment",
+        "fuel",
+        "crew_consumables"
+      ],
+      "exports": [
+        "survey_data"
+      ]
+    },
+    {
+      "id": "expedition_camp",
+      "population_range": [
+        4,
+        80
+      ],
+      "needs": [
+        "food",
+        "water",
+        "fuel",
+        "medical",
+        "spares",
+        "lab_equipment"
+      ],
+      "exports": [
+        "survey_data",
+        "samples"
+      ]
+    },
+    {
+      "id": "prospecting_camp",
+      "population_range": [
+        20,
+        400
+      ],
+      "needs": [
+        "habitat_modules",
+        "power",
+        "mining_equipment",
+        "food",
+        "water_processing"
+      ],
+      "exports": [
+        "assay_data",
+        "pilot_resource_shipments"
+      ]
+    },
+    {
+      "id": "supported_outpost",
+      "population_range": [
+        100,
+        3000
+      ],
+      "needs": [
+        "construction",
+        "utilities",
+        "vehicles",
+        "medical",
+        "food",
+        "communications"
+      ],
+      "exports": [
+        "resources",
+        "services"
+      ]
+    },
+    {
+      "id": "permanent_settlement",
+      "population_range": [
+        1000,
+        100000
+      ],
+      "needs": [
+        "consumer_goods",
+        "education",
+        "industry",
+        "replacement_parts"
+      ],
+      "exports": [
+        "resources",
+        "manufactured_goods",
+        "services"
+      ]
+    },
+    {
+      "id": "commercial_port",
+      "population_range": [
+        10000,
+        null
+      ],
+      "needs": [
+        "diverse_market_inputs"
+      ],
+      "exports": [
+        "diverse_market_outputs",
+        "transport_services"
+      ]
+    }
+  ],
+  "advancement_factors": [
+    "sustained_population",
+    "reliable_power",
+    "water_or_import_capacity",
+    "economic_output",
+    "transport_frequency",
+    "governance",
+    "medical_capacity"
+  ],
+  "regression_factors": [
+    "resource_failure",
+    "supply_collapse",
+    "environmental_event",
+    "loss_of_financing",
+    "population_departure"
+  ],
+  "rule": "Stages are emergent thresholds, not guaranteed progression. A prospecting camp can fail and be abandoned."
+}
