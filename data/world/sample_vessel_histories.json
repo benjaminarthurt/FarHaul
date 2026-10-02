@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "vessels": [
+    {
+      "id": "fhv_long_road",
+      "name": "Long Road",
+      "class_id": "r_61",
+      "build_year_ice": 247,
+      "history": [
+        {
+          "year": 247,
+          "event": "delivered",
+          "owner": "Dane Freight"
+        },
+        {
+          "year": 259,
+          "event": "sold",
+          "owner": "Mara Vell"
+        },
+        {
+          "year": 266,
+          "event": "main_drive_rebuild"
+        },
+        {
+          "year": 278,
+          "event": "talos_first_wave_contracts"
+        },
+        {
+          "year": 284,
+          "event": "sold",
+          "owner": "independent_operator"
+        }
+      ],
+      "condition": "serviceable",
+      "title": "clean"
+    },
+    {
+      "id": "fhv_three_pumps",
+      "name": "Three Pumps",
+      "class_id": "mule_40",
+      "build_year_ice": 252,
+      "history": [
+        {
+          "year": 252,
+          "event": "delivered"
+        },
+        {
+          "year": 271,
+          "event": "coolant_casualty"
+        },
+        {
+          "year": 271,
+          "event": "temporary_repairs_completed_run"
+        },
+        {
+          "year": 272,
+          "event": "full_rebuild"
+        }
+      ],
+      "condition": "serviceable",
+      "title": "clean"
+    },
+    {
+      "id": "fhv_still_here",
+      "name": "Still Here",
+      "class_id": "r_88_roadliner",
+      "build_year_ice": 229,
+      "history": [
+        {
+          "year": 229,
+          "event": "delivered"
+        },
+        {
+          "year": 251,
+          "event": "second_owner"
+        },
+        {
+          "year": 263,
+          "event": "pressure_hull_repair"
+        },
+        {
+          "year": 275,
+          "event": "cargo_conversion"
+        },
+        {
+          "year": 283,
+          "event": "survey_support_refit"
+        }
+      ],
+      "condition": "worn",
+      "title": "clean"
+    }
+  ]
+}
