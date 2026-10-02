@@ -150,8 +150,8 @@ The game also exports to the web (Compatibility renderer, single-threaded, so it
 2. In the repo on GitHub: Settings > Pages > Build and deployment > Source: **GitHub Actions**.
 3. Push. The game appears at `https://benjaminarthurt.github.io/FarHaul/` after the workflow finishes.
 
-The web build in `site/` is committed. After changing the game, re-export it before pushing: install the 4.4.1 export templates in Godot, then
-`godot --headless --export-release "Web" site/index.html` and serve `site/` with any static web server.
+The site root (`site/index.html`) is a docs page with screenshots, help and a Launch game button. The web build lives in `site/play/` and is committed. After changing the game, re-export it before pushing: install the 4.4.1 export templates in Godot, then
+`godot --headless --export-release "Web" site/play/index.html` and serve `site/` with any static web server.
 Saves live in the browser's own storage, so they stay on that device.
 
 ## Branding
