@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "checks": [
+    {
+      "id": "population_rollup",
+      "hard": true
+    },
+    {
+      "id": "settlement_parentage",
+      "hard": true
+    },
+    {
+      "id": "organization_identity",
+      "hard": true
+    },
+    {
+      "id": "site_parentage",
+      "hard": true
+    },
+    {
+      "id": "commodity_references",
+      "hard": true
+    },
+    {
+      "id": "production_input_balance",
+      "hard": false
+    },
+    {
+      "id": "employment_population_balance",
+      "hard": false
+    },
+    {
+      "id": "port_throughput_balance",
+      "hard": false
+    },
+    {
+      "id": "utility_capacity_balance",
+      "hard": false
+    },
+    {
+      "id": "housing_capacity_balance",
+      "hard": false
+    }
+  ],
+  "migration_policy": "New runtime code references authority registries only. Legacy identity datasets are read-only migration sources."
+}
