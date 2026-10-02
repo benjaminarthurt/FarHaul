@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "identity_authority": true,
+  "site_classes": [
+    "factory",
+    "mine",
+    "farm",
+    "warehouse",
+    "utility",
+    "hospital",
+    "school",
+    "retail",
+    "hospitality",
+    "repair",
+    "freight_terminal",
+    "civic",
+    "entertainment"
+  ],
+  "sites": [
+    {
+      "id": "new_houston_frame_plant_4",
+      "settlement_id": "new_houston",
+      "name": "Frame Plant 4",
+      "class": "factory"
+    },
+    {
+      "id": "greenline_cold_chain",
+      "settlement_id": "greenline",
+      "name": "Greenline Cold Chain",
+      "class": "warehouse"
+    },
+    {
+      "id": "keelward_plate_works",
+      "settlement_id": "keelward",
+      "name": "Keelward Plate Works",
+      "class": "factory"
+    },
+    {
+      "id": "lowell_secure_terminal",
+      "settlement_id": "lowell",
+      "name": "Lowell Secure Receiving",
+      "class": "freight_terminal"
+    },
+    {
+      "id": "hopewell_freight_yard",
+      "settlement_id": "hopewell",
+      "name": "Hopewell Freight Yard",
+      "class": "freight_terminal"
+    },
+    {
+      "id": "hopewell_water_one",
+      "settlement_id": "hopewell",
+      "name": "Hopewell Water Plant One",
+      "class": "utility"
+    },
+    {
+      "id": "beacon_reserve_stores",
+      "settlement_id": "beacon",
+      "name": "Beacon Reserve Stores",
+      "class": "warehouse"
+    },
+    {
+      "id": "deepworks_ceramics_site",
+      "settlement_id": "deepworks",
+      "name": "Deepworks Technical Ceramics",
+      "class": "factory"
+    },
+    {
+      "id": "nine_currents_bioprocessing_site",
+      "settlement_id": "nine_currents_city",
+      "name": "Nine Currents Bioprocessing",
+      "class": "factory"
+    },
+    {
+      "id": "roosevelt_yard_institute_site",
+      "settlement_id": "new_houston",
+      "name": "Roosevelt Yard Institute",
+      "class": "school"
+    }
+  ]
+}
