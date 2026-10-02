@@ -1,0 +1,113 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "rule": "Named records are anchors. Aggregate population remains simulated through regional, household, employment, business-density and demand models.",
+  "worlds": [
+    {
+      "id": "earth",
+      "population": 18400000000,
+      "named_metro_population": 1632000000,
+      "coverage_mode": "megaregions_plus_aggregate",
+      "target_named_metros": 12
+    },
+    {
+      "id": "keshar_prime",
+      "population": 11800000000,
+      "named_metro_population": 80300000,
+      "coverage_mode": "metros_plus_regional_aggregate",
+      "target_named_metros": 10
+    },
+    {
+      "id": "ilos_prime",
+      "population": 7200000000,
+      "named_metro_population": 60600000,
+      "coverage_mode": "metros_plus_regional_aggregate",
+      "target_named_metros": 8
+    },
+    {
+      "id": "veyara_prime",
+      "population": 9600000000,
+      "named_metro_population": 42500000,
+      "coverage_mode": "basins_plus_oceanic_aggregate",
+      "target_named_metros": 9
+    },
+    {
+      "id": "orun_prime",
+      "population": 6700000000,
+      "named_metro_population": 31900000,
+      "coverage_mode": "junction_networks_plus_subsurface_aggregate",
+      "target_named_metros": 8
+    },
+    {
+      "id": "concord_prime",
+      "population": 2800000000,
+      "named_metro_population": 43800000,
+      "coverage_mode": "metros_plus_regional_aggregate",
+      "target_named_metros": 7
+    },
+    {
+      "id": "roosevelt",
+      "population": 640000000,
+      "named_metro_population": 12830000,
+      "coverage_mode": "metros_towns_plus_aggregate",
+      "target_named_metros": 6
+    },
+    {
+      "id": "hesperus_prime",
+      "population": 84000000,
+      "named_metro_population": 7920000,
+      "coverage_mode": "agricultural_regions_plus_towns",
+      "target_named_metros": 4
+    },
+    {
+      "id": "iron_gate_prime",
+      "population": 310000000,
+      "named_metro_population": 30370000,
+      "coverage_mode": "industrial_regions_plus_aggregate",
+      "target_named_metros": 5
+    },
+    {
+      "id": "bradbury_prime",
+      "population": 155000000,
+      "named_metro_population": 12800000,
+      "coverage_mode": "research_regions_plus_aggregate",
+      "target_named_metros": 5
+    },
+    {
+      "id": "pelagos_prime",
+      "population": 46000000,
+      "named_metro_population": 9130000,
+      "coverage_mode": "marine_regions_plus_aggregate",
+      "target_named_metros": 4
+    },
+    {
+      "id": "foundry_prime",
+      "population": 22000000,
+      "named_metro_population": 10290000,
+      "coverage_mode": "subsurface_networks",
+      "target_named_metros": 3
+    },
+    {
+      "id": "talos_prime",
+      "population": 74000,
+      "named_metro_population": 58200,
+      "coverage_mode": "nearly_full_named_frontier",
+      "target_named_metros": 1
+    },
+    {
+      "id": "waystation_habitat",
+      "population": 38000,
+      "named_metro_population": 23000,
+      "coverage_mode": "habitat_sections_plus_aggregate",
+      "target_named_metros": 1
+    },
+    {
+      "id": "lastlight_settlement",
+      "population": 11400,
+      "named_metro_population": 8240,
+      "coverage_mode": "nearly_full_named_frontier",
+      "target_named_metros": 1
+    }
+  ]
+}
