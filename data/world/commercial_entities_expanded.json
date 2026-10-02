@@ -1,0 +1,207 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "entities": [
+    {
+      "id": "continuity_mutual",
+      "name": "Continuity Mutual",
+      "type": "insurer",
+      "home_system_id": "keshar",
+      "specialties": [
+        "hull",
+        "industrial",
+        "cargo"
+      ]
+    },
+    {
+      "id": "concord_underwriters",
+      "name": "Concord Underwriters Exchange",
+      "type": "insurer",
+      "home_system_id": "concord",
+      "specialties": [
+        "hull",
+        "cargo",
+        "liability",
+        "trade"
+      ]
+    },
+    {
+      "id": "outer_reach_assurance",
+      "name": "Outer Reach Assurance",
+      "type": "insurer",
+      "home_system_id": "port_meridian",
+      "specialties": [
+        "frontier",
+        "hull",
+        "expedition"
+      ]
+    },
+    {
+      "id": "bluecurrent_mutual",
+      "name": "Bluecurrent Mutual",
+      "type": "insurer",
+      "home_system_id": "veyara",
+      "specialties": [
+        "marine",
+        "cargo",
+        "environmental"
+      ]
+    },
+    {
+      "id": "roosevelt_equipment_credit",
+      "name": "Roosevelt Equipment Credit",
+      "type": "lender",
+      "home_system_id": "new_houston",
+      "specialties": [
+        "ship_finance",
+        "equipment",
+        "refit"
+      ]
+    },
+    {
+      "id": "concord_commercial_bank",
+      "name": "Concord Commercial Bank",
+      "type": "lender",
+      "home_system_id": "concord",
+      "specialties": [
+        "trade_finance",
+        "ship_finance"
+      ]
+    },
+    {
+      "id": "meridian_captains_credit",
+      "name": "Meridian Captains Credit Union",
+      "type": "lender",
+      "home_system_id": "port_meridian",
+      "specialties": [
+        "repair_bridge",
+        "ship_finance"
+      ]
+    },
+    {
+      "id": "gateworks_finance",
+      "name": "Gateworks Commercial Finance",
+      "type": "lender",
+      "home_system_id": "iron_gate",
+      "specialties": [
+        "heavy_ship",
+        "industrial"
+      ]
+    },
+    {
+      "id": "sol_intermodal",
+      "name": "Sol Intermodal Group",
+      "type": "logistics",
+      "home_system_id": "sol",
+      "specialties": [
+        "warehousing",
+        "drayage",
+        "orbital_transfer"
+      ]
+    },
+    {
+      "id": "old_load_logistics",
+      "name": "Old Load Logistics Cooperative",
+      "type": "logistics",
+      "home_system_id": "keshar",
+      "specialties": [
+        "heavy_freight",
+        "marine",
+        "warehousing"
+      ]
+    },
+    {
+      "id": "span_cargo_services",
+      "name": "Span Cargo Services",
+      "type": "logistics",
+      "home_system_id": "ilos",
+      "specialties": [
+        "precision",
+        "vertical_transfer"
+      ]
+    },
+    {
+      "id": "current_cold_chain",
+      "name": "Current Cold Chain",
+      "type": "logistics",
+      "home_system_id": "veyara",
+      "specialties": [
+        "biological",
+        "refrigerated"
+      ]
+    },
+    {
+      "id": "junction_machine_logistics",
+      "name": "Junction Machine Logistics",
+      "type": "logistics",
+      "home_system_id": "orun",
+      "specialties": [
+        "machinery",
+        "subsurface_transfer"
+      ]
+    },
+    {
+      "id": "concord_bonded_storage",
+      "name": "Concord Bonded Storage",
+      "type": "warehouse",
+      "home_system_id": "concord",
+      "specialties": [
+        "bonded",
+        "secure",
+        "general"
+      ]
+    },
+    {
+      "id": "greenline_cold_storage",
+      "name": "Greenline Cold Storage Union",
+      "type": "warehouse",
+      "home_system_id": "hesperus",
+      "specialties": [
+        "food",
+        "refrigerated"
+      ]
+    },
+    {
+      "id": "keelward_bulk_storage",
+      "name": "Keelward Bulk Storage",
+      "type": "warehouse",
+      "home_system_id": "iron_gate",
+      "specialties": [
+        "metals",
+        "oversize"
+      ]
+    },
+    {
+      "id": "lowell_secure_receiving",
+      "name": "Lowell Secure Receiving",
+      "type": "warehouse",
+      "home_system_id": "bradbury",
+      "specialties": [
+        "scientific",
+        "secure"
+      ]
+    },
+    {
+      "id": "hopewell_freight_coop",
+      "name": "Hopewell Freight Cooperative",
+      "type": "logistics",
+      "home_system_id": "talos",
+      "specialties": [
+        "surface_haul",
+        "warehousing"
+      ]
+    },
+    {
+      "id": "beacon_outfitters",
+      "name": "Beacon Outfitters",
+      "type": "retail_logistics",
+      "home_system_id": "lastlight",
+      "specialties": [
+        "expedition",
+        "provisions",
+        "parts"
+      ]
+    }
+  ]
+}
