@@ -1,0 +1,252 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "recipes": [
+    {
+      "id": "structural_panel",
+      "output": {
+        "item": "structural_panel",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "structural_materials",
+          0.82
+        ],
+        [
+          "ceramics",
+          0.08
+        ],
+        [
+          "specialty_chemicals",
+          0.04
+        ]
+      ],
+      "process": "forming_and_bonding"
+    },
+    {
+      "id": "power_control_unit",
+      "output": {
+        "item": "power_control_unit",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "electronics",
+          0.42
+        ],
+        [
+          "precision_equipment",
+          0.18
+        ],
+        [
+          "machine_components",
+          0.16
+        ]
+      ],
+      "process": "electronics_assembly"
+    },
+    {
+      "id": "pump_assembly",
+      "output": {
+        "item": "pump_assembly",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "machine_components",
+          0.46
+        ],
+        [
+          "electronics",
+          0.12
+        ],
+        [
+          "structural_materials",
+          0.2
+        ]
+      ],
+      "process": "precision_machine_assembly"
+    },
+    {
+      "id": "thermal_loop_module",
+      "output": {
+        "item": "thermal_loop_module",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "thermal_equipment",
+          0.4
+        ],
+        [
+          "pump_assembly",
+          2
+        ],
+        [
+          "electronics",
+          0.1
+        ]
+      ],
+      "process": "thermal_system_assembly"
+    },
+    {
+      "id": "life_support_rack",
+      "output": {
+        "item": "life_support_rack",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "water_processing_equipment",
+          0.22
+        ],
+        [
+          "electronics",
+          0.18
+        ],
+        [
+          "pump_assembly",
+          3
+        ],
+        [
+          "specialty_chemicals",
+          0.08
+        ]
+      ],
+      "process": "environmental_assembly"
+    },
+    {
+      "id": "drive_control_package",
+      "output": {
+        "item": "drive_control_package",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "precision_equipment",
+          0.28
+        ],
+        [
+          "electronics",
+          0.31
+        ],
+        [
+          "sensors",
+          0.12
+        ],
+        [
+          "automation_systems",
+          0.1
+        ]
+      ],
+      "process": "precision_electronics"
+    },
+    {
+      "id": "freighter_engine",
+      "output": {
+        "item": "freighter_engine",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "machine_components",
+          0.34
+        ],
+        [
+          "precision_equipment",
+          0.12
+        ],
+        [
+          "drive_control_package",
+          1
+        ],
+        [
+          "thermal_loop_module",
+          2
+        ],
+        [
+          "structural_materials",
+          0.18
+        ]
+      ],
+      "process": "engine_assembly"
+    },
+    {
+      "id": "habitation_module",
+      "output": {
+        "item": "habitation_module",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "structural_panel",
+          24
+        ],
+        [
+          "life_support_rack",
+          2
+        ],
+        [
+          "electronics",
+          0.08
+        ],
+        [
+          "consumer_goods",
+          0.06
+        ]
+      ],
+      "process": "module_integration"
+    },
+    {
+      "id": "cargo_module",
+      "output": {
+        "item": "cargo_module",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "structural_panel",
+          31
+        ],
+        [
+          "electronics",
+          0.04
+        ],
+        [
+          "machine_components",
+          0.08
+        ]
+      ],
+      "process": "module_integration"
+    },
+    {
+      "id": "ship_reactor",
+      "output": {
+        "item": "ship_reactor",
+        "qty": 1
+      },
+      "inputs": [
+        [
+          "reactors",
+          0.7
+        ],
+        [
+          "power_control_unit",
+          4
+        ],
+        [
+          "thermal_loop_module",
+          3
+        ],
+        [
+          "structural_materials",
+          0.12
+        ]
+      ],
+      "process": "reactor_integration"
+    }
+  ],
+  "rule": "Recipe quantities are normalized industrial input units pending final mass calibration; they establish dependency topology now."
+}
