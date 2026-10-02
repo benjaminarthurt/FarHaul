@@ -1,0 +1,181 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "archetypes": [
+    {
+      "id": "legal_office",
+      "inputs": [
+        "office_supplies",
+        "data_services"
+      ],
+      "outputs": [
+        "legal_services"
+      ],
+      "typical_employees": [
+        2,
+        30
+      ]
+    },
+    {
+      "id": "accounting_firm",
+      "inputs": [
+        "data_services",
+        "office_supplies"
+      ],
+      "outputs": [
+        "accounting_services"
+      ],
+      "typical_employees": [
+        2,
+        80
+      ]
+    },
+    {
+      "id": "childcare_center",
+      "inputs": [
+        "food",
+        "cleaning_supplies",
+        "furniture"
+      ],
+      "outputs": [
+        "childcare"
+      ],
+      "typical_employees": [
+        4,
+        45
+      ]
+    },
+    {
+      "id": "funeral_memorial_service",
+      "inputs": [
+        "consumer_goods",
+        "flowers_or_local_equivalent",
+        "transport"
+      ],
+      "outputs": [
+        "memorial_services"
+      ],
+      "typical_employees": [
+        2,
+        25
+      ]
+    },
+    {
+      "id": "salon_personal_service",
+      "inputs": [
+        "cleaning_supplies",
+        "consumer_goods"
+      ],
+      "outputs": [
+        "personal_services"
+      ],
+      "typical_employees": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "gym_recreation",
+      "inputs": [
+        "equipment",
+        "cleaning_supplies",
+        "beverages"
+      ],
+      "outputs": [
+        "recreation"
+      ],
+      "typical_employees": [
+        2,
+        40
+      ]
+    },
+    {
+      "id": "repair_electronics",
+      "inputs": [
+        "electronics",
+        "small_parts"
+      ],
+      "outputs": [
+        "consumer_repair"
+      ],
+      "typical_employees": [
+        1,
+        18
+      ]
+    },
+    {
+      "id": "cleaning_contractor",
+      "inputs": [
+        "cleaning_chemicals",
+        "equipment"
+      ],
+      "outputs": [
+        "commercial_cleaning"
+      ],
+      "typical_employees": [
+        3,
+        120
+      ]
+    },
+    {
+      "id": "security_service",
+      "inputs": [
+        "electronics",
+        "uniforms",
+        "vehicles"
+      ],
+      "outputs": [
+        "private_security"
+      ],
+      "typical_employees": [
+        4,
+        250
+      ]
+    },
+    {
+      "id": "veterinary_or_species_animal_service",
+      "inputs": [
+        "medical_supplies",
+        "food"
+      ],
+      "outputs": [
+        "animal_care"
+      ],
+      "typical_employees": [
+        2,
+        35
+      ]
+    },
+    {
+      "id": "religious_civic_center",
+      "inputs": [
+        "food",
+        "furniture",
+        "utilities"
+      ],
+      "outputs": [
+        "community_services"
+      ],
+      "typical_employees": [
+        1,
+        35
+      ]
+    },
+    {
+      "id": "arts_entertainment_venue",
+      "inputs": [
+        "food",
+        "beverages",
+        "electronics",
+        "maintenance"
+      ],
+      "outputs": [
+        "entertainment"
+      ],
+      "typical_employees": [
+        5,
+        180
+      ]
+    }
+  ]
+}
