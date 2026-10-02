@@ -1,0 +1,116 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "models": [
+    {
+      "id": "khs_r440",
+      "name": "KHS R-440",
+      "type": "reactor",
+      "manufacturer_id": "kesh_heavy_systems",
+      "introduced_ice": 244,
+      "discontinued_ice": 271,
+      "market_status": "legacy_common",
+      "compatibility": [
+        "heavy_freighter",
+        "industrial"
+      ],
+      "nominal_reliability": 0.982
+    },
+    {
+      "id": "khs_r620",
+      "name": "KHS R-620",
+      "type": "reactor",
+      "manufacturer_id": "kesh_heavy_systems",
+      "introduced_ice": 269,
+      "discontinued_ice": null,
+      "market_status": "current",
+      "compatibility": [
+        "heavy_freighter",
+        "yard"
+      ],
+      "nominal_reliability": 0.991
+    },
+    {
+      "id": "ivw_v90",
+      "name": "IVW V90 Vector Drive",
+      "type": "engine",
+      "manufacturer_id": "ilyan_vector_works",
+      "introduced_ice": 258,
+      "discontinued_ice": 281,
+      "market_status": "mature",
+      "compatibility": [
+        "medium_freighter"
+      ],
+      "nominal_reliability": 0.987
+    },
+    {
+      "id": "ivw_v112",
+      "name": "IVW V112 Vector Drive",
+      "type": "engine",
+      "manufacturer_id": "ilyan_vector_works",
+      "introduced_ice": 279,
+      "discontinued_ice": null,
+      "market_status": "current",
+      "compatibility": [
+        "medium_heavy"
+      ],
+      "nominal_reliability": 0.994
+    },
+    {
+      "id": "vcc_cl8",
+      "name": "VCC CL-8 Closed Cycle Rack",
+      "type": "life_support",
+      "manufacturer_id": "vey_closed_cycle",
+      "introduced_ice": 251,
+      "discontinued_ice": null,
+      "market_status": "current",
+      "compatibility": [
+        "habitation",
+        "passenger"
+      ],
+      "nominal_reliability": 0.993
+    },
+    {
+      "id": "otc_th12",
+      "name": "OTC TH-12 Thermal Loop",
+      "type": "thermal",
+      "manufacturer_id": "orun_thermal_collective",
+      "introduced_ice": 238,
+      "discontinued_ice": 276,
+      "market_status": "legacy_common",
+      "compatibility": [
+        "general"
+      ],
+      "nominal_reliability": 0.985
+    },
+    {
+      "id": "otc_th18",
+      "name": "OTC TH-18 Thermal Loop",
+      "type": "thermal",
+      "manufacturer_id": "orun_thermal_collective",
+      "introduced_ice": 274,
+      "discontinued_ice": null,
+      "market_status": "current",
+      "compatibility": [
+        "general",
+        "high_heat"
+      ],
+      "nominal_reliability": 0.995
+    },
+    {
+      "id": "riy_cargo_40",
+      "name": "RIY Cargo-40 Module",
+      "type": "cargo_module",
+      "manufacturer_id": "roosevelt_independent_yards_coop",
+      "introduced_ice": 265,
+      "discontinued_ice": null,
+      "market_status": "current",
+      "compatibility": [
+        "roosevelt_frames",
+        "standard_mount"
+      ],
+      "nominal_reliability": 0.989
+    }
+  ]
+}
