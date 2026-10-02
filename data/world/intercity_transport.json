@@ -1,0 +1,151 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "corridors": [
+    {
+      "id": "roosevelt_trunk",
+      "body_id": "roosevelt",
+      "name": "Roosevelt Trunk",
+      "mode": "heavy_rail",
+      "nodes": [
+        "New Houston",
+        "Truman Junction",
+        "Coldwater",
+        "Toolbox Escarpment"
+      ],
+      "length_km": 6120,
+      "daily_capacity_scu": 188000,
+      "passenger_service": true,
+      "bottlenecks": [
+        "winter_weather",
+        "yard_congestion"
+      ]
+    },
+    {
+      "id": "roosevelt_south_freightway",
+      "body_id": "roosevelt",
+      "name": "South Freightway",
+      "mode": "road",
+      "nodes": [
+        "New Houston",
+        "South Coast",
+        "Longhorn Transfer"
+      ],
+      "length_km": 2440,
+      "daily_capacity_scu": 72000,
+      "passenger_service": true,
+      "bottlenecks": [
+        "snow",
+        "urban_delivery_windows"
+      ]
+    },
+    {
+      "id": "greenline_main",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Main",
+      "mode": "rail",
+      "nodes": [
+        "Greenline",
+        "Thresh City",
+        "Rainmaker"
+      ],
+      "length_km": 4870,
+      "daily_capacity_scu": 242000,
+      "passenger_service": true,
+      "bottlenecks": [
+        "harvest_peak"
+      ]
+    },
+    {
+      "id": "shepherd_branch",
+      "body_id": "hesperus_prime",
+      "name": "Shepherd Branch",
+      "mode": "rail",
+      "nodes": [
+        "Greenline",
+        "Shepherd Uplands"
+      ],
+      "length_km": 2180,
+      "daily_capacity_scu": 64000,
+      "passenger_service": true,
+      "bottlenecks": [
+        "grade",
+        "winter"
+      ]
+    },
+    {
+      "id": "gate_ore_trunk",
+      "body_id": "iron_gate_prime",
+      "name": "Gate Ore Trunk",
+      "mode": "heavy_rail",
+      "nodes": [
+        "Anvil Range",
+        "Keelward",
+        "Hammer Junction",
+        "Grand Terminal"
+      ],
+      "length_km": 3930,
+      "daily_capacity_scu": 410000,
+      "passenger_service": false,
+      "bottlenecks": [
+        "oversize_loads",
+        "yard_windows"
+      ]
+    },
+    {
+      "id": "bradbury_lowell_mariner",
+      "body_id": "bradbury_prime",
+      "name": "Lowell-Mariner Line",
+      "mode": "electric_rail",
+      "nodes": [
+        "Lowell",
+        "Mariner City",
+        "Secure Receiving"
+      ],
+      "length_km": 1840,
+      "daily_capacity_scu": 48000,
+      "passenger_service": true,
+      "bottlenecks": [
+        "secure_cargo_windows"
+      ]
+    },
+    {
+      "id": "talos_claim_road",
+      "body_id": "talos_prime",
+      "name": "Claim Road",
+      "mode": "haul_road",
+      "nodes": [
+        "Hopewell",
+        "Claim Camp Four",
+        "Prospect Junction"
+      ],
+      "length_km": 620,
+      "daily_capacity_scu": 15400,
+      "passenger_service": true,
+      "bottlenecks": [
+        "dust",
+        "unfinished_sections",
+        "mine_convoys"
+      ]
+    },
+    {
+      "id": "lastlight_reserve_road",
+      "body_id": "lastlight_settlement",
+      "name": "Reserve Road",
+      "mode": "surface_road",
+      "nodes": [
+        "Beacon",
+        "Reserve Post"
+      ],
+      "length_km": 310,
+      "daily_capacity_scu": 1200,
+      "passenger_service": true,
+      "bottlenecks": [
+        "snow",
+        "wind",
+        "rescue_priority"
+      ]
+    }
+  ]
+}
