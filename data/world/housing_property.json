@@ -1,0 +1,131 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "housing_types": [
+    {
+      "id": "core_apartment",
+      "occupancy": 2.1,
+      "inputs": [
+        "power",
+        "water",
+        "food",
+        "consumer_goods"
+      ],
+      "maintenance": [
+        "fixtures",
+        "electronics",
+        "building_systems"
+      ]
+    },
+    {
+      "id": "industrial_worker_block",
+      "occupancy": 2.5,
+      "inputs": [
+        "power",
+        "heat",
+        "food",
+        "workwear"
+      ],
+      "maintenance": [
+        "HVAC",
+        "plumbing",
+        "structural"
+      ]
+    },
+    {
+      "id": "rural_compound",
+      "occupancy": 3.4,
+      "inputs": [
+        "power",
+        "fuel",
+        "consumer_goods",
+        "machinery"
+      ],
+      "maintenance": [
+        "vehicles",
+        "building_materials"
+      ]
+    },
+    {
+      "id": "sealed_habitat_unit",
+      "occupancy": 2.3,
+      "inputs": [
+        "power",
+        "air",
+        "water",
+        "filters",
+        "food"
+      ],
+      "maintenance": [
+        "seals",
+        "life_support",
+        "electronics"
+      ]
+    },
+    {
+      "id": "frontier_prefab",
+      "occupancy": 2.7,
+      "inputs": [
+        "power",
+        "water",
+        "filters",
+        "food"
+      ],
+      "maintenance": [
+        "panels",
+        "heaters",
+        "seals"
+      ]
+    }
+  ],
+  "operators": [
+    {
+      "id": "atlantic_habitat_group",
+      "name": "Atlantic Habitat Group",
+      "body_id": "earth",
+      "market": "mixed_residential"
+    },
+    {
+      "id": "shelf_civic_housing",
+      "name": "Shelf Civic Housing",
+      "body_id": "keshar_prime",
+      "market": "dense_residential"
+    },
+    {
+      "id": "upper_span_residences",
+      "name": "Upper Span Residences",
+      "body_id": "ilos_prime",
+      "market": "vertical_residential"
+    },
+    {
+      "id": "nine_currents_housing",
+      "name": "Nine Currents Housing Cooperative",
+      "body_id": "veyara_prime",
+      "market": "floating_residential"
+    },
+    {
+      "id": "junction_housing_commons",
+      "name": "Junction Housing Commons",
+      "body_id": "orun_prime",
+      "market": "subterranean_residential"
+    },
+    {
+      "id": "concord_residential_trust",
+      "name": "Concord Residential Trust",
+      "body_id": "concord_prime",
+      "market": "multispecies_residential"
+    },
+    {
+      "id": "roosevelt_worker_housing",
+      "name": "Roosevelt Worker Housing",
+      "body_id": "roosevelt",
+      "market": "industrial_residential"
+    },
+    {
+      "id": "hopewell_habitat_leasing",
+      "name": "Hopewell Habitat Leasing",
+      "body_id": "talos_prime",
+      "market": "frontier_prefab"
+    }
+  ]
+}
