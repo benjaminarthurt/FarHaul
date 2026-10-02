@@ -1,0 +1,42 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "infrastructure_types": [
+    {
+      "id": "traffic_beacon",
+      "functions": [
+        "identity",
+        "lane_advisory",
+        "hazard_broadcast"
+      ]
+    },
+    {
+      "id": "navigation_reference",
+      "functions": [
+        "position_reference",
+        "ephemeris_update"
+      ]
+    },
+    {
+      "id": "market_relay",
+      "functions": [
+        "market_packets",
+        "contract_packets"
+      ]
+    },
+    {
+      "id": "rescue_transponder",
+      "functions": [
+        "distress_relay",
+        "search_reference"
+      ]
+    }
+  ],
+  "coverage_rules": {
+    "core": "continuous major-lane coverage",
+    "developed": "continuous near inhabited bodies; intermittent outer lanes",
+    "outer": "major approaches only",
+    "frontier": "local settlement approaches; outbound coverage sparse"
+  }
+}
