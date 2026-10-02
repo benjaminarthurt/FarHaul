@@ -307,3 +307,14 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `ordinary_services.json` | Civilian service-business archetypes |
 | `economic_shocks.json` | Local disruption and dependency propagation |
 | `world_validation_rules.json` | Cross-dataset consistency and completeness rules |
+| `physical_geography.json` | Continental regions, plains, basins, mountains and resource-bearing terrain |
+| `hydrology_watersheds.json` | Watersheds, rivers, reservoirs, outlets and water-use constraints |
+| `climate_regions.json` | Operational climate zones affecting infrastructure and freight |
+| `resource_provinces.json` | Regional mineral, soil and resource endowments |
+| `agricultural_belts.json` | Large-scale farming regions, yields and freight nodes |
+| `intercity_transport.json` | Rail, road and other corridors connecting planetary settlements |
+| `planetary_power_grids.json` | Generation, load, storage and regional grid topology |
+| `industrial_corridors.json` | Regional concentrations of linked industry and freight |
+| `rural_regions.json` | Rural population, economies and service-access geography |
+| `suburban_belts.json` | Commuter belts, housing and metropolitan edge logistics |
+| `region_generation_standard.json` | Required physical/economic fields for dense planetary regions |
