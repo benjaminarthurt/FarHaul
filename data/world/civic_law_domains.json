@@ -1,0 +1,60 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "domains": [
+    {
+      "id": "labor",
+      "rules": [
+        "workplace_safety",
+        "wage_contract",
+        "crew_hours",
+        "collective_bargaining_varies"
+      ]
+    },
+    {
+      "id": "land_use",
+      "rules": [
+        "zoning",
+        "industrial_buffer",
+        "environmental_review",
+        "building_code"
+      ]
+    },
+    {
+      "id": "residency",
+      "rules": [
+        "local_residency_registration",
+        "work_permission_where_applicable",
+        "species_environment_accommodation"
+      ]
+    },
+    {
+      "id": "tax",
+      "rules": [
+        "jurisdictional_income",
+        "commercial_transaction",
+        "port_and_property"
+      ]
+    },
+    {
+      "id": "social",
+      "rules": [
+        "basic_emergency_care",
+        "education_access",
+        "unemployment_support_varies",
+        "pension_systems_vary"
+      ]
+    },
+    {
+      "id": "courts",
+      "rules": [
+        "civil_contract",
+        "commercial",
+        "criminal",
+        "administrative",
+        "salvage_specialty"
+      ]
+    }
+  ],
+  "principle": "Jurisdiction and due process are explicit. A law has an enforcing institution, evidence source and remedy."
+}
