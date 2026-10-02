@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "networks": [
+    {
+      "id": "new_houston_health",
+      "metro_id": "new_houston_metro",
+      "hospital_beds": 36100,
+      "clinics": 780,
+      "emergency_centers": 94,
+      "staff": 228000,
+      "specialties": [
+        "industrial_trauma",
+        "general",
+        "multispecies"
+      ]
+    },
+    {
+      "id": "nine_currents_health",
+      "metro_id": "nine_currents_metro",
+      "hospital_beds": 58400,
+      "clinics": 1190,
+      "emergency_centers": 132,
+      "staff": 361000,
+      "specialties": [
+        "aquatic",
+        "general",
+        "multispecies",
+        "storm"
+      ]
+    },
+    {
+      "id": "central_concord_health",
+      "metro_id": "central_concord_metro",
+      "hospital_beds": 91000,
+      "clinics": 1740,
+      "emergency_centers": 181,
+      "staff": 584000,
+      "specialties": [
+        "multispecies",
+        "travel",
+        "trauma",
+        "specialist"
+      ]
+    },
+    {
+      "id": "warm_junction_health",
+      "metro_id": "warm_junction_metro",
+      "hospital_beds": 39200,
+      "clinics": 840,
+      "emergency_centers": 77,
+      "staff": 249000,
+      "specialties": [
+        "general",
+        "industrial",
+        "thermal"
+      ]
+    },
+    {
+      "id": "hopewell_health",
+      "metro_id": "hopewell_metro",
+      "hospital_beds": 96,
+      "clinics": 7,
+      "emergency_centers": 2,
+      "staff": 640,
+      "specialties": [
+        "trauma",
+        "occupational",
+        "general"
+      ],
+      "referral": "Port Meridian for complex care"
+    }
+  ],
+  "freight_inputs": [
+    "pharmaceuticals",
+    "sterile_goods",
+    "medical_gases",
+    "food",
+    "cleaning_supplies",
+    "replacement_equipment"
+  ]
+}
