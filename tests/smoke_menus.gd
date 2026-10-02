@@ -53,6 +53,19 @@ func _run() -> void:
 	check(Session.scene_path() == Session.YARD_SCENE, "saved in the shipyard resumes in the shipyard")
 	check(LoadPanel.describe(0).contains("Empty") and LoadPanel.describe(2).contains("Second"), "load list describes slots")
 
+	print("freight lifecycle")
+	Session.load_slot(2)
+	var offers := Contracts.offers_from(Session.system_id())
+	check(not offers.is_empty(), "starting system has freight available")
+	if not offers.is_empty():
+		var accepted := Session.accept_contract(offers[0])
+		check(bool(accepted.ok) and not Session.active_contract().is_empty(), "contract can be accepted and cargo loaded")
+		var departed := Session.depart_active_contract()
+		check(bool(departed.ok) and Session.system_id() == String(offers[0].destination_system_id), "ready ship travels to contract destination")
+		var before := int(Session.profile.credits)
+		var delivered := Session.deliver_active_contract()
+		check(bool(delivered.ok) and Session.active_contract().is_empty() and int(Session.profile.credits) > before, "delivery unloads freight and pays the operator")
+
 	print("builder in a game")
 	Session.load_slot(2)
 	var scene: Node3D = load("res://scenes/main.tscn").instantiate()
