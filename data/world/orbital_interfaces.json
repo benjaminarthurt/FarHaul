@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "interfaces": [
+    {
+      "id": "earth_orbital_interface",
+      "body_id": "earth",
+      "gravity_g": 1,
+      "atmosphere": "dense",
+      "surface_to_orbit_cost_factor": 1.35,
+      "landing_access": "highly_regulated",
+      "methods": [
+        "reusable_lander",
+        "orbital_transfer"
+      ],
+      "large_freighter_policy": "orbital_transfer_preferred"
+    },
+    {
+      "id": "roosevelt_interface",
+      "body_id": "roosevelt",
+      "gravity_g": 0.84,
+      "atmosphere": "breathable_cold",
+      "surface_to_orbit_cost_factor": 1,
+      "landing_access": "routine_certified",
+      "methods": [
+        "lander",
+        "surface_launch",
+        "orbital_transfer"
+      ],
+      "large_freighter_policy": "mixed"
+    },
+    {
+      "id": "hesperus_interface",
+      "body_id": "hesperus_prime",
+      "gravity_g": 0.91,
+      "atmosphere": "breathable",
+      "surface_to_orbit_cost_factor": 1.08,
+      "landing_access": "routine_certified",
+      "methods": [
+        "lander",
+        "bulk_surface_launch"
+      ],
+      "large_freighter_policy": "orbital_bulk_transfer"
+    },
+    {
+      "id": "iron_gate_interface",
+      "body_id": "iron_gate_prime",
+      "gravity_g": 0.72,
+      "atmosphere": "dry",
+      "surface_to_orbit_cost_factor": 0.82,
+      "landing_access": "industrial",
+      "methods": [
+        "heavy_lander",
+        "orbital_lift",
+        "surface_launch"
+      ],
+      "large_freighter_policy": "orbital_yards"
+    },
+    {
+      "id": "bradbury_interface",
+      "body_id": "bradbury_prime",
+      "gravity_g": 0.68,
+      "atmosphere": "low_pressure",
+      "surface_to_orbit_cost_factor": 0.76,
+      "landing_access": "controlled",
+      "methods": [
+        "lander",
+        "surface_launch"
+      ],
+      "large_freighter_policy": "orbital_transfer"
+    },
+    {
+      "id": "talos_interface",
+      "body_id": "talos_prime",
+      "gravity_g": 0.79,
+      "atmosphere": "thin_breathable_lowlands",
+      "surface_to_orbit_cost_factor": 0.94,
+      "landing_access": "frontier_routine",
+      "methods": [
+        "lander"
+      ],
+      "large_freighter_policy": "medium_and_smaller_surface"
+    }
+  ],
+  "fees": {
+    "surface_landing_base_cr": {
+      "small": 180,
+      "medium": 420,
+      "large": 1100,
+      "heavy": 3200
+    },
+    "orbital_transfer_base_cr_per_scu": 38,
+    "priority_multiplier": 1.8,
+    "hazard_multiplier": 1.35,
+    "cold_chain_multiplier": 1.2
+  }
+}
