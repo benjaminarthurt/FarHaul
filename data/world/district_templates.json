@@ -1,0 +1,109 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "templates": [
+    {
+      "id": "mixed_residential",
+      "land_use": {
+        "residential": 0.62,
+        "retail": 0.12,
+        "office": 0.08,
+        "civic": 0.08,
+        "school": 0.04,
+        "medical": 0.03,
+        "recreation": 0.03
+      },
+      "freight": "light_frequent"
+    },
+    {
+      "id": "old_industrial",
+      "land_use": {
+        "industrial": 0.36,
+        "warehouse": 0.22,
+        "residential": 0.15,
+        "retail": 0.08,
+        "office": 0.06,
+        "repair": 0.08,
+        "civic": 0.05
+      },
+      "freight": "heavy"
+    },
+    {
+      "id": "modern_industrial",
+      "land_use": {
+        "industrial": 0.44,
+        "warehouse": 0.31,
+        "office": 0.08,
+        "utility": 0.07,
+        "repair": 0.06,
+        "retail": 0.04
+      },
+      "freight": "very_heavy"
+    },
+    {
+      "id": "commercial_core",
+      "land_use": {
+        "office": 0.31,
+        "retail": 0.22,
+        "residential": 0.18,
+        "hospitality": 0.12,
+        "civic": 0.09,
+        "medical": 0.04,
+        "recreation": 0.04
+      },
+      "freight": "consolidated"
+    },
+    {
+      "id": "working_residential",
+      "land_use": {
+        "residential": 0.7,
+        "retail": 0.1,
+        "school": 0.06,
+        "civic": 0.05,
+        "medical": 0.03,
+        "repair": 0.03,
+        "recreation": 0.03
+      },
+      "freight": "light"
+    },
+    {
+      "id": "wealthy_residential",
+      "land_use": {
+        "residential": 0.72,
+        "retail": 0.08,
+        "recreation": 0.08,
+        "school": 0.04,
+        "medical": 0.03,
+        "hospitality": 0.03,
+        "civic": 0.02
+      },
+      "freight": "light_high_value"
+    },
+    {
+      "id": "freight_district",
+      "land_use": {
+        "warehouse": 0.46,
+        "freight_terminal": 0.22,
+        "industrial": 0.12,
+        "repair": 0.1,
+        "office": 0.06,
+        "retail": 0.04
+      },
+      "freight": "extreme"
+    },
+    {
+      "id": "university_medical",
+      "land_use": {
+        "school": 0.3,
+        "medical": 0.25,
+        "residential": 0.18,
+        "office": 0.1,
+        "retail": 0.07,
+        "civic": 0.05,
+        "recreation": 0.05
+      },
+      "freight": "specialized"
+    }
+  ]
+}
