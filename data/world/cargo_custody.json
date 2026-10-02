@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "events": [
+    "shipper_release",
+    "carrier_pickup",
+    "terminal_receive",
+    "customs_hold",
+    "warehouse_receive",
+    "crossdock_transfer",
+    "local_carrier_pickup",
+    "consignee_receive"
+  ],
+  "record_fields": [
+    "cargo_lot_id",
+    "from_custodian",
+    "to_custodian",
+    "time",
+    "location",
+    "seal_state",
+    "condition",
+    "temperature_if_applicable",
+    "exceptions"
+  ],
+  "liability_rule": "Damage responsibility depends on custody record, contract terms and evidence rather than automatically attaching to the player."
+}
