@@ -1,0 +1,86 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "domains": [
+    {
+      "id": "media",
+      "examples": [
+        "system_news",
+        "local_radio_equivalent",
+        "trade_press",
+        "creator_networks",
+        "public_broadcast"
+      ]
+    },
+    {
+      "id": "sport",
+      "examples": [
+        "low_gravity_sport",
+        "heavy_gravity_strength_sport",
+        "marine_racing",
+        "vehicle_endurance",
+        "multispecies_adapted_leagues"
+      ]
+    },
+    {
+      "id": "food",
+      "examples": [
+        "regional_staples",
+        "species_environmental_diets",
+        "fusion_food",
+        "port_food"
+      ]
+    },
+    {
+      "id": "music",
+      "examples": [
+        "regional_popular",
+        "work_songs",
+        "electronic",
+        "acoustic",
+        "communal_performance"
+      ]
+    },
+    {
+      "id": "architecture",
+      "examples": [
+        "legacy_industrial",
+        "climate_adapted",
+        "multispecies_public",
+        "temporary_frontier"
+      ]
+    },
+    {
+      "id": "religion_philosophy",
+      "examples": [
+        "human_traditions",
+        "species_traditions",
+        "secular_civic",
+        "syncretic"
+      ],
+      "rule": "No belief system is universal within a species."
+    },
+    {
+      "id": "leisure",
+      "examples": [
+        "bars",
+        "cafes",
+        "parks",
+        "water_spaces",
+        "games",
+        "hiking",
+        "workshop_hobbies",
+        "live_performance"
+      ]
+    }
+  ],
+  "gameplay_links": [
+    "passenger_demand",
+    "holiday_closures",
+    "food_cargo",
+    "event_freight",
+    "local_reputation_context",
+    "architecture",
+    "ambient_media"
+  ]
+}
