@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "events": [
+    {
+      "id": "utility_failure",
+      "triggers": [
+        "equipment_failure",
+        "storm",
+        "maintenance_error"
+      ],
+      "effects": [
+        "service_capacity_down",
+        "critical_parts_contracts",
+        "possible_business_closure",
+        "price_pressure"
+      ],
+      "propagation": [
+        "households",
+        "hospitals",
+        "industry"
+      ]
+    },
+    {
+      "id": "transit_disruption",
+      "triggers": [
+        "weather",
+        "accident",
+        "maintenance"
+      ],
+      "effects": [
+        "commute_delay",
+        "local_delivery_delay",
+        "warehouse_congestion"
+      ],
+      "propagation": [
+        "employment",
+        "retail",
+        "port_throughput"
+      ]
+    },
+    {
+      "id": "housing_surge",
+      "triggers": [
+        "boom",
+        "migration",
+        "major_project"
+      ],
+      "effects": [
+        "rent_increase",
+        "construction_demand",
+        "temporary_housing",
+        "labor_cost_increase"
+      ],
+      "propagation": [
+        "retail",
+        "municipal_budget",
+        "freight"
+      ]
+    },
+    {
+      "id": "hospital_capacity_event",
+      "triggers": [
+        "industrial_accident",
+        "epidemic",
+        "storm"
+      ],
+      "effects": [
+        "medical_import_priority",
+        "staffing_pressure",
+        "elective_delay"
+      ],
+      "propagation": [
+        "transport",
+        "pharma",
+        "government"
+      ]
+    },
+    {
+      "id": "warehouse_shortage",
+      "triggers": [
+        "late_ship",
+        "demand_spike",
+        "spoilage"
+      ],
+      "effects": [
+        "reorder_contracts",
+        "rationing",
+        "substitution",
+        "price_increase"
+      ],
+      "propagation": [
+        "retail",
+        "industry",
+        "households"
+      ]
+    },
+    {
+      "id": "major_employer_closure",
+      "triggers": [
+        "market_failure",
+        "casualty",
+        "resource_depletion"
+      ],
+      "effects": [
+        "unemployment",
+        "outmigration",
+        "credit_stress",
+        "municipal_revenue_loss"
+      ],
+      "propagation": [
+        "housing",
+        "retail",
+        "banking",
+        "government"
+      ]
+    },
+    {
+      "id": "major_project_start",
+      "triggers": [
+        "yard_expansion",
+        "mine",
+        "transit",
+        "settlement_growth"
+      ],
+      "effects": [
+        "construction_imports",
+        "labor_migration",
+        "housing_pressure",
+        "equipment_demand"
+      ],
+      "propagation": [
+        "food",
+        "transport",
+        "utilities",
+        "services"
+      ]
+    }
+  ],
+  "rule": "Shocks propagate only through explicit dependencies and available information; they do not globally modify unrelated markets."
+}
