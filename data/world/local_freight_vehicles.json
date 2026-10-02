@@ -1,0 +1,99 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "vehicle_classes": [
+    {
+      "id": "urban_delivery_van",
+      "capacity_scu": [
+        1,
+        4
+      ],
+      "range_km": [
+        180,
+        600
+      ],
+      "access": "urban"
+    },
+    {
+      "id": "box_truck",
+      "capacity_scu": [
+        4,
+        18
+      ],
+      "range_km": [
+        300,
+        1200
+      ],
+      "access": "general_surface"
+    },
+    {
+      "id": "semi_hauler",
+      "capacity_scu": [
+        18,
+        60
+      ],
+      "range_km": [
+        500,
+        2400
+      ],
+      "access": "freight_corridors"
+    },
+    {
+      "id": "heavy_mine_hauler",
+      "capacity_scu": [
+        40,
+        160
+      ],
+      "range_km": [
+        100,
+        800
+      ],
+      "access": "industrial_only"
+    },
+    {
+      "id": "marine_cargo_boat",
+      "capacity_scu": [
+        8,
+        120
+      ],
+      "range_km": [
+        100,
+        2000
+      ],
+      "access": "marine"
+    },
+    {
+      "id": "subsurface_freight_crawler",
+      "capacity_scu": [
+        6,
+        40
+      ],
+      "range_km": [
+        50,
+        600
+      ],
+      "access": "tunnel_network"
+    },
+    {
+      "id": "vertical_freight_car",
+      "capacity_scu": [
+        2,
+        30
+      ],
+      "range_km": [
+        1,
+        80
+      ],
+      "access": "vertical_network"
+    }
+  ],
+  "dispatch_factors": [
+    "capacity",
+    "distance",
+    "environment",
+    "cargo_class",
+    "receiving_window",
+    "driver_or_automation_availability",
+    "traffic"
+  ]
+}
