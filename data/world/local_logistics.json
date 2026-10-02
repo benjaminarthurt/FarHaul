@@ -1,0 +1,202 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "operators": [
+    {
+      "id": "atlantic_intermodal",
+      "name": "Atlantic Intermodal",
+      "body_id": "earth",
+      "modes": [
+        "rail",
+        "road",
+        "port_drayage"
+      ],
+      "scale": "very_large"
+    },
+    {
+      "id": "luna_tunnel_freight",
+      "name": "Luna Tunnel Freight",
+      "body_id": "luna",
+      "modes": [
+        "buried_rail",
+        "pressurized_truck"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "mars_redline",
+      "name": "Mars Redline Freight",
+      "body_id": "mars",
+      "modes": [
+        "sealed_rail",
+        "surface_haul"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "shelf_heavy_transport",
+      "name": "Shelf Heavy Transport",
+      "body_id": "keshar_prime",
+      "modes": [
+        "heavy_rail",
+        "road",
+        "marine"
+      ],
+      "scale": "very_large"
+    },
+    {
+      "id": "span_freight",
+      "name": "Span Freight",
+      "body_id": "ilos_prime",
+      "modes": [
+        "vertical_freight",
+        "air_cargo"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "nine_currents_carriers",
+      "name": "Nine Currents Carriers",
+      "body_id": "veyara_prime",
+      "modes": [
+        "marine",
+        "subsurface"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "junction_freight_commons",
+      "name": "Junction Freight Commons",
+      "body_id": "orun_prime",
+      "modes": [
+        "tunnel_rail",
+        "cargo_crawl"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "concord_intermodal",
+      "name": "Concord Intermodal",
+      "body_id": "concord_prime",
+      "modes": [
+        "rail",
+        "road",
+        "air",
+        "orbital_drayage"
+      ],
+      "scale": "very_large"
+    },
+    {
+      "id": "roosevelt_rail",
+      "name": "Roosevelt Industrial Rail",
+      "body_id": "roosevelt",
+      "modes": [
+        "rail",
+        "yard_drayage"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "greenline_haul",
+      "name": "Greenline Haul Cooperative",
+      "body_id": "hesperus_prime",
+      "modes": [
+        "road",
+        "rail",
+        "farm_collection"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "keelward_heavy",
+      "name": "Keelward Heavy Transport",
+      "body_id": "iron_gate_prime",
+      "modes": [
+        "ore_rail",
+        "oversize_haul"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "lowell_secure",
+      "name": "Lowell Secure Logistics",
+      "body_id": "bradbury_prime",
+      "modes": [
+        "secure_road",
+        "air_courier"
+      ],
+      "scale": "medium"
+    },
+    {
+      "id": "crosswater_freight",
+      "name": "Crosswater Freight Cooperative",
+      "body_id": "pelagos_prime",
+      "modes": [
+        "marine",
+        "ferry_cargo"
+      ],
+      "scale": "medium"
+    },
+    {
+      "id": "anchor_lift",
+      "name": "Anchor Lift Services",
+      "body_id": "tidemark_prime",
+      "modes": [
+        "platform",
+        "marine_heavy_lift"
+      ],
+      "scale": "medium"
+    },
+    {
+      "id": "deepworks_freight",
+      "name": "Deepworks Freight Cooperative",
+      "body_id": "foundry_prime",
+      "modes": [
+        "tunnel",
+        "mass_lift"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "meridian_drayage",
+      "name": "Meridian Drayage Union",
+      "body_id": "meridian_station",
+      "modes": [
+        "station_tug",
+        "container_transfer"
+      ],
+      "scale": "large"
+    },
+    {
+      "id": "hopewell_haul",
+      "name": "Hopewell Haul",
+      "body_id": "talos_prime",
+      "modes": [
+        "surface_haul",
+        "claim_service"
+      ],
+      "scale": "small"
+    },
+    {
+      "id": "crossroads_cartage",
+      "name": "Crossroads Cartage",
+      "body_id": "waystation_habitat",
+      "modes": [
+        "station_transfer",
+        "surface_service"
+      ],
+      "scale": "small"
+    },
+    {
+      "id": "beacon_local",
+      "name": "Beacon Local Freight",
+      "body_id": "lastlight_settlement",
+      "modes": [
+        "road",
+        "crawler"
+      ],
+      "scale": "small"
+    }
+  ]
+}
