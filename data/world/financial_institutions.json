@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "insurers": [
+    {
+      "id": "concord_mutual",
+      "name": "Concord Mutual Marine",
+      "base_system_id": "concord",
+      "specialties": [
+        "hull",
+        "cargo",
+        "carrier_liability",
+        "passenger_liability"
+      ],
+      "client_profile": "established commercial operators",
+      "frontier_posture": "standard coverage through Lastlight; unsupported-space endorsements priced separately"
+    },
+    {
+      "id": "stonewall_underwriters",
+      "name": "Stonewall Underwriters",
+      "base_system_id": "keshar",
+      "specialties": [
+        "heavy_hull",
+        "machinery",
+        "hazard_liability"
+      ],
+      "client_profile": "industrial and heavy freight",
+      "frontier_posture": "conservative outside developed systems"
+    },
+    {
+      "id": "meridian_indemnity",
+      "name": "Meridian Indemnity Exchange",
+      "base_system_id": "port_meridian",
+      "specialties": [
+        "hull",
+        "cargo",
+        "salvage",
+        "expedition"
+      ],
+      "client_profile": "independents and outer-region operators",
+      "frontier_posture": "willing to write expensive named-route frontier coverage"
+    },
+    {
+      "id": "bluewater_assurance",
+      "name": "Bluewater Assurance Cooperative",
+      "base_system_id": "veyara",
+      "specialties": [
+        "environmental_liability",
+        "passenger_liability",
+        "marine_hull"
+      ],
+      "client_profile": "ocean-world and environmental operators",
+      "frontier_posture": "selective"
+    },
+    {
+      "id": "redline_risk_pool",
+      "name": "Redline Cooperative Risk Pool",
+      "base_system_id": "new_houston",
+      "specialties": [
+        "hull",
+        "cargo",
+        "carrier_liability"
+      ],
+      "client_profile": "owner-operators and small fleets",
+      "frontier_posture": "pragmatic through supported frontier"
+    }
+  ],
+  "lenders": [
+    {
+      "id": "concord_commercial_bank",
+      "name": "Concord Commercial Bank",
+      "base_system_id": "concord",
+      "products": [
+        "secured_ship_loan",
+        "fleet_credit"
+      ],
+      "client_profile": "low-risk established operators"
+    },
+    {
+      "id": "roosevelt_equipment_credit",
+      "name": "Roosevelt Equipment Credit",
+      "base_system_id": "new_houston",
+      "products": [
+        "used_ship_note",
+        "refit_finance",
+        "secured_ship_loan"
+      ],
+      "client_profile": "owner-operators and yard customers"
+    },
+    {
+      "id": "meridian_captains_credit",
+      "name": "Meridian Captains Credit Union",
+      "base_system_id": "port_meridian",
+      "products": [
+        "used_ship_note",
+        "repair_bridge_loan"
+      ],
+      "client_profile": "independent crews with demonstrated earnings"
+    },
+    {
+      "id": "gateworks_finance",
+      "name": "Gateworks Commercial Finance",
+      "base_system_id": "iron_gate",
+      "products": [
+        "heavy_ship_finance",
+        "fleet_credit"
+      ],
+      "client_profile": "heavy carriers and industrial firms"
+    }
+  ],
+  "pricing_inputs": [
+    "ship_value",
+    "class",
+    "age",
+    "maintenance_history",
+    "claims_history",
+    "commercial_reputation",
+    "crew_qualification",
+    "operating_area",
+    "cargo_class",
+    "deductible"
+  ],
+  "information_rule": "A financial institution acts on information it receives through applications, claims, registry records, permitted commercial data exchange, inspections or investigations."
+}
