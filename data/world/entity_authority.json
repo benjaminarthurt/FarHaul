@@ -1,0 +1,88 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "hierarchy": [
+    {
+      "level": "system",
+      "id_pattern": "^[a-z0-9_]+$",
+      "parent": null,
+      "canonical_file": "system_demographics.json"
+    },
+    {
+      "level": "body",
+      "parent": "system",
+      "canonical_file": "system_bodies.json"
+    },
+    {
+      "level": "region",
+      "parent": "body",
+      "canonical_file": "planetary_regions_complete.json"
+    },
+    {
+      "level": "settlement",
+      "parent": "region_or_body",
+      "canonical_file": "settlements_authority.json"
+    },
+    {
+      "level": "district",
+      "parent": "settlement",
+      "canonical_file": "districts.json"
+    },
+    {
+      "level": "site",
+      "parent": "district_or_settlement_or_region",
+      "canonical_file": "sites_authority.json"
+    },
+    {
+      "level": "organization",
+      "parent": "site_or_system",
+      "canonical_file": "organizations_authority.json"
+    }
+  ],
+  "authority_rules": [
+    "Canonical authority files own identity and parentage; specialized files attach mechanics by stable ID.",
+    "Legacy files remain readable during migration but may not introduce competing identity records.",
+    "Display names are mutable; IDs are not.",
+    "Aggregate entities use explicit aggregate=true and population/capacity scopes.",
+    "Every mechanics-facing foreign key declares its target entity class."
+  ],
+  "legacy_migrations": [
+    {
+      "legacy": "settlements.json",
+      "authority": "settlements_authority.json"
+    },
+    {
+      "legacy": "settlement_network.json",
+      "authority": "settlements_authority.json"
+    },
+    {
+      "legacy": "commercial_companies.json",
+      "authority": "organizations_authority.json"
+    },
+    {
+      "legacy": "commercial_entities_expanded.json",
+      "authority": "organizations_authority.json"
+    },
+    {
+      "legacy": "organizations.json",
+      "authority": "organizations_authority.json"
+    },
+    {
+      "legacy": "industrial_sites.json",
+      "authority": "sites_authority.json"
+    },
+    {
+      "legacy": "factories_processors.json",
+      "authority": "sites_authority.json"
+    },
+    {
+      "legacy": "mining_sites.json",
+      "authority": "sites_authority.json"
+    },
+    {
+      "legacy": "agricultural_sites.json",
+      "authority": "sites_authority.json"
+    }
+  ]
+}
