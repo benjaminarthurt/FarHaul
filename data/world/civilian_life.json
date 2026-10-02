@@ -1,0 +1,520 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "world_profiles": [
+    {
+      "id": "earth",
+      "urbanization": 0.82,
+      "housing": [
+        "legacy urban",
+        "high-rise mixed use",
+        "suburban",
+        "rural",
+        "orbital-linked"
+      ],
+      "mobility": [
+        "rail",
+        "road freight",
+        "air",
+        "sea",
+        "orbital transfer"
+      ],
+      "utilities": [
+        "continental power grids",
+        "municipal water",
+        "waste recovery",
+        "global data networks"
+      ],
+      "institutions": [
+        "universities",
+        "hospitals",
+        "local governments",
+        "courts",
+        "schools",
+        "ports"
+      ],
+      "consumption": [
+        "food",
+        "housing",
+        "consumer goods",
+        "medical",
+        "mobility",
+        "entertainment"
+      ],
+      "daily_life": "Dense old civilization with enormous regional variation; interstellar freight is important but most daily life remains local."
+    },
+    {
+      "id": "keshar_prime",
+      "urbanization": 0.76,
+      "housing": [
+        "low-rise load-bearing blocks",
+        "extended-household compounds",
+        "industrial housing"
+      ],
+      "mobility": [
+        "heavy rail",
+        "surface freightways",
+        "coastal shipping",
+        "orbital lift"
+      ],
+      "utilities": [
+        "storm-hardened grids",
+        "desalination",
+        "district heat",
+        "redundant water"
+      ],
+      "institutions": [
+        "apprenticeship halls",
+        "maintenance courts",
+        "hospitals",
+        "civic directorates"
+      ],
+      "consumption": [
+        "dense foods",
+        "durable goods",
+        "household machinery",
+        "maintenance services"
+      ],
+      "daily_life": "Cities are broad, durable and maintenance-conscious; industrial infrastructure is visible and culturally ordinary."
+    },
+    {
+      "id": "ilos_prime",
+      "urbanization": 0.88,
+      "housing": [
+        "vertical residential towers",
+        "suspended districts",
+        "professional residences"
+      ],
+      "mobility": [
+        "vertical rail",
+        "cable transit",
+        "light freight lifts",
+        "orbital shuttle"
+      ],
+      "utilities": [
+        "high-efficiency grids",
+        "water recovery",
+        "distributed storage"
+      ],
+      "institutions": [
+        "technical institutes",
+        "clinics",
+        "professional guilds",
+        "assembly offices"
+      ],
+      "consumption": [
+        "light manufactured goods",
+        "precision services",
+        "food",
+        "education"
+      ],
+      "daily_life": "Vertical commuting and strict mass discipline shape both domestic and commercial life."
+    },
+    {
+      "id": "veyara_prime",
+      "urbanization": 0.71,
+      "housing": [
+        "floating neighborhoods",
+        "submerged districts",
+        "island cities"
+      ],
+      "mobility": [
+        "water transit",
+        "subsurface transit",
+        "air",
+        "orbital shuttle"
+      ],
+      "utilities": [
+        "closed-cycle water",
+        "bio-processing",
+        "storm power",
+        "environmental control"
+      ],
+      "institutions": [
+        "waters councils",
+        "clinics",
+        "schools",
+        "ecological utilities"
+      ],
+      "consumption": [
+        "aquatic food",
+        "environmental services",
+        "household biotech",
+        "marine transport"
+      ],
+      "daily_life": "Water is public space, freight corridor and utility network at once."
+    },
+    {
+      "id": "orun_prime",
+      "urbanization": 0.91,
+      "housing": [
+        "subterranean communal blocks",
+        "junction neighborhoods",
+        "private sleep cells"
+      ],
+      "mobility": [
+        "tunnel rail",
+        "walkways",
+        "cargo crawls",
+        "surface lifts"
+      ],
+      "utilities": [
+        "district thermal loops",
+        "geothermal power",
+        "water recycling",
+        "shared workshops"
+      ],
+      "institutions": [
+        "junction councils",
+        "repair schools",
+        "clinics",
+        "community kitchens"
+      ],
+      "consumption": [
+        "prepared food",
+        "tools",
+        "thermal services",
+        "shared facilities"
+      ],
+      "daily_life": "Dense underground neighborhoods blend homes, workshops, transit and utilities."
+    },
+    {
+      "id": "concord_prime",
+      "urbanization": 0.86,
+      "housing": [
+        "multispecies apartment districts",
+        "gravity-specific residences",
+        "commercial lodging"
+      ],
+      "mobility": [
+        "intermodal rail",
+        "surface freight",
+        "air",
+        "orbital transfer"
+      ],
+      "utilities": [
+        "zoned atmosphere",
+        "variable-gravity facilities",
+        "standardized freight utilities"
+      ],
+      "institutions": [
+        "banks",
+        "standards bodies",
+        "arbitration courts",
+        "universities",
+        "hospitals"
+      ],
+      "consumption": [
+        "imported food",
+        "services",
+        "finance",
+        "consumer goods",
+        "travel"
+      ],
+      "daily_life": "Commercial multiculturalism is mundane rather than exceptional."
+    },
+    {
+      "id": "roosevelt",
+      "urbanization": 0.74,
+      "housing": [
+        "industrial cities",
+        "worker suburbs",
+        "yard housing",
+        "small towns"
+      ],
+      "mobility": [
+        "freight rail",
+        "road",
+        "surface launch",
+        "orbital transfer"
+      ],
+      "utilities": [
+        "cold-weather grids",
+        "district heat",
+        "industrial water"
+      ],
+      "institutions": [
+        "yard schools",
+        "hospitals",
+        "credit unions",
+        "trade halls"
+      ],
+      "consumption": [
+        "food",
+        "workwear",
+        "vehicles",
+        "parts",
+        "housing heat"
+      ],
+      "daily_life": "Shift schedules, weather and yard work structure ordinary life."
+    },
+    {
+      "id": "hesperus_prime",
+      "urbanization": 0.39,
+      "housing": [
+        "farm towns",
+        "processing cities",
+        "rural compounds"
+      ],
+      "mobility": [
+        "rail",
+        "autonomous road freight",
+        "agricultural air",
+        "orbital export"
+      ],
+      "utilities": [
+        "irrigation",
+        "rural grids",
+        "cold chain",
+        "water storage"
+      ],
+      "institutions": [
+        "producer exchanges",
+        "schools",
+        "regional clinics",
+        "agricultural colleges"
+      ],
+      "consumption": [
+        "machinery",
+        "household goods",
+        "fuel",
+        "medical",
+        "services"
+      ],
+      "daily_life": "Population is sparse, but freight volume is enormous during harvest cycles."
+    },
+    {
+      "id": "iron_gate_prime",
+      "urbanization": 0.81,
+      "housing": [
+        "foundry cities",
+        "yard-worker districts",
+        "contractor housing"
+      ],
+      "mobility": [
+        "ore rail",
+        "heavy freightways",
+        "orbital lift",
+        "worker transit"
+      ],
+      "utilities": [
+        "industrial power",
+        "process water",
+        "district cooling"
+      ],
+      "institutions": [
+        "trade schools",
+        "industrial clinics",
+        "labor halls",
+        "yard offices"
+      ],
+      "consumption": [
+        "food",
+        "workwear",
+        "consumer goods",
+        "parts"
+      ],
+      "daily_life": "Large-hull construction dominates employment without eliminating ordinary family and neighborhood life."
+    },
+    {
+      "id": "bradbury_prime",
+      "urbanization": 0.79,
+      "housing": [
+        "campus cities",
+        "research towns",
+        "residential valleys"
+      ],
+      "mobility": [
+        "electric rail",
+        "air",
+        "secure freight",
+        "orbital shuttle"
+      ],
+      "utilities": [
+        "clean power",
+        "laboratory utilities",
+        "data networks"
+      ],
+      "institutions": [
+        "universities",
+        "labs",
+        "hospitals",
+        "schools",
+        "review boards"
+      ],
+      "consumption": [
+        "food",
+        "instruments",
+        "media",
+        "education",
+        "medical"
+      ],
+      "daily_life": "Research institutions are major employers, but the planet also contains ordinary cities supporting them."
+    },
+    {
+      "id": "pelagos_prime",
+      "urbanization": 0.58,
+      "housing": [
+        "island cities",
+        "floating districts",
+        "coastal towns"
+      ],
+      "mobility": [
+        "water freight",
+        "ferries",
+        "subsurface transit",
+        "orbital shuttle"
+      ],
+      "utilities": [
+        "water treatment",
+        "storm grids",
+        "aquaculture systems"
+      ],
+      "institutions": [
+        "joint schools",
+        "marine hospitals",
+        "charter councils"
+      ],
+      "consumption": [
+        "food",
+        "marine equipment",
+        "household goods",
+        "biotech"
+      ],
+      "daily_life": "Mixed-species neighborhoods developed around water transport and biological industries."
+    },
+    {
+      "id": "tidemark_prime",
+      "urbanization": 0.96,
+      "housing": [
+        "platform apartments",
+        "industrial habitation",
+        "storm shelters"
+      ],
+      "mobility": [
+        "platform transit",
+        "marine craft",
+        "orbital transfer"
+      ],
+      "utilities": [
+        "desalination",
+        "storm power",
+        "life support",
+        "industrial pumping"
+      ],
+      "institutions": [
+        "platform councils",
+        "clinics",
+        "technical schools"
+      ],
+      "consumption": [
+        "food",
+        "parts",
+        "filters",
+        "medical",
+        "dry goods"
+      ],
+      "daily_life": "Nearly every resident lives inside infrastructure built to keep the ocean outside."
+    },
+    {
+      "id": "foundry_prime",
+      "urbanization": 0.93,
+      "housing": [
+        "subterranean city blocks",
+        "factory-adjacent housing"
+      ],
+      "mobility": [
+        "freight lifts",
+        "tunnel rail",
+        "service corridors"
+      ],
+      "utilities": [
+        "geothermal heat",
+        "process cooling",
+        "air treatment",
+        "water recycling"
+      ],
+      "institutions": [
+        "technical schools",
+        "clinics",
+        "industrial councils"
+      ],
+      "consumption": [
+        "food",
+        "electronics",
+        "household goods",
+        "cooling equipment"
+      ],
+      "daily_life": "Most residents rarely need the hostile surface."
+    },
+    {
+      "id": "talos_prime",
+      "urbanization": 0.69,
+      "housing": [
+        "prefab blocks",
+        "converted containers",
+        "company camps",
+        "informal rentals"
+      ],
+      "mobility": [
+        "haul roads",
+        "utility vehicles",
+        "surface pads"
+      ],
+      "utilities": [
+        "imported power modules",
+        "water plants",
+        "temporary grids"
+      ],
+      "institutions": [
+        "provisional offices",
+        "clinic",
+        "trade school",
+        "claim exchange"
+      ],
+      "consumption": [
+        "food",
+        "water",
+        "filters",
+        "housing modules",
+        "tools"
+      ],
+      "daily_life": "Housing and utilities lag population growth; ordinary services become profitable businesses quickly."
+    },
+    {
+      "id": "lastlight_settlement",
+      "urbanization": 0.84,
+      "housing": [
+        "compact town housing",
+        "crew lodging",
+        "survey barracks"
+      ],
+      "mobility": [
+        "surface roads",
+        "utility crawlers",
+        "orbital shuttle"
+      ],
+      "utilities": [
+        "local power",
+        "water recovery",
+        "heated distribution"
+      ],
+      "institutions": [
+        "civil office",
+        "survey house",
+        "clinic",
+        "school",
+        "communications office"
+      ],
+      "consumption": [
+        "food",
+        "heat",
+        "parts",
+        "medical",
+        "expedition supplies"
+      ],
+      "daily_life": "A small permanent town supports residents as well as transient expedition crews."
+    }
+  ]
+}
