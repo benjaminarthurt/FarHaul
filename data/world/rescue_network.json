@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "providers": [
+    {
+      "id": "sol_rescue_coordination",
+      "base": "sol",
+      "coverage": [
+        "sol",
+        "new_houston"
+      ],
+      "response": "routine",
+      "billing": "public_and_insurer_recovery"
+    },
+    {
+      "id": "concord_rescue_service",
+      "base": "concord",
+      "coverage": [
+        "concord",
+        "new_houston",
+        "hesperus",
+        "carver",
+        "bradbury"
+      ],
+      "response": "routine",
+      "billing": "public_core_plus_tow_fees"
+    },
+    {
+      "id": "meridian_rescue_coordination",
+      "base": "port_meridian",
+      "coverage": [
+        "port_meridian",
+        "pelagos",
+        "tidemark",
+        "foundry",
+        "talos",
+        "waystation"
+      ],
+      "response": "limited_outer",
+      "billing": "tow_and_recovery"
+    },
+    {
+      "id": "lastlight_rescue_survey",
+      "base": "lastlight",
+      "coverage": [
+        "lastlight",
+        "lastlight_outward_corridor"
+      ],
+      "response": "best_effort",
+      "billing": "public_emergency_plus_recovery_costs"
+    }
+  ],
+  "priority": [
+    "life_threat",
+    "uncontrolled_hazard",
+    "disabled_passenger_vessel",
+    "disabled_commercial_vessel",
+    "property_recovery"
+  ],
+  "rule": "Coverage is not a guarantee. Distance, fuel, weather, available craft and competing incidents determine response."
+}
