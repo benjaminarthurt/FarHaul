@@ -47,6 +47,10 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `businesses.json` | Ordinary chandlers, surveyors, parts shops, lodging and frontier suppliers |
 | `communications.json` | Relay networks, frontier data latency, radio terminology and example traffic |
 | `insurance_finance.json` | Hull/cargo insurance, ship loans and owner-operator financial realities |
+| `governments.json` | Independent system governments, jurisdictions and registry authorities |
+| `ship_registration.json` | Vessel registration states, renewal, major modifications and yard compliance behavior |
+| `insurance_rules.json` | Optional insurance certificates, restrictions, violations, detection and cancellation risk |
+| `port_access_rules.json` | How core, industrial, outer, frontier and informal ports treat registration and insurance |
 
 ## Stable IDs
 
