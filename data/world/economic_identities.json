@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "identities": [
+    {
+      "id": "population",
+      "equation": "body_population = sum(region_population_or_aggregate)"
+    },
+    {
+      "id": "settlement",
+      "equation": "region_population >= sum(named_settlement_population)"
+    },
+    {
+      "id": "labor",
+      "equation": "employed + unemployed + students + caregivers + retired + other = modeled_population"
+    },
+    {
+      "id": "production",
+      "equation": "output <= capacity * utilization * input_availability * utility_availability * labor_availability"
+    },
+    {
+      "id": "consumption",
+      "equation": "inventory_next = inventory + production + receipts - consumption - shipments - loss"
+    },
+    {
+      "id": "freight",
+      "equation": "scheduled_capacity + spot_capacity >= realized_shipments or backlog grows"
+    },
+    {
+      "id": "utilities",
+      "equation": "served_load <= available_generation_or_treatment + storage_draw"
+    },
+    {
+      "id": "finance",
+      "equation": "cash_next = cash + revenue + borrowing - operating_cost - capex - debt_service"
+    },
+    {
+      "id": "housing",
+      "equation": "occupied_units <= habitable_units; excess_households create crowding_or_migration"
+    }
+  ],
+  "tolerances": {
+    "population_relative": 0.001,
+    "inventory_negative": 0,
+    "capacity_overage_relative": 0.02
+  }
+}
