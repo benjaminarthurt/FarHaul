@@ -16,6 +16,9 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `coordinates.json` | Draft 3D gameplay coordinates and travel/fuel model inputs |
 | `markets.json` | Per-system commodity stock, demand and baseline local price multipliers |
 | `ports.json` | Physical freight terminals, docks and spaceports with hull limits, fees and services |
+| `worlds.json` | Detailed planets, moons, belts, habitats and stations: environment, settlement rationale, culture and visual identity |
+| `history.json` | Shared calendar, setting eras and major historical events |
+| `survey_regions.json` | Exploration states, frontier regions, supply gateways and survey design rules |
 
 ## Stable IDs
 
