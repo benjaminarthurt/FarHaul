@@ -1,0 +1,169 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "identity_authority": true,
+  "settlements": [
+    {
+      "id": "rotterdam_orbital",
+      "body_id": "earth",
+      "name": "Rotterdam Orbital",
+      "population": 420000,
+      "type": "orbital_city"
+    },
+    {
+      "id": "new_houston",
+      "body_id": "roosevelt",
+      "name": "New Houston",
+      "population": 11800000,
+      "type": "industrial_metropolis"
+    },
+    {
+      "id": "greenline",
+      "body_id": "hesperus_prime",
+      "name": "Greenline",
+      "population": 1900000,
+      "type": "agricultural_city"
+    },
+    {
+      "id": "keelward",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward",
+      "population": 7400000,
+      "type": "industrial_city"
+    },
+    {
+      "id": "twelve",
+      "body_id": "carver_habitats",
+      "name": "Twelve",
+      "population": 610000,
+      "type": "habitat_city"
+    },
+    {
+      "id": "lowell",
+      "body_id": "bradbury_prime",
+      "name": "Lowell",
+      "population": 4300000,
+      "type": "research_city"
+    },
+    {
+      "id": "crosswater",
+      "body_id": "pelagos_prime",
+      "name": "Crosswater",
+      "population": 2600000,
+      "type": "marine_city"
+    },
+    {
+      "id": "anchor_seven",
+      "body_id": "tidemark_prime",
+      "name": "Anchor Seven",
+      "population": 184000,
+      "type": "platform_city"
+    },
+    {
+      "id": "deepworks",
+      "body_id": "foundry_prime",
+      "name": "Deepworks",
+      "population": 5100000,
+      "type": "subsurface_city"
+    },
+    {
+      "id": "old_ring",
+      "body_id": "meridian_station",
+      "name": "Old Ring",
+      "population": 310000,
+      "type": "station_district_city"
+    },
+    {
+      "id": "hopewell",
+      "body_id": "talos_prime",
+      "name": "Hopewell",
+      "population": 51000,
+      "type": "boomtown"
+    },
+    {
+      "id": "crossroads",
+      "body_id": "waystation_habitat",
+      "name": "Crossroads",
+      "population": 23000,
+      "type": "transit_habitat"
+    },
+    {
+      "id": "beacon",
+      "body_id": "lastlight_settlement",
+      "name": "Beacon",
+      "population": 7900,
+      "type": "frontier_town"
+    },
+    {
+      "id": "copernicus_works",
+      "body_id": "luna",
+      "name": "Copernicus Works",
+      "population": 12800000,
+      "type": "sealed_city"
+    },
+    {
+      "id": "lowell_crossing",
+      "body_id": "mars",
+      "name": "Lowell Crossing",
+      "population": 9400000,
+      "type": "sealed_city"
+    },
+    {
+      "id": "hanging_works_city",
+      "body_id": "ilos_prime",
+      "name": "Hanging Works City",
+      "population": 6200000,
+      "type": "vertical_city"
+    },
+    {
+      "id": "nine_currents_city",
+      "body_id": "veyara_prime",
+      "name": "Nine Currents",
+      "population": 18400000,
+      "type": "marine_metropolis"
+    },
+    {
+      "id": "warm_junction_city",
+      "body_id": "orun_prime",
+      "name": "Warm Junction",
+      "population": 12200000,
+      "type": "subsurface_metropolis"
+    },
+    {
+      "id": "central_concord",
+      "body_id": "concord_prime",
+      "name": "Central Concord",
+      "population": 27000000,
+      "type": "multispecies_metropolis"
+    },
+    {
+      "id": "anvil_city",
+      "body_id": "iron_gate_prime",
+      "name": "Anvil City",
+      "population": 2100000,
+      "type": "industrial_city"
+    },
+    {
+      "id": "mariner_city",
+      "body_id": "bradbury_prime",
+      "name": "Mariner City",
+      "population": 1600000,
+      "type": "research_city"
+    },
+    {
+      "id": "shoal_city",
+      "body_id": "pelagos_prime",
+      "name": "Shoal City",
+      "population": 930000,
+      "type": "marine_city"
+    },
+    {
+      "id": "liftmouth",
+      "body_id": "foundry_prime",
+      "name": "Liftmouth",
+      "population": 690000,
+      "type": "industrial_town"
+    }
+  ]
+}
