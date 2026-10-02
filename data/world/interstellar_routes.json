@@ -1,0 +1,177 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "route_classes": {
+    "trunk": {
+      "nav_quality": 0.99,
+      "rescue": "routine",
+      "relay": "frequent",
+      "traffic": "heavy"
+    },
+    "commercial": {
+      "nav_quality": 0.97,
+      "rescue": "available",
+      "relay": "scheduled",
+      "traffic": "moderate"
+    },
+    "outer": {
+      "nav_quality": 0.92,
+      "rescue": "limited",
+      "relay": "delayed",
+      "traffic": "light"
+    },
+    "frontier": {
+      "nav_quality": 0.82,
+      "rescue": "conditional",
+      "relay": "carried_or_sparse",
+      "traffic": "sparse"
+    }
+  },
+  "legs": [
+    {
+      "id": "sol_new_houston",
+      "from": "sol",
+      "to": "new_houston",
+      "class": "trunk",
+      "distance_ly": 5.94,
+      "baseline_ship_movements_per_30d": 820
+    },
+    {
+      "id": "new_houston_concord",
+      "from": "new_houston",
+      "to": "concord",
+      "class": "trunk",
+      "distance_ly": 6.14,
+      "baseline_ship_movements_per_30d": 690
+    },
+    {
+      "id": "concord_carver",
+      "from": "concord",
+      "to": "carver",
+      "class": "trunk",
+      "distance_ly": 4.09,
+      "baseline_ship_movements_per_30d": 760
+    },
+    {
+      "id": "carver_iron_gate",
+      "from": "carver",
+      "to": "iron_gate",
+      "class": "commercial",
+      "distance_ly": 3.7,
+      "baseline_ship_movements_per_30d": 510
+    },
+    {
+      "id": "iron_gate_keshar",
+      "from": "iron_gate",
+      "to": "keshar",
+      "class": "commercial",
+      "distance_ly": 5.18,
+      "baseline_ship_movements_per_30d": 470
+    },
+    {
+      "id": "concord_bradbury",
+      "from": "concord",
+      "to": "bradbury",
+      "class": "commercial",
+      "distance_ly": 4.57,
+      "baseline_ship_movements_per_30d": 390
+    },
+    {
+      "id": "bradbury_ilos",
+      "from": "bradbury",
+      "to": "ilos",
+      "class": "commercial",
+      "distance_ly": 6,
+      "baseline_ship_movements_per_30d": 330
+    },
+    {
+      "id": "keshar_orun",
+      "from": "keshar",
+      "to": "orun",
+      "class": "commercial",
+      "distance_ly": 9.05,
+      "baseline_ship_movements_per_30d": 260
+    },
+    {
+      "id": "orun_foundry",
+      "from": "orun",
+      "to": "foundry",
+      "class": "commercial",
+      "distance_ly": 5.17,
+      "baseline_ship_movements_per_30d": 210
+    },
+    {
+      "id": "carver_port_meridian",
+      "from": "carver",
+      "to": "port_meridian",
+      "class": "commercial",
+      "distance_ly": 13,
+      "baseline_ship_movements_per_30d": 240
+    },
+    {
+      "id": "foundry_port_meridian",
+      "from": "foundry",
+      "to": "port_meridian",
+      "class": "commercial",
+      "distance_ly": 8.18,
+      "baseline_ship_movements_per_30d": 190
+    },
+    {
+      "id": "veyara_tidemark",
+      "from": "veyara",
+      "to": "tidemark",
+      "class": "commercial",
+      "distance_ly": 4.04,
+      "baseline_ship_movements_per_30d": 170
+    },
+    {
+      "id": "tidemark_pelagos",
+      "from": "tidemark",
+      "to": "pelagos",
+      "class": "commercial",
+      "distance_ly": 4.24,
+      "baseline_ship_movements_per_30d": 150
+    },
+    {
+      "id": "pelagos_port_meridian",
+      "from": "pelagos",
+      "to": "port_meridian",
+      "class": "commercial",
+      "distance_ly": 5.55,
+      "baseline_ship_movements_per_30d": 180
+    },
+    {
+      "id": "concord_hesperus",
+      "from": "concord",
+      "to": "hesperus",
+      "class": "commercial",
+      "distance_ly": 5.45,
+      "baseline_ship_movements_per_30d": 310
+    },
+    {
+      "id": "port_meridian_talos",
+      "from": "port_meridian",
+      "to": "talos",
+      "class": "outer",
+      "distance_ly": 6.56,
+      "baseline_ship_movements_per_30d": 82
+    },
+    {
+      "id": "port_meridian_waystation",
+      "from": "port_meridian",
+      "to": "waystation",
+      "class": "outer",
+      "distance_ly": 6.65,
+      "baseline_ship_movements_per_30d": 64
+    },
+    {
+      "id": "waystation_lastlight",
+      "from": "waystation",
+      "to": "lastlight",
+      "class": "frontier",
+      "distance_ly": 6.67,
+      "baseline_ship_movements_per_30d": 18
+    }
+  ]
+}
