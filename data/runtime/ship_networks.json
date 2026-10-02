@@ -1,0 +1,106 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "networks": [
+    {
+      "id": "structural",
+      "state": [
+        "intact",
+        "deformed",
+        "fractured"
+      ],
+      "effects": [
+        "load_path",
+        "alignment"
+      ]
+    },
+    {
+      "id": "electrical",
+      "state": [
+        "energized",
+        "isolated",
+        "overloaded",
+        "failed"
+      ],
+      "effects": [
+        "equipment_availability",
+        "heat"
+      ]
+    },
+    {
+      "id": "coolant",
+      "state": [
+        "nominal",
+        "restricted",
+        "leaking",
+        "dry"
+      ],
+      "effects": [
+        "heat_rejection"
+      ]
+    },
+    {
+      "id": "air",
+      "state": [
+        "pressurized",
+        "leaking",
+        "isolated",
+        "vacuum"
+      ],
+      "effects": [
+        "habitability"
+      ]
+    },
+    {
+      "id": "water",
+      "state": [
+        "nominal",
+        "restricted",
+        "contaminated",
+        "empty"
+      ],
+      "effects": [
+        "crew_endurance"
+      ]
+    },
+    {
+      "id": "waste",
+      "state": [
+        "nominal",
+        "restricted",
+        "full"
+      ],
+      "effects": [
+        "habitability"
+      ]
+    },
+    {
+      "id": "data",
+      "state": [
+        "online",
+        "degraded",
+        "isolated"
+      ],
+      "effects": [
+        "automation",
+        "sensors",
+        "control"
+      ]
+    },
+    {
+      "id": "fuel",
+      "state": [
+        "nominal",
+        "restricted",
+        "leaking",
+        "empty"
+      ],
+      "effects": [
+        "propulsion",
+        "power"
+      ]
+    }
+  ],
+  "flow_rule": "Equipment works only when required connected networks satisfy minimum state."
+}
