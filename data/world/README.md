@@ -12,7 +12,7 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `species.json` | Playable species, home systems, biology, culture and engineering identity |
 | `systems.json` | Known populated systems, destinations, population, economy and narrative identity |
 | `routes.json` | Direct trade/navigation relationships between systems |
-| `corridors.json` | Named multi-system commercial corridors |
+| `corridors.json` | Named multi-system commercial corridors |\n| `yards.json` | Orbital shipyards, build tiers, service costs, hangars and starting-yard choices |\n| `commodities.json` | Freight goods, physical loading data, base values and handling requirements |
 
 ## Stable IDs
 
