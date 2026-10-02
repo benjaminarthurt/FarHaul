@@ -105,7 +105,7 @@ func _build_ui() -> void:
 	where.add_theme_color_override("font_color", Brand.OFFWHITE)
 	col.add_child(where)
 	var yard := Label.new()
-	yard.text = "%s  ·  %s" % [w.yard_name, w.yard_type]
+	yard.text = "%s  ·  %s  ·  %s" % [w.name, Worlds.yard_tier(String(w.tier)).name, String(w.system_id).replace("_", " ").capitalize()]
 	yard.add_theme_font_size_override("font_size", 18)
 	yard.add_theme_color_override("font_color", Brand.AMBER)
 	col.add_child(yard)
