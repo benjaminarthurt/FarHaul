@@ -1,0 +1,233 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "layers": [
+    {
+      "id": "municipal",
+      "functions": [
+        "zoning",
+        "local_roads",
+        "utilities_oversight",
+        "building_permits",
+        "local_services",
+        "local_business_licensing"
+      ]
+    },
+    {
+      "id": "regional",
+      "functions": [
+        "regional_transport",
+        "hospitals",
+        "water_management",
+        "environmental_rules",
+        "major_infrastructure"
+      ]
+    },
+    {
+      "id": "system",
+      "functions": [
+        "ship_registry",
+        "customs",
+        "interplanetary_trade",
+        "criminal_law",
+        "resource_rights",
+        "system_transport_policy"
+      ]
+    }
+  ],
+  "agencies": [
+    {
+      "id": "sol_customs",
+      "name": "Sol Customs Service",
+      "system_id": "sol",
+      "function": "customs"
+    },
+    {
+      "id": "sol_registry",
+      "name": "Sol Vessel Registry",
+      "system_id": "sol",
+      "function": "registry"
+    },
+    {
+      "id": "sol_transport",
+      "name": "Sol Transport Commission",
+      "system_id": "sol",
+      "function": "transport"
+    },
+    {
+      "id": "keshar_load_safety",
+      "name": "Keshar Load Safety Directorate",
+      "system_id": "keshar",
+      "function": "industrial_safety"
+    },
+    {
+      "id": "keshar_registry",
+      "name": "Keshar Vessel Office",
+      "system_id": "keshar",
+      "function": "registry"
+    },
+    {
+      "id": "ilos_mass_authority",
+      "name": "Ilos Mass & Flight Authority",
+      "system_id": "ilos",
+      "function": "transport_safety"
+    },
+    {
+      "id": "ilos_registry",
+      "name": "Ilos Registry Office",
+      "system_id": "ilos",
+      "function": "registry"
+    },
+    {
+      "id": "veyara_environment",
+      "name": "Veyara Environmental Transit Office",
+      "system_id": "veyara",
+      "function": "environment_customs"
+    },
+    {
+      "id": "veyara_registry",
+      "name": "Veyara Vessel Registry",
+      "system_id": "veyara",
+      "function": "registry"
+    },
+    {
+      "id": "orun_junction_safety",
+      "name": "Orun Junction Safety Office",
+      "system_id": "orun",
+      "function": "infrastructure_safety"
+    },
+    {
+      "id": "orun_registry",
+      "name": "Orun Registry Office",
+      "system_id": "orun",
+      "function": "registry"
+    },
+    {
+      "id": "concord_trade",
+      "name": "Concord Trade Administration",
+      "system_id": "concord",
+      "function": "customs_trade"
+    },
+    {
+      "id": "concord_registry",
+      "name": "Concord Vessel Registry",
+      "system_id": "concord",
+      "function": "registry"
+    },
+    {
+      "id": "concord_arbitration",
+      "name": "Concord Commercial Arbitration Service",
+      "system_id": "concord",
+      "function": "commercial_law"
+    },
+    {
+      "id": "roosevelt_registry",
+      "name": "Roosevelt Vessel Registry",
+      "system_id": "new_houston",
+      "function": "registry"
+    },
+    {
+      "id": "roosevelt_yard_safety",
+      "name": "Roosevelt Yard Safety Office",
+      "system_id": "new_houston",
+      "function": "industrial_safety"
+    },
+    {
+      "id": "hesperus_biosecurity",
+      "name": "Hesperus Biosecurity Service",
+      "system_id": "hesperus",
+      "function": "biosecurity"
+    },
+    {
+      "id": "hesperus_transport",
+      "name": "Hesperus Freight Commission",
+      "system_id": "hesperus",
+      "function": "transport"
+    },
+    {
+      "id": "gate_registry",
+      "name": "Iron Gate Registry",
+      "system_id": "iron_gate",
+      "function": "registry"
+    },
+    {
+      "id": "gate_heavy_safety",
+      "name": "Iron Gate Heavy Safety Office",
+      "system_id": "iron_gate",
+      "function": "industrial_safety"
+    },
+    {
+      "id": "carver_claims",
+      "name": "Carver Claims Office",
+      "system_id": "carver",
+      "function": "resource_claims"
+    },
+    {
+      "id": "carver_registry",
+      "name": "Carver Habitat Registry",
+      "system_id": "carver",
+      "function": "registry"
+    },
+    {
+      "id": "bradbury_science_control",
+      "name": "Bradbury Controlled Materials Office",
+      "system_id": "bradbury",
+      "function": "science_customs"
+    },
+    {
+      "id": "pelagos_joint_customs",
+      "name": "Pelagos Joint Customs",
+      "system_id": "pelagos",
+      "function": "customs"
+    },
+    {
+      "id": "tidemark_platform_safety",
+      "name": "Tidemark Platform Safety",
+      "system_id": "tidemark",
+      "function": "industrial_safety"
+    },
+    {
+      "id": "foundry_lift_authority",
+      "name": "Foundry Lift Authority",
+      "system_id": "foundry",
+      "function": "transport"
+    },
+    {
+      "id": "meridian_port_state",
+      "name": "Meridian Port State Office",
+      "system_id": "port_meridian",
+      "function": "port_state"
+    },
+    {
+      "id": "meridian_registry",
+      "name": "Meridian Vessel Registry",
+      "system_id": "port_meridian",
+      "function": "registry"
+    },
+    {
+      "id": "talos_claim_office",
+      "name": "Talos Claim Office",
+      "system_id": "talos",
+      "function": "resource_claims"
+    },
+    {
+      "id": "talos_provisional_registry",
+      "name": "Talos Provisional Registry",
+      "system_id": "talos",
+      "function": "registry"
+    },
+    {
+      "id": "waystation_dock_office",
+      "name": "Waystation Dock Office",
+      "system_id": "waystation",
+      "function": "port_state"
+    },
+    {
+      "id": "lastlight_outbound",
+      "name": "Lastlight Outbound Office",
+      "system_id": "lastlight",
+      "function": "expedition_control"
+    }
+  ]
+}
