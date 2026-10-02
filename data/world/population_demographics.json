@@ -1,0 +1,115 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "dimensions": {
+    "age_bands": [
+      [
+        "child",
+        0,
+        14
+      ],
+      [
+        "student_young",
+        15,
+        24
+      ],
+      [
+        "working_early",
+        25,
+        39
+      ],
+      [
+        "working_mid",
+        40,
+        59
+      ],
+      [
+        "older",
+        60,
+        84
+      ],
+      [
+        "extended_life",
+        85,
+        130
+      ]
+    ],
+    "household_types": [
+      "single",
+      "couple",
+      "family_children",
+      "multigenerational",
+      "shared_workers",
+      "communal_species_tradition",
+      "institutional"
+    ],
+    "employment_states": [
+      "employed",
+      "self_employed",
+      "student",
+      "caregiver",
+      "retired",
+      "unemployed",
+      "temporary_worker"
+    ],
+    "income_bands": [
+      "low",
+      "lower_middle",
+      "middle",
+      "upper_middle",
+      "high"
+    ]
+  },
+  "world_modifiers": [
+    {
+      "id": "core",
+      "household_size": [
+        1.8,
+        3.8
+      ],
+      "unemployment": [
+        0.025,
+        0.08
+      ],
+      "commuting": "dense_multi_mode"
+    },
+    {
+      "id": "industrial",
+      "household_size": [
+        2,
+        4.2
+      ],
+      "unemployment": [
+        0.02,
+        0.09
+      ],
+      "commuting": "shift_heavy"
+    },
+    {
+      "id": "agricultural",
+      "household_size": [
+        2.2,
+        4.8
+      ],
+      "unemployment": [
+        0.015,
+        0.07
+      ],
+      "commuting": "distributed"
+    },
+    {
+      "id": "frontier",
+      "household_size": [
+        1.6,
+        3.4
+      ],
+      "unemployment": [
+        0.01,
+        0.12
+      ],
+      "commuting": "employer_vehicle_or_walk"
+    }
+  ],
+  "species_rule": "Species affects environmental accommodation and some household traditions, but does not determine occupation, income or personality."
+}
