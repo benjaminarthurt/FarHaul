@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "sites": [
+    {
+      "id": "hesperus_greenline_coops",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Producer Cooperatives",
+      "type": "field_agriculture",
+      "cultivated_km2": 184000,
+      "workers": 460000,
+      "outputs": [
+        "grain",
+        "oilseed",
+        "produce"
+      ],
+      "seasonality": "high"
+    },
+    {
+      "id": "hesperus_thresh_livestock",
+      "body_id": "hesperus_prime",
+      "name": "Thresh Livestock District",
+      "type": "livestock",
+      "workers": 92000,
+      "outputs": [
+        "protein",
+        "fiber",
+        "organic_feedstock"
+      ],
+      "seasonality": "medium"
+    },
+    {
+      "id": "earth_controlled_ag",
+      "body_id": "earth",
+      "name": "Earth Controlled Agriculture Sector",
+      "type": "mixed_agriculture",
+      "workers": 74000000,
+      "outputs": [
+        "food",
+        "specialty_food",
+        "seed_stock"
+      ],
+      "seasonality": "regional"
+    },
+    {
+      "id": "mars_greenhouse_belt",
+      "body_id": "mars",
+      "name": "Mars Greenhouse Belt",
+      "type": "controlled_agriculture",
+      "workers": 2100000,
+      "outputs": [
+        "fresh_food",
+        "specialty_produce"
+      ],
+      "seasonality": "low"
+    },
+    {
+      "id": "talos_greenhouses",
+      "body_id": "talos_prime",
+      "name": "Hopewell Greenhouses",
+      "type": "controlled_agriculture",
+      "workers": 210,
+      "outputs": [
+        "fresh_food"
+      ],
+      "seasonality": "low",
+      "coverage": "small_fraction_of_local_demand"
+    }
+  ]
+}
