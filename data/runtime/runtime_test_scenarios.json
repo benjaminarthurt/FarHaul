@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "scenarios": [
+    {
+      "id": "ordinary_hauler_solvent",
+      "assert": [
+        "100 ordinary contracts over representative routes produce median positive operating cashflow for competent baseline operator"
+      ]
+    },
+    {
+      "id": "filter_shortage_propagates",
+      "assert": [
+        "facility consumption crosses reorder point",
+        "procurement creates shipment",
+        "unserved shipment becomes contract",
+        "delivery restores stock"
+      ]
+    },
+    {
+      "id": "port_capacity_backlog",
+      "assert": [
+        "demand above throughput creates queue",
+        "prices and delivery estimates react"
+      ]
+    },
+    {
+      "id": "remote_information_latency",
+      "assert": [
+        "remote disruption does not affect market before information arrival"
+      ]
+    },
+    {
+      "id": "ship_radiator_damage",
+      "assert": [
+        "reduced heat rejection constrains sustained power/thrust"
+      ]
+    },
+    {
+      "id": "cargo_mass_acceleration",
+      "assert": [
+        "same thrust with more cargo lowers acceleration"
+      ]
+    },
+    {
+      "id": "npc_memory",
+      "assert": [
+        "consequential interaction persists after schedule cycles"
+      ]
+    },
+    {
+      "id": "settlement_failure",
+      "assert": [
+        "unsupported outpost can regress instead of auto-growing"
+      ]
+    },
+    {
+      "id": "frontier_rarity",
+      "assert": [
+        "exceptional generated systems remain within configured rarity band"
+      ]
+    }
+  ]
+}
