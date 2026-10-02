@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "pipeline": [
+    {
+      "id": "star",
+      "derive": [
+        "mass",
+        "spectral_class",
+        "luminosity",
+        "age",
+        "activity",
+        "multiplicity"
+      ]
+    },
+    {
+      "id": "disk",
+      "derive": [
+        "solid_mass",
+        "volatile_fraction",
+        "metallicity_effect"
+      ]
+    },
+    {
+      "id": "planets",
+      "derive": [
+        "count",
+        "mass",
+        "orbit",
+        "composition",
+        "migration"
+      ]
+    },
+    {
+      "id": "moons_rings",
+      "derive": [
+        "satellites",
+        "rings",
+        "tidal_state"
+      ]
+    },
+    {
+      "id": "atmosphere",
+      "derive": [
+        "retention",
+        "outgassing",
+        "escape",
+        "temperature"
+      ]
+    },
+    {
+      "id": "geology",
+      "derive": [
+        "differentiation",
+        "tectonics",
+        "volcanism",
+        "impact_history"
+      ]
+    },
+    {
+      "id": "resources",
+      "derive": [
+        "common_materials",
+        "concentrations",
+        "accessibility"
+      ]
+    },
+    {
+      "id": "hazards",
+      "derive": [
+        "radiation",
+        "storms",
+        "gravity",
+        "temperature",
+        "terrain",
+        "dust"
+      ]
+    }
+  ],
+  "determinism": "catalog_seed + system_index + generation_version",
+  "rarity_rule": "Commercially exceptional concentrations require rare geological outcomes; ordinary useful material is common but often uneconomic."
+}
