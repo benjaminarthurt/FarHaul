@@ -231,3 +231,10 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `insurance_products.json` | Insurance products, premiums, deductibles, region/history factors and certificate requirements |
 | `contract_compliance.json` | Machine-readable registration, insurance and ship-endorsement requirements by contract class |
 | `compliance_inspections.json` | Inspection triggers, detection probabilities, scrutiny modifiers and enforcement outcomes |
+
+| `customs.json` | Per-system customs profiles, declarations, inspection methods, scrutiny and clearance outcomes |
+| `crime_law.json` | Civil/criminal offenses, legal record states and cross-system record exchange |
+| `smuggling.json` | Concealment methods, detection model and smuggling pressure by cargo circumstance |
+| `salvage_claims.json` | Salvage asset states, ownership interests, claim types and adjudication outcomes |
+| `reputation.json` | Per-organization multidimensional reputation, propagation and decay |
+| `organization_relationships.json` | Government/company/institution relationship graph and information-sharing edges |
