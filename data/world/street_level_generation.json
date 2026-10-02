@@ -1,0 +1,128 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "settlement_archetypes": [
+    {
+      "id": "mature_metro",
+      "districts": [
+        12,
+        180
+      ],
+      "neighborhoods_per_district": [
+        3,
+        40
+      ],
+      "blocks_per_neighborhood": [
+        8,
+        120
+      ],
+      "sites_per_block": [
+        4,
+        80
+      ]
+    },
+    {
+      "id": "industrial_city",
+      "districts": [
+        8,
+        90
+      ],
+      "neighborhoods_per_district": [
+        2,
+        25
+      ],
+      "blocks_per_neighborhood": [
+        6,
+        100
+      ],
+      "sites_per_block": [
+        3,
+        60
+      ]
+    },
+    {
+      "id": "town",
+      "districts": [
+        1,
+        12
+      ],
+      "neighborhoods_per_district": [
+        1,
+        10
+      ],
+      "blocks_per_neighborhood": [
+        3,
+        60
+      ],
+      "sites_per_block": [
+        2,
+        35
+      ]
+    },
+    {
+      "id": "frontier_town",
+      "districts": [
+        1,
+        8
+      ],
+      "neighborhoods_per_district": [
+        1,
+        6
+      ],
+      "blocks_per_neighborhood": [
+        2,
+        35
+      ],
+      "sites_per_block": [
+        1,
+        25
+      ]
+    },
+    {
+      "id": "habitat",
+      "districts": [
+        2,
+        40
+      ],
+      "neighborhoods_per_district": [
+        1,
+        15
+      ],
+      "blocks_per_neighborhood": [
+        4,
+        60
+      ],
+      "sites_per_block": [
+        3,
+        50
+      ]
+    }
+  ],
+  "street_types": [
+    "arterial",
+    "collector",
+    "local",
+    "service_lane",
+    "pedestrian_commercial",
+    "industrial_access",
+    "transit_spine",
+    "pressurized_corridor",
+    "marine_channel",
+    "subsurface_crawl"
+  ],
+  "site_mix": [
+    "residential",
+    "retail",
+    "office",
+    "industrial",
+    "warehouse",
+    "civic",
+    "school",
+    "medical",
+    "hospitality",
+    "repair",
+    "utility",
+    "recreation"
+  ]
+}
