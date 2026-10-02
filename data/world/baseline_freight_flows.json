@@ -1,0 +1,182 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "unit": "freight_units_per_30d",
+  "baseline_flows": [
+    {
+      "origin": "hesperus",
+      "destination": "new_houston",
+      "commodity_id": "grain",
+      "units_per_30d": 84000
+    },
+    {
+      "origin": "hesperus",
+      "destination": "concord",
+      "commodity_id": "grain",
+      "units_per_30d": 116000
+    },
+    {
+      "origin": "hesperus",
+      "destination": "port_meridian",
+      "commodity_id": "food",
+      "units_per_30d": 28000
+    },
+    {
+      "origin": "pelagos",
+      "destination": "port_meridian",
+      "commodity_id": "aquatic_food_products",
+      "units_per_30d": 12500
+    },
+    {
+      "origin": "veyara",
+      "destination": "concord",
+      "commodity_id": "pharmaceuticals",
+      "units_per_30d": 4800
+    },
+    {
+      "origin": "veyara",
+      "destination": "port_meridian",
+      "commodity_id": "life_support_equipment",
+      "units_per_30d": 3600
+    },
+    {
+      "origin": "bradbury",
+      "destination": "lastlight",
+      "commodity_id": "scientific_instruments",
+      "units_per_30d": 740
+    },
+    {
+      "origin": "bradbury",
+      "destination": "concord",
+      "commodity_id": "precision_equipment",
+      "units_per_30d": 6200
+    },
+    {
+      "origin": "carver",
+      "destination": "iron_gate",
+      "commodity_id": "iron",
+      "units_per_30d": 142000
+    },
+    {
+      "origin": "carver",
+      "destination": "new_houston",
+      "commodity_id": "metals",
+      "units_per_30d": 91000
+    },
+    {
+      "origin": "iron_gate",
+      "destination": "concord",
+      "commodity_id": "structural_materials",
+      "units_per_30d": 68000
+    },
+    {
+      "origin": "iron_gate",
+      "destination": "new_houston",
+      "commodity_id": "structural_components",
+      "units_per_30d": 44000
+    },
+    {
+      "origin": "new_houston",
+      "destination": "hesperus",
+      "commodity_id": "agricultural_machinery",
+      "units_per_30d": 7200
+    },
+    {
+      "origin": "new_houston",
+      "destination": "talos",
+      "commodity_id": "machinery",
+      "units_per_30d": 4100
+    },
+    {
+      "origin": "new_houston",
+      "destination": "talos",
+      "commodity_id": "habitation_modules",
+      "units_per_30d": 1800
+    },
+    {
+      "origin": "foundry",
+      "destination": "new_houston",
+      "commodity_id": "ceramics",
+      "units_per_30d": 19000
+    },
+    {
+      "origin": "foundry",
+      "destination": "port_meridian",
+      "commodity_id": "thermal_equipment",
+      "units_per_30d": 5400
+    },
+    {
+      "origin": "ilos",
+      "destination": "new_houston",
+      "commodity_id": "engines",
+      "units_per_30d": 2600
+    },
+    {
+      "origin": "ilos",
+      "destination": "concord",
+      "commodity_id": "precision_equipment",
+      "units_per_30d": 8700
+    },
+    {
+      "origin": "keshar",
+      "destination": "iron_gate",
+      "commodity_id": "machine_components",
+      "units_per_30d": 24000
+    },
+    {
+      "origin": "keshar",
+      "destination": "new_houston",
+      "commodity_id": "reactors",
+      "units_per_30d": 1600
+    },
+    {
+      "origin": "orun",
+      "destination": "port_meridian",
+      "commodity_id": "automation_systems",
+      "units_per_30d": 4900
+    },
+    {
+      "origin": "port_meridian",
+      "destination": "talos",
+      "commodity_id": "food",
+      "units_per_30d": 7600
+    },
+    {
+      "origin": "port_meridian",
+      "destination": "talos",
+      "commodity_id": "consumer_goods",
+      "units_per_30d": 5200
+    },
+    {
+      "origin": "port_meridian",
+      "destination": "waystation",
+      "commodity_id": "replacement_parts",
+      "units_per_30d": 1800
+    },
+    {
+      "origin": "port_meridian",
+      "destination": "lastlight",
+      "commodity_id": "food",
+      "units_per_30d": 2100
+    },
+    {
+      "origin": "port_meridian",
+      "destination": "lastlight",
+      "commodity_id": "replacement_parts",
+      "units_per_30d": 920
+    },
+    {
+      "origin": "talos",
+      "destination": "port_meridian",
+      "commodity_id": "rare_minerals",
+      "units_per_30d": 8300
+    },
+    {
+      "origin": "lastlight",
+      "destination": "bradbury",
+      "commodity_id": "survey_data",
+      "units_per_30d": 180
+    }
+  ]
+}
