@@ -1,0 +1,457 @@
+{
+  "schema_version": "0.2.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "enums": {
+    "registration_requirement": [
+      "required",
+      "conditional",
+      "not_required"
+    ],
+    "insurance_requirement": [
+      "required",
+      "conditional",
+      "not_required"
+    ],
+    "registration_enforcement": [
+      "strict",
+      "standard",
+      "light",
+      "inconsistent",
+      "none"
+    ],
+    "yard_reporting": [
+      "automatic",
+      "documentation_only",
+      "captain_responsibility",
+      "none"
+    ]
+  },
+  "defaults": {
+    "recognized_registry_rule": "Registration issued by any inhabited-system government is recognized unless suspended, expired, fraudulent, or specifically sanctioned by local law.",
+    "insurance_rule": "Insurance is never globally required. A port may require it for docking, or a contract/cargo/lender may independently require it.",
+    "major_modification_rule": "A major configuration change places registration into modification_pending until the vessel passes required inspection and renewal."
+  },
+  "ports": [
+    {
+      "port_id": "earth_orbital_freight",
+      "system_id": "sol",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "strict",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "passenger",
+        "hazardous",
+        "high_value_contract"
+      ],
+      "notes": "Unregistered vessels cannot use ordinary commercial berths."
+    },
+    {
+      "port_id": "keshar_highport",
+      "system_id": "keshar",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "strict",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "hazardous",
+        "heavy_lift"
+      ],
+      "notes": "Current recognized registration required."
+    },
+    {
+      "port_id": "ilos_lattice_port",
+      "system_id": "ilos",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "strict",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "passenger",
+        "high_value_contract"
+      ],
+      "notes": "Configuration and mass records are checked closely."
+    },
+    {
+      "port_id": "veyara_bluewater_orbital",
+      "system_id": "veyara",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "passenger",
+        "biological",
+        "hazardous"
+      ],
+      "notes": "Environmental-risk cargo can trigger insurance requirements."
+    },
+    {
+      "port_id": "orun_transfer_crown",
+      "system_id": "orun",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "hazardous",
+        "industrial"
+      ],
+      "notes": "Ordinary commercial docking requires registration."
+    },
+    {
+      "port_id": "concord_central_exchange",
+      "system_id": "concord",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "strict",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "passenger",
+        "hazardous",
+        "high_value_contract"
+      ],
+      "notes": "Registry and insurance certificates are easy to verify here."
+    },
+    {
+      "port_id": "roosevelt_orbital_freight",
+      "system_id": "new_houston",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "financed_ship",
+        "heavy_lift",
+        "high_value_contract"
+      ],
+      "notes": "Major yard work is commonly paired with registry renewal."
+    },
+    {
+      "port_id": "new_houston_surface_port",
+      "system_id": "new_houston",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "passenger",
+        "hazardous"
+      ],
+      "notes": "Surface commercial operations require current registration."
+    },
+    {
+      "port_id": "hesperus_agricultural_terminal",
+      "system_id": "hesperus",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "biological",
+        "hazardous"
+      ],
+      "notes": "Biosecurity rules can impose additional certificates."
+    },
+    {
+      "port_id": "iron_gate_grand_terminal",
+      "system_id": "iron_gate",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "strict",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "heavy_lift",
+        "hazardous",
+        "financed_ship"
+      ],
+      "notes": "Heavy commercial traffic receives strict configuration checks."
+    },
+    {
+      "port_id": "carver_habitat_exchange",
+      "system_id": "carver",
+      "registration_requirement": "conditional",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": true,
+      "insurance_triggers": [
+        "hazardous",
+        "high_value_contract"
+      ],
+      "notes": "Unregistered ships may receive restricted berths after identity and mass checks."
+    },
+    {
+      "port_id": "bradbury_research_port",
+      "system_id": "bradbury",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "scientific_sensitive",
+        "hazardous",
+        "high_value_contract"
+      ],
+      "notes": "Sensitive research cargo often carries insurer requirements."
+    },
+    {
+      "port_id": "pelagos_highport",
+      "system_id": "pelagos",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "passenger",
+        "biological"
+      ],
+      "notes": "Ordinary freight insurance remains optional."
+    },
+    {
+      "port_id": "tidemark_platform_exchange",
+      "system_id": "tidemark",
+      "registration_requirement": "conditional",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "light",
+      "unregistered_basic_access": true,
+      "insurance_triggers": [
+        "hazardous",
+        "weather_sensitive",
+        "high_value_contract"
+      ],
+      "notes": "Unregistered vessels may dock at operator discretion; storms can tighten requirements."
+    },
+    {
+      "port_id": "foundry_lift_terminal",
+      "system_id": "foundry",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "hazardous",
+        "industrial"
+      ],
+      "notes": "Industrial endorsements frequently checked."
+    },
+    {
+      "port_id": "port_meridian_main",
+      "system_id": "port_meridian",
+      "registration_requirement": "required",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "standard",
+      "unregistered_basic_access": false,
+      "insurance_triggers": [
+        "passenger",
+        "hazardous",
+        "high_value_contract",
+        "financed_ship"
+      ],
+      "notes": "Main Ring requires registration; peripheral independent docks are a separate market."
+    },
+    {
+      "port_id": "talos_hopewell_field",
+      "system_id": "talos",
+      "registration_requirement": "conditional",
+      "insurance_requirement": "conditional",
+      "registration_enforcement": "inconsistent",
+      "unregistered_basic_access": true,
+      "insurance_triggers": [
+        "high_value_contract",
+        "hazardous"
+      ],
+      "notes": "Registration is officially expected but capacity and enforcement vary."
+    },
+    {
+      "port_id": "waystation_main_dock",
+      "system_id": "waystation",
+      "registration_requirement": "not_required",
+      "insurance_requirement": "not_required",
+      "registration_enforcement": "light",
+      "unregistered_basic_access": true,
+      "insurance_triggers": [],
+      "notes": "Basic docking does not require registration or insurance; individual brokers/contracts may."
+    },
+    {
+      "port_id": "lastlight_orbital",
+      "system_id": "lastlight",
+      "registration_requirement": "conditional",
+      "insurance_requirement": "not_required",
+      "registration_enforcement": "light",
+      "unregistered_basic_access": true,
+      "insurance_triggers": [
+        "government_survey",
+        "biological"
+      ],
+      "notes": "Basic freight access can be granted unregistered; official survey work requires recognized registration."
+    }
+  ],
+  "yards": [
+    {
+      "yard_id": "sol_orbital_yards",
+      "system_id": "sol",
+      "registration_to_accept_work": "required",
+      "major_change_reporting": "automatic",
+      "can_leave_with_unrenewed_major_changes": false,
+      "notes": "Major work tied directly into Sol registry records."
+    },
+    {
+      "yard_id": "keshar_heavy_orbital",
+      "system_id": "keshar",
+      "registration_to_accept_work": "required",
+      "major_change_reporting": "automatic",
+      "can_leave_with_unrenewed_major_changes": false,
+      "notes": "Structural work is closely documented."
+    },
+    {
+      "yard_id": "ilos_orbital_fabrication",
+      "system_id": "ilos",
+      "registration_to_accept_work": "required",
+      "major_change_reporting": "automatic",
+      "can_leave_with_unrenewed_major_changes": false,
+      "notes": "Mass and propulsion changes are reported."
+    },
+    {
+      "yard_id": "veyara_orbital_dockworks",
+      "system_id": "veyara",
+      "registration_to_accept_work": "required",
+      "major_change_reporting": "automatic",
+      "can_leave_with_unrenewed_major_changes": false,
+      "notes": "Environmental and habitation changes are documented."
+    },
+    {
+      "yard_id": "orun_subsurface_orbital_link",
+      "system_id": "orun",
+      "registration_to_accept_work": "required",
+      "major_change_reporting": "automatic",
+      "can_leave_with_unrenewed_major_changes": false,
+      "notes": "Registered commercial yard."
+    },
+    {
+      "yard_id": "concord_exchange_yards",
+      "system_id": "concord",
+      "registration_to_accept_work": "required",
+      "major_change_reporting": "automatic",
+      "can_leave_with_unrenewed_major_changes": false,
+      "notes": "Registry-integrated commercial yard."
+    },
+    {
+      "yard_id": "roosevelt_independent_yards",
+      "system_id": "new_houston",
+      "registration_to_accept_work": "conditional",
+      "major_change_reporting": "documentation_only",
+      "can_leave_with_unrenewed_major_changes": true,
+      "notes": "Independent yards can perform work before renewal; captain receives documentation and may leave modification_pending."
+    },
+    {
+      "yard_id": "iron_gate_grand_yards",
+      "system_id": "iron_gate",
+      "registration_to_accept_work": "required",
+      "major_change_reporting": "automatic",
+      "can_leave_with_unrenewed_major_changes": false,
+      "notes": "Heavy-hull changes are registry integrated."
+    },
+    {
+      "yard_id": "carver_field_dock",
+      "system_id": "carver",
+      "registration_to_accept_work": "not_required",
+      "major_change_reporting": "captain_responsibility",
+      "can_leave_with_unrenewed_major_changes": true,
+      "notes": "Will repair unregistered vessels; formal documentation available when requested."
+    },
+    {
+      "yard_id": "port_meridian_service_yards",
+      "system_id": "port_meridian",
+      "registration_to_accept_work": "conditional",
+      "major_change_reporting": "documentation_only",
+      "can_leave_with_unrenewed_major_changes": true,
+      "notes": "Main commercial slips prefer registration; independent subcontractors may not require it."
+    },
+    {
+      "yard_id": "waystation_service_slip",
+      "system_id": "waystation",
+      "registration_to_accept_work": "not_required",
+      "major_change_reporting": "captain_responsibility",
+      "can_leave_with_unrenewed_major_changes": true,
+      "notes": "Repairs and refits can be performed without registry involvement."
+    },
+    {
+      "yard_id": "lastlight_orbital_service",
+      "system_id": "lastlight",
+      "registration_to_accept_work": "not_required",
+      "major_change_reporting": "captain_responsibility",
+      "can_leave_with_unrenewed_major_changes": true,
+      "notes": "Will keep an expedition ship operational; captain decides when to regularize configuration."
+    }
+  ],
+  "contract_requirements": {
+    "ordinary_bulk": {
+      "registration": "issuer_defined",
+      "insurance": "usually_not_required"
+    },
+    "high_value": {
+      "registration": "usually_required",
+      "insurance": "cargo_and_liability_often_required"
+    },
+    "passenger": {
+      "registration": "required",
+      "insurance": "liability_usually_required"
+    },
+    "hazardous": {
+      "registration": "required_at_reputable_terminals",
+      "insurance": "liability_or_environmental_often_required"
+    },
+    "government": {
+      "registration": "required",
+      "insurance": "issuer_defined"
+    },
+    "frontier_speculative": {
+      "registration": "issuer_defined",
+      "insurance": "often_not_required"
+    }
+  },
+  "insurance_violation_detection": {
+    "base_model": "event-driven plus probabilistic audit",
+    "events": [
+      {
+        "event": "enter_connected_port",
+        "visibility": "medium"
+      },
+      {
+        "event": "submit_manifest_for_restricted_cargo",
+        "visibility": "high"
+      },
+      {
+        "event": "registry_major_change",
+        "visibility": "high"
+      },
+      {
+        "event": "connected_yard_major_repair",
+        "visibility": "high"
+      },
+      {
+        "event": "distress_or_rescue",
+        "visibility": "high"
+      },
+      {
+        "event": "file_claim",
+        "visibility": "certain"
+      },
+      {
+        "event": "visit_informal_frontier_site",
+        "visibility": "low"
+      }
+    ],
+    "outcomes": [
+      "none",
+      "audit",
+      "premium_increase",
+      "restriction_added",
+      "nonrenewal",
+      "cancellation",
+      "claim_denial_if_material",
+      "fraud_case_if_false_statement"
+    ]
+  }
+}
