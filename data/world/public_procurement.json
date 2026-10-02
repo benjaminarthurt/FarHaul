@@ -1,0 +1,108 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "contract_sources": [
+    {
+      "id": "utility_maintenance",
+      "issuers": [
+        "municipal_utilities"
+      ],
+      "cargo": [
+        "filters",
+        "pumps",
+        "electronics",
+        "chemicals"
+      ],
+      "frequency": "continuous"
+    },
+    {
+      "id": "school_supply",
+      "issuers": [
+        "education_networks"
+      ],
+      "cargo": [
+        "food",
+        "furniture",
+        "electronics",
+        "lab_supplies"
+      ],
+      "frequency": "term_and_continuous"
+    },
+    {
+      "id": "hospital_supply",
+      "issuers": [
+        "medical_networks"
+      ],
+      "cargo": [
+        "pharmaceuticals",
+        "sterile_goods",
+        "medical_gases",
+        "equipment"
+      ],
+      "frequency": "continuous_priority"
+    },
+    {
+      "id": "road_rail_maintenance",
+      "issuers": [
+        "municipalities",
+        "transport_operators"
+      ],
+      "cargo": [
+        "structural_materials",
+        "machine_parts",
+        "electronics"
+      ],
+      "frequency": "scheduled_and_incident"
+    },
+    {
+      "id": "housing_construction",
+      "issuers": [
+        "developers",
+        "housing_operators"
+      ],
+      "cargo": [
+        "building_materials",
+        "fixtures",
+        "appliances"
+      ],
+      "frequency": "project"
+    },
+    {
+      "id": "waste_export",
+      "issuers": [
+        "recovery_operators"
+      ],
+      "cargo": [
+        "scrap_metals",
+        "reclaimed_components",
+        "hazardous_waste"
+      ],
+      "frequency": "inventory_threshold"
+    },
+    {
+      "id": "emergency_restock",
+      "issuers": [
+        "civil_defense",
+        "hospitals",
+        "utilities"
+      ],
+      "cargo": [
+        "medical",
+        "filters",
+        "fuel",
+        "food",
+        "parts"
+      ],
+      "frequency": "incident"
+    }
+  ],
+  "award_factors": [
+    "price",
+    "delivery_window",
+    "carrier_reliability",
+    "required_certificates",
+    "cargo_handling",
+    "local_preference_if_any"
+  ]
+}
