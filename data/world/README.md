@@ -238,3 +238,19 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `salvage_claims.json` | Salvage asset states, ownership interests, claim types and adjudication outcomes |
 | `reputation.json` | Per-organization multidimensional reputation, propagation and decay |
 | `organization_relationships.json` | Government/company/institution relationship graph and information-sharing edges |
+| `crew_credentials.json` | Captain/crew licenses, endorsements, prerequisites and validity |
+| `trade_regulations.json` | System duties, permits and controlled trade categories |
+| `ship_ownership_finance.json` | Ownership forms, ship loans, liens, leases and repossession states |
+| `law_enforcement.json` | Distinct customs, security, police, investigation, rescue and registry institutions |
+| `commercial_companies.json` | Producers, manufacturers, distributors and contract issuers with explicit inputs/outputs |
+| `supply_chains.json` | Connected production chains and delayed shortage propagation |
+| `branded_cargo.json` | Named commercial products tied to producers and commodity classes |
+| `port_capacity.json` | Berths, cranes, tugs, specialized storage, fuel storage and congestion rules |
+| `fuel_economy.json` | Fuel types, regional availability, pricing and reserve guidance |
+| `maintenance.json` | Component service intervals, condition, deferred maintenance and repair classes |
+| `ship_history.json` | Persistent vessel provenance, owners, liens, casualties, repairs and valuation effects |
+| `crew_labor.json` | Crew roles, pay, labor markets, contracts and employment relationships |
+| `passenger_economy.json` | Passenger classes, requirements, demand and physical capacity |
+| `survey_mechanics.json` | Multidiscipline survey progress, data quality, value and publication state |
+| `settlement_development.json` | Frontier development stages, needs, advancement and regression |
+| `entity_graph.json` | Stable entity types, IDs and relationship vocabulary connecting world and runtime systems |
