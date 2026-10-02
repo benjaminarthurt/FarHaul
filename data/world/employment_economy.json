@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "sector_templates": [
+    {
+      "id": "core_diversified",
+      "shares": {
+        "government": 0.11,
+        "health_education": 0.17,
+        "retail_hospitality": 0.14,
+        "professional_finance": 0.18,
+        "manufacturing": 0.12,
+        "transport_logistics": 0.09,
+        "utilities_construction": 0.08,
+        "other": 0.11
+      }
+    },
+    {
+      "id": "heavy_industrial",
+      "shares": {
+        "government": 0.08,
+        "health_education": 0.13,
+        "retail_hospitality": 0.12,
+        "professional_finance": 0.08,
+        "manufacturing_extraction": 0.28,
+        "transport_logistics": 0.13,
+        "utilities_construction": 0.12,
+        "other": 0.06
+      }
+    },
+    {
+      "id": "agricultural",
+      "shares": {
+        "government": 0.08,
+        "health_education": 0.13,
+        "retail_hospitality": 0.11,
+        "agriculture_processing": 0.31,
+        "transport_logistics": 0.13,
+        "utilities_construction": 0.09,
+        "professional_services": 0.07,
+        "other": 0.08
+      }
+    },
+    {
+      "id": "research",
+      "shares": {
+        "government": 0.1,
+        "health_education_research": 0.32,
+        "retail_hospitality": 0.12,
+        "precision_manufacturing": 0.14,
+        "transport_logistics": 0.08,
+        "professional_services": 0.12,
+        "utilities_construction": 0.06,
+        "other": 0.06
+      }
+    },
+    {
+      "id": "frontier_boom",
+      "shares": {
+        "government": 0.08,
+        "health_education": 0.08,
+        "retail_hospitality": 0.15,
+        "extraction": 0.25,
+        "construction_utilities": 0.18,
+        "transport_logistics": 0.14,
+        "professional_services": 0.05,
+        "other": 0.07
+      }
+    },
+    {
+      "id": "frontier_service",
+      "shares": {
+        "government": 0.12,
+        "health_education": 0.1,
+        "retail_hospitality": 0.18,
+        "repair_technical": 0.2,
+        "transport_logistics": 0.18,
+        "utilities": 0.1,
+        "survey_services": 0.07,
+        "other": 0.05
+      }
+    }
+  ],
+  "assignments": {
+    "earth": "core_diversified",
+    "keshar_prime": "heavy_industrial",
+    "ilos_prime": "core_diversified",
+    "veyara_prime": "core_diversified",
+    "orun_prime": "core_diversified",
+    "concord_prime": "core_diversified",
+    "roosevelt": "heavy_industrial",
+    "hesperus_prime": "agricultural",
+    "iron_gate_prime": "heavy_industrial",
+    "bradbury_prime": "research",
+    "pelagos_prime": "core_diversified",
+    "tidemark_prime": "heavy_industrial",
+    "foundry_prime": "heavy_industrial",
+    "talos_prime": "frontier_boom",
+    "waystation_habitat": "frontier_service",
+    "lastlight_settlement": "frontier_service"
+  }
+}
