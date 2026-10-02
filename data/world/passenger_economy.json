@@ -1,0 +1,90 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "classes": [
+    {
+      "id": "worker_transfer",
+      "fare_factor": 0.8,
+      "requirements": [
+        "certified_passenger_habitation",
+        "passenger_liability"
+      ],
+      "expectations": [
+        "safe",
+        "basic_bunk",
+        "reasonable_schedule"
+      ]
+    },
+    {
+      "id": "general_passenger",
+      "fare_factor": 1,
+      "requirements": [
+        "certified_passenger_habitation",
+        "passenger_liability"
+      ],
+      "expectations": [
+        "privacy",
+        "food",
+        "environmental_compatibility"
+      ]
+    },
+    {
+      "id": "specialist_transfer",
+      "fare_factor": 1.35,
+      "requirements": [
+        "certified_passenger_habitation",
+        "passenger_liability"
+      ],
+      "expectations": [
+        "schedule_reliability",
+        "work_storage"
+      ]
+    },
+    {
+      "id": "medical_transfer",
+      "fare_factor": 1.8,
+      "requirements": [
+        "certified_passenger_habitation",
+        "passenger_liability",
+        "medical_support_if_required"
+      ],
+      "expectations": [
+        "priority_handling"
+      ]
+    },
+    {
+      "id": "expedition_personnel",
+      "fare_factor": 1.25,
+      "requirements": [
+        "certified_passenger_habitation"
+      ],
+      "expectations": [
+        "cargo_allowance",
+        "frontier_risk_acknowledgement"
+      ]
+    },
+    {
+      "id": "private_charter",
+      "fare_factor": 2.2,
+      "requirements": [
+        "certified_passenger_habitation",
+        "passenger_liability"
+      ],
+      "expectations": [
+        "exclusive_capacity",
+        "schedule_control"
+      ]
+    }
+  ],
+  "demand_drivers": [
+    "labor migration",
+    "research rotations",
+    "family travel",
+    "construction booms",
+    "medical need",
+    "tourism",
+    "expedition staffing"
+  ],
+  "rule": "Passengers occupy real habitation, life-support capacity, provisions and emergency capacity."
+}
