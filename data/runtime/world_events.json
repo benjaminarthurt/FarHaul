@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "event_classes": [
+    "weather",
+    "equipment_failure",
+    "industrial_accident",
+    "labor_action",
+    "festival",
+    "sport_event",
+    "medical_surge",
+    "utility_outage",
+    "traffic_disruption",
+    "market_shock",
+    "construction",
+    "inspection_campaign"
+  ],
+  "rule": "Events modify existing capacities, schedules, inventories or information; they do not create consequences disconnected from modeled systems."
+}
