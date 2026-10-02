@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "belts": [
+    {
+      "id": "new_houston_coldwater_belt",
+      "metro_id": "new_houston_metro",
+      "population": 3200000,
+      "housing_units": 1420000,
+      "dominant_housing": [
+        "midrise",
+        "row_housing",
+        "detached"
+      ],
+      "jobs_housing_ratio": 0.61,
+      "commute_modes": {
+        "rail": 0.42,
+        "road": 0.38,
+        "other": 0.2
+      },
+      "local_centers": 38,
+      "warehouses": 210
+    },
+    {
+      "id": "concord_north_exchange_belt",
+      "metro_id": "central_concord_metro",
+      "population": 6100000,
+      "housing_units": 2670000,
+      "dominant_housing": [
+        "mixed_species_midrise",
+        "special_environment_blocks"
+      ],
+      "jobs_housing_ratio": 0.78,
+      "commute_modes": {
+        "rail": 0.51,
+        "road": 0.19,
+        "other": 0.3
+      },
+      "local_centers": 74,
+      "warehouses": 390
+    },
+    {
+      "id": "nine_currents_outer_basin",
+      "metro_id": "nine_currents_metro",
+      "population": 4700000,
+      "housing_units": 1940000,
+      "dominant_housing": [
+        "floating_neighborhood",
+        "island_midrise"
+      ],
+      "jobs_housing_ratio": 0.66,
+      "commute_modes": {
+        "water": 0.48,
+        "subsurface": 0.28,
+        "other": 0.24
+      },
+      "local_centers": 61,
+      "warehouses": 170
+    },
+    {
+      "id": "keelward_worker_belt",
+      "metro_id": "iron_gate_keelward",
+      "population": 8400000,
+      "housing_units": 3510000,
+      "dominant_housing": [
+        "worker_block",
+        "midrise",
+        "family_compound"
+      ],
+      "jobs_housing_ratio": 0.92,
+      "commute_modes": {
+        "rail": 0.39,
+        "employer": 0.33,
+        "road": 0.19,
+        "other": 0.09
+      },
+      "local_centers": 92,
+      "warehouses": 620
+    },
+    {
+      "id": "hopewell_north_camp_belt",
+      "metro_id": "hopewell_metro",
+      "population": 8700,
+      "housing_units": 4100,
+      "dominant_housing": [
+        "prefab",
+        "company_camp"
+      ],
+      "jobs_housing_ratio": 1.18,
+      "commute_modes": {
+        "employer": 0.47,
+        "utility_vehicle": 0.32,
+        "walk": 0.14,
+        "other": 0.07
+      },
+      "local_centers": 3,
+      "warehouses": 11
+    }
+  ]
+}
