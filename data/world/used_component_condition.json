@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "condition_grades": [
+    {
+      "id": "new",
+      "value_factor": 1,
+      "failure_risk_factor": 1
+    },
+    {
+      "id": "serviceable",
+      "value_factor": 0.68,
+      "failure_risk_factor": 1.18
+    },
+    {
+      "id": "worn",
+      "value_factor": 0.42,
+      "failure_risk_factor": 1.65
+    },
+    {
+      "id": "rebuildable",
+      "value_factor": 0.2,
+      "failure_risk_factor": 2.4
+    },
+    {
+      "id": "parts_only",
+      "value_factor": 0.08,
+      "failure_risk_factor": null
+    }
+  ],
+  "history_effects": [
+    "documented_rebuild",
+    "overheat",
+    "pressure_event",
+    "contamination",
+    "impact",
+    "long_storage",
+    "unknown_hours"
+  ]
+}
