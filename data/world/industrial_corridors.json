@@ -1,0 +1,117 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "corridors": [
+    {
+      "id": "roosevelt_yard_corridor",
+      "body_id": "roosevelt",
+      "name": "New Houston-Truman Industrial Corridor",
+      "nodes": [
+        "New Houston",
+        "Truman Junction"
+      ],
+      "industries": [
+        "shipbuilding",
+        "breakers",
+        "parts",
+        "steel"
+      ],
+      "employment": 680000,
+      "freight_scu_day": 214000,
+      "dependencies": [
+        "roosevelt_trunk",
+        "roosevelt_integrated_grid",
+        "Houston Gulf ports"
+      ]
+    },
+    {
+      "id": "greenline_food_corridor",
+      "body_id": "hesperus_prime",
+      "name": "Greenline Food Corridor",
+      "nodes": [
+        "Greenline",
+        "Thresh City",
+        "Rainmaker"
+      ],
+      "industries": [
+        "grain",
+        "food_processing",
+        "cold_storage",
+        "seed"
+      ],
+      "employment": 910000,
+      "freight_scu_day": 286000,
+      "dependencies": [
+        "greenline_main",
+        "green_watershed"
+      ]
+    },
+    {
+      "id": "keelward_heavy_corridor",
+      "body_id": "iron_gate_prime",
+      "name": "Keelward Heavy Corridor",
+      "nodes": [
+        "Anvil Range",
+        "Keelward",
+        "Grand Terminal"
+      ],
+      "industries": [
+        "mining",
+        "smelting",
+        "plate",
+        "shipbuilding"
+      ],
+      "employment": 3200000,
+      "freight_scu_day": 492000,
+      "dependencies": [
+        "gate_ore_trunk",
+        "iron_gate_industrial_grid",
+        "Gate Coastal Basin"
+      ]
+    },
+    {
+      "id": "bradbury_precision_arc",
+      "body_id": "bradbury_prime",
+      "name": "Lowell Precision Arc",
+      "nodes": [
+        "Lowell",
+        "Mariner City"
+      ],
+      "industries": [
+        "instruments",
+        "research",
+        "electronics",
+        "medical"
+      ],
+      "employment": 840000,
+      "freight_scu_day": 51000,
+      "dependencies": [
+        "bradbury_clean_grid",
+        "lowell_mariner_line"
+      ]
+    },
+    {
+      "id": "talos_claim_corridor",
+      "body_id": "talos_prime",
+      "name": "Hopewell Claim Corridor",
+      "nodes": [
+        "Hopewell",
+        "Claim Camp Four",
+        "Prospect Junction"
+      ],
+      "industries": [
+        "mining",
+        "concentration",
+        "construction",
+        "repair"
+      ],
+      "employment": 23800,
+      "freight_scu_day": 18100,
+      "dependencies": [
+        "talos_claim_road",
+        "hopewell_water_one",
+        "talos_patchwork_grid"
+      ]
+    }
+  ]
+}
