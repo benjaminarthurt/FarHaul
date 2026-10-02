@@ -170,7 +170,7 @@ func _show_menu() -> void:
 	continue_btn.disabled = latest < 0
 	if latest >= 0:
 		var p := SaveSlots.profile(latest)
-		last_label.text = "Slot %d: %s, %s" % [latest + 1, p.name, Worlds.world(p.world).name]
+		last_label.text = "Slot %d: %s, %s" % [latest + 1, p.name, Worlds.yard(p.world).name]
 	else:
 		last_label.text = "No saved games yet"
 	(continue_btn if latest >= 0 else menu_box.get_child(1)).grab_focus()

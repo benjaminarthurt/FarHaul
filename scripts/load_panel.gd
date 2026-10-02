@@ -41,7 +41,7 @@ static func describe(slot: int) -> String:
 		when = "   " + Time.get_datetime_string_from_unix_time(int(p.saved_at), true).substr(0, 16)
 	var where := "In the shipyard" if p.location == "shipyard" else "Docked"
 	return "SLOT %d   %s, %s%s\n%s at %s   ·   %s   ·   %s cr" % [
-		slot + 1, p.name, Worlds.species(p.species).name, when,
+		slot + 1, p.name, Worlds.species(p.get("species", p.get("race", "human"))).name, when,
 		where, Worlds.world(p.world).name, Session.ship_label_for(p), ShipStats.commas(int(p.credits))]
 
 

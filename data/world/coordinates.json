@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "coordinate_system": {
+    "units": "light_years",
+    "origin_system_id": "sol",
+    "axes": "fictional galactic-local Cartesian coordinates; not tied to real stellar astrometry",
+    "note": "Coordinates are gameplay geometry and remain draft until real/catalog stellar designations are chosen."
+  },
+  "travel_model": {
+    "jump_fuel_units_per_light_year_per_mass_unit": 0.06,
+    "base_jump_overhead_fuel_units": 0.4,
+    "note": "Fuel coefficient is a balancing input, not a finalized physical model."
+  },
+  "systems": [
+    {
+      "id": "sol",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    {
+      "id": "new_houston",
+      "x": 5.8,
+      "y": 1.2,
+      "z": -0.5
+    },
+    {
+      "id": "hesperus",
+      "x": 8.2,
+      "y": -2.6,
+      "z": 0.4
+    },
+    {
+      "id": "concord",
+      "x": 11.6,
+      "y": 2.1,
+      "z": 0.8
+    },
+    {
+      "id": "bradbury",
+      "x": 13.8,
+      "y": -1.4,
+      "z": 2.2
+    },
+    {
+      "id": "ilos",
+      "x": 18.4,
+      "y": -4,
+      "z": 3
+    },
+    {
+      "id": "keshar",
+      "x": 12,
+      "y": 9.8,
+      "z": -1.5
+    },
+    {
+      "id": "iron_gate",
+      "x": 15.8,
+      "y": 7.3,
+      "z": -0.7
+    },
+    {
+      "id": "carver",
+      "x": 14.2,
+      "y": 4.4,
+      "z": 0.1
+    },
+    {
+      "id": "veyara",
+      "x": 17,
+      "y": 7,
+      "z": 7.2
+    },
+    {
+      "id": "tidemark",
+      "x": 20.6,
+      "y": 5.5,
+      "z": 7.8
+    },
+    {
+      "id": "pelagos",
+      "x": 23.8,
+      "y": 4,
+      "z": 5.8
+    },
+    {
+      "id": "orun",
+      "x": 18.2,
+      "y": 10.2,
+      "z": -7
+    },
+    {
+      "id": "foundry",
+      "x": 22,
+      "y": 7.5,
+      "z": -5.2
+    },
+    {
+      "id": "port_meridian",
+      "x": 27,
+      "y": 3.2,
+      "z": 0.5
+    },
+    {
+      "id": "talos",
+      "x": 32.8,
+      "y": 5.4,
+      "z": 2
+    },
+    {
+      "id": "waystation",
+      "x": 33.5,
+      "y": 1,
+      "z": -1
+    },
+    {
+      "id": "lastlight",
+      "x": 40,
+      "y": -0.5,
+      "z": -2
+    }
+  ]
+}

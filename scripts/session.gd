@@ -16,8 +16,11 @@ static func default_profile() -> Dictionary:
 	return {
 		"name": "Captain",
 		"species": "human",
+		"race": "human",
 		"difficulty": "normal",
-		"world": "concord",  # starting system id
+		"world": "concord",  # starting system id / yard id
+		"system_id": "new_houston",
+		"port_id": "roosevelt_orbital_freight",
 		"ship_name": "",
 		"location": "dock",  # "dock" or "shipyard"
 		"seen_welcome": false,
@@ -30,8 +33,12 @@ static func start_funds() -> int:
 	return int(Worlds.difficulty(profile.difficulty).funds)
 
 
+static func yard() -> Dictionary:
+	return Worlds.yard(String(profile.world))
+
+
 static func world() -> Dictionary:
-	return Worlds.world(profile.world)
+	return yard()
 
 
 static func ship_label() -> String:
@@ -58,6 +65,8 @@ static func begin_new(at_slot: int, name: String, species_id: String, difficulty
 	p["species"] = species_id
 	p["difficulty"] = difficulty
 	p["world"] = world_id
+	p["system_id"] = Worlds.yard_system(world_id)
+	p["port_id"] = String(Worlds.primary_port(p.system_id).get("id", ""))
 	var lib := ModuleLibrary.new()
 	var ship := ShipData.new(lib)
 	ShipPresets.build(ship)
@@ -81,6 +90,93 @@ static func load_slot(from_slot: int) -> bool:
 	slot = from_slot
 	profile = SaveSlots.profile(from_slot)
 	return true
+
+
+static func system_id() -> String:
+	var id := String(profile.get("system_id", ""))
+	return id if id != "" else Worlds.yard_system(String(profile.world))
+
+
+static func port() -> Dictionary:
+	var id := String(profile.get("port_id", ""))
+	return Worlds.port(id) if id != "" else Worlds.primary_port(system_id())
+
+
+static func active_contract() -> Dictionary:
+	if slot < 0:
+		return {}
+	return SaveSlots.read(slot).get("active_contract", {})
+
+
+static func accept_contract(contract: Dictionary) -> Dictionary:
+	if slot < 0 or contract.is_empty() or not active_contract().is_empty():
+		return {"ok": false, "message": "A contract is already active or this is not a saved game."}
+	var data := SaveSlots.read(slot)
+	var lib := ModuleLibrary.new()
+	var ship := ShipData.new(lib)
+	if not ship.from_json(JSON.stringify(data)):
+		return {"ok": false, "message": "Could not load the current ship."}
+	var manifest := CargoManifest.new(ship)
+	manifest.from_dict(data.get("cargo", {}))
+	var loaded := manifest.load(StringName(contract.commodity), float(contract.offer))
+	if loaded <= CargoManifest.EPS:
+		return {"ok": false, "message": "No compatible cargo capacity is available."}
+	var accepted := contract.duplicate(true)
+	accepted["accepted_tonnes"] = loaded
+	accepted["status"] = "loaded"
+	data["cargo"] = manifest.to_dict()
+	data["active_contract"] = accepted
+	data["profile"] = profile
+	if not SaveSlots.write(slot, data):
+		return {"ok": false, "message": "Could not save the accepted contract."}
+	return {"ok": true, "message": "Loaded %.1f t of %s." % [loaded, Worlds.commodity(String(contract.commodity)).name]}
+
+
+static func depart_active_contract() -> Dictionary:
+	var c := active_contract()
+	if c.is_empty():
+		return {"ok": false, "message": "Accept a freight contract first."}
+	if String(c.origin_system_id) != system_id():
+		return {"ok": false, "message": "This contract does not depart from the current system."}
+	var data := SaveSlots.read(slot)
+	var lib := ModuleLibrary.new()
+	var ship := ShipData.new(lib)
+	if not ship.from_json(JSON.stringify(data)):
+		return {"ok": false, "message": "Could not load the current ship."}
+	var manifest := CargoManifest.new(ship)
+	manifest.from_dict(data.get("cargo", {}))
+	var stats := ShipStats.compute(ship, 1.0, manifest)
+	var checks := Contracts.check(stats, manifest, c)
+	if not Contracts.ready(checks):
+		return {"ok": false, "message": "The ship is not ready to depart with this load."}
+	profile["system_id"] = String(c.destination_system_id)
+	profile["port_id"] = String(c.destination_port_id)
+	c["status"] = "arrived"
+	data["active_contract"] = c
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Arrived at %s after %.2f ly." % [Worlds.port(profile.port_id).name, float(c.distance_ly)]}
+
+
+static func deliver_active_contract() -> Dictionary:
+	var c := active_contract()
+	if c.is_empty() or String(c.destination_system_id) != system_id():
+		return {"ok": false, "message": "There is no contract to deliver here."}
+	var data := SaveSlots.read(slot)
+	var lib := ModuleLibrary.new()
+	var ship := ShipData.new(lib)
+	ship.from_json(JSON.stringify(data))
+	var manifest := CargoManifest.new(ship)
+	manifest.from_dict(data.get("cargo", {}))
+	var delivered := manifest.unload(StringName(c.commodity), float(c.get("accepted_tonnes", c.offer)))
+	var payment := roundi(delivered * float(c.rate))
+	profile["credits"] = int(profile.credits) + payment
+	data["earned"] = int(data.get("earned", 0)) + payment
+	data["cargo"] = manifest.to_dict()
+	data.erase("active_contract")
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Delivered %.1f t. Payment: %s cr." % [delivered, ShipStats.commas(payment)], "payment": payment}
 
 
 static func scene_path() -> String:
