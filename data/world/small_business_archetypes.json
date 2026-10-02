@@ -1,0 +1,192 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "archetypes": [
+    {
+      "id": "corner_food_shop",
+      "employees": [
+        2,
+        18
+      ],
+      "inputs": [
+        "food",
+        "packaging",
+        "cleaning_supplies"
+      ],
+      "outputs": [
+        "retail_food"
+      ]
+    },
+    {
+      "id": "restaurant",
+      "employees": [
+        4,
+        45
+      ],
+      "inputs": [
+        "food",
+        "beverages",
+        "cleaning_supplies",
+        "replacement_equipment"
+      ],
+      "outputs": [
+        "meals"
+      ]
+    },
+    {
+      "id": "machine_shop",
+      "employees": [
+        3,
+        60
+      ],
+      "inputs": [
+        "metals",
+        "tools",
+        "lubricants",
+        "electronics"
+      ],
+      "outputs": [
+        "fabricated_parts",
+        "repair_services"
+      ]
+    },
+    {
+      "id": "laundry",
+      "employees": [
+        2,
+        25
+      ],
+      "inputs": [
+        "water",
+        "cleaning_chemicals",
+        "replacement_parts"
+      ],
+      "outputs": [
+        "laundry_services"
+      ]
+    },
+    {
+      "id": "clinic",
+      "employees": [
+        5,
+        80
+      ],
+      "inputs": [
+        "medical_supplies",
+        "pharmaceuticals",
+        "cleaning_supplies"
+      ],
+      "outputs": [
+        "healthcare"
+      ]
+    },
+    {
+      "id": "school",
+      "employees": [
+        12,
+        250
+      ],
+      "inputs": [
+        "food",
+        "electronics",
+        "furniture",
+        "lab_supplies"
+      ],
+      "outputs": [
+        "education"
+      ]
+    },
+    {
+      "id": "hotel",
+      "employees": [
+        5,
+        120
+      ],
+      "inputs": [
+        "food",
+        "cleaning_supplies",
+        "linens",
+        "furniture"
+      ],
+      "outputs": [
+        "lodging"
+      ]
+    },
+    {
+      "id": "construction_contractor",
+      "employees": [
+        4,
+        90
+      ],
+      "inputs": [
+        "building_materials",
+        "tools",
+        "machine_parts"
+      ],
+      "outputs": [
+        "construction_services"
+      ]
+    },
+    {
+      "id": "vehicle_service",
+      "employees": [
+        3,
+        45
+      ],
+      "inputs": [
+        "parts",
+        "lubricants",
+        "electronics"
+      ],
+      "outputs": [
+        "vehicle_repair"
+      ]
+    },
+    {
+      "id": "data_service",
+      "employees": [
+        2,
+        40
+      ],
+      "inputs": [
+        "electronics",
+        "power_components"
+      ],
+      "outputs": [
+        "communications_services"
+      ]
+    },
+    {
+      "id": "bar_or_cafe",
+      "employees": [
+        3,
+        35
+      ],
+      "inputs": [
+        "food",
+        "beverages",
+        "cleaning_supplies"
+      ],
+      "outputs": [
+        "hospitality"
+      ]
+    },
+    {
+      "id": "general_store",
+      "employees": [
+        2,
+        30
+      ],
+      "inputs": [
+        "consumer_goods",
+        "food",
+        "tools",
+        "workwear"
+      ],
+      "outputs": [
+        "retail_goods"
+      ]
+    }
+  ],
+  "generation_rule": "Counts derive from business_density templates and population. Named businesses can instantiate an archetype and override inputs, employment or reputation."
+}
