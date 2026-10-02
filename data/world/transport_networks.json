@@ -1,0 +1,444 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "networks": [
+    {
+      "id": "earth_surface_network",
+      "body_id": "earth",
+      "modes": [
+        [
+          "heavy_rail",
+          "continental",
+          "very_high"
+        ],
+        [
+          "road_freight",
+          "regional",
+          "very_high"
+        ],
+        [
+          "ocean_shipping",
+          "global",
+          "very_high"
+        ],
+        [
+          "air_cargo",
+          "global",
+          "high"
+        ],
+        [
+          "orbital_transfer",
+          "interplanetary",
+          "very_high"
+        ]
+      ],
+      "bottlenecks": [
+        "customs windows",
+        "orbital slot congestion",
+        "urban delivery restrictions"
+      ]
+    },
+    {
+      "id": "luna_freight_network",
+      "body_id": "luna",
+      "modes": [
+        [
+          "buried_rail",
+          "regional",
+          "high"
+        ],
+        [
+          "pressurized_rover",
+          "local",
+          "medium"
+        ],
+        [
+          "surface_mass_driver",
+          "orbital",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "pressure transfer",
+        "dust maintenance"
+      ]
+    },
+    {
+      "id": "mars_freight_network",
+      "body_id": "mars",
+      "modes": [
+        [
+          "sealed_rail",
+          "continental",
+          "very_high"
+        ],
+        [
+          "surface_hauler",
+          "regional",
+          "high"
+        ],
+        [
+          "suborbital",
+          "continental",
+          "medium"
+        ]
+      ],
+      "bottlenecks": [
+        "dust closures",
+        "pressure interfaces"
+      ]
+    },
+    {
+      "id": "keshar_surface_network",
+      "body_id": "keshar_prime",
+      "modes": [
+        [
+          "heavy_rail",
+          "continental",
+          "very_high"
+        ],
+        [
+          "coastal_shipping",
+          "regional",
+          "very_high"
+        ],
+        [
+          "freightway",
+          "regional",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "storm closures",
+        "bridge load scheduling"
+      ]
+    },
+    {
+      "id": "ilos_vertical_network",
+      "body_id": "ilos_prime",
+      "modes": [
+        [
+          "vertical_rail",
+          "metro",
+          "very_high"
+        ],
+        [
+          "suspended_freight",
+          "regional",
+          "high"
+        ],
+        [
+          "air_cargo",
+          "regional",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "wind windows",
+        "mass restrictions"
+      ]
+    },
+    {
+      "id": "veyara_water_network",
+      "body_id": "veyara_prime",
+      "modes": [
+        [
+          "water_freight",
+          "planetary",
+          "very_high"
+        ],
+        [
+          "subsurface_tube",
+          "metro",
+          "high"
+        ],
+        [
+          "air_cargo",
+          "regional",
+          "medium"
+        ]
+      ],
+      "bottlenecks": [
+        "storms",
+        "biosecurity"
+      ]
+    },
+    {
+      "id": "orun_tunnel_network",
+      "body_id": "orun_prime",
+      "modes": [
+        [
+          "tunnel_rail",
+          "continental",
+          "very_high"
+        ],
+        [
+          "cargo_crawl",
+          "local",
+          "high"
+        ],
+        [
+          "surface_lift",
+          "orbital_interface",
+          "medium"
+        ]
+      ],
+      "bottlenecks": [
+        "thermal maintenance",
+        "junction congestion"
+      ]
+    },
+    {
+      "id": "concord_intermodal_network",
+      "body_id": "concord_prime",
+      "modes": [
+        [
+          "rail",
+          "continental",
+          "very_high"
+        ],
+        [
+          "road_freight",
+          "regional",
+          "high"
+        ],
+        [
+          "air_cargo",
+          "planetary",
+          "high"
+        ],
+        [
+          "orbital_transfer",
+          "interstellar",
+          "very_high"
+        ]
+      ],
+      "bottlenecks": [
+        "documentation",
+        "peak berth demand"
+      ]
+    },
+    {
+      "id": "roosevelt_industrial_network",
+      "body_id": "roosevelt",
+      "modes": [
+        [
+          "freight_rail",
+          "continental",
+          "very_high"
+        ],
+        [
+          "winter_road",
+          "regional",
+          "high"
+        ],
+        [
+          "surface_launch",
+          "orbital",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "winter storms",
+        "yard congestion"
+      ]
+    },
+    {
+      "id": "hesperus_ag_network",
+      "body_id": "hesperus_prime",
+      "modes": [
+        [
+          "grain_rail",
+          "continental",
+          "very_high"
+        ],
+        [
+          "autonomous_road",
+          "regional",
+          "high"
+        ],
+        [
+          "cold_chain_air",
+          "regional",
+          "medium"
+        ]
+      ],
+      "bottlenecks": [
+        "harvest peaks",
+        "refrigeration capacity"
+      ]
+    },
+    {
+      "id": "iron_gate_heavy_network",
+      "body_id": "iron_gate_prime",
+      "modes": [
+        [
+          "ore_rail",
+          "continental",
+          "very_high"
+        ],
+        [
+          "heavy_freightway",
+          "regional",
+          "high"
+        ],
+        [
+          "orbital_lift",
+          "orbital",
+          "very_high"
+        ]
+      ],
+      "bottlenecks": [
+        "yard schedules",
+        "oversize loads"
+      ]
+    },
+    {
+      "id": "bradbury_precision_network",
+      "body_id": "bradbury_prime",
+      "modes": [
+        [
+          "electric_rail",
+          "regional",
+          "high"
+        ],
+        [
+          "secure_courier",
+          "planetary",
+          "medium"
+        ],
+        [
+          "air_cargo",
+          "planetary",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "handling certification",
+        "secure receiving windows"
+      ]
+    },
+    {
+      "id": "pelagos_marine_network",
+      "body_id": "pelagos_prime",
+      "modes": [
+        [
+          "marine_freight",
+          "planetary",
+          "very_high"
+        ],
+        [
+          "ferry",
+          "regional",
+          "high"
+        ],
+        [
+          "orbital_transfer",
+          "interstellar",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "storms",
+        "island transfer"
+      ]
+    },
+    {
+      "id": "tidemark_platform_network",
+      "body_id": "tidemark_prime",
+      "modes": [
+        [
+          "platform_freight",
+          "local",
+          "high"
+        ],
+        [
+          "marine_heavy_lift",
+          "regional",
+          "medium"
+        ],
+        [
+          "orbital_shuttle",
+          "interstellar",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "sea state",
+        "landing weather"
+      ]
+    },
+    {
+      "id": "foundry_subsurface_network",
+      "body_id": "foundry_prime",
+      "modes": [
+        [
+          "tunnel_freight",
+          "regional",
+          "very_high"
+        ],
+        [
+          "mass_lift",
+          "surface",
+          "very_high"
+        ],
+        [
+          "orbital_transfer",
+          "interstellar",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "lift queues",
+        "thermal shutdowns"
+      ]
+    },
+    {
+      "id": "talos_claim_network",
+      "body_id": "talos_prime",
+      "modes": [
+        [
+          "haul_road",
+          "regional",
+          "high"
+        ],
+        [
+          "surface_lander",
+          "interstellar",
+          "high"
+        ]
+      ],
+      "bottlenecks": [
+        "dust",
+        "unfinished roads",
+        "pad storage"
+      ]
+    },
+    {
+      "id": "lastlight_local_network",
+      "body_id": "lastlight_settlement",
+      "modes": [
+        [
+          "surface_road",
+          "regional",
+          "medium"
+        ],
+        [
+          "crawler",
+          "remote_sites",
+          "medium"
+        ],
+        [
+          "orbital_shuttle",
+          "interstellar",
+          "medium"
+        ]
+      ],
+      "bottlenecks": [
+        "weather",
+        "spare availability"
+      ]
+    }
+  ]
+}
