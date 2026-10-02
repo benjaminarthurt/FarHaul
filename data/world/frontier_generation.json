@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "generation": {
+    "seed": 867530,
+    "counts": {
+      "cataloged_stars": 1200,
+      "surveyed_systems": 180,
+      "partial_systems": 420,
+      "unmapped_targets": 600
+    },
+    "value_distribution": {
+      "commercially_uninteresting": 0.68,
+      "minor_interest": 0.22,
+      "significant": 0.085,
+      "exceptional": 0.015
+    },
+    "rule": "Exceptional systems are rare; most exploration improves knowledge rather than finding treasure."
+  },
+  "star_distribution": {
+    "m_dwarf": 0.57,
+    "k_dwarf": 0.16,
+    "g_type": 0.08,
+    "f_type": 0.03,
+    "a_type": 0.01,
+    "white_dwarf": 0.07,
+    "multiple_system": 0.08
+  },
+  "system_features": [
+    "barren_rock",
+    "ice_world",
+    "gas_giant",
+    "asteroid_belts",
+    "comets",
+    "dust_disk",
+    "high_radiation",
+    "close_binary",
+    "tidal_lock",
+    "thin_atmosphere",
+    "subsurface_ice",
+    "ordinary_mineralization"
+  ]
+}
