@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "reference_contracts": [
+    {
+      "file": "ship_classes.json",
+      "field": "manufacturer_id",
+      "target": "manufacturers.json:manufacturers.id",
+      "severity": "error"
+    },
+    {
+      "file": "sample_vessel_histories.json",
+      "field": "class_id",
+      "target": "ship_classes.json:ship_classes.id",
+      "severity": "error"
+    },
+    {
+      "file": "baseline_freight_flows.json",
+      "field": "commodity_id",
+      "target": "commodities.json:commodities.id",
+      "severity": "error"
+    },
+    {
+      "file": "commodity_provenance.json",
+      "field": "commodity_id",
+      "target": "commodities.json:commodities.id",
+      "severity": "error"
+    },
+    {
+      "file": "commercial_relationships_expanded.json",
+      "field": "from/to",
+      "target": "registered organization/company/manufacturer/expanded entity IDs",
+      "severity": "warning_until_graph_unified"
+    }
+  ],
+  "principles": [
+    "Stable IDs are contracts.",
+    "Display names are never foreign keys.",
+    "New mechanics-facing datasets should be added to validation when they introduce references.",
+    "Warnings identify intentionally incomplete graph unification; errors indicate broken mechanics references."
+  ]
+}
