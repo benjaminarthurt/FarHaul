@@ -1,0 +1,203 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "module_classes": [
+    {
+      "id": "frame",
+      "ports": [
+        "structural"
+      ],
+      "mass_fraction": 0.12
+    },
+    {
+      "id": "pressure_hull",
+      "ports": [
+        "structural",
+        "pressure"
+      ],
+      "mass_fraction": 0.1
+    },
+    {
+      "id": "bridge",
+      "ports": [
+        "power",
+        "data",
+        "pressure"
+      ]
+    },
+    {
+      "id": "reactor",
+      "ports": [
+        "fuel",
+        "power",
+        "coolant"
+      ]
+    },
+    {
+      "id": "battery",
+      "ports": [
+        "power",
+        "coolant"
+      ]
+    },
+    {
+      "id": "main_engine",
+      "ports": [
+        "power_or_fuel",
+        "coolant",
+        "data"
+      ]
+    },
+    {
+      "id": "maneuver_thruster",
+      "ports": [
+        "power_or_fuel",
+        "data"
+      ]
+    },
+    {
+      "id": "fuel_tank",
+      "ports": [
+        "fuel"
+      ]
+    },
+    {
+      "id": "radiator",
+      "ports": [
+        "coolant",
+        "structure"
+      ]
+    },
+    {
+      "id": "life_support",
+      "ports": [
+        "power",
+        "water",
+        "air",
+        "waste",
+        "coolant"
+      ]
+    },
+    {
+      "id": "cargo_bay",
+      "ports": [
+        "structure",
+        "power_optional"
+      ]
+    },
+    {
+      "id": "external_cargo_mount",
+      "ports": [
+        "structure",
+        "data_optional"
+      ]
+    },
+    {
+      "id": "landing_gear",
+      "ports": [
+        "structure",
+        "power"
+      ]
+    },
+    {
+      "id": "airlock",
+      "ports": [
+        "pressure",
+        "power"
+      ]
+    },
+    {
+      "id": "crew_quarters",
+      "ports": [
+        "pressure",
+        "power",
+        "air",
+        "water"
+      ]
+    },
+    {
+      "id": "galley",
+      "ports": [
+        "pressure",
+        "power",
+        "water",
+        "waste"
+      ]
+    },
+    {
+      "id": "sanitation",
+      "ports": [
+        "pressure",
+        "power",
+        "water",
+        "waste"
+      ]
+    },
+    {
+      "id": "passenger_cabin",
+      "ports": [
+        "pressure",
+        "power",
+        "air",
+        "water"
+      ]
+    },
+    {
+      "id": "workshop",
+      "ports": [
+        "pressure_optional",
+        "power",
+        "data"
+      ]
+    },
+    {
+      "id": "medical_bay",
+      "ports": [
+        "pressure",
+        "power",
+        "air",
+        "water",
+        "data"
+      ]
+    },
+    {
+      "id": "sensor",
+      "ports": [
+        "power",
+        "data"
+      ]
+    },
+    {
+      "id": "communications",
+      "ports": [
+        "power",
+        "data"
+      ]
+    },
+    {
+      "id": "docking_adapter",
+      "ports": [
+        "structure",
+        "pressure_optional",
+        "power_optional"
+      ]
+    },
+    {
+      "id": "cargo_crane",
+      "ports": [
+        "structure",
+        "power",
+        "data"
+      ]
+    },
+    {
+      "id": "shuttle_bay",
+      "ports": [
+        "structure",
+        "pressure_optional",
+        "power"
+      ]
+    }
+  ]
+}
