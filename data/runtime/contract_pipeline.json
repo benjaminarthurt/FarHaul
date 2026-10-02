@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "pipeline": [
+    {
+      "id": "need",
+      "from": [
+        "reorder",
+        "production_order",
+        "project",
+        "passenger_demand",
+        "emergency",
+        "survey",
+        "salvage"
+      ]
+    },
+    {
+      "id": "procurement",
+      "actions": [
+        "source_supplier",
+        "quote",
+        "award"
+      ]
+    },
+    {
+      "id": "shipment",
+      "actions": [
+        "allocate_lot",
+        "package",
+        "documents",
+        "route_plan"
+      ]
+    },
+    {
+      "id": "freight_offer",
+      "actions": [
+        "publish_or_tender",
+        "carrier_bid",
+        "compliance_check"
+      ]
+    },
+    {
+      "id": "carriage",
+      "actions": [
+        "pickup",
+        "custody",
+        "transfers",
+        "delivery"
+      ]
+    },
+    {
+      "id": "settlement",
+      "actions": [
+        "receiving_inspection",
+        "invoice",
+        "claim_if_needed",
+        "payment"
+      ]
+    }
+  ],
+  "contract_types": [
+    "scheduled_freight",
+    "spot_freight",
+    "urgent",
+    "refrigerated",
+    "hazardous",
+    "oversize",
+    "secure",
+    "passenger",
+    "government_procurement",
+    "survey",
+    "salvage",
+    "empty_reposition",
+    "emergency_relief"
+  ]
+}
