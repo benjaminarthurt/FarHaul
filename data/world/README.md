@@ -19,6 +19,10 @@ Narrative lore is intentionally stored alongside structured gameplay fields so t
 | `worlds.json` | Detailed planets, moons, belts, habitats and stations: environment, settlement rationale, culture and visual identity |
 | `history.json` | Shared calendar, setting eras and major historical events |
 | `survey_regions.json` | Exploration states, frontier regions, supply gateways and survey design rules |
+| `frontier_systems.json` | Named uninhabited systems beyond Lastlight, their bodies, survey state, hazards and commercial outlook |
+| `settlements.json` | Cities, habitat districts and frontier towns that make inhabited worlds recognizable |
+| `organizations.json` | Major manufacturers, standards bodies, survey authorities, cooperatives and salvage firms |
+| `local_color.json` | Bars, markets, industrial landmarks and other memorable place-level details |
 
 ## Stable IDs
 
