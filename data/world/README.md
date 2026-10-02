@@ -282,3 +282,19 @@ These should reference existing IDs rather than duplicate entity definitions.
 | `demographics_households.json` | Household composition, migration and commuting |
 | `small_business_archetypes.json` | Generated ordinary-business types and freight inputs |
 | `economic_rhythms.json` | Daily, seasonal and industrial demand cycles |
+| `metro_areas.json` | Metropolitan populations, districts, satellites, commuting and freight throughput |
+| `municipal_finance.json` | Municipal revenue, budgets and public expenditure |
+| `real_estate_costs.json` | Residential, retail and warehouse cost pressure |
+| `household_income.json` | Household income levels and boomtown purchasing power |
+| `passenger_transit.json` | Metropolitan passenger networks and ridership |
+| `surface_vehicle_fleets.json` | Local freight and service vehicle populations |
+| `postal_parcel.json` | Mail, parcel and small-parts distribution |
+| `factories_processors.json` | Individual industrial plants with labor and throughput |
+| `agricultural_sites.json` | Farms, greenhouse and livestock production |
+| `mining_sites.json` | Named mines and extraction operations |
+| `education_capacity.json` | School and technical/university capacity |
+| `medical_capacity.json` | Hospitals, clinics, staffing and specialties |
+| `emergency_services.json` | Fire, rescue and emergency medical capacity |
+| `daily_city_rhythms.json` | Ordinary weekday traffic and demand schedules |
+| `public_procurement.json` | Government and civic freight contract generation |
+| `city_generation_standard.json` | Required fields and validation for complete cities |
