@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "required_region_fields": [
+    "parent_body",
+    "area",
+    "terrain",
+    "elevation",
+    "climate",
+    "hydrology",
+    "resources",
+    "population",
+    "settlement_pattern",
+    "land_use",
+    "food_path",
+    "water_path",
+    "power_grid",
+    "transport_links",
+    "industrial_or_agricultural_role",
+    "service_access",
+    "hazards"
+  ],
+  "generation_order": [
+    "physical_region",
+    "climate",
+    "hydrology",
+    "resources_and_soils",
+    "land_use",
+    "population_distribution",
+    "settlements",
+    "transport",
+    "utilities",
+    "economy",
+    "service_access",
+    "freight_flows",
+    "hazards_and_resilience"
+  ],
+  "rules": [
+    "Mountain and elevation patterns constrain rivers and transport.",
+    "Climate and water constrain agriculture and settlement density.",
+    "Resource extraction requires transport, labor, power and water paths.",
+    "Large populations require multiple settlements and service networks, not a single city.",
+    "Rural populations consume goods and generate freight even when no individual village is named.",
+    "Intercity corridors should follow geography and economic demand rather than connect every node directly.",
+    "Every region must connect to planetary aggregates so named geography does not erase unnamed population."
+  ]
+}
