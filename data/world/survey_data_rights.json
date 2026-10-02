@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "source_of_truth": true,
+  "products": [
+    {
+      "id": "public_catalog",
+      "ownership": "public_or_purchased_release",
+      "resale": "free_after_release",
+      "value": "low"
+    },
+    {
+      "id": "commercial_survey_package",
+      "ownership": "surveyor",
+      "resale": "licensed",
+      "value": "medium"
+    },
+    {
+      "id": "exclusive_assay",
+      "ownership": "contracting_party",
+      "resale": "restricted_by_contract",
+      "value": "high"
+    },
+    {
+      "id": "navigation_update",
+      "ownership": "surveyor_or_authority",
+      "resale": "licensed_or_public",
+      "value": "medium"
+    },
+    {
+      "id": "claim_evidence",
+      "ownership": "claimant",
+      "resale": "transfer_with_claim",
+      "value": "variable"
+    }
+  ],
+  "rule": "Discovery does not automatically grant ownership of a world or every resource on it."
+}
