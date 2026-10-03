@@ -4,15 +4,15 @@
   "note": "Economy difficulty. These multipliers change the PLAYER's operating position only; NPC carriers, prices and the rest of the world run on the base economy at every level, so a harder level means a harder life for you, not a different universe. target_margin is the net margin the benchmark ship (the starter) should earn on the reference lane mix; tests/test_economy_levels.gd checks each level lands inside its band, and tools like it retune the multipliers when the economy changes. Multipliers were solved with tests/solve_levels.gd (bisect freight_pay_mult against target margin); rerun it whenever base rates, fuel, ship costs or the starter ship change. freight_pay_mult above 1 is the owner-operator premium (small, odd and urgent loads pay more per SCU than trunk freight); the consignee pays it, so money is conserved.",
   "benchmark": {
     "utilisation": 0.98,
-    "backhaul_fraction": 0.70,
-    "rate_premium": 1.32,
-    "note": "The benchmark captain is the starter ship worked by a stand-in (tests/test_player_economy.gd): paid time 98% (the known-space world always has more freight than one small ship can carry), 70% of return legs also loaded, and realised rates 1.32x the list rate (urgency premiums on goods in short supply, and escalated rates on freight nobody has picked up). The stand-ins see freight before the NPC fleets, as the human does (carrier flag first_look). rate_premium is fitted by tests/solve_levels_sim.gd so the quick probe agrees with the full simulation at the normal level. A captain who is idle more, or who flies empty, loses money."
+    "backhaul_fraction": 0.7,
+    "rate_premium": 1.28,
+    "note": "The benchmark captain is the starter ship worked by a stand-in (tests/test_player_economy.gd): paid time 98% (the known-space world always has more freight than one small ship can carry), 70% of return legs also loaded, and realised rates 1.32x the list rate (urgency premiums on goods in short supply, and escalated rates on freight nobody has picked up). The stand-ins see freight before the NPC fleets, as the human does (carrier flag first_look). rate_premium is fitted by tests/solve_levels_sim.gd so the quick probe agrees with the full simulation at the normal level. A captain who is idle more, or who flies empty, loses money. The benchmark ship is ShipPresets.STARTER_FTL: the plain starter with an FTL drive and the radiator it needs fitted (interstellar freight needs a drive; the plain starter is sublight and works local runs, see local_pay_mult)."
   },
   "levels": [
     {
       "id": "easy",
       "name": "Easy",
-      "freight_pay_mult": 0.57,
+      "freight_pay_mult": 0.69,
       "fuel_price_mult": 0.9,
       "port_fee_mult": 0.9,
       "wage_mult": 1.0,
@@ -21,12 +21,14 @@
       "target_margin": [
         0.24,
         0.36
-      ]
+      ],
+      "local_pay_mult": 0.44,
+      "local_target_net_per_day": 300
     },
     {
       "id": "normal",
       "name": "Normal",
-      "freight_pay_mult": 0.49,
+      "freight_pay_mult": 0.6,
       "fuel_price_mult": 1.0,
       "port_fee_mult": 1.0,
       "wage_mult": 1.0,
@@ -35,12 +37,14 @@
       "target_margin": [
         0.12,
         0.2
-      ]
+      ],
+      "local_pay_mult": 0.45,
+      "local_target_net_per_day": 200
     },
     {
       "id": "hard",
       "name": "Hard",
-      "freight_pay_mult": 0.49,
+      "freight_pay_mult": 0.59,
       "fuel_price_mult": 1.2,
       "port_fee_mult": 1.2,
       "wage_mult": 1.1,
@@ -49,8 +53,11 @@
       "target_margin": [
         0.0,
         0.05
-      ]
+      ],
+      "local_pay_mult": 0.5,
+      "local_target_net_per_day": 120
     }
   ],
-  "difficulty_ids_match": "Level ids match Worlds.DIFFICULTIES ids, so the difficulty chosen at New Game selects the economy level."
+  "difficulty_ids_match": "Level ids match Worlds.DIFFICULTIES ids, so the difficulty chosen at New Game selects the economy level.",
+  "local_note": "local_pay_mult scales in-system (sublight) job pay. Solved with tests/solve_local.gd: a stand-in captain with the plain starter takes the best-paying run available for 120 days; the net per day after fuel, berth fees, wages and ownership is bisected to local_target_net_per_day. The tank, not the board, is the limit on long hops, so net income is steep in this multiplier: re-solve whenever fuel, crew costs, the starter or local_space.json change."
 }

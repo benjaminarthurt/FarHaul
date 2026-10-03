@@ -16,11 +16,23 @@ func _initialize() -> void:
 		DirAccess.remove_absolute(SaveSlots.dir + "/" + f)
 	process_frame.connect(_run, CONNECT_ONE_SHOT)
 
+## The new-game starter is sublight; interstellar freight needs a drive, so fit one the way a captain would.
+func _fit_ftl() -> void:
+	var data := SaveSlots.read(0)
+	var ship := ShipData.new(ModuleLibrary.new())
+	ShipPresets.build(ship, ShipPresets.STARTER_FTL)
+	data["modules"] = (JSON.parse_string(ship.to_json()) as Dictionary)["modules"]
+	data["cargo"] = CargoManifest.new(ship).to_dict()
+	SaveSlots.write(0, data)
+	SimWorld.sync(Session.sim, Session.profile, ship)
+
+
 func _run() -> void:
 	print("new game starts a living world")
 	check(Session.begin_new(0, "Test Captain", "human", "hard", "roosevelt_independent_yards"), "begin a hard game at Roosevelt")
 	check(Session.sim != null and Session.sim.hour >= 24 * SimWorld.WARMUP_DAYS, "the world has already been running (%d days)" % Session.day())
 	check(Session.system_id() == "new_houston", "docked at New Houston")
+	_fit_ftl()
 	var credits0 := int(Session.profile.credits)
 	check(SaveSlots.read(0).has("sim"), "the sim is saved with the game")
 
@@ -110,6 +122,8 @@ func _run() -> void:
 	check(int(Session.profile.bankruptcies) == 1, "the failure is on the record")
 	check(SaveSlots.read(Session.slot).modules.size() == 10, "the player flies the starter hauler again")
 	check(absf(float(Session.sim.summary()["cash_error"])) < 0.01, "money is still conserved after the bailout")
+	check(not bool(SimWorld.player(Session.sim)["ftl"]), "and it has no FTL drive")
+	_fit_ftl()
 	print("a captain working steadily for 60 days")
 	var trips := 0
 	var days_start := Session.day()

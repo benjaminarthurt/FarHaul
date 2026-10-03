@@ -8,7 +8,7 @@ const GOALS := {"easy": 0.31, "normal": 0.165, "hard": 0.02}
 
 func _initialize() -> void:
 	var ship := ShipData.new(ModuleLibrary.new())
-	ShipPresets.build(ship)
+	ShipPresets.build(ship, ShipPresets.STARTER_FTL)
 	var prof := SimShip.profile(ship)
 	var lv: Dictionary = SimShip.levels()
 	var solved := {}

@@ -223,3 +223,15 @@ distributor stock, consumer budgets, carrier fleets and bases. No world file nam
 
 Production inputs, port capacity and queues, information latency, cargo damage or loss, insurance,
 financing and passenger traffic.
+
+## FTL drives and local runs
+
+The new-game starter has **no FTL drive**. A ship needs at least one `jump_drive` module (shown as "FTL drive", 45,000 cr, 50 kW heat, 40 kW power) to take or fly any interstellar leg: `_path_feasible` refuses multi-system paths for a carrier whose `ftl` flag is off, so the board, fly-empty and the contract readiness check ("FTL drive" row) all follow. The first drive is the baseline speed; each extra drive adds 30% speed and fuel burn. `ShipPresets.STARTER_FTL` is the starter plus a drive and the radiator it needs (about 140,600 cr, 1.39 ly/day) and is the benchmark ship for all freight calibration.
+
+Saves made before this change are grandfathered (`profile.ftl_grandfathered`, set on load when the slot has no `ftl_rules` marker). A bankruptcy restructure gives the plain sublight starter and clears the flag.
+
+**Local runs** (`scripts/local_space.gd`, `data/runtime/local_space.json`): every system has its main port plus a fuel depot, a moon base and a belt works (assumed sites, not yet on the world map). A hop has a delta-v and a duration; propellant comes from the rocket equation (Isp 900 s) on the ship's wet mass plus cargo, and the hop is only offered if the tank covers it. The starter's 10 t tank lifts a full hold between the port and the depot, only about 5 t to the moon base, and cannot reach the belt at all. Boards are deterministic per site and two-day window; a job done is not re-posted. Pay is credits per tonne per km/s times a good's value factor, a +/-25% spread and the level's `local_pay_mult`. Fuel and a berth fee are paid at departure, unloading takes 3 hours and the consignee pays on delivery.
+
+Local pay per level was solved with `tests/solve_local.gd` (a stand-in captain with the plain starter, 120 days, best net per hour): easy 0.44, normal 0.45, hard 0.50, giving about 286 / 201 / 103 cr/day net after fuel, fees, wages and ownership (targets 300 / 200 / 120; the result is steep and lumpy in the multiplier because fuel, not the board, limits long hops). Interstellar `freight_pay_mult` was re-solved for the FTL benchmark ship: easy 0.69, normal 0.60, hard 0.59, `rate_premium` 1.28.
+
+Affordability: after the 92,600 cr starter the captain holds about 127k / 57k / 17k, and a drive plus radiator costs about 48k. Easy and Normal can fit one on day one (Normal is left with about 9k, roughly a month of running costs); Hard has to earn about 31k first, roughly ten months at the local rate.

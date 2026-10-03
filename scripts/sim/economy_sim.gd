@@ -107,6 +107,7 @@ func _add_carrier(c: Dictionary) -> void:
 		"level": c.get("level", {}),
 		# A manual carrier is flown by the player: it never takes work or goes home on its own.
 		"manual": bool(c.get("manual", false)),
+		"ftl": bool(c.get("ftl", true)),   # plain scenario carriers jump freely; SimShip profiles say whether a drive is fitted
 		"first_look": bool(c.get("first_look", false)),
 	}
 	carriers[c["id"]] = cr
@@ -316,6 +317,8 @@ func _fuel_cargo_limit_kg(c: Dictionary, path: Array) -> float:
 ## Can the ship fly this path on one tank per leg? It refuels at every stop that sells fuel; a stop
 ## with no priced fuel (frontier) also needs enough left to fly back out.
 func _path_feasible(c: Dictionary, path: Array, cargo_t: float) -> bool:
+	if path.size() > 1 and not bool(c.get("ftl", true)):
+		return false   # sublight ships cannot make interstellar legs
 	if c["fuel_units"] >= 1.0e11:
 		return true
 	for i in range(path.size() - 1):

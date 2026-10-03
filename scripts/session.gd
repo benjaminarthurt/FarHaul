@@ -67,6 +67,7 @@ static func begin_new(at_slot: int, name: String, species_id: String, difficulty
 	p["name"] = name.strip_edges() if name.strip_edges() != "" else "Captain"
 	p["species"] = species_id
 	p["difficulty"] = difficulty
+	p["ftl_rules"] = 1   # FTL is a fitted drive, not a given
 	p["world"] = world_id
 	p["system_id"] = Worlds.yard_system(world_id)
 	p["port_id"] = String(Worlds.primary_port(p.system_id).get("id", ""))
@@ -95,6 +96,12 @@ static func load_slot(from_slot: int) -> bool:
 		return false
 	slot = from_slot
 	profile = SaveSlots.profile(from_slot)
+	if not (data.get("profile", {}) as Dictionary).has("ftl_rules"):
+		# Saved before FTL drives were a separate part: that ship keeps the jump capability it was flown with.
+		profile["ftl_rules"] = 1
+		profile["ftl_grandfathered"] = true
+		data["profile"] = profile
+		SaveSlots.write(slot, data)
 	sim = SimWorld.restore(String(data["sim"])) if data.has("sim") else null
 	if sim == null:   # older save: the world starts now, around the player's current ship
 		var ship := ShipData.new(ModuleLibrary.new())
@@ -110,7 +117,34 @@ static func system_id() -> String:
 
 static func port() -> Dictionary:
 	var id := String(profile.get("port_id", ""))
-	return Worlds.port(id) if id != "" else Worlds.primary_port(system_id())
+	if id == "":
+		return Worlds.primary_port(system_id())
+	var real := Worlds.port(id)
+	return real if not real.is_empty() else LocalSpace.node(id)
+
+
+## In-system jobs posted at the ship's current site, for the ship as it is now.
+static func local_board() -> Array[Dictionary]:
+	if slot < 0 or sim == null:
+		return []
+	var loaded := _load_ship(SaveSlots.read(slot))
+	if loaded.is_empty():
+		return []
+	var st := ship_stats(loaded.ship)
+	var id := String(profile.get("port_id", ""))
+	if LocalSpace.node(id).is_empty():
+		id = String(LocalSpace.nodes(system_id())[0]["id"])
+	return LocalSpace.board(id, day(), st, SimShip.level(String(profile.get("difficulty", "normal"))), profile.get("local_taken", []))
+
+
+## Propellant and berth fee for one local hop with `cargo_t` aboard, in credits.
+static func local_trip_cost(stats: Dictionary, cargo_t: float, dv_kms: float) -> Dictionary:
+	var burn := LocalSpace.burn_t(float(stats["wet"]) + cargo_t, dv_kms)
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	var units := burn * float(SimShip.config()["fuel"]["units_per_tonne"])
+	var fuel_cost: float = units * float(sim.p["fuel_cr_per_unit"]) * float(sim.fuel_factor.get(system_id(), 1.0)) * float(lv.get("fuel_price_mult", 1.0))
+	var fee: float = float(LocalSpace.config()["board"]["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+	return {"burn_t": burn, "fuel_cost": fuel_cost, "fee": fee, "total": fuel_cost + fee}
 
 
 static func active_contract() -> Dictionary:
@@ -130,6 +164,18 @@ static func _load_ship(data: Dictionary) -> Dictionary:
 
 
 ## Puts the sim in step with the saved ship, money and position before it is used.
+## Ship stats as the dock sees them, with the grandfathered FTL flag applied.
+static func ship_stats(ship: ShipData, manifest: CargoManifest = null) -> Dictionary:
+	var st := ShipStats.compute(ship, 1.0, manifest)
+	if bool(profile.get("ftl_grandfathered", false)):
+		st["ftl"] = true
+	return st
+
+
+static func has_ftl(ship: ShipData) -> bool:
+	return bool(ship_stats(ship).get("ftl", false))
+
+
 static func _sync_sim(ship: ShipData) -> void:
 	if sim != null:
 		SimWorld.sync(sim, profile, ship)
@@ -186,6 +232,7 @@ static func restructure() -> Dictionary:
 	data["cargo"] = CargoManifest.new(fresh).to_dict()
 	data.erase("active_contract")
 	profile["bankruptcies"] = int(profile.get("bankruptcies", 0)) + 1
+	profile["ftl_grandfathered"] = false   # the bank's hauler is the plain sublight starter
 	profile["credits"] = left
 	_sync_sim(fresh)
 	var grant := roundi(SimWorld.daily_cost(sim) * 10.0)
@@ -272,6 +319,13 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 	var tonnes := float(contract.offer)
 	var accepted := contract.duplicate(true)
 	var live := sim != null and contract.has("sim_contract")
+	var is_local := bool(contract.get("local", false))
+	if is_local:
+		var stats := ship_stats(loaded_ship.ship)
+		var cap := LocalSpace.max_cargo_t(float(stats["wet"]), float(stats["fuel"]), float(contract["dv_kms"]))
+		tonnes = minf(tonnes, maxf(cap, 0.0))
+		if tonnes <= 0.0:
+			return {"ok": false, "message": "The tanks cannot lift a load that far."}
 	if live:
 		_sync_sim(loaded_ship.ship)
 		var taken := sim.player_accept(SimWorld.PLAYER, String(contract.sim_contract))
@@ -286,6 +340,11 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 	var loaded := manifest.load(StringName(contract.commodity), tonnes)
 	if loaded <= CargoManifest.EPS:
 		return {"ok": false, "message": "No compatible cargo capacity is available."}
+	if is_local:
+		accepted["pay_total"] = roundi(loaded * float(contract.rate))
+		var done: Array = profile.get("local_taken", [])
+		done.append(String(contract.id))
+		profile["local_taken"] = done.slice(maxi(0, done.size() - 40))
 	accepted["accepted_tonnes"] = loaded
 	accepted["status"] = "loaded"
 	data["cargo"] = manifest.to_dict()
@@ -298,10 +357,63 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 	return {"ok": true, "message": "Loaded %.1f t of %s." % [loaded, Worlds.commodity(String(contract.commodity)).name]}
 
 
+static func _depart_local(c: Dictionary) -> Dictionary:
+	if String(c.origin_port_id) != String(profile.get("port_id", "")):
+		return {"ok": false, "message": "This run does not start from here."}
+	var data := SaveSlots.read(slot)
+	var loaded_ship := _load_ship(data)
+	if loaded_ship.is_empty():
+		return {"ok": false, "message": "Could not load the current ship."}
+	var manifest: CargoManifest = loaded_ship.manifest
+	var stats := ship_stats(loaded_ship.ship, manifest)
+	if not Contracts.ready(Contracts.check(stats, manifest, c)):
+		return {"ok": false, "message": "The ship is not ready to depart with this load."}
+	var cargo := float(c.get("accepted_tonnes", c.offer))
+	var cost := local_trip_cost(stats, cargo, float(c.dv_kms))
+	if float(cost.burn_t) > float(stats["fuel"]):
+		return {"ok": false, "message": "The tanks cannot cover that burn."}
+	_sync_sim(loaded_ship.ship)
+	sim._pay(SimWorld.PLAYER, "world", float(cost.total))
+	sim.run_hours(int(c.hours))
+	profile["port_id"] = String(c.destination_port_id)
+	c["status"] = "arrived"
+	data["active_contract"] = c
+	data["profile"] = profile
+	_commit_sim(data, loaded_ship.ship)
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), int(c.hours)]}
+
+
+static func _deliver_local(c: Dictionary) -> Dictionary:
+	if String(c.destination_port_id) != String(profile.get("port_id", "")):
+		return {"ok": false, "message": "There is no contract to deliver here."}
+	var data := SaveSlots.read(slot)
+	var loaded_ship := _load_ship(data)
+	if loaded_ship.is_empty():
+		return {"ok": false, "message": "Could not load the current ship."}
+	var manifest: CargoManifest = loaded_ship.manifest
+	var delivered := manifest.unload(StringName(c.commodity), float(c.get("accepted_tonnes", c.offer)))
+	var payment := int(c.get("pay_total", roundi(delivered * float(c.rate))))
+	_sync_sim(loaded_ship.ship)
+	sim.run_hours(int(LocalSpace.config()["board"]["unload_hours"]))
+	sim._pay("world", SimWorld.PLAYER, float(payment))
+	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
+	pc["revenue"] = float(pc["revenue"]) + float(payment)
+	pc["trips"] = int(pc["trips"]) + 1
+	_commit_sim(data, loaded_ship.ship)
+	data["cargo"] = manifest.to_dict()
+	data.erase("active_contract")
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr." % [delivered, ShipStats.commas(payment)], "payment": payment}
+
+
 static func depart_active_contract() -> Dictionary:
 	var c := active_contract()
 	if c.is_empty():
 		return {"ok": false, "message": "Accept a freight contract first."}
+	if bool(c.get("local", false)):
+		return _depart_local(c)
 	if String(c.origin_system_id) != system_id():
 		return {"ok": false, "message": "This contract does not depart from the current system."}
 	var data := SaveSlots.read(slot)
@@ -309,7 +421,7 @@ static func depart_active_contract() -> Dictionary:
 	if loaded_ship.is_empty():
 		return {"ok": false, "message": "Could not load the current ship."}
 	var manifest: CargoManifest = loaded_ship.manifest
-	var stats := ShipStats.compute(loaded_ship.ship, 1.0, manifest)
+	var stats := ship_stats(loaded_ship.ship, manifest)
 	var checks := Contracts.check(stats, manifest, c)
 	if not Contracts.ready(checks):
 		return {"ok": false, "message": "The ship is not ready to depart with this load."}
@@ -332,6 +444,8 @@ static func depart_active_contract() -> Dictionary:
 
 static func deliver_active_contract() -> Dictionary:
 	var c := active_contract()
+	if not c.is_empty() and bool(c.get("local", false)):
+		return _deliver_local(c)
 	if c.is_empty() or String(c.destination_system_id) != system_id():
 		return {"ok": false, "message": "There is no contract to deliver here."}
 	var data := SaveSlots.read(slot)

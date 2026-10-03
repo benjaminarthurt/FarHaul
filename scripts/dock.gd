@@ -279,6 +279,17 @@ func _go(scene: String) -> void:
 	tw.tween_callback(func() -> void: get_tree().change_scene_to_file(scene))
 
 
+func _site_name(port_id: String, fallback: String = "") -> String:
+	var real := Worlds.port(port_id)
+	if not real.is_empty():
+		return String(real.get("name", fallback))
+	return String(LocalSpace.node(port_id).get("name", fallback))
+
+
+func _sublight() -> bool:
+	return Session.sim != null and not bool(SimWorld.player(Session.sim).get("ftl", true))
+
+
 func _show_contracts() -> void:
 	if Session.insolvent():
 		status.text = "No one will give a bankrupt captain freight."
@@ -293,21 +304,31 @@ func _show_contracts() -> void:
 	var heading := Brand.heading("FREIGHT BOARD — %s" % String(port.get("name", system_id)).to_upper(), 15)
 	contract_list.add_child(heading)
 	var offers := Contracts.offers_from(system_id)
+	if _sublight():
+		contract_list.add_child(Brand.note("No FTL drive fitted: you can only haul inside this system. Fit a drive in the shipyard to take freight between stars.", 14))
 	if offers.is_empty():
-		contract_list.add_child(Brand.note("No profitable scheduled freight is posted here right now."))
+		contract_list.add_child(Brand.note("No profitable freight is posted here right now."))
 		return
 	var active := Session.active_contract()
 	if not active.is_empty():
-		contract_list.add_child(Brand.note("ACTIVE: %s — %.1f t loaded for %s" % [active.title, float(active.accepted_tonnes), Worlds.port(String(active.destination_port_id)).name]))
+		contract_list.add_child(Brand.note("ACTIVE: %s — %.1f t loaded for %s" % [active.title, float(active.accepted_tonnes), _site_name(String(active.destination_port_id), "its destination")]))
 		return
+	var board_ship := _ship_for_board()
+	var board_stats := Session.ship_stats(board_ship) if board_ship != null else {}
 	for c in offers:
 		var goods := Worlds.commodity(String(c.commodity))
-		var destination := Worlds.port(String(c.destination_port_id))
 		var line := Button.new()
-		line.text = "%s  →  %s\n%.1f t available  ·  %.2f ly  ·  %s cr/t  ·  up to %s cr%s\nACCEPT & LOAD" % [
-			goods.name, destination.get("name", c.destination_system_id), float(c.offer), float(c.distance_ly),
-			ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate))),
-			"  ·  due in %.0f days" % float(c.deadline_days) if c.has("sim_contract") else ""]
+		if bool(c.get("local", false)) and not board_stats.is_empty():
+			var trip := Session.local_trip_cost(board_stats, float(c.offer), float(c.dv_kms))
+			line.text = "LOCAL  %s  →  %s\n%.1f t  ·  %.1f km/s  ·  %d h  ·  %s cr/t  ·  up to %s cr, fuel about %s cr\nACCEPT & LOAD" % [
+				goods.name, _site_name(String(c.destination_port_id)), float(c.offer), float(c.dv_kms), int(c.hours),
+				ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate))), ShipStats.commas(roundi(float(trip.total)))]
+		else:
+			var destination := Worlds.port(String(c.destination_port_id))
+			line.text = "%s  →  %s\n%.1f t available  ·  %.2f ly  ·  %s cr/t  ·  up to %s cr%s\nACCEPT & LOAD" % [
+				goods.name, destination.get("name", c.destination_system_id), float(c.offer), float(c.distance_ly),
+				ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate))),
+				"  ·  due in %.0f days" % float(c.deadline_days) if c.has("sim_contract") else ""]
 		Brand.style_button(line, 14)
 		line.pressed.connect(func() -> void: _accept(c))
 		contract_list.add_child(line)
@@ -322,6 +343,11 @@ func _accept(c: Dictionary) -> void:
 		_show_contracts()
 
 
+func _ship_for_board() -> ShipData:
+	var loaded := Session._load_ship(SaveSlots.read(Session.slot))
+	return loaded.ship if not loaded.is_empty() else null
+
+
 func _refresh_actions() -> void:
 	if depart_btn == null or deliver_btn == null:
 		return
@@ -330,7 +356,14 @@ func _refresh_actions() -> void:
 		var idle := c.is_empty() and Session.sim != null and not Session.insolvent()
 		wait_btn.disabled = not idle
 		helm_btn.disabled = Session.insolvent()
-		fly_btn.disabled = not idle
+		fly_btn.disabled = not idle or _sublight()
+		if _sublight():
+			fly_btn.tooltip_text = "Needs an FTL drive. Fit one in the shipyard."
+	var site := String(Session.profile.get("port_id", ""))
+	if bool(c.get("local", false)):
+		depart_btn.disabled = String(c.get("origin_port_id", "")) != site or String(c.get("status", "")) == "arrived"
+		deliver_btn.disabled = String(c.get("destination_port_id", "")) != site or String(c.get("status", "")) != "arrived"
+		return
 	depart_btn.disabled = c.is_empty() or String(c.get("origin_system_id", "")) != Session.system_id()
 	deliver_btn.disabled = c.is_empty() or String(c.get("destination_system_id", "")) != Session.system_id()
 

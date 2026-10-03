@@ -133,7 +133,7 @@ func _add_defaults() -> void:
 			"thrust": 80.0, "power": -15.0, "heat": 25.0})
 	# Jump drive: bolts on like any external part and makes the ship faster between stars. It needs
 	# power and sheds heat, and its mass counts against thrust-to-weight like everything else.
-	_def(&"jump_drive", "Jump drive", one, Color(0.35, 0.50, 0.75),
+	_def(&"jump_drive", "FTL drive", one, Color(0.35, 0.50, 0.75),
 		[_mount(o, DIR_W)],
 		{"group": &"external", "pressurized": false, "shape": &"drive", "mass": 4.0, "cost": 45000,
 			"drive": 0.30, "power": -40.0, "heat": 50.0})

@@ -206,7 +206,7 @@ func _init() -> void:
 	var stst := ShipStats.compute(starter, 1.0)
 	check(stst.open_doors == 0 and stst.airlocks == 1 and stst.has_helm, "starter is sealed, has an airlock and cockpit")
 	check(stst.power_use <= stst.power_gen and stst.heat_gen <= stst.cooling, "starter power and cooling balance")
-	check(stst.warnings.size() == 0, "starter has no warnings: %s" % str(stst.warnings))
+	check(stst.warnings.size() == 1 and has_warning(stst, "No FTL"), "starter has only the sublight note: %s" % str(stst.warnings))
 	check(stst.cost < 150000, "starter is affordable")
 	check(stst.twr_loaded > 0.14, "starter can lift a full hold")
 
@@ -215,7 +215,18 @@ func _init() -> void:
 	var k0 := Contracts.get_contract(0)
 	check(not Contracts.ready(Contracts.check(stst, smf, k0)), "can't run without cargo aboard")
 	smf.load(k0.commodity, k0.offer)
-	check(Contracts.ready(Contracts.check(ShipStats.compute(starter, 1.0, smf), smf, k0)), "starter can run the water contract")
+	var rows0 := Contracts.check(ShipStats.compute(starter, 1.0, smf), smf, k0)
+	check(not Contracts.ready(rows0), "the sublight starter can't run a contract between stars")
+	var ftl_rows := rows0.filter(func(r: Dictionary) -> bool: return not r.ok)
+	check(ftl_rows.size() == 1 and String(ftl_rows[0].label) == "FTL drive", "and the only thing missing is the FTL drive")
+	var ftl_starter := ShipData.new(ModuleLibrary.new())
+	ShipPresets.build(ftl_starter, ShipPresets.STARTER_FTL)
+	var fmf := CargoManifest.new(ftl_starter)
+	fmf.load(k0.commodity, k0.offer)
+	check(Contracts.ready(Contracts.check(ShipStats.compute(ftl_starter, 1.0, fmf), fmf, k0)), "the FTL starter can run the water contract")
+	var local_job := {"commodity": k0.commodity, "offer": 5.0, "min_twr": 0.05, "origin_system_id": "x", "destination_system_id": "x"}
+	smf.load(k0.commodity, 5.0)
+	check(Contracts.ready(Contracts.check(ShipStats.compute(starter, 1.0, smf), smf, local_job)), "but it can run a job inside one system")
 	check(Contracts.pay(smf, k0) == roundi(smf.total() * float(k0.rate)), "pays rate times tonnes")
 	var k1 := Contracts.get_contract(1)
 	var smf2 := CargoManifest.new(starter)
@@ -265,11 +276,19 @@ func _init() -> void:
 	var st0 := ShipStats.compute(st_ship)
 	check(st0.berths == 1 and st0.crew_needed == 1 and not has_warning(st0, "Crew"), "starter: pilot berth covers a one-person crew")
 	var p0 := SimShip.profile(st_ship)
-	check(absf(float(p0.ly_per_day) - 1.5) < 0.1, "starter flies about 1.5 ly/day (%.2f)" % float(p0.ly_per_day))
+	check(not bool(p0.ftl) and float(p0.ly_per_day) == 0.0, "starter is sublight only")
+	check(has_warning(st0, "No FTL"), "builder warns the starter has no FTL drive")
+	var ftl_ship := ShipData.new(lib)
+	check(ShipPresets.build(ftl_ship, ShipPresets.STARTER_FTL) == "", "FTL starter builds")
+	var sf := ShipStats.compute(ftl_ship)
+	check(sf.ftl and sf.drive_count == 1 and not has_warning(sf, "Overheating") and not has_warning(sf, "No FTL"), "FTL starter has a drive and stays cool")
+	var pf := SimShip.profile(ftl_ship)
+	check(bool(pf.ftl) and absf(float(pf.ly_per_day) - 1.39) < 0.15, "FTL starter flies about 1.4 ly/day (%.2f)" % float(pf.ly_per_day))
+	p0 = pf
 	var drive_ship := ShipData.new(lib)
-	ShipPresets.build(drive_ship)
+	ShipPresets.build(drive_ship, ShipPresets.STARTER_FTL)
 	var placed_drive := false
-	for cell in [Vector3i(-1, 0, 0), Vector3i(1, 0, 0), Vector3i(-1, 0, 3), Vector3i(1, 0, 2)]:
+	for cell in [Vector3i(-1, 0, 0), Vector3i(-1, 0, 3), Vector3i(-1, 0, 1), Vector3i(1, 0, -1)]:
 		for rot in 4:
 			if not placed_drive and drive_ship.add(&"jump_drive", cell, rot) == "":
 				placed_drive = true
@@ -277,11 +296,11 @@ func _init() -> void:
 	if placed_drive:
 		var sd := ShipStats.compute(drive_ship)
 		var pd := SimShip.profile(drive_ship)
-		check(sd.drive > 0.29, "stats report the drive (+%d%%)" % roundi(sd.drive * 100.0))
+		check(sd.drive > 0.59 and sd.drive_count == 2, "stats report two drives (%.2f)" % sd.drive)
 		check(float(pd.ly_per_day) > float(p0.ly_per_day) * 1.15, "the drive makes the ship faster (%.2f vs %.2f ly/day)" % [float(pd.ly_per_day), float(p0.ly_per_day)])
-	check(absf(float(p0.burn) - 1.0) < 0.001, "starter burns base fuel")
+	check(absf(float(p0.burn) - 1.0) < 0.001, "one FTL drive burns base fuel")
 	if placed_drive:
-		check(float(SimShip.profile(drive_ship).burn) > 1.1, "a drive burns more fuel (x%.2f)" % float(SimShip.profile(drive_ship).burn))
+		check(float(SimShip.profile(drive_ship).burn) > 1.1, "a second drive burns more fuel (x%.2f)" % float(SimShip.profile(drive_ship).burn))
 	var sbig := ShipStats.compute(st_ship)
 	check(sbig.crew_needed == SimShip.crew_for(sbig.cargo_capacity), "crew need follows hold size (%d for %.0f t)" % [sbig.crew_needed, sbig.cargo_capacity])
 	check(SimShip.crew_for(120.0) == 4 and SimShip.crew_for(24.0) == 1, "crew formula: 24 t needs 1, 120 t needs 4")

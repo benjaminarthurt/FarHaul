@@ -22,7 +22,7 @@ static func create(profile: Dictionary, ship: ShipData) -> EconomySim:
 	if not sim.load_all(WORLD_DIR, RUNTIME_DIR, SCENARIO):
 		return null
 	sim.run_days(WARMUP_DAYS)
-	var c := SimShip.profile(ship)
+	var c := SimShip.profile(ship, {}, bool(profile.get("ftl_grandfathered", false)))
 	c["id"] = PLAYER
 	c["company"] = "player"
 	c["home_system_id"] = String(profile.system_id)
@@ -71,7 +71,8 @@ static func sync(sim: EconomySim, profile: Dictionary, ship: ShipData) -> void:
 	var c := player(sim)
 	if c.is_empty():
 		return
-	var fresh := SimShip.profile(ship)
+	var fresh := SimShip.profile(ship, {}, bool(profile.get("ftl_grandfathered", false)))
+	c["ftl"] = fresh["ftl"]
 	c["capacity_scu"] = fresh["capacity_scu"]
 	c["capacity_kg"] = fresh["capacity_kg"]
 	c["dry_mass_t"] = fresh["dry_mass_t"]

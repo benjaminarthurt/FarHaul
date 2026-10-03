@@ -17,7 +17,7 @@ func _initialize() -> void:
 		quit(1)
 		return
 	var ship := ShipData.new(ModuleLibrary.new())
-	ShipPresets.build(ship)
+	ShipPresets.build(ship, ShipPresets.STARTER_FTL)
 	var prof := SimShip.profile(ship)
 	check(prof["capacity_scu"] < 40.0, "the starter (%.0f SCU) is smaller than a standard lot" % prof["capacity_scu"])
 	for i in 2:

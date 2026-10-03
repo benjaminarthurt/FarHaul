@@ -3,7 +3,7 @@ func _initialize():
 	var sim := EconomySim.new()
 	sim.load_all("res://data/world/", "res://data/runtime/", "sim_scenario_hopewell.json")
 	var ship := ShipData.new(ModuleLibrary.new())
-	ShipPresets.build(ship)
+	ShipPresets.build(ship, ShipPresets.STARTER_FTL)
 	var prof := SimShip.profile(ship)
 	var lv = JSON.parse_string(FileAccess.get_file_as_string("res://data/runtime/economy_levels.json"))
 	var sec := {"easy": {"fuel_price_mult":0.9,"port_fee_mult":0.9,"wage_mult":1.0,"ownership_mult":0.9,"maintenance_mult":0.9},

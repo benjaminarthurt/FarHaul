@@ -18,7 +18,7 @@ func _run(scene: Node3D) -> void:
 	check(scene.ship.modules.size() == 10, "starter ship is loaded on a fresh start")
 	check(scene.welcome_panel.visible, "welcome panel shows on first run")
 	check(scene._credits() == 150000 - scene._ship_cost(), "credits = funds minus ship cost")
-	check(scene.last_stats.warnings.size() == 0, "starter has no warnings")
+	check(scene.last_stats.warnings.size() == 1 and "No FTL" in String(scene.last_stats.warnings[0]), "starter has only the sublight note")
 
 	print("placement")
 	var before_n: int = scene.ship.modules.size()

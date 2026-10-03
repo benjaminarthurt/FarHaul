@@ -32,6 +32,7 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 	var engine_power := 0.0
 	var engine_heat := 0.0
 	var drive := 0.0
+	var drive_count := 0
 	var cargo_capacity := 0.0
 	var cargo_carried := 0.0
 
@@ -53,6 +54,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		cargo_slots += d.cargo_slots
 		berths += d.berths
 		drive += d.drive
+		if d.drive > 0.0:
+			drive_count += 1
 		cargo_capacity += d.cargo_capacity
 		var carried := d.cargo_capacity * cargo_load
 		if manifest != null:
@@ -121,6 +124,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 			warnings.append("Crew: this hold needs %d berths, you have %d. Add crew bunks or quarters" % [crew_needed, berths])
 		if cargo_capacity <= 0.0:
 			warnings.append("No cargo capacity: add a hold or rack to haul freight")
+		if drive_count == 0:
+			warnings.append("No FTL drive: this ship can only work inside one system")
 
 	return {
 		"modules": ship.modules.size(),
@@ -138,7 +143,9 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		"engine_heat": engine_heat,     # kW of waste heat the engines make at full throttle (part of heat_gen)
 		"radius": (hi - lo).length() * 0.5 + 1.5 if not ship.modules.is_empty() else 0.0,
 		"crew_needed": crew_needed,
-		"drive": drive,
+		"drive": drive,  # summed drive rating; the first FTL drive is the baseline, extras add speed
+		"drive_count": drive_count,
+		"ftl": drive_count > 0,
 		"cargo_slots": cargo_slots,
 		"cargo_capacity": cargo_capacity,  # tonnes when full
 		"cargo_load": load_frac,
@@ -170,7 +177,7 @@ static func format(s: Dictionary) -> String:
 		"Mass  dry %.1f   wet %.1f   loaded %.1f t" % [s.dry, s.wet, s.loaded],
 		"Fuel  %.1f t full" % s.fuel,
 		"Hull  %s   airlocks %d" % [hull, s.airlocks],
-		"Crew  %d needed, %d berths%s" % [s.crew_needed, s.berths, "   Jump drive +%d%%" % roundi(s.drive * 100.0) if s.drive > 0.0 else ""],
+		"Crew  %d needed, %d berths%s" % [s.crew_needed, s.berths, ("   FTL drive x%d" % s.drive_count) if s.drive_count > 0 else "   no FTL"],
 		"Thrust  %.0f kN   T/W %.2f empty, %.2f loaded" % [s.thrust_fwd, s.twr, s.twr_loaded],
 	])
 	if s.cargo_used_slots >= 0:

@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "note": "In-system freight for ships with no FTL drive. Every system has its main port plus a fuel depot, a moon base and a belt works (assumed, not yet on the world map). A hop between two sites costs delta-v and hours; fuel burned follows the rocket equation from the ship's mass, so heavy loads and long hops eat the tank. Pay is per tonne per km/s of delta-v, scaled by the difficulty level's local_pay_mult (solved with tests/solve_local.gd).",
+  "isp_s": 900,
+  "kinds": {
+    "port": {"name": "Freight port"},
+    "depot": {"name": "Fuel depot"},
+    "moon": {"name": "Moon base"},
+    "belt": {"name": "Belt works"}
+  },
+  "hops": {
+    "port|depot": {"dv_kms": 1.2, "hours": 9},
+    "port|moon": {"dv_kms": 3.0, "hours": 22},
+    "port|belt": {"dv_kms": 5.5, "hours": 40},
+    "depot|moon": {"dv_kms": 2.0, "hours": 15},
+    "depot|belt": {"dv_kms": 4.5, "hours": 32},
+    "moon|belt": {"dv_kms": 3.5, "hours": 26}
+  },
+  "board": {
+    "jobs_per_site": 5,
+    "refresh_days": 2,
+    "min_tonnes": 8,
+    "max_tonnes": 40,
+    "rate_cr_per_t_per_kms": 70,
+    "variance": 0.25,
+    "unload_hours": 3,
+    "dock_fee_cr": 60,
+    "deadline_days": 6
+  },
+  "eligible_containers": ["standard", "sealed", "bulk", "dry_bulk", "refrigerated", "chemical_tank", "sealed_tank", "mixed_food", "module_rack", "liquid_tank", "fuel_tank", "shock_isolated"]
+}

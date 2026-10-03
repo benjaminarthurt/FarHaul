@@ -13,7 +13,7 @@ func check(ok: bool, msg: String) -> void:
 
 func _initialize() -> void:
 	var ship := ShipData.new(ModuleLibrary.new())
-	ShipPresets.build(ship)
+	ShipPresets.build(ship, ShipPresets.STARTER_FTL)
 	var prof := SimShip.profile(ship)
 	var margins := {}
 	for L in SimShip.levels()["levels"]:

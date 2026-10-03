@@ -6,19 +6,23 @@ extends RefCounted
 
 static func offers_from(system_id: String, limit: int = 8) -> Array[Dictionary]:
 	# In a saved game the board is the live economy: real stock moving between real facilities.
+	var local_extra: Array[Dictionary] = []
 	if Session.sim != null:
 		if Session.slot >= 0:
 			var loaded := Session._load_ship(SaveSlots.read(Session.slot))
 			if not loaded.is_empty():
 				Session._sync_sim(loaded.ship)
 		var live := SimWorld.board(Session.sim, system_id, limit)
+		local_extra = Session.local_board()
+		if not bool(SimWorld.player(Session.sim).get("ftl", true)):
+			return live + local_extra   # sublight: only what can be reached without a jump
 		if not live.is_empty():
-			return live
+			return live + local_extra
 		# Outside the slice the live economy covers (or when nothing is posted), fall back to the
 		# scheduled market freight below so every port still has something to haul.
 	var origin := Worlds.market(system_id)
 	if origin.is_empty():
-		return []
+		return local_extra
 	var offers: Array[Dictionary] = []
 	for route in _routes_from(system_id):
 		var destination_id := String(route.b) if String(route.a) == system_id else String(route.a)
@@ -54,7 +58,7 @@ static func offers_from(system_id: String, limit: int = 8) -> Array[Dictionary]:
 				"blurb": "Market freight generated from local surplus and destination demand."
 			})
 	offers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.rate) > int(b.rate))
-	return offers.slice(0, mini(limit, offers.size()))
+	return offers.slice(0, mini(limit, offers.size())) + local_extra
 
 
 static func _routes_from(system_id: String) -> Array:
@@ -104,6 +108,8 @@ static func check(stats: Dictionary, manifest: CargoManifest, c: Dictionary) -> 
 	rows.append(_row("Power", stats.power_use <= stats.power_gen, "%.0f of %.0f kW" % [stats.power_use, stats.power_gen]))
 	rows.append(_row("Cooling", stats.heat_gen <= stats.cooling, "%.0f made, %.0f cooled kW" % [stats.heat_gen, stats.cooling]))
 	rows.append(_row("T/W loaded %.2f" % c.min_twr, stats.twr_loaded >= c.min_twr, "you have %.2f" % stats.twr_loaded))
+	if String(c.get("origin_system_id", "")) != String(c.get("destination_system_id", "")):
+		rows.append(_row("FTL drive", bool(stats.get("ftl", false)), "" if bool(stats.get("ftl", false)) else "needed to cross between systems"))
 	var aboard := manifest.total_of(c.commodity)
 	rows.append(_row("Cargo aboard", aboard > 0.0, "%.1f of %.0f t offered" % [aboard, c.offer]))
 	return rows

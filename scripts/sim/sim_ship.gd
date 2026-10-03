@@ -62,7 +62,9 @@ static func wage_index(system_id: String, cfg: Dictionary = {}) -> float:
 
 ## `ship` is a ShipData. Returns a carrier-shaped dictionary (see EconomySim._add_carrier) plus a few
 ## display fields. `cfg` defaults to ship_economy.json.
-static func profile(ship: ShipData, cfg: Dictionary = {}) -> Dictionary:
+## `force_ftl` treats the ship as jump-capable without a drive (saves made before drives were a
+## separate part).
+static func profile(ship: ShipData, cfg: Dictionary = {}, force_ftl: bool = false) -> Dictionary:
 	if cfg.is_empty():
 		cfg = config()
 	var st := ShipStats.compute(ship)
@@ -76,7 +78,12 @@ static func profile(ship: ShipData, cfg: Dictionary = {}) -> Dictionary:
 	var twr := float(st["twr"])
 	var ly_day := clampf(float(spd["reference_ly_per_day"]) * pow(maxf(twr, 0.0001) / float(spd["reference_twr"]), float(spd["exponent"])),
 			float(spd["min_ly_per_day"]), float(spd["max_ly_per_day"]))
-	ly_day = minf(ly_day * (1.0 + float(st.get("drive", 0.0))), float(spd.get("max_with_drive_ly_per_day", spd["max_ly_per_day"])))
+	var has_drive := bool(st.get("ftl", false))
+	var extra := maxf(float(st.get("drive", 0.0)) - 0.30, 0.0) if has_drive else 0.0   # first drive is the baseline
+	ly_day = minf(ly_day * (1.0 + extra), float(spd.get("max_with_drive_ly_per_day", spd["max_ly_per_day"])))
+	var ftl := has_drive or force_ftl
+	if not ftl:
+		ly_day = 0.0   # sublight only: no interstellar legs
 	return {
 		"capacity_scu": scu,
 		"capacity_kg": float(st["cargo_capacity"]) * 1000.0,
@@ -85,11 +92,12 @@ static func profile(ship: ShipData, cfg: Dictionary = {}) -> Dictionary:
 		"wage_cr_per_day": _average_wage(crew, cfg),     # per crew member, before the regional index
 		"fixed_cr_per_day": fixed,
 		"ly_per_day": ly_day,
+		"ftl": ftl,
 		"fuel_units": float(st["fuel"]) * float(cfg["fuel"]["units_per_tonne"]),
 		"ship_cost": float(st["cost"]),
 		"twr": twr,
 		"berths": int(st.get("berths", 0)),
-		"burn": 1.0 + float(st.get("drive", 0.0)) * float(spd.get("fuel_burn_per_drive_speed", 0.0)),
+		"burn": 1.0 + extra * float(spd.get("fuel_burn_per_drive_speed", 0.0)),
 	}
 
 
