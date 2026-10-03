@@ -13,6 +13,7 @@ var contract_list: VBoxContainer
 var depart_btn: Button
 var deliver_btn: Button
 var wait_btn: Button
+var helm_btn: Button
 var fly_btn: Button
 var fly_panel: PanelContainer
 var fly_list: VBoxContainer
@@ -160,6 +161,8 @@ func _build_ui() -> void:
 	_button(menu, "CONTRACT BOARD", _show_contracts)
 	depart_btn = _button(menu, "DEPART", _depart)
 	deliver_btn = _button(menu, "DELIVER FREIGHT", _deliver)
+	helm_btn = _button(menu, "TAKE THE HELM", _take_helm)
+	helm_btn.tooltip_text = "Fly the ship in free flight around the dock. No time passes and nothing is lost: it is practice until star jumps arrive."
 	wait_btn = _button(menu, "WAIT A DAY", _wait_day)
 	fly_btn = _button(menu, "FLY EMPTY", _show_destinations)
 	wait_btn.tooltip_text = "Let a day pass. The rest of the economy keeps moving; your crew and ship still cost money."
@@ -312,9 +315,14 @@ func _refresh_actions() -> void:
 	if wait_btn != null:
 		var idle := c.is_empty() and Session.sim != null and not Session.insolvent()
 		wait_btn.disabled = not idle
+		helm_btn.disabled = Session.insolvent()
 		fly_btn.disabled = not idle
 	depart_btn.disabled = c.is_empty() or String(c.get("origin_system_id", "")) != Session.system_id()
 	deliver_btn.disabled = c.is_empty() or String(c.get("destination_system_id", "")) != Session.system_id()
+
+
+func _take_helm() -> void:
+	_go(Session.FLIGHT_SCENE)
 
 
 func _wait_day() -> void:

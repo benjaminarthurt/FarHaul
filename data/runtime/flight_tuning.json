@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "note": "Tuning for the flight model (scripts/flight_model.gd). Equations follow flight_physics.json: a = thrust / current mass, current mass = dry + fuel + cargo. Numbers here are PLACEHOLDERS chosen so the starter ship is fun, not canon.",
+  "isp_s": 900.0,
+  "max_turn_rate_rad_s": 1.1,
+  "turn_accel_rad_s2": 0.9,
+  "reference_mass_t": 20.0,
+  "turn_mass_exponent": 0.5,
+  "offset_penalty_per_m": 0.12,
+  "dock_range_m": 70.0,
+  "dock_speed_m_s": 4.0,
+  "start_distance_m": 140.0,
+  "stop_speed_m_s": 0.15,
+  "throttle_rate_per_s": 0.8
+}

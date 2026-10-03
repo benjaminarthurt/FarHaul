@@ -6,6 +6,7 @@ extends RefCounted
 const BOOT_SCENE := "res://scenes/boot.tscn"
 const DOCK_SCENE := "res://scenes/dock.tscn"
 const YARD_SCENE := "res://scenes/main.tscn"
+const FLIGHT_SCENE := "res://scenes/flight.tscn"
 
 static var slot := -1  ## -1 when a scene was opened on its own, outside a saved game
 static var profile: Dictionary = default_profile()

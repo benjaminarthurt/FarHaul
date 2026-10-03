@@ -139,7 +139,7 @@ of work, and checks ledger and money conservation throughout.
 small parameter changes, so tests use bands, not exact figures. A past commit briefly regressed the
 scenario to 13 carriers with three insolvent; it is back to 11 carriers with at most one loser.
 
-**Dock.** The dock shows the day, running costs and how long cash lasts, plus WAIT A DAY and FLY EMPTY
+**Dock.** TAKE THE HELM flies the ship in free flight (see `flight.md`). The dock shows the day, running costs and how long cash lasts, plus WAIT A DAY and FLY EMPTY
 (a nearest-first list with distance, days, estimated cost and freight posted at each stop). A warning
 appears when cash covers under a week; a captain in debt with no contract is insolvent and the run is
 over (`Session.insolvent`).
