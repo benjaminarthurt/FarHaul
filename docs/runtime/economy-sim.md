@@ -103,12 +103,12 @@ margin on the world's direct lanes; the full simulation confirms it. Three start
 
 | Level | Probe | Simulated | Net per ship per day | Pay multiplier |
 |---|---|---|---|---|
-| Easy | 31% | 30% | about 290 cr | 1.00 |
-| Normal | 17% | 15% | about 130 cr | 0.86 |
-| Hard | 2% | 0-3% | a few cr | 0.84 (costs 10-20% higher) |
+| Easy | 31% | 30% | about 275 cr | 1.15 |
+| Normal | 16% | 16% | about 120 cr | 0.98 |
+| Hard | 2% | 1-2% | about 10 cr | 0.96 (costs 10-20% higher) |
 
-On hard the ship is a few credits a day from the red, and paid time is the skill: the benchmark is 65%
-paid time with 74% of return legs carrying freight (it was 30% before the brine chain below gave the frontier outbound freight, and the pay multipliers were re-solved then; they are now at or below 1 because the world has more freight to find). A captain who idles more loses money. Tests:
+On hard the ship is a few credits a day from the red, and paid time is the skill: the benchmark is 60%
+paid time with 55% of return legs carrying freight (it was 30% before the frontier export chains below, then 74% with the first single chain; refit each time the world changed, and the pay multipliers were re-solved). The stand-in captains in `test_player_economy.gd` carry the `first_look` flag: they see new freight before the NPC fleets do, as the human does, so a larger NPC fleet does not starve them. A captain who idles more loses money. Tests:
 `test_economy_levels.gd` (probe, quick) and `test_player_economy.gd` (simulation, about two minutes). To
 retune, edit the targets or secondary multipliers and run `tests/solve_levels.gd`, which bisects the pay
 multiplier to hit each target margin; rerun it whenever base rates, fuel, ship costs or the starter change.
@@ -137,7 +137,7 @@ of work, and checks ledger and money conservation throughout.
 
 **Calibration note.** The solvency calibration is noisy: a single run's margins swing about 10 points with
 small parameter changes, so tests use bands, not exact figures. A past commit briefly regressed the
-scenario to 13 carriers with three insolvent; it is back to 11 carriers with at most one loser.
+scenario to 13 carriers with three insolvent; it is now 13 carriers (see Return freight) with at most one loser; margins band 8-31%.
 
 **Dock.** TAKE THE HELM flies the ship in free flight (see `flight.md`). The dock shows the day, running costs and how long cash lasts, plus WAIT A DAY and FLY EMPTY
 (a nearest-first list with distance, days, estimated cost and freight posted at each stop). A warning
@@ -149,12 +149,18 @@ over (`Session.insolvent`).
 drive adds 30% cruising speed each (capped at 4 ly/day) and burns 15% more fuel per drive (`fuel_burn_per_drive_speed`), draws 40 kW, sheds 50 kW of heat and weighs
 4 t, so it also cuts thrust-to-weight. The starter ship has neither and is unchanged.
 
-**Return freight.** A second chain runs the other way so the frontier port Talos is no longer a dead end:
-Hopewell Brine Works (assumed) sells rare dissolved minerals to Roosevelt Mineral Refinery (assumed) through
-the Meridian and Concord hubs. The refinery stocks out about 13-16% of the time (tested under 25%), looser than
-the filter consumers because its supply line is three hops. Freight nobody wants gets dearer without the
-normal cap once it has waited 8 days (`stale_*` parameters), so stranded parcels move, and show up on the
-player's board as fat contracts. The fleet is now 12 carriers.
+**Return freight.** Three frontier export chains keep the edges from being dead ends (all assumed, in line with
+Talos canon of thin backhaul, but now modest rather than empty):
+- Talos Ore Works sells rare minerals to Meridian Smelter Guild (port Meridian).
+- Waystation Fuel Depot sells fuel to Meridian Bunkering.
+- Lastlight Survey Mining sells platinum-group metals to Roosevelt Instrument Works (New Houston).
+
+Each flows through the hubs like any other chain. The fleet is 13 carriers (a second Concord interstellar and a
+second Meridian outbound ship absorb the new volume). Return-chain consumers stock out under 25% of the time
+(tested); the Beacon heat plant is allowed 15% because it sits at the far end of the frontier. Freight nobody
+wants gets dearer without the normal cap once it has waited 8 days (`stale_*` parameters), so stranded
+parcels move and show up on the player's board as fat contracts. `first_look` (carrier flag) lets a carrier
+see contracts before the board delay; only the player stand-ins use it.
 
 **Flight and the economy.** A flight in free flight costs the fuel burned (at the port's price and the level's
 fuel multiplier) plus hull repairs, and the clock moves on by the hours it took (`SimWorld.settle_flight`).

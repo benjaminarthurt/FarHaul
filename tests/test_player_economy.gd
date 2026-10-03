@@ -25,6 +25,7 @@ func _initialize() -> void:
 			c["home_system_id"] = "new_houston"
 			c["cash"] = 60000.0
 			c["min_margin"] = 0.0
+			c["first_look"] = true   # a stand-in for the human captain, who sees freight before the fleets do
 			c["network"] = ["new_houston", "concord", "sol", "hesperus", "carver", "bradbury", "port_meridian"]
 			c["level"] = L
 			sim._add_carrier(c)

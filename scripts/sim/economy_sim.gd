@@ -104,6 +104,7 @@ func _add_carrier(c: Dictionary) -> void:
 		"level": c.get("level", {}),
 		# A manual carrier is flown by the player: it never takes work or goes home on its own.
 		"manual": bool(c.get("manual", false)),
+		"first_look": bool(c.get("first_look", false)),
 	}
 	carriers[c["id"]] = cr
 	cash_initial += cr["cash"]
@@ -594,14 +595,20 @@ func _dispatch_carriers() -> void:
 	# Freight sits on the board for a while before the AI fleets look at it, so the player gets a
 	# real choice instead of whatever the fleets happened to leave in the same hour.
 	var delay := int(p.get("npc_board_delay_hours", 0))
+	var all_offered := offered
 	if delay > 0:
 		offered = offered.filter(func(k): return hour - k["offered"] >= delay)
-	for c in carriers.values():
+	# Carriers flagged first_look (the player's stand-ins in calibration runs) see freight at once and
+	# choose before the fleets do, exactly as the human player does.
+	var order: Array = carriers.values()
+	order.sort_custom(func(a, b): return bool(a.get("first_look", false)) and not bool(b.get("first_look", false)))
+	for c in order:
 		if c["state"] != "idle" or c["manual"]:
 			continue
+		var offered_here: Array = all_offered if bool(c.get("first_look", false)) else offered
 		var best: Dictionary = {}
 		var seen := {}
-		for k in offered:
+		for k in offered_here:
 			if k["status"] != "offered" or not _eligible(c, k):
 				continue
 			var key: String = k["origin_port"] + ">" + k["dest_port"]
@@ -611,7 +618,7 @@ func _dispatch_carriers() -> void:
 			var fitted := _fit_contract(c, k)
 			if fitted.is_empty():
 				continue
-			var bundle := _bundle(c, fitted, offered)
+			var bundle := _bundle(c, fitted, offered_here)
 			var ev := _evaluate(c, bundle)
 			if ev.is_empty():
 				continue

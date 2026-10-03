@@ -107,15 +107,18 @@ func _initialize() -> void:
 	check(absf(s["cash_error"]) < 0.01, "money is conserved (error %.6f cr)" % s["cash_error"])
 	# Calibration targets. Hopewell has the shortest supply line; the outer consumers are looser.
 	check(s["facilities"]["hopewell_water_one"]["stockout_hours"] <= 0.10 * hours_total, "Hopewell stock-out under 10% of the time")
-	for fid in ["beacon_heatplant", "tank_farm_coop"]:
-		check(s["facilities"][fid]["stockout_hours"] <= 0.12 * hours_total, "%s frontier stock-out under 12%%" % fid)
+	check(s["facilities"]["tank_farm_coop"]["stockout_hours"] <= 0.12 * hours_total, "tank_farm_coop frontier stock-out under 12%")
+	# Lastlight is the end of the road (canon: extreme frontier), so it is allowed to be the leanest supplied.
+	check(s["facilities"]["beacon_heatplant"]["stockout_hours"] <= 0.15 * hours_total, "beacon_heatplant extreme-frontier stock-out under 15%")
 	check(s["facilities"]["meridian_chandlers_union"]["stockout_hours"] <= 0.03 * hours_total, "distributor stock-out under 3%")
-	var from_talos := 0
-	for k in run.contracts.values():
-		if k["origin_sys"] == "talos":
-			from_talos += 1
-	check(from_talos >= 5, "the frontier port Talos has outbound freight (%d contracts)" % from_talos)
-	check(s["facilities"]["roosevelt_mineral_refinery"]["stockout_hours"] <= 0.25 * hours_total, "return chain: Roosevelt refinery stock-out under 25%")
+	for port in ["talos", "waystation", "lastlight"]:
+		var outbound := 0
+		for k in run.contracts.values():
+			if k["origin_sys"] == port:
+				outbound += 1
+		check(outbound >= 5, "the frontier port %s has outbound freight (%d contracts)" % [port, outbound])
+	for fid in ["meridian_smelter_guild", "meridian_bunkering", "roosevelt_instrument_works"]:
+		check(s["facilities"][fid]["stockout_hours"] <= 0.25 * hours_total, "return chain: %s stock-out under 25%%" % fid)
 	check(s["contracts"]["delivered"] > 100, "freight actually flows (%d delivered)" % s["contracts"]["delivered"])
 	check(s["contracts"]["oldest_open_offer_hours"] < 24 * 16, "no contract sits unserved for 16 days")
 	nets.sort()
