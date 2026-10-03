@@ -13,14 +13,14 @@
       "id": "coldwall_18_cells",
       "brand": "Coldwall 18 Exchange Cells",
       "producer_id": "orun_thermal_collective",
-      "commodity_id": "thermal_components",
+      "commodity_id": "thermal_equipment",
       "description": "Replaceable exchanger cells shipped in shock-protected racks."
     },
     {
       "id": "cascade_filters",
       "brand": "Cascade Filter Sets",
       "producer_id": "vey_closed_cycle",
-      "commodity_id": "life_support_consumables",
+      "commodity_id": "filters",
       "description": "Certified filter consumables for Cascade closed-cycle plants."
     },
     {
@@ -34,14 +34,14 @@
       "id": "kesh_loadbeam",
       "brand": "KHS Loadbeam",
       "producer_id": "kesh_heavy_systems",
-      "commodity_id": "structural_modules",
+      "commodity_id": "structural_components",
       "description": "Heavy certified structural member used in industrial construction and ship repair."
     },
     {
       "id": "deepworks_hotface",
       "brand": "Hotface Ceramic Liners",
       "producer_id": "deepworks_ceramics",
-      "commodity_id": "technical_ceramics",
+      "commodity_id": "ceramics",
       "description": "High-temperature liners for reactors, furnaces and industrial heat systems."
     },
     {

@@ -952,6 +952,16 @@
       "handling": [
         "hazardous"
       ]
+    },
+    {
+      "id": "expedition_consumables",
+      "name": "Expedition Consumables",
+      "category": "consumer",
+      "mass_kg_per_unit": 500,
+      "scu_per_unit": 1,
+      "container_type": "standard",
+      "base_value": 3000,
+      "handling": []
     }
   ]
 }

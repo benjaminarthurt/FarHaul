@@ -35,7 +35,7 @@ func _run() -> void:
 	check(p.location == "dock" and Session.scene_path() == Session.DOCK_SCENE, "new games begin at the dock")
 	check(Session.start_funds() == 110000, "hard starts with 110,000 credits")
 	check(int(p.credits) < 110000 and int(p.credits) > 0, "credits are funds minus the starter ship")
-	check(Worlds.world(p.world).yard_name == "Roosevelt Orbital Yards" or Worlds.yard(p.world).name == "Roosevelt Independent Yards", "starting world decides the yard")
+	check(Worlds.world(p.world).yard_name in ["Roosevelt Orbital Yards", "Roosevelt Independent Yards"], "starting world decides the yard")
 
 	print("overwrite keeps the old save")
 	check(Session.begin_new(2, "Second", "human", "easy", "concord"), "start over in slot 3")
@@ -72,7 +72,7 @@ func _run() -> void:
 	var scene: Node3D = load("res://scenes/main.tscn").instantiate()
 	root.add_child(scene)
 	await process_frame
-	check(scene._credits() == 220000 - scene._ship_cost(), "builder uses this game's starting funds")
+	check(scene._credits() == int(Session.profile.credits) and scene._credits() == scene._start_funds() + scene.earned - scene._ship_cost(), "builder credits match the saved game")
 	check(scene.yard_label.text.contains("Concord Open Docks") or scene.yard_label.text.contains("Concord Exchange Yards"), "builder shows which yard you are at")
 	check(Session.profile.location == "shipyard", "entering the builder records the shipyard")
 	scene.name_edit.text = "Dunlin"

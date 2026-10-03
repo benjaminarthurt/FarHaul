@@ -42,7 +42,7 @@
       "from": "new_houston",
       "to": "concord",
       "class": "trunk",
-      "distance_ly": 6.14,
+      "distance_ly": 6.01,
       "baseline_ship_movements_per_30d": 690
     },
     {
@@ -50,7 +50,7 @@
       "from": "concord",
       "to": "carver",
       "class": "trunk",
-      "distance_ly": 4.09,
+      "distance_ly": 3.54,
       "baseline_ship_movements_per_30d": 760
     },
     {
@@ -58,7 +58,7 @@
       "from": "carver",
       "to": "iron_gate",
       "class": "commercial",
-      "distance_ly": 3.7,
+      "distance_ly": 3.41,
       "baseline_ship_movements_per_30d": 510
     },
     {
@@ -66,7 +66,7 @@
       "from": "iron_gate",
       "to": "keshar",
       "class": "commercial",
-      "distance_ly": 5.18,
+      "distance_ly": 4.62,
       "baseline_ship_movements_per_30d": 470
     },
     {
@@ -74,7 +74,7 @@
       "from": "concord",
       "to": "bradbury",
       "class": "commercial",
-      "distance_ly": 4.57,
+      "distance_ly": 4.36,
       "baseline_ship_movements_per_30d": 390
     },
     {
@@ -82,39 +82,23 @@
       "from": "bradbury",
       "to": "ilos",
       "class": "commercial",
-      "distance_ly": 6,
+      "distance_ly": 5.34,
       "baseline_ship_movements_per_30d": 330
-    },
-    {
-      "id": "keshar_orun",
-      "from": "keshar",
-      "to": "orun",
-      "class": "commercial",
-      "distance_ly": 9.05,
-      "baseline_ship_movements_per_30d": 260
     },
     {
       "id": "orun_foundry",
       "from": "orun",
       "to": "foundry",
       "class": "commercial",
-      "distance_ly": 5.17,
+      "distance_ly": 5,
       "baseline_ship_movements_per_30d": 210
-    },
-    {
-      "id": "carver_port_meridian",
-      "from": "carver",
-      "to": "port_meridian",
-      "class": "commercial",
-      "distance_ly": 13,
-      "baseline_ship_movements_per_30d": 240
     },
     {
       "id": "foundry_port_meridian",
       "from": "foundry",
       "to": "port_meridian",
       "class": "commercial",
-      "distance_ly": 8.18,
+      "distance_ly": 8.72,
       "baseline_ship_movements_per_30d": 190
     },
     {
@@ -122,7 +106,7 @@
       "from": "veyara",
       "to": "tidemark",
       "class": "commercial",
-      "distance_ly": 4.04,
+      "distance_ly": 3.95,
       "baseline_ship_movements_per_30d": 170
     },
     {
@@ -130,7 +114,7 @@
       "from": "tidemark",
       "to": "pelagos",
       "class": "commercial",
-      "distance_ly": 4.24,
+      "distance_ly": 4.06,
       "baseline_ship_movements_per_30d": 150
     },
     {
@@ -138,23 +122,15 @@
       "from": "pelagos",
       "to": "port_meridian",
       "class": "commercial",
-      "distance_ly": 5.55,
+      "distance_ly": 6.24,
       "baseline_ship_movements_per_30d": 180
-    },
-    {
-      "id": "concord_hesperus",
-      "from": "concord",
-      "to": "hesperus",
-      "class": "commercial",
-      "distance_ly": 5.45,
-      "baseline_ship_movements_per_30d": 310
     },
     {
       "id": "port_meridian_talos",
       "from": "port_meridian",
       "to": "talos",
       "class": "outer",
-      "distance_ly": 6.56,
+      "distance_ly": 6.38,
       "baseline_ship_movements_per_30d": 82
     },
     {
@@ -162,7 +138,7 @@
       "from": "port_meridian",
       "to": "waystation",
       "class": "outer",
-      "distance_ly": 6.65,
+      "distance_ly": 7.02,
       "baseline_ship_movements_per_30d": 64
     },
     {
@@ -170,8 +146,33 @@
       "from": "waystation",
       "to": "lastlight",
       "class": "frontier",
-      "distance_ly": 6.67,
+      "distance_ly": 6.75,
       "baseline_ship_movements_per_30d": 18
+    },
+    {
+      "id": "new_houston_hesperus",
+      "from": "new_houston",
+      "to": "hesperus",
+      "class": "commercial",
+      "distance_ly": 4.58,
+      "baseline_ship_movements_per_30d": 310
+    },
+    {
+      "id": "concord_port_meridian",
+      "from": "concord",
+      "to": "port_meridian",
+      "class": "commercial",
+      "distance_ly": 15.44,
+      "baseline_ship_movements_per_30d": 240
+    },
+    {
+      "id": "port_meridian_lastlight",
+      "from": "port_meridian",
+      "to": "lastlight",
+      "class": "frontier",
+      "distance_ly": 13.75,
+      "baseline_ship_movements_per_30d": 12
     }
-  ]
+  ],
+  "note": "Topology and distances follow routes.json, which matches coordinates.json. This file adds route class and baseline ship movements. Legs added for routes.json entries reuse the traffic of the removed leg they replace (new_houston_hesperus from concord_hesperus, concord_port_meridian from carver_port_meridian); port_meridian_lastlight is a light frontier estimate."
 }

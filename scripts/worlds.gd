@@ -83,6 +83,13 @@ static func yard(id: String) -> Dictionary:
 	for y in _yards:
 		if y.id == id:
 			return y
+	# Older saves and tests name a system instead of a yard: use that system's starting yard.
+	for y in _yards:
+		if String(y.get("system_id", "")) == id and bool(y.get("starting_option", false)):
+			return y
+	for y in _yards:
+		if String(y.get("system_id", "")) == id:
+			return y
 	return _yards[0] if not _yards.is_empty() else {}
 
 
@@ -233,17 +240,21 @@ static func world(id: String) -> Dictionary:
 	if sys.is_empty():
 		sys = system("concord")
 		id = "concord"
-	var yard: Dictionary = YARDS.get(id, {"name": "%s Yard" % sys.name, "type": "Shipyard", "at": sys.name})
-	if not _yards.is_empty():
-		yard = yard(id)
+	var fallback: Dictionary = {"name": "%s Yard" % sys.name, "type": "Shipyard", "at": sys.name}
+	var yd: Dictionary = YARDS.get(id, fallback).duplicate()
+	# yards.json names the yard at this system when it has one; type and place come from the table.
+	for y in yards():
+		if String(y.get("system_id", "")) == id and bool(y.get("starting_option", false)):
+			yd["name"] = y.get("name", yd.name)
+			break
 	var eco: Dictionary = sys.get("economy", {})
 	var nar: Dictionary = sys.get("narrative", {})
 	return {
 		"id": id,
 		"name": sys.name,
-		"yard_name": yard.name,
-		"yard_type": yard.type,
-		"yard_at": yard.at,
+		"yard_name": yd.name,
+		"yard_type": yd.type,
+		"yard_at": yd.at,
 		"blurb": nar.get("gameplay_identity", ""),
 		"summary": nar.get("summary", ""),
 		"population": population_text(int(sys.get("population", 0))),
@@ -265,7 +276,7 @@ static func population_text(n: int) -> String:
 
 
 static func race(id: String) -> Dictionary:
-	return _find(RACES, id)
+	return _by_id(RACES, id)
 
 
 static func _trim(t: String) -> String:

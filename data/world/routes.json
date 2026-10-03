@@ -114,17 +114,6 @@
       "base_jump_fuel_units_per_mass_unit": 0.721
     },
     {
-      "id": "bradbury_concord",
-      "a": "bradbury",
-      "b": "concord",
-      "corridors": [
-        "ilyan_research"
-      ],
-      "traffic": "regular",
-      "distance_ly": 4.36,
-      "base_jump_fuel_units_per_mass_unit": 0.662
-    },
-    {
       "id": "veyara_tidemark",
       "a": "veyara",
       "b": "tidemark",

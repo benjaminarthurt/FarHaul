@@ -30,7 +30,8 @@
         "customs",
         "lodging",
         "food",
-        "passenger_terminal"
+        "passenger_terminal",
+        "shipyard"
       ],
       "docking_fee": 900,
       "cargo_handling_multiplier": 1.15,
@@ -229,7 +230,8 @@
         "freight_broker",
         "market",
         "food",
-        "salvage"
+        "salvage",
+        "shipyard"
       ],
       "docking_fee": 300,
       "cargo_handling_multiplier": 0.78,
@@ -364,7 +366,8 @@
         "market",
         "lodging",
         "food",
-        "salvage"
+        "salvage",
+        "shipyard"
       ],
       "docking_fee": 120,
       "cargo_handling_multiplier": 1.25,
@@ -383,7 +386,8 @@
         "freight_broker",
         "market",
         "survey_office",
-        "food"
+        "food",
+        "shipyard"
       ],
       "docking_fee": 160,
       "cargo_handling_multiplier": 1.45,

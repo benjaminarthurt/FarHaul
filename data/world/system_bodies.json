@@ -103,6 +103,37 @@
           "type": "asteroid_belt",
           "role": "specialty minerals",
           "summary": "Low-volume extraction with long-established Kesh industrial camps."
+        },
+        {
+          "id": "dorr",
+          "name": "Dorr",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "venn",
+          "name": "Venn",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "industrial_habitat"
+          ]
+        },
+        {
+          "id": "tor",
+          "name": "Tor",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "outer_stone",
+          "name": "Outer Stone",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -143,6 +174,37 @@
           "type": "icy_belt",
           "role": "water/volatiles",
           "summary": "Sparse extraction region supplying orbital industry."
+        },
+        {
+          "id": "serrin",
+          "name": "Serrin",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "ari",
+          "name": "Ari",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "research_habitat"
+          ]
+        },
+        {
+          "id": "elen",
+          "name": "Elen",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "glass_reach",
+          "name": "Glass Reach",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -176,6 +238,30 @@
           "type": "gas_giant",
           "role": "chemicals",
           "summary": "Atmospheric feedstocks support Vey chemical industries."
+        },
+        {
+          "id": "shaal",
+          "name": "Shaal",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "neris",
+          "name": "Neris",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "research_settlement"
+          ]
+        },
+        {
+          "id": "oruvai",
+          "name": "Oruvai",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -209,6 +295,30 @@
           "type": "asteroid_belt",
           "role": "distributed fabrication",
           "summary": "Numerous small workshops grew around extraction camps and remain interconnected by tug traffic."
+        },
+        {
+          "id": "kes",
+          "name": "Kes",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "var",
+          "name": "Var",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "industrial_settlement"
+          ]
+        },
+        {
+          "id": "junction_belt",
+          "name": "Junction Belt",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -249,6 +359,30 @@
           "type": "orbital_habitat_cluster",
           "role": "trade",
           "summary": "Privately operated warehouses and bonded transfer stations outside the busiest planetary traffic."
+        },
+        {
+          "id": "accord",
+          "name": "Accord",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "compact",
+          "name": "Compact",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "certification_habitat"
+          ]
+        },
+        {
+          "id": "arbitrator",
+          "name": "Arbitrator",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -289,6 +423,40 @@
           "type": "gas_giant",
           "role": "fuel/chemicals",
           "summary": "Fuel-processing stations supply shipyards and outbound traffic."
+        },
+        {
+          "id": "boiler",
+          "name": "Boiler",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "truman",
+          "name": "Truman",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "industrial_settlement"
+          ]
+        },
+        {
+          "id": "toolbox",
+          "name": "Toolbox",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "mixed_mineral"
+          ]
+        },
+        {
+          "id": "longhorn",
+          "name": "Longhorn",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -322,6 +490,30 @@
           "type": "gas_giant",
           "role": "chemical feedstocks",
           "summary": "Source of industrial gases and fertilizer inputs."
+        },
+        {
+          "id": "shepherd",
+          "name": "Shepherd",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "support_habitat"
+          ]
+        },
+        {
+          "id": "thresh",
+          "name": "Thresh",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "rainmaker",
+          "name": "Rainmaker",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -355,6 +547,33 @@
           "type": "gas_giant",
           "role": "fuel",
           "summary": "Large fuel industry serving superheavy construction and outbound vessels."
+        },
+        {
+          "id": "anvil",
+          "name": "Anvil",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "industrial_city"
+          ]
+        },
+        {
+          "id": "keel_belt",
+          "name": "Keel Belt",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "asteroid_mining"
+          ]
+        },
+        {
+          "id": "hammer",
+          "name": "Hammer",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -387,6 +606,20 @@
           "type": "gas_giant",
           "role": "fuel",
           "summary": "Remote fuel stations keep ore traffic independent of imported propellant."
+        },
+        {
+          "id": "cinder",
+          "name": "Cinder",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "prospector",
+          "name": "Prospector",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -420,6 +653,27 @@
           "type": "icy_planet",
           "role": "planetary science",
           "summary": "Research destination with little commercial extraction."
+        },
+        {
+          "id": "fahrenheit",
+          "name": "Fahrenheit",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "lowell",
+          "name": "Lowell",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "mariner",
+          "name": "Mariner",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -453,6 +707,27 @@
           "type": "icy_body",
           "role": "water reserve",
           "summary": "Strategic but rarely exploited water and volatile reserve."
+        },
+        {
+          "id": "shoal",
+          "name": "Shoal",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "breaker",
+          "name": "Breaker",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "drift",
+          "name": "Drift",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -486,6 +761,27 @@
           "type": "gas_giant",
           "role": "research",
           "summary": "Little commercial use beyond specialized atmospheric science."
+        },
+        {
+          "id": "drymark",
+          "name": "Drymark",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "anchor",
+          "name": "Anchor",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "stormhold",
+          "name": "Stormhold",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -519,6 +815,27 @@
           "type": "asteroid_belt",
           "role": "industrial minerals",
           "summary": "Supplies specialized ceramics and machine production."
+        },
+        {
+          "id": "slag",
+          "name": "Slag",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "lift",
+          "name": "Lift",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "feedstock_belt",
+          "name": "Feedstock Belt",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -559,6 +876,34 @@
           "type": "icy_belt",
           "role": "frontier provisioning",
           "summary": "Small extraction camps and survey staging sites."
+        },
+        {
+          "id": "scorch",
+          "name": "Scorch",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "meridian",
+          "name": "Meridian",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "layover",
+          "name": "Layover",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "outbound_belt",
+          "name": "Outbound Belt",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -592,6 +937,27 @@
           "type": "asteroid_belt",
           "role": "prospecting",
           "summary": "Heavily prospected since the Talos boom; results so far are mixed."
+        },
+        {
+          "id": "prospect",
+          "name": "Prospect",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "claim",
+          "name": "Claim",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "second_chance",
+          "name": "Second Chance",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -625,6 +991,27 @@
           "type": "icy_minor_bodies",
           "role": "water/fuel",
           "summary": "Small captured and naturally occurring icy bodies exploited to support the station."
+        },
+        {
+          "id": "burnt_rock",
+          "name": "Burnt Rock",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "crossroads",
+          "name": "Crossroads",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "tank_farm",
+          "name": "Tank Farm",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
         }
       ]
     },
@@ -664,6 +1051,30 @@
           "type": "icy_belt",
           "role": "water/volatiles",
           "summary": "Local resources reduce the amount expedition traffic must import from Waystation."
+        },
+        {
+          "id": "ash",
+          "name": "Ash",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "beacon_moon",
+          "name": "Beacon Moon",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored."
+        },
+        {
+          "id": "reserve",
+          "name": "Reserve",
+          "type": "unspecified",
+          "stub": true,
+          "summary": "Named in later data files; description, type and orbit still to be authored.",
+          "referenced_as": [
+            "ice_extraction"
+          ]
         }
       ]
     }

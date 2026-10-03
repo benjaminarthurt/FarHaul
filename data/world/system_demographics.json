@@ -12,7 +12,7 @@
         "earth",
         "luna",
         "mars",
-        "main_belt",
+        "sol_belt",
         "jupiter",
         "saturn"
       ],
@@ -103,7 +103,7 @@
         "concord_prime",
         "compact",
         "arbitrator",
-        "freeport_cluster"
+        "concord_freeports"
       ],
       "economic_sectors": [
         "trade",

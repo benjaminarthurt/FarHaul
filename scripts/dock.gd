@@ -102,7 +102,7 @@ func _build_ui() -> void:
 	col.add_theme_constant_override("separation", 8)
 	margin.add_child(col)
 
-	var w := Session.world()
+	var w := Worlds.world(Session.system_id())
 	var current_port := Session.port()
 	var where := Label.new()
 	where.text = String(current_port.get("name", w.name)).to_upper()
@@ -110,13 +110,11 @@ func _build_ui() -> void:
 	where.add_theme_color_override("font_color", Brand.OFFWHITE)
 	col.add_child(where)
 	var yard := Label.new()
-		yard.text = "%s  ·  %s" % [w.yard_name, w.yard_type]
-		var at := Brand.note("%s. Population %s." % [String(w.yard_at).substr(0, 1).to_upper() + String(w.yard_at).substr(1), w.population], 14)
+	yard.text = "%s  ·  %s" % [String(Session.system_id()).replace("_", " ").capitalize(), String(current_port.get("type", "port")).replace("_", " ").capitalize()]
 	yard.add_theme_font_size_override("font_size", 18)
 	yard.add_theme_color_override("font_color", Brand.AMBER)
 	col.add_child(yard)
-	col.add_child(at)
-	col.add_child(_gap(10))
+	col.add_child(_gap(14))
 
 	var p := Session.profile
 	var grid := GridContainer.new()
@@ -145,35 +143,35 @@ func _build_ui() -> void:
 	status.add_theme_color_override("font_color", Brand.MUTED)
 	status.add_theme_font_size_override("font_size", 13)
 	col.add_child(status)
-		yard_btn.tooltip_text = "The shipyard is where you build and fit your ship. It is only open at a yard like this one."
-		contract_panel = PanelContainer.new()
-		contract_panel.visible = false
-		contract_panel.add_theme_stylebox_override("panel", Brand.panel_box())
-		contract_panel.custom_minimum_size = Vector2(520, 0)
-		col.add_child(contract_panel)
-		contract_list = VBoxContainer.new()
-		contract_list.add_theme_constant_override("separation", 4)
-		contract_panel.add_child(contract_list)
-		var note := Brand.note("The shipyard is where you build and fit your ship. It is only open at a yard like this one.")
-		note.custom_minimum_size = Vector2(380, 0)
-		col.add_child(note)
+	yard_btn.tooltip_text = "The shipyard is where you build and fit your ship. It is only open at a yard like this one."
+	contract_panel = PanelContainer.new()
+	contract_panel.visible = false
+	contract_panel.add_theme_stylebox_override("panel", Brand.panel_box())
+	contract_panel.custom_minimum_size = Vector2(520, 0)
+	col.add_child(contract_panel)
+	contract_list = VBoxContainer.new()
+	contract_list.add_theme_constant_override("separation", 4)
+	contract_panel.add_child(contract_list)
+	var note := Brand.note("The shipyard is where you build and fit your ship. It is only open at a yard like this one.")
+	note.custom_minimum_size = Vector2(380, 0)
+	col.add_child(note)
 
-		var card := PanelContainer.new()
-		card.add_theme_stylebox_override("panel", Brand.panel_box())
-		layer.add_child(card)
-		card.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 40)
-		card.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-		card.grow_vertical = Control.GROW_DIRECTION_BEGIN
-		var info := VBoxContainer.new()
-		info.add_theme_constant_override("separation", 6)
-		info.custom_minimum_size = Vector2(400, 0)
-		card.add_child(info)
-		info.add_child(Brand.heading("ABOUT " + String(w.name).to_upper()))
-		info.add_child(Brand.note(w.blurb, 15))
-		info.add_child(Brand.note("Sells: %s.\nNeeds: %s." % [_few(w.exports), _few(w.imports)], 14))
-		if not w.neighbours.is_empty():
-			info.add_child(Brand.note("Direct routes to %s." % ", ".join(PackedStringArray(w.neighbours)), 14))
-		_refresh_actions()
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", Brand.panel_box())
+	layer.add_child(card)
+	card.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 40)
+	card.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	card.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	var info := VBoxContainer.new()
+	info.add_theme_constant_override("separation", 6)
+	info.custom_minimum_size = Vector2(400, 0)
+	card.add_child(info)
+	info.add_child(Brand.heading("ABOUT " + String(w.name).to_upper()))
+	info.add_child(Brand.note(w.blurb, 15))
+	info.add_child(Brand.note("Sells: %s.\nNeeds: %s." % [_few(w.exports), _few(w.imports)], 14))
+	if not w.neighbours.is_empty():
+		info.add_child(Brand.note("Direct routes to %s." % ", ".join(PackedStringArray(w.neighbours)), 14))
+	_refresh_actions()
 	yard_btn.grab_focus()
 
 	fade = ColorRect.new()

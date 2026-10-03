@@ -66,6 +66,16 @@
         "lastlight"
       ],
       "description": "The corridor where established commerce thins into frontier logistics and eventually unsupported exploration."
+    },
+    {
+      "id": "ilyan_research",
+      "name": "Ilyan Research Corridor",
+      "system_ids": [
+        "ilos",
+        "bradbury",
+        "concord"
+      ],
+      "description": "Instrument, sample and research-equipment traffic between Ilyan propulsion and survey industry, the Bradbury institutes and the Concord exchange. Modest volume, high value, tolerant of schedules but not of damage."
     }
   ]
 }
