@@ -140,6 +140,11 @@ func _build_ui() -> void:
 		broke.add_theme_color_override("font_color", Color(0.95, 0.4, 0.3))
 		broke.custom_minimum_size = Vector2(440, 0)
 		col.add_child(broke)
+		var rep := Session.run_report()
+		var recap := Brand.note("Your run: %d days, %d jobs, %.0f t hauled. Freight paid %s cr, running costs %s cr." % [int(rep.days), int(rep.jobs), float(rep.tonnes),
+				ShipStats.commas(roundi(float(rep.revenue))), ShipStats.commas(roundi(float(rep.costs)))], 15)
+		recap.custom_minimum_size = Vector2(440, 0)
+		col.add_child(recap)
 	elif Session.sim != null and SimWorld.runway_days(Session.sim) < 7 and Session.active_contract().is_empty():
 		var warn := Brand.note("Cash covers less than a week of running costs. Take freight now.", 15)
 		warn.add_theme_color_override("font_color", Brand.AMBER)
@@ -160,7 +165,7 @@ func _build_ui() -> void:
 	wait_btn.tooltip_text = "Let a day pass. The rest of the economy keeps moving; your crew and ship still cost money."
 	fly_btn.tooltip_text = "Fly without cargo to another system, to reach freight or leave a port with none."
 	_button(menu, "SAVE GAME", _save)
-	_button(menu, "MAIN MENU", _main_menu)
+	_button(menu, "NEW GAME" if Session.insolvent() else "MAIN MENU", _main_menu)
 	status = Label.new()
 	status.add_theme_color_override("font_color", Brand.MUTED)
 	status.add_theme_font_size_override("font_size", 13)

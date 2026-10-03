@@ -26,6 +26,7 @@
     "min_ly_per_day": 0.6,
     "max_ly_per_day": 2.4,
     "max_with_drive_ly_per_day": 4.0,
+    "fuel_burn_per_drive_speed": 0.5,
     "note": "ly/day = reference * (empty thrust-to-weight / reference)^exponent, clamped. The starter ship (TWR 0.28) flies at the reference speed."
   },
   "fuel": {

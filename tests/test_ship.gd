@@ -279,6 +279,9 @@ func _init() -> void:
 		var pd := SimShip.profile(drive_ship)
 		check(sd.drive > 0.29, "stats report the drive (+%d%%)" % roundi(sd.drive * 100.0))
 		check(float(pd.ly_per_day) > float(p0.ly_per_day) * 1.15, "the drive makes the ship faster (%.2f vs %.2f ly/day)" % [float(pd.ly_per_day), float(p0.ly_per_day)])
+	check(absf(float(p0.burn) - 1.0) < 0.001, "starter burns base fuel")
+	if placed_drive:
+		check(float(SimShip.profile(drive_ship).burn) > 1.1, "a drive burns more fuel (x%.2f)" % float(SimShip.profile(drive_ship).burn))
 	var sbig := ShipStats.compute(st_ship)
 	check(sbig.crew_needed == SimShip.crew_for(sbig.cargo_capacity), "crew need follows hold size (%d for %.0f t)" % [sbig.crew_needed, sbig.cargo_capacity])
 	check(SimShip.crew_for(120.0) == 4 and SimShip.crew_for(24.0) == 1, "crew formula: 24 t needs 1, 120 t needs 4")

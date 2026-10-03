@@ -49,6 +49,7 @@ static func profile(ship: ShipData, cfg: Dictionary = {}) -> Dictionary:
 		"ship_cost": float(st["cost"]),
 		"twr": twr,
 		"berths": int(st.get("berths", 0)),
+		"burn": 1.0 + float(st.get("drive", 0.0)) * float(spd.get("fuel_burn_per_drive_speed", 0.0)),
 	}
 
 

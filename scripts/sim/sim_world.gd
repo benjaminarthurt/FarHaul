@@ -78,6 +78,7 @@ static func sync(sim: EconomySim, profile: Dictionary, ship: ShipData) -> void:
 	c["fixed"] = fresh["fixed_cr_per_day"]
 	c["speed"] = fresh["ly_per_day"]
 	c["fuel_units"] = fresh["fuel_units"]
+	c["burn"] = fresh["burn"]
 	c["level"] = SimShip.level(String(profile.get("difficulty", "normal")))
 	var credits := float(profile.credits)
 	if absf(credits - c["cash"]) > 0.5:

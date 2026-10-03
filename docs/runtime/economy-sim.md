@@ -146,13 +146,14 @@ over (`Session.insolvent`).
 
 **Builder parts.** Crew berths (cockpit 1, crew bunk 1, crew quarters 2) must cover the crew a hold needs
 (one, plus one per 40 t of hold). A short crew shows a builder warning and blocks departure. The jump
-drive adds 30% cruising speed each (capped at 4 ly/day), draws 40 kW, sheds 50 kW of heat and weighs
+drive adds 30% cruising speed each (capped at 4 ly/day) and burns 15% more fuel per drive (`fuel_burn_per_drive_speed`), draws 40 kW, sheds 50 kW of heat and weighs
 4 t, so it also cuts thrust-to-weight. The starter ship has neither and is unchanged.
 
-**Known gaps.** Crew wages and ownership costs still come from `ship_economy.json`, not from parts, and
-a drive does not yet change fuel burn. Dead-end consumer ports (for example Talos) have no outbound
-freight, so the captain must fly empty. When the sim is absent the legacy contract board is used.
-Insolvency ends the run but there is no restart or ship-sale screen yet.
+**Known gaps.** Crew wages are a flat rate per crew member in `ship_economy.json`; ownership cost does follow
+the parts, because it is a share of the ship's total price. Dead-end consumer ports (for example Talos)
+have no outbound freight, so the captain must fly empty. When the sim is absent the legacy contract
+board is used. Bankruptcy shows a recap of the run (`Session.run_report`) and ends it; there is no
+second chance or ship-sale mechanic.
 
 ## Assumptions to replace with data
 

@@ -93,6 +93,8 @@ func _run() -> void:
 	check(not Session.insolvent(), "a captain with cash is not insolvent")
 	Session.profile["credits"] = -50
 	check(Session.insolvent(), "a captain in debt with no contract is insolvent")
+	var rep := Session.run_report()
+	check(int(rep.days) > 0 and int(rep.jobs) >= 1 and float(rep.tonnes) > 0.0, "run report: %d days, %d jobs, %.0f t" % [int(rep.days), int(rep.jobs), float(rep.tonnes)])
 	Session.profile["credits"] = saved_credits
 
 	print("a captain working steadily for 60 days")

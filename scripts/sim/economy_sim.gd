@@ -98,6 +98,7 @@ func _add_carrier(c: Dictionary) -> void:
 		"capacity_kg": float(c.get("capacity_kg", float(c["capacity_scu"]) * scu_mass_kg)),
 		"speed": float(c.get("ly_per_day", p["ly_per_day"])),
 		"fuel_units": float(c.get("fuel_units", 1.0e12)),
+		"burn": float(c.get("burn", 1.0)),   # fuel burned per tonne-jump relative to the base: jump drives cost fuel for speed
 		# Difficulty multipliers from economy_levels.json. Only the player's ships carry one; NPC
 		# carriers leave it empty and run on the base economy.
 		"level": c.get("level", {}),
@@ -263,10 +264,10 @@ func _path_hours(path: Array, speed: float = -1.0) -> int:
 			h += int(p["port_dwell_hours"])
 	return h
 
-func _fuel_cost(from_sys: String, to_sys: String, ship_mass_t: float) -> float:
+func _fuel_cost(from_sys: String, to_sys: String, ship_mass_t: float, burn: float = 1.0) -> float:
 	var r := net.route(from_sys, to_sys)
 	var coef: float = float(r.get("base_jump_fuel_units_per_mass_unit", 0.0))
-	return coef * ship_mass_t * float(p["fuel_cr_per_unit"]) * fuel_factor.get(from_sys, 1.0)
+	return coef * ship_mass_t * float(p["fuel_cr_per_unit"]) * fuel_factor.get(from_sys, 1.0) * burn
 
 func _port_fee(system_id: String) -> float:
 	var port: Dictionary = net.ports.get(net.primary_port(system_id), {})
@@ -281,7 +282,7 @@ func _trip_parts(ship: Dictionary, path: Array, cargo_mass_t: float) -> Dictiona
 	var fuel := 0.0
 	var fees := 0.0
 	for i in range(path.size() - 1):
-		fuel += _fuel_cost(path[i], path[i + 1], ship["dry_mass_t"] + cargo_mass_t)
+		fuel += _fuel_cost(path[i], path[i + 1], ship["dry_mass_t"] + cargo_mass_t, float(ship.get("burn", 1.0)))
 		fees += _port_fee(path[i + 1])
 	var days := _path_hours(path, float(ship.get("speed", -1.0))) / 24.0
 	return {"fuel": fuel, "fees": fees, "wages": days * ship["crew"] * ship["wage"], "fixed": days * ship["fixed"], "days": days}
@@ -291,8 +292,8 @@ func _trip_cost(ship: Dictionary, path: Array, cargo_mass_t: float) -> float:
 	return t["fuel"] + t["fees"] + t["wages"] + t["fixed"]
 
 ## Fuel units a leg burns for a ship of this total mass.
-func _leg_fuel_units(from_sys: String, to_sys: String, mass_t: float) -> float:
-	return float(net.route(from_sys, to_sys).get("base_jump_fuel_units_per_mass_unit", 0.0)) * mass_t
+func _leg_fuel_units(from_sys: String, to_sys: String, mass_t: float, burn: float = 1.0) -> float:
+	return float(net.route(from_sys, to_sys).get("base_jump_fuel_units_per_mass_unit", 0.0)) * mass_t * burn
 
 ## The most cargo (kg) a ship can lift along `path` and still cover every leg on one tank, because a
 ## heavier ship burns more. Unlimited-range ships return a huge number.
@@ -305,7 +306,7 @@ func _fuel_cargo_limit_kg(c: Dictionary, path: Array) -> float:
 		if coef <= 0.0:
 			continue
 		var mult := 1.0 if fuel_factor.has(path[i + 1]) else 2.0
-		limit_t = minf(limit_t, c["fuel_units"] / (coef * mult) - c["dry_mass_t"])
+		limit_t = minf(limit_t, c["fuel_units"] / (coef * mult * float(c.get("burn", 1.0))) - c["dry_mass_t"])
 	return maxf(limit_t, 0.0) * 1000.0
 
 ## Can the ship fly this path on one tank per leg? It refuels at every stop that sells fuel; a stop
@@ -314,7 +315,7 @@ func _path_feasible(c: Dictionary, path: Array, cargo_t: float) -> bool:
 	if c["fuel_units"] >= 1.0e11:
 		return true
 	for i in range(path.size() - 1):
-		var need := _leg_fuel_units(path[i], path[i + 1], c["dry_mass_t"] + cargo_t)
+		var need := _leg_fuel_units(path[i], path[i + 1], c["dry_mass_t"] + cargo_t, float(c.get("burn", 1.0)))
 		if not fuel_factor.has(path[i + 1]):
 			need *= 2.0
 		if need > c["fuel_units"]:
@@ -806,7 +807,7 @@ func _start_action(c: Dictionary, a: Dictionary) -> void:
 		"travel":
 			a["left"] = a["hours"]
 			var mass_t: float = c["dry_mass_t"] + (_job_mass_t(c) if a["loaded"] else 0.0)
-			_pay(c["id"], "world", _fuel_cost(a["from"], a["to"], mass_t) * _lv(c, "fuel_price_mult"))
+			_pay(c["id"], "world", _fuel_cost(a["from"], a["to"], mass_t, float(c.get("burn", 1.0))) * _lv(c, "fuel_price_mult"))
 			if a["loaded"]:
 				_log("departed", {"carrier": c["id"], "from": a["from"], "to": a["to"], "days": a["hours"] / 24.0})
 
@@ -943,7 +944,7 @@ func summary() -> Dictionary:
 func probe_ship(profile: Dictionary, level: Dictionary, bench: Dictionary, lanes: Array = []) -> Dictionary:
 	var ship := {"capacity_scu": profile["capacity_scu"], "capacity_kg": profile["capacity_kg"], "dry_mass_t": profile["dry_mass_t"],
 			"crew": profile["crew"], "wage": profile["wage_cr_per_day"], "fixed": profile["fixed_cr_per_day"],
-			"speed": profile.get("ly_per_day", float(p["ly_per_day"])), "fuel_units": profile.get("fuel_units", 1.0e12)}
+			"speed": profile.get("ly_per_day", float(p["ly_per_day"])), "fuel_units": profile.get("fuel_units", 1.0e12), "burn": profile.get("burn", 1.0)}
 	var scu_ref := _reference_mass_per_scu()
 	var util := float(bench.get("utilisation", 0.7))
 	var back := float(bench.get("backhaul_fraction", 0.35))

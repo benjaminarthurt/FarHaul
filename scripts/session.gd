@@ -147,6 +147,21 @@ static func day() -> int:
 	return SimWorld.day(sim) if sim != null else 0
 
 
+## How the captain's run went, for the bankruptcy screen and anything that wants a summary.
+static func run_report() -> Dictionary:
+	if sim == null:
+		return {}
+	var c := SimWorld.player(sim)
+	var jobs := 0
+	var tonnes := 0.0
+	for k in sim.contracts.values():
+		if k.get("carrier", "") == SimWorld.PLAYER and k["status"] == "delivered":
+			jobs += 1
+			tonnes += float(k["mass_kg"]) / 1000.0
+	return {"days": day(), "jobs": jobs, "tonnes": tonnes, "revenue": float(c.get("revenue", 0.0)), "costs": float(c.get("costs", 0.0)),
+			"credits": int(profile.get("credits", 0))}
+
+
 ## True once the captain is in debt with no contract in hand: the bank takes the ship and the run ends.
 static func insolvent() -> bool:
 	return sim != null and int(profile.get("credits", 0)) < 0 and active_contract().is_empty()
