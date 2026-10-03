@@ -98,6 +98,9 @@ func _add_carrier(c: Dictionary) -> void:
 		"capacity_kg": float(c.get("capacity_kg", float(c["capacity_scu"]) * scu_mass_kg)),
 		"speed": float(c.get("ly_per_day", p["ly_per_day"])),
 		"fuel_units": float(c.get("fuel_units", 1.0e12)),
+		# Difficulty multipliers from economy_levels.json. Only the player's ships carry one; NPC
+		# carriers leave it empty and run on the base economy.
+		"level": c.get("level", {}),
 	}
 	carriers[c["id"]] = cr
 	cash_initial += cr["cash"]
@@ -243,6 +246,9 @@ func quote(fid: String, com: String) -> float:
 	var hi: float = price_cfg["inventory_cover_days"][1]
 	var t := clampf(cover / 30.0, 0.0, 1.0)
 	return ref * (1.0 + hi + (lo - hi) * t)
+
+func _lv(c: Dictionary, key: String) -> float:
+	return float(c["level"].get(key, 1.0))
 
 func _leg_hours(dist_ly: float, speed: float = -1.0) -> int:
 	return int(ceil(dist_ly / (speed if speed > 0.0 else float(p["ly_per_day"])) * 24.0))
@@ -393,7 +399,7 @@ func _consume_and_produce() -> void:
 					_pay(f["id"], "world", made * it["unit_cost"])
 			it["min_on_hand"] = minf(it["min_on_hand"], ledger.on_hand(f["id"], com))
 	for c in carriers.values():
-		var per_hour: float = (c["crew"] * c["wage"] + c["fixed"]) / 24.0
+		var per_hour: float = (c["crew"] * c["wage"] * _lv(c, "wage_mult") + c["fixed"] * _lv(c, "ownership_mult")) / 24.0
 		_pay(c["id"], "world", per_hour)
 		if c["state"] != "idle":
 			c["busy_hours"] += 1
@@ -576,7 +582,10 @@ func _dispatch_carriers() -> void:
 			if seen.has(key):
 				continue
 			seen[key] = true
-			var bundle := _bundle(c, k, offered)
+			var fitted := _fit_contract(c, k)
+			if fitted.is_empty():
+				continue
+			var bundle := _bundle(c, fitted, offered)
 			var ev := _evaluate(c, bundle)
 			if ev.is_empty():
 				continue
@@ -602,13 +611,68 @@ func _return_home(c: Dictionary) -> void:
 	c["queue"] = []
 	_queue_path(c, path, false)
 
+## A contract this carrier can actually take. A whole lot that fits is returned as is; one too big for
+## the hold (by volume or mass) is offered as a part-lot ("parcel"): a copy sized to what fits, with the
+## rate pro rata. Nothing is split until the carrier accepts it (see _split_for).
+func _fit_contract(c: Dictionary, k: Dictionary) -> Dictionary:
+	if k["scu"] <= c["capacity_scu"] and k["mass_kg"] <= c["capacity_kg"]:
+		return k
+	var lot: Dictionary = lots[k["lot"]]
+	var frac := minf(c["capacity_scu"] / k["scu"], c["capacity_kg"] / k["mass_kg"])
+	var units := floorf(lot["units"] * frac)
+	if units < 1.0 or units < float(p.get("min_parcel_units", 1)):
+		return {}
+	var f: float = units / lot["units"]
+	var part := k.duplicate()
+	part["scu"] = k["scu"] * f
+	part["mass_kg"] = k["mass_kg"] * f
+	part["rate"] = k["rate"] * f
+	part["rate0"] = k["rate0"] * f
+	part["parcel_units"] = units
+	part["parent"] = k["id"]
+	return part
+
+## Carve a real contract and lot out of the offered one, for `part` as returned by _fit_contract.
+## The remainder stays on offer, so a big lot can be moved by several small ships.
+func _split_for(part: Dictionary) -> Dictionary:
+	var k: Dictionary = contracts[part["parent"]]
+	var lot: Dictionary = lots[k["lot"]]
+	var units: float = part["parcel_units"]
+	var order: Dictionary = orders[lot["order"]]
+	var lid := _new_id("lot")
+	var new_lot := lot.duplicate(true)
+	new_lot["id"] = lid
+	new_lot["units"] = units
+	new_lot["scu"] = _scu(lot["com"], units)
+	new_lot["mass_kg"] = _mass_kg(lot["com"], units)
+	lot["units"] -= units
+	lot["scu"] = _scu(lot["com"], lot["units"])
+	lot["mass_kg"] = _mass_kg(lot["com"], lot["units"])
+	lots[lid] = new_lot
+	order["lots"].append(lid)
+	var cid := _new_id("contract")
+	var nk := k.duplicate(true)
+	nk["id"] = cid
+	nk["lot"] = lid
+	nk["scu"] = new_lot["scu"]
+	nk["mass_kg"] = new_lot["mass_kg"]
+	nk["rate"] = part["rate"]
+	nk["rate0"] = part["rate0"]
+	k["scu"] = lot["scu"]
+	k["mass_kg"] = lot["mass_kg"]
+	k["rate"] -= part["rate"]
+	k["rate0"] -= part["rate0"]
+	contracts[cid] = nk
+	_log("contract_split", {"contract": k["id"], "parcel": cid, "lot": lid, "units": units, "remaining_units": lot["units"]})
+	return nk
+
 func _bundle(c: Dictionary, first: Dictionary, offered: Array) -> Array:
 	var out: Array = [first]
 	var scu: float = first["scu"]
 	var mass: float = first["mass_kg"]
 	var cap_mass: float = c["capacity_kg"]
 	for k in offered:
-		if k == first or k["status"] != "offered" or not _eligible(c, k):
+		if k["id"] == first["id"] or k["status"] != "offered" or not _eligible(c, k):
 			continue
 		if k["origin_port"] != first["origin_port"] or k["dest_port"] != first["dest_port"]:
 			continue
@@ -620,8 +684,6 @@ func _bundle(c: Dictionary, first: Dictionary, offered: Array) -> Array:
 
 func _evaluate(c: Dictionary, bundle: Array) -> Dictionary:
 	var first: Dictionary = bundle[0]
-	if first["scu"] > c["capacity_scu"] or first["mass_kg"] > c["capacity_kg"]:
-		return {}
 	var revenue := 0.0
 	var scu := 0.0
 	var mass := 0.0
@@ -652,6 +714,8 @@ func _evaluate(c: Dictionary, bundle: Array) -> Dictionary:
 
 func _accept(c: Dictionary, ev: Dictionary) -> void:
 	var bundle: Array = ev["bundle"]
+	if bundle[0].has("parent"):
+		bundle[0] = _split_for(bundle[0])
 	var first: Dictionary = bundle[0]
 	c["job"] = []
 	var scu := 0.0
@@ -720,7 +784,7 @@ func _start_action(c: Dictionary, a: Dictionary) -> void:
 		"travel":
 			a["left"] = a["hours"]
 			var mass_t: float = c["dry_mass_t"] + (_job_mass_t(c) if a["loaded"] else 0.0)
-			_pay(c["id"], "world", _fuel_cost(a["from"], a["to"], mass_t))
+			_pay(c["id"], "world", _fuel_cost(a["from"], a["to"], mass_t) * _lv(c, "fuel_price_mult"))
 			if a["loaded"]:
 				_log("departed", {"carrier": c["id"], "from": a["from"], "to": a["to"], "days": a["hours"] / 24.0})
 
@@ -728,7 +792,7 @@ func _complete_action(c: Dictionary, a: Dictionary) -> void:
 	match a["type"]:
 		"travel":
 			c["sys"] = a["to"]
-			_pay(c["id"], "world", _port_fee(a["to"]))
+			_pay(c["id"], "world", _port_fee(a["to"]) * _lv(c, "port_fee_mult"))
 			if a["loaded"]:
 				_log("arrived", {"carrier": c["id"], "system": a["to"]})
 		"load":
@@ -765,11 +829,12 @@ func _deliver(c: Dictionary) -> void:
 		k["status"] = "delivered"
 		k["delivered"] = hour
 		_pay(buyer["id"], "world", _handling_cost(k["dest_port"], lot["scu"]))
-		_pay(buyer["id"], c["id"], k["rate"])
-		buyer["freight_paid"] += k["rate"]
-		c["revenue"] += k["rate"]
+		var paid: float = k["rate"] * _lv(c, "freight_pay_mult")   # the owner-operator premium is paid by the consignee
+		_pay(buyer["id"], c["id"], paid)
+		buyer["freight_paid"] += paid
+		c["revenue"] += paid
 		c["delivered_scu"] += lot["scu"]
-		_log("carrier_paid", {"contract": kid, "carrier": c["id"], "payer": buyer["id"], "amount": k["rate"]})
+		_log("carrier_paid", {"contract": kid, "carrier": c["id"], "payer": buyer["id"], "amount": paid})
 		if lot["seg_i"] >= lot["segs"].size() - 1:
 			ledger.receive(buyer["id"], lot["com"], lot["units"])
 			lot["holder"] = buyer["id"]
@@ -800,7 +865,7 @@ func _finish_job(c: Dictionary) -> void:
 	var earned := 0.0
 	for kid in c["job"]:
 		earned += contracts[kid]["rate"]
-	_pay(c["id"], "world", earned * float(p["maintenance_reserve_fraction"]))
+	_pay(c["id"], "world", earned * float(p["maintenance_reserve_fraction"]) * _lv(c, "maintenance_mult") * _lv(c, "freight_pay_mult"))
 	c["job"] = []
 	c["queue"] = []
 	c["state"] = "idle"

@@ -90,27 +90,33 @@ The sim enforces three physical limits per carrier: mass, volume, and fuel range
 tank; a stop with no priced fuel also needs the way back). Tuning is in `data/runtime/ship_economy.json`.
 The starter ship works out at 24 SCU, 24 t, 1 crew, 43 cr/day ownership, 1.5 ly/day, five reachable lanes.
 
+**Parcels.** A ship smaller than a 40 SCU lot takes part of it: the contract is split on acceptance into
+a parcel (pro-rata rate, its own lot) and the remainder, which stays on offer. Order totals, ledger
+and money are unchanged by splitting (`tests/test_economy_parcels.gd`).
+
 **Difficulty levels.** `data/runtime/economy_levels.json` holds easy / normal / hard (the same ids as
 `Worlds.DIFFICULTIES`). Each level scales the player's freight pay, fuel price, port fees, wages,
-ownership cost and maintenance. NPC carriers and prices never change with level. `probe_ship()` measures
-a ship's expected margin on the world's direct lanes at a given share of time with paid cargo, and
-`tests/test_economy_levels.gd` checks the starter ship lands in each level's band:
+ownership cost and maintenance. NPC carriers and prices never change with level; a carrier given a
+`level` dictionary in the sim uses it. Freight pay above 1 is the owner-operator premium for small,
+odd and urgent loads, paid by the consignee. `probe_ship()` is the quick analytic estimate of a ship's
+margin on the world's direct lanes; the full simulation confirms it. Three starter ships over 180 days:
 
-| Level | Starter margin | Net per day | Idle-heavy captain (45% paid time) |
-|---|---|---|---|
-| Easy | 29% | about 330 cr | stays near break-even |
-| Normal | 15% | about 150 cr | thin |
-| Hard | 3% | about 30 cr | loses money |
+| Level | Probe | Simulated | Net per ship per day | Pay multiplier |
+|---|---|---|---|---|
+| Easy | 31% | 30% | about 280 cr | 1.21 |
+| Normal | 16% | 16% | about 125 cr | 1.04 |
+| Hard | 2% | 2% | about 13 cr | 1.02 (costs 10-20% higher) |
 
-On hard the ship is a few credits a day from the red, and a captain who lets it sit idle goes under, which
-is the point. To retune, edit the multipliers or targets and run `tests/solve_levels.gd`, which bisects
-the pay multiplier to hit each target margin. Rerun it whenever base rates, fuel, ship costs or the
-starter change.
+On hard the ship is a few credits a day from the red, and paid time is the skill: the benchmark is 65%
+paid time with 30% of return legs carrying freight. A captain who idles more loses money. Tests:
+`test_economy_levels.gd` (probe, quick) and `test_player_economy.gd` (simulation, about two minutes). To
+retune, edit the targets or secondary multipliers and run `tests/solve_levels.gd`, which bisects the pay
+multiplier to hit each target margin; rerun it whenever base rates, fuel, ship costs or the starter change.
 
-**Known gaps.** Lots are 40 SCU, so a 24 SCU ship cannot take a whole lot; small-parcel contracts (split
-lots) are needed before the player runs freight inside the sim. The builder has no drive or crew modules,
-so speed, crew and fuel units are derived, not designed. The level multipliers apply in the probe only; the
-simulated player carrier does not exist yet.
+**Known gaps.** The builder has no drive or crew modules, so speed, crew and fuel units are derived, not
+designed. There is no live player carrier in the game yet: the sim treats the player as an NPC-style
+carrier that auto-accepts work. The player's own contract board (`contracts.gd`) is still separate from
+the simulated one.
 
 ## Assumptions to replace with data
 

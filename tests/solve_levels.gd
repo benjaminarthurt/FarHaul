@@ -8,8 +8,8 @@ func _initialize():
 	var lv = JSON.parse_string(FileAccess.get_file_as_string("res://data/runtime/economy_levels.json"))
 	var sec := {"easy": {"fuel_price_mult":0.9,"port_fee_mult":0.9,"wage_mult":1.0,"ownership_mult":0.9,"maintenance_mult":0.9},
 		"normal": {"fuel_price_mult":1.0,"port_fee_mult":1.0,"wage_mult":1.0,"ownership_mult":1.0,"maintenance_mult":1.0},
-		"hard": {"fuel_price_mult":1.15,"port_fee_mult":1.2,"wage_mult":1.1,"ownership_mult":1.15,"maintenance_mult":1.15}}
-	var goal := {"easy": 0.29, "normal": 0.15, "hard": 0.03}
+		"hard": {"fuel_price_mult":1.2,"port_fee_mult":1.2,"wage_mult":1.1,"ownership_mult":1.2,"maintenance_mult":1.2}}
+	var goal := {"easy": 0.31, "normal": 0.165, "hard": 0.02}
 	for L in lv["levels"]:
 		var id: String = L["id"]
 		for k in sec[id]: L[k] = sec[id][k]

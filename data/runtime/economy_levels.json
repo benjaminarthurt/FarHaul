@@ -1,53 +1,53 @@
 {
   "schema_version": "0.1.0",
   "canon_status": "draft",
-  "note": "Economy difficulty. These multipliers change the PLAYER's operating position only; NPC carriers, prices and the rest of the world run on the base economy at every level, so a harder level means a harder life for you, not a different universe. target_margin is the net margin the benchmark ship (the starter) should earn on the reference lane mix; tests/test_economy_levels.gd checks each level lands inside its band, and tools like it retune the multipliers when the economy changes. Multipliers were solved with tests/solve_levels.gd (bisect freight_pay_mult against target margin); rerun it whenever base rates, fuel, ship costs or the starter ship change.",
+  "note": "Economy difficulty. These multipliers change the PLAYER's operating position only; NPC carriers, prices and the rest of the world run on the base economy at every level, so a harder level means a harder life for you, not a different universe. target_margin is the net margin the benchmark ship (the starter) should earn on the reference lane mix; tests/test_economy_levels.gd checks each level lands inside its band, and tools like it retune the multipliers when the economy changes. Multipliers were solved with tests/solve_levels.gd (bisect freight_pay_mult against target margin); rerun it whenever base rates, fuel, ship costs or the starter ship change. freight_pay_mult above 1 is the owner-operator premium (small, odd and urgent loads pay more per SCU than trunk freight); the consignee pays it, so money is conserved.",
   "benchmark": {
-    "utilisation": 0.7,
-    "backhaul_fraction": 0.35,
-    "note": "Share of time the ship has paid cargo, and the share of return legs that also carry paid cargo."
+    "utilisation": 0.65,
+    "backhaul_fraction": 0.3,
+    "note": "Share of time the ship has paid cargo, and the share of return legs that also carry paid cargo. Calibrated on the simulated starter: starter-class ships running the Hopewell scenario for 150-180 days (tests/test_economy_parcels.gd, tests/lvl_sim.gd) sit at 51-67% paid time, 65% for three ships sharing the work. A sloppier captain idles more and loses money. Backhaul 30% makes the probe agree with the full simulation within a point at every level (probe 31/17/0%, simulation 31/17/0% before the hard retune)."
   },
   "levels": [
     {
       "id": "easy",
       "name": "Easy",
-      "freight_pay_mult": 1.09,
+      "freight_pay_mult": 1.21,
       "fuel_price_mult": 0.9,
       "port_fee_mult": 0.9,
       "wage_mult": 1.0,
       "ownership_mult": 0.9,
       "maintenance_mult": 0.9,
       "target_margin": [
-        0.22,
+        0.24,
         0.36
       ]
     },
     {
       "id": "normal",
       "name": "Normal",
-      "freight_pay_mult": 0.95,
+      "freight_pay_mult": 1.04,
       "fuel_price_mult": 1.0,
       "port_fee_mult": 1.0,
       "wage_mult": 1.0,
       "ownership_mult": 1.0,
       "maintenance_mult": 1.0,
       "target_margin": [
-        0.1,
+        0.12,
         0.2
       ]
     },
     {
       "id": "hard",
       "name": "Hard",
-      "freight_pay_mult": 0.94,
-      "fuel_price_mult": 1.15,
+      "freight_pay_mult": 1.02,
+      "fuel_price_mult": 1.2,
       "port_fee_mult": 1.2,
       "wage_mult": 1.1,
-      "ownership_mult": 1.15,
-      "maintenance_mult": 1.15,
+      "ownership_mult": 1.2,
+      "maintenance_mult": 1.2,
       "target_margin": [
         0.0,
-        0.06
+        0.05
       ]
     }
   ],
