@@ -22,7 +22,7 @@
         0.24,
         0.36
       ],
-      "local_pay_mult": 0.44,
+      "local_pay_mult": 0.495,
       "local_target_net_per_day": 300
     },
     {
@@ -38,7 +38,7 @@
         0.12,
         0.2
       ],
-      "local_pay_mult": 0.45,
+      "local_pay_mult": 0.52,
       "local_target_net_per_day": 200
     },
     {
@@ -54,7 +54,7 @@
         0.0,
         0.05
       ],
-      "local_pay_mult": 0.5,
+      "local_pay_mult": 0.595,
       "local_target_net_per_day": 120
     }
   ],

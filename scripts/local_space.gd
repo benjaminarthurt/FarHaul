@@ -93,8 +93,14 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 	var goods := _goods()
 	var others: Array[Dictionary] = []
 	for n in nodes(String(here["system_id"])):
-		if String(n["id"]) != node_id:
+		if String(n["id"]) == node_id:
+			continue
+		var reach := hop(String(here["kind"]), String(n["kind"]))
+		# only post runs this ship's tank can lift a worthwhile load over
+		if min(float(ship.get("cargo_capacity", 0.0)), max_cargo_t(float(ship["wet"]), float(ship["fuel"]), float(reach["dv_kms"]))) >= float(b["min_tonnes"]) * 0.5:
 			others.append(n)
+	if others.is_empty():
+		return out
 	var mult := float(level.get("local_pay_mult", 1.0)) if pay_override < 0.0 else pay_override
 	for i in int(b["jobs_per_site"]):
 		var dest: Dictionary = others[rng.randi() % others.size()]
@@ -109,7 +115,7 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 		if cap < float(b["min_tonnes"]) * 0.5:
 			continue   # the tank cannot lift a worthwhile load that far
 		var info := Worlds.commodity(good)
-		var value_factor := clampf(float(info.get("base_value", 500)) / 800.0, 0.7, 1.5)
+		var value_factor := clampf(float(info.get("base_value", 500)) / 800.0, 0.85, 1.2)
 		var rate := float(b["rate_cr_per_t_per_kms"]) * float(h["dv_kms"]) * spread * value_factor * mult
 		out.append({
 			"id": id,

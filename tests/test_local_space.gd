@@ -44,7 +44,7 @@ func _run() -> void:
 	var a := LocalSpace.board(String(ns[0].id), 10, ship_stats, lvl)
 	var b := LocalSpace.board(String(ns[0].id), 10, ship_stats, lvl)
 	var c := LocalSpace.board(String(ns[0].id), 11, ship_stats, lvl)
-	check(not a.is_empty() and a.size() <= 5, "jobs are posted (%d)" % a.size())
+	check(not a.is_empty() and a.size() <= 6, "jobs are posted (%d)" % a.size())
 	check(JSON.stringify(a) == JSON.stringify(b), "the board is the same every time it is opened")
 	check(JSON.stringify(a) == JSON.stringify(c), "and holds for the two-day window")
 	check(JSON.stringify(a) != JSON.stringify(LocalSpace.board(String(ns[0].id), 14, ship_stats, lvl)), "then it changes")

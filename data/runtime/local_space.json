@@ -18,12 +18,12 @@
     "moon|belt": {"dv_kms": 3.5, "hours": 26}
   },
   "board": {
-    "jobs_per_site": 5,
+    "jobs_per_site": 6,
     "refresh_days": 2,
     "min_tonnes": 8,
     "max_tonnes": 40,
     "rate_cr_per_t_per_kms": 70,
-    "variance": 0.25,
+    "variance": 0.1,
     "unload_hours": 3,
     "dock_fee_cr": 60,
     "deadline_days": 6
