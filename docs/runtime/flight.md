@@ -65,6 +65,14 @@ heat) the prompt offers J to engage the FTL drive. Then, in the flight scene wit
 5. **Approach**: the ship is at rest 3 km off the destination's collar. Docking works as for a local run, and
    docking settles the manoeuvring fuel and any repairs.
 
+**Sound** (`scripts/jump_audio.gd`, `data/runtime/jump_audio.json`): a hum, a rising whine and a rush of noise
+play as loops whose volume and pitch follow the jump timeline (the whine's pitch and the rush's volume follow
+the same streak value that stretches the stars); an engage chirp plays at J, a sub-bass boom at the flash
+with everything ducked under it for about a second, and a soft thud as the ship settles. The six files are
+synthesised by `tools/gen_jump_audio.py` (no samples, no licences; rerun it after changing the recipe) into
+`assets/audio/jump/`. Any file can be swapped for a recording of the same name. Levels are placeholders to tune
+by ear in `jump_audio.json`.
+
 Inputs are locked from J until the approach. Before J, Esc or docking back turns the flight round (fuel
 charged, the load stays aboard). `tests/smoke_jump.gd` runs the whole sequence headless;
 `tests/capture_jump.gd` renders its frames to PNGs under xvfb-run for looking at it.

@@ -31,9 +31,11 @@ var phase := "free"   ## free flight, or for a flown run: depart (leaving the or
 var station_label: Label3D
 var sun: DirectionalLight3D
 var fx: JumpFx
+var audio: JumpAudio
 var flash_rect: ColorRect
 var jump_t := 0.0
 var _jump_committed := false
+var _settle_played := false
 var _jump_result := {}
 var jump_peak_flash := 0.0   # for tests: the brightest the flash got
 var jump_peak_streak := 0.0
@@ -184,6 +186,8 @@ func _setup_jump() -> void:
 	fx = JumpFx.new()
 	fx.visible = false
 	add_child(fx)
+	audio = JumpAudio.new()
+	add_child(audio)
 	flash_rect = ColorRect.new()
 	flash_rect.color = Color(0.9, 0.95, 1.0, 0.0)
 	flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -217,11 +221,14 @@ func _start_jump() -> void:
 	phase = "spool"
 	jump_t = 0.0
 	_jump_committed = false
+	_settle_played = false
 	model.braking = false
 	model.throttle = 0.0
 	fx.visible = true
 	fx.streak = 0.0
 	prompt.text = "FTL DRIVE SPOOLING"
+	audio.begin()
+	audio.cue("engage")
 
 
 ## The jump timeline: spool, accelerate into streaks, flash (the trip happens), decelerate out.
@@ -238,11 +245,14 @@ func _jump_step(delta: float) -> void:
 	var speed := 0.0
 	var fov := 70.0
 	var white := 0.0
+	var level := 0.0
+	var duck := 1.0
 	if jump_t < spool:
 		var u := jump_t / spool
 		streak = 0.12 * u
 		speed = 30.0 + 250.0 * u
 		fov = 70.0 + 4.0 * u
+		level = 0.55 * u
 		prompt.text = "FTL DRIVE SPOOLING"
 	elif jump_t < t_flash:
 		phase = "warp"
@@ -250,6 +260,7 @@ func _jump_step(delta: float) -> void:
 		streak = 0.12 + 0.88 * u * u
 		speed = 280.0 + 30000.0 * u * u
 		fov = 74.0 + 44.0 * u * u
+		level = 0.55 + 0.45 * u
 		prompt.text = ""
 	elif jump_t < t_commit:
 		var u := (jump_t - t_flash) / flash
@@ -257,9 +268,11 @@ func _jump_step(delta: float) -> void:
 		speed = 30280.0
 		fov = 118.0
 		white = u
+		level = 1.0
 		if white >= 0.98 and not _jump_committed:
 			_jump_committed = true
 			_arrive_in_system()
+			audio.cue("boom")
 	elif jump_t < t_end:
 		phase = "decel"
 		var u := (jump_t - t_commit) / decel
@@ -268,14 +281,21 @@ func _jump_step(delta: float) -> void:
 		speed = 30280.0 * inv * inv * inv + 20.0
 		fov = 70.0 + 48.0 * inv * inv
 		white = maxf(0.0, 1.0 - u * 4.0)
+		level = inv
+		duck = clampf((jump_t - t_commit) / 1.2, 0.0, 1.0)   # silence under the boom, then everything comes back
+		if not _settle_played and u > 0.8:
+			_settle_played = true
+			audio.cue("settle")
 		prompt.text = ""
 	else:
+		audio.end()
 		fx.visible = false
 		fx.streak = 0.0
 		camera.fov = 70.0
 		flash_rect.color = Color(0.9, 0.95, 1.0, 0.0)
 		_begin_approach(3000.0)
 		return
+	audio.mix(level, streak, duck)
 	fx.streak = streak
 	fx.advance(delta, speed)
 	camera.fov = fov

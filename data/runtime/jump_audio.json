@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "note": "Levels for the jump sounds (scripts/jump_audio.gd). Volumes in dB, pitch as a multiplier. PLACEHOLDERS to be tuned by ear after playing: hum_*: the drive's idle at the start and at full spool; whine_max_*: the rising tone at full streak; rush_max_db: the noise of the stars going by; boom/engage/settle: one-shot levels.",
+  "hum_min_db": -30.0,
+  "hum_max_db": -6.0,
+  "whine_max_db": -12.0,
+  "whine_max_pitch": 2.8,
+  "rush_max_db": -5.0,
+  "boom_db": 0.0,
+  "engage_db": -6.0,
+  "settle_db": -4.0
+}
