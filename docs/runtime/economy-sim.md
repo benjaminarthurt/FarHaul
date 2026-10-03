@@ -48,13 +48,15 @@ inventory rises, then the carrier and supplier are paid.
 | Meridian Chandlers Union (distributor) | 18.2% | 1.05 |
 | Beacon Heatplant (Lastlight) | 23.5% | 1.58 |
 
-330 contracts delivered, average 11 days from offer to delivery, median carrier +1,473 cr/day.
-Two carriers lose money: Sol Transit A and Redline Co-op A. The test thresholds
-(Hopewell under 10%, others under 30%) are targets to tighten, not a claim that this is healthy.
+After calibration (2026-10-03): base rate 60 cr per SCU-ly (was 75), and the three loss-making hulls
+(Sol Transit A, Redline Co-op A, Meridian Outbound E) removed, since the slice has far more hulls than
+freight. Result over 180 days: 312 contracts delivered, about 12 days from offer to delivery, every
+carrier solvent, fleet margin 19% (canon band 8 to 24% in `economic_calibration.json`). The test now
+checks both. Going lower than 60 pushes small carriers underwater; going higher breaks the band.
 
 ## Findings for calibration
 
-- **Freight costs as much as the goods.** At the assumed ship, crew and fuel costs, moving filters three
+- **Freight costs as much as the goods (still true after calibration).** At the assumed ship, crew and fuel costs, moving filters three
   jumps (New Houston to Hopewell or Lastlight) costs 0.4 to 1.6 times their value. Lowering the
   per-SCU rate does not fix it: carriers then run at a loss. Faster ships do not fix it either. Cargo
   worth under roughly 1,500 cr per unit cannot be shipped to the frontier at these costs. The levers
@@ -68,6 +70,11 @@ Two carriers lose money: Sol Transit A and Redline Co-op A. The test thresholds
   per 30 days on New Houston to Concord; this scenario has 13 ships.
 - **Hopewell's seed example starts in a stock-out.** 47 filters at 13.4 per day is 3.5 days of cover and
   the fastest delivery is 4.3 days.
+
+- **Open after calibration:** Beacon, Tank Farm and Meridian Chandlers still run short about 20% of the
+  time, and freight still costs about 0.6 to 1.1 times the goods bought. The rate is at its floor, so the
+  next levers are ship economics (crew per SCU, bigger or faster hulls) and the value of what these
+  facilities buy, not the rate.
 
 ## Assumptions to replace with data
 
