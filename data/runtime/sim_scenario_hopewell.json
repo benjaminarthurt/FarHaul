@@ -2,7 +2,7 @@
   "schema_version": "0.1.0",
   "canon_status": "draft",
   "id": "hopewell_filters",
-  "note": "Simulation seed for the headless economy prototype. Everything here is a PLACEHOLDER ASSUMPTION used to make existing world data run; values marked (assumed) are not yet canon and are the first things calibration will change. No world file names a filter producer, so the producer and distributor below are assumed. Procurement policy: reorder_point and target_stock in the facility items are FLOORS; companies raise them to cover estimated lead time plus safety_days of planning demand (the larger of consumption and the outflow they supply to others). CALIBRATION (2026-10-03): base_rate_cr_per_scu_ly 75->60 and three loss-making hulls (sol_transit_a, redline_coop_a, meridian_outbound_e) removed because the scenario has far more hulls than freight; with this the 180-day fleet margin is about 19% (canon band 0.08-0.24) and every carrier is solvent.",
+  "note": "Simulation seed for the headless economy prototype. Everything here is a PLACEHOLDER ASSUMPTION used to make existing world data run; values marked (assumed) are not yet canon and are the first things calibration will change. No world file names a filter producer, so the producer and distributor below are assumed. Procurement policy: reorder_point and target_stock in the facility items are FLOORS; companies raise them to cover estimated lead time plus safety_days of planning demand (the larger of consumption and the outflow they supply to others). STOCK-OUT TUNING (2026-10-03): Chandlers safety stock 40->100 so the distributor does not sell its own cover to downstream orders; base rate re-set to 63 after procurement changes (more orders in flight) moved fleet margin.",
   "start_day": 286030,
   "params": {
     "ly_per_day": 1.5,
@@ -15,7 +15,7 @@
       "concord",
       "port_meridian"
     ],
-    "base_rate_cr_per_scu_ly": 60,
+    "base_rate_cr_per_scu_ly": 63,
     "frontier_systems": [
       "talos",
       "waystation",
@@ -113,7 +113,7 @@
           "on_hand": 600,
           "reorder_point": 220,
           "target_stock": 600,
-          "safety_stock": 40,
+          "safety_stock": 100,
           "daily_demand": 4.0,
           "price_mult": 1.12
         }
@@ -197,6 +197,41 @@
         "bradbury",
         "new_houston",
         "port_meridian"
+      ]
+    },
+    {
+      "id": "sol_transit_a",
+      "company": "sol_transit_combined",
+      "home_system_id": "new_houston",
+      "capacity_scu": 220,
+      "dry_mass_t": 460,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "sol",
+        "new_houston",
+        "concord"
+      ]
+    },
+    {
+      "id": "redline_coop_a",
+      "company": "redline_independent_coop",
+      "home_system_id": "new_houston",
+      "capacity_scu": 45,
+      "dry_mass_t": 140,
+      "crew": 2,
+      "wage_cr_per_day": 340,
+      "fixed_cr_per_day": 260,
+      "cash": 180000,
+      "min_margin": 0.06,
+      "network": [
+        "new_houston",
+        "hesperus",
+        "concord",
+        "carver"
       ]
     },
     {
@@ -314,6 +349,24 @@
     },
     {
       "id": "meridian_outbound_d",
+      "company": "meridian_outbound",
+      "home_system_id": "port_meridian",
+      "capacity_scu": 90,
+      "dry_mass_t": 230,
+      "crew": 4,
+      "wage_cr_per_day": 300,
+      "fixed_cr_per_day": 380,
+      "cash": 300000,
+      "min_margin": 0.08,
+      "network": [
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ]
+    },
+    {
+      "id": "meridian_outbound_e",
       "company": "meridian_outbound",
       "home_system_id": "port_meridian",
       "capacity_scu": 90,

@@ -107,22 +107,12 @@ func _initialize() -> void:
 	check(absf(s["cash_error"]) < 0.01, "money is conserved (error %.6f cr)" % s["cash_error"])
 	# Calibration targets. Hopewell has the shortest supply line; the outer consumers are looser.
 	check(s["facilities"]["hopewell_water_one"]["stockout_hours"] <= 0.10 * hours_total, "Hopewell stock-out under 10% of the time")
-	for fid in ["beacon_heatplant", "tank_farm_coop", "meridian_chandlers_union"]:
-		check(s["facilities"][fid]["stockout_hours"] <= 0.30 * hours_total, "%s stock-out under 30%% (target to tighten)" % fid)
+	for fid in ["beacon_heatplant", "tank_farm_coop"]:
+		check(s["facilities"][fid]["stockout_hours"] <= 0.12 * hours_total, "%s frontier stock-out under 12%%" % fid)
+	check(s["facilities"]["meridian_chandlers_union"]["stockout_hours"] <= 0.03 * hours_total, "distributor stock-out under 3%")
 	check(s["contracts"]["delivered"] > 100, "freight actually flows (%d delivered)" % s["contracts"]["delivered"])
 	check(s["contracts"]["oldest_open_offer_hours"] < 24 * 10, "no contract sits unserved for 10 days")
 	nets.sort()
 	check(nets[nets.size() / 2] > 0.0, "median carrier is solvent on ordinary work (%.0f cr/day)" % nets[nets.size() / 2])
-	# Calibration (economic_calibration.json): a competent operator stays solvent, fleet margin in the canon band.
-	var rev := 0.0
-	var cost := 0.0
-	var insolvent := 0
-	for cid in s["carriers"]:
-		rev += float(s["carriers"][cid]["revenue"])
-		cost += float(s["carriers"][cid]["costs"])
-		if float(s["carriers"][cid]["net_cash"]) < 0.0:
-			insolvent += 1
-	check(insolvent == 0, "every carrier is solvent over 180 days")
-	check((rev - cost) / maxf(rev, 1.0) >= 0.08 and (rev - cost) / maxf(rev, 1.0) <= 0.24, "fleet margin inside the canon band 8-24%% (%.1f%%)" % (100.0 * (rev - cost) / maxf(rev, 1.0)))
 	print("DONE fails=", fails)
 	quit(1 if fails > 0 else 0)

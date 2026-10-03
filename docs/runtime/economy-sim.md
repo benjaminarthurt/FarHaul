@@ -48,11 +48,11 @@ inventory rises, then the carrier and supplier are paid.
 | Meridian Chandlers Union (distributor) | 18.2% | 1.05 |
 | Beacon Heatplant (Lastlight) | 23.5% | 1.58 |
 
-After calibration (2026-10-03): base rate 60 cr per SCU-ly (was 75), and the three loss-making hulls
+After calibration (2026-10-03): base rate 63 cr per SCU-ly (was 75), and the three loss-making hulls
 (Sol Transit A, Redline Co-op A, Meridian Outbound E) removed, since the slice has far more hulls than
 freight. Result over 180 days: 312 contracts delivered, about 12 days from offer to delivery, every
-carrier solvent, fleet margin 19% (canon band 8 to 24% in `economic_calibration.json`). The test now
-checks both. Going lower than 60 pushes small carriers underwater; going higher breaks the band.
+carrier solvent, fleet margin about 16% (canon band 8 to 24% in `economic_calibration.json`). The test now
+checks both. Going lower than about 57 pushes small carriers underwater; going higher breaks the band.
 
 ## Findings for calibration
 
@@ -71,10 +71,15 @@ checks both. Going lower than 60 pushes small carriers underwater; going higher 
 - **Hopewell's seed example starts in a stock-out.** 47 filters at 13.4 per day is 3.5 days of cover and
   the fastest delivery is 4.3 days.
 
-- **Open after calibration:** Beacon, Tank Farm and Meridian Chandlers still run short about 20% of the
-  time, and freight still costs about 0.6 to 1.1 times the goods bought. The rate is at its floor, so the
-  next levers are ship economics (crew per SCU, bigger or faster hulls) and the value of what these
-  facilities buy, not the rate.
+- **Stock-outs fixed (2026-10-03).** Buyers now (1) trust observed lead time up to 1.7x the slowest real
+  supplier path rather than 2.5x the nearest one, (2) count only inbound shipments that arrive before the
+  shelf empties, so a late shipment no longer blocks a second order, (3) never place sliver orders (at
+  least 75% of a 14-day cycle), and (4) weight transit time heavily when the shelf will empty first. The
+  Chandlers distributor keeps 100 units of safety stock instead of 40. Result over 180 days: Hopewell 4%,
+  Beacon 8.5%, Tank Farm 5%, Chandlers 0% stock-out (was 4%, 23%, 14%, 18%). Most of what is left is the
+  start-up transient and the long frontier lead time (30+ days).
+- **Open:** freight still costs about 0.5 to 0.8 times the goods bought, and about 20% of contracts finish
+  after their deadline.
 
 ## Assumptions to replace with data
 

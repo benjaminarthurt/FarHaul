@@ -190,6 +190,18 @@ func estimate_lead_days(fid: String, com: String) -> float:
 		return best_fill
 	return worst if worst > 0.0 else 14.0
 
+## Slowest nominal supplier path (days), used to bound how much observed lead time is trusted.
+func worst_lead_days(fid: String, com: String) -> float:
+	var buyer: Dictionary = facilities[fid]
+	var worst := 0.0
+	for f in facilities.values():
+		if f["id"] == fid or f["kind"] == "consumer" or not f["items"].has(com):
+			continue
+		var segs := _segments(f["system_id"], buyer["system_id"], f["port_id"], buyer["port_id"])
+		if not segs.is_empty():
+			worst = maxf(worst, _est_hours(segs) / 24.0)
+	return worst
+
 ## Effective reorder point / target: configured floors raised to cover lead time.
 func policy(fid: String, com: String) -> Dictionary:
 	var it: Dictionary = facilities[fid]["items"][com]
@@ -198,7 +210,10 @@ func policy(fid: String, com: String) -> Dictionary:
 	var d := planning_demand(it)
 	# Learn from real deliveries, but cap the correction so one slow patch cannot trigger a bullwhip.
 	var est := estimate_lead_days(fid, com)
-	var lead := clampf(it["lead_obs"], est, est * float(p["lead_learning_cap"]))
+	# The cap is relative to the slowest real supplier path, not to the (often optimistic) nearest one,
+	# because the nearest supplier is exactly the one that runs out when it matters.
+	var cap := maxf(est * float(p["lead_learning_cap"]), worst_lead_days(fid, com) * float(p.get("lead_worst_cap", 1.7)))
+	var lead := clampf(it["lead_obs"], est, cap)
 	var reorder := maxf(it["reorder"], d * (lead + float(p["safety_days"])))
 	var target := maxf(it["target"], reorder + d * float(p["cycle_days"]))
 	return {"reorder": reorder, "target": target}
@@ -366,6 +381,16 @@ func _inbound_units(fid: String, com: String) -> float:
 			t += o["units"] - o["received"]
 	return t
 
+## Inbound units that will land before the shelf is empty. A shipment due after the stock-out
+## does not protect against it, so it should not stop a second, faster order.
+func _inbound_in_time(fid: String, com: String, avail: float, demand: float) -> float:
+	var runway_h := hour + int((avail / maxf(demand, 0.001) + float(p["safety_days"]) * 0.5) * 24.0)
+	var t := 0.0
+	for o in orders.values():
+		if o["buyer"] == fid and o["com"] == com and o["eta"] <= runway_h:
+			t += o["units"] - o["received"]
+	return t
+
 func _generate_procurement() -> void:
 	for f in facilities.values():
 		for com in f["items"]:
@@ -375,9 +400,11 @@ func _generate_procurement() -> void:
 			var pol := policy(f["id"], com)
 			var avail := ledger.available(f["id"], com)
 			var inbound := _inbound_units(f["id"], com)
-			if avail + inbound > pol["reorder"]:
+			var protect := _inbound_in_time(f["id"], com, avail, planning_demand(it))
+			if avail + protect > pol["reorder"] or avail + inbound > pol["target"]:
 				continue
-			var request := ceilf(pol["target"] - (avail + inbound))
+			# Never place a sliver order: each one is a lot, a contract and a carrier trip.
+			var request := maxf(ceilf(pol["target"] - (avail + inbound)), ceilf(planning_demand(it) * float(p["cycle_days"]) * 0.75))
 			if request < 1.0:
 				continue
 			_log("reorder_triggered", {"facility": f["id"], "commodity": com, "available": avail,
@@ -402,7 +429,10 @@ func _source(buyer_id: String, com: String, request: float) -> void:
 		for s in segs:
 			freight += _segment_rate(s["systems"], _scu(com, 1.0), _mass_kg(com, 1.0), 1.0)
 		var hours := _est_hours(segs)
-		var score: float = (price + freight) * (1.0 + hours / 24.0 * 0.01) / f["reliability"]
+		# Normally price dominates. Once the shelf will empty before this supplier could deliver,
+		# every extra day of transit counts heavily against it.
+		var late_days := maxf(0.0, hours / 24.0 - cover_days(buyer_id, com))
+		var score: float = (price + freight) * (1.0 + hours / 24.0 * 0.01 + late_days * float(p.get("late_weight", 0.08))) / f["reliability"]
 		cands.append({"f": f, "alloc": alloc, "price": price, "segs": segs, "hours": hours, "score": score, "freight": freight})
 	cands.sort_custom(func(a, b): return a["score"] < b["score"])
 	var remaining := request
@@ -428,7 +458,8 @@ func _place_order(buyer: Dictionary, seller: Dictionary, com: String, units: flo
 	var oid := _new_id("order")
 	var deadline := hour + int(ceil(est_hours * float(p["deadline_slack"]))) + 48
 	var order := {"id": oid, "buyer": buyer["id"], "seller": seller["id"], "com": com, "units": units,
-			"unit_price": price, "placed": hour, "deadline": deadline, "received": 0.0, "lots": []}
+			"unit_price": price, "placed": hour, "deadline": deadline, "received": 0.0, "lots": [],
+			"eta": hour + int(maxf(float(est_hours), float(buyer["items"][com]["lead_obs"]) * 24.0))}
 	orders[oid] = order
 	seller["items"][com]["outflow_today"] += units
 	var lot_units: float = maxf(1.0, floorf(float(p["lot_size_scu"]) / float(commodities[com]["scu_per_unit"])))
