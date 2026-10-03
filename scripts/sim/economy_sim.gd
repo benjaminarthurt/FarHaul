@@ -93,6 +93,11 @@ func _add_carrier(c: Dictionary) -> void:
 		"cash": float(c["cash"]), "start_cash": float(c["cash"]), "min_margin": float(c["min_margin"]),
 		"network": c["network"], "state": "idle", "queue": [], "job": [], "home": c["home_system_id"], "idle_since": 0,
 		"revenue": 0.0, "costs": 0.0, "trips": 0, "delivered_scu": 0.0, "busy_hours": 0, "min_cash": float(c["cash"]),
+		# Physical limits. Ships built from a SimShip profile set all three; plain scenario carriers
+		# fall back to the volume limit, the reference speed and unlimited range.
+		"capacity_kg": float(c.get("capacity_kg", float(c["capacity_scu"]) * scu_mass_kg)),
+		"speed": float(c.get("ly_per_day", p["ly_per_day"])),
+		"fuel_units": float(c.get("fuel_units", 1.0e12)),
 	}
 	carriers[c["id"]] = cr
 	cash_initial += cr["cash"]
@@ -239,13 +244,13 @@ func quote(fid: String, com: String) -> float:
 	var t := clampf(cover / 30.0, 0.0, 1.0)
 	return ref * (1.0 + hi + (lo - hi) * t)
 
-func _leg_hours(dist_ly: float) -> int:
-	return int(ceil(dist_ly / float(p["ly_per_day"]) * 24.0))
+func _leg_hours(dist_ly: float, speed: float = -1.0) -> int:
+	return int(ceil(dist_ly / (speed if speed > 0.0 else float(p["ly_per_day"])) * 24.0))
 
-func _path_hours(path: Array) -> int:
+func _path_hours(path: Array, speed: float = -1.0) -> int:
 	var h := 0
 	for i in range(path.size() - 1):
-		h += _leg_hours(net.adj[path[i]][path[i + 1]])
+		h += _leg_hours(net.adj[path[i]][path[i + 1]], speed)
 		if i < path.size() - 2:
 			h += int(p["port_dwell_hours"])
 	return h
@@ -263,15 +268,36 @@ func _handling_cost(port_id: String, scu: float) -> float:
 	var port: Dictionary = net.ports.get(port_id, {})
 	return scu * float(p["handling_cr_per_scu"]) * float(port.get("cargo_handling_multiplier", 1.0))
 
-## Cost of flying `path` for a ship; fuel, port fees and crew/fixed time.
-func _trip_cost(ship: Dictionary, path: Array, cargo_mass_t: float) -> float:
-	var cost := 0.0
-	var per_day: float = ship["crew"] * ship["wage"] + ship["fixed"]
+## Cost of flying `path` for a ship, split into fuel, port fees, crew wages and fixed (ownership) time.
+func _trip_parts(ship: Dictionary, path: Array, cargo_mass_t: float) -> Dictionary:
+	var fuel := 0.0
+	var fees := 0.0
 	for i in range(path.size() - 1):
-		cost += _fuel_cost(path[i], path[i + 1], ship["dry_mass_t"] + cargo_mass_t)
-		cost += _port_fee(path[i + 1])
-	cost += _path_hours(path) / 24.0 * per_day
-	return cost
+		fuel += _fuel_cost(path[i], path[i + 1], ship["dry_mass_t"] + cargo_mass_t)
+		fees += _port_fee(path[i + 1])
+	var days := _path_hours(path, float(ship.get("speed", -1.0))) / 24.0
+	return {"fuel": fuel, "fees": fees, "wages": days * ship["crew"] * ship["wage"], "fixed": days * ship["fixed"], "days": days}
+
+func _trip_cost(ship: Dictionary, path: Array, cargo_mass_t: float) -> float:
+	var t := _trip_parts(ship, path, cargo_mass_t)
+	return t["fuel"] + t["fees"] + t["wages"] + t["fixed"]
+
+## Fuel units a leg burns for a ship of this total mass.
+func _leg_fuel_units(from_sys: String, to_sys: String, mass_t: float) -> float:
+	return float(net.route(from_sys, to_sys).get("base_jump_fuel_units_per_mass_unit", 0.0)) * mass_t
+
+## Can the ship fly this path on one tank per leg? It refuels at every stop that sells fuel; a stop
+## with no priced fuel (frontier) also needs enough left to fly back out.
+func _path_feasible(c: Dictionary, path: Array, cargo_t: float) -> bool:
+	if c["fuel_units"] >= 1.0e11:
+		return true
+	for i in range(path.size() - 1):
+		var need := _leg_fuel_units(path[i], path[i + 1], c["dry_mass_t"] + cargo_t)
+		if not fuel_factor.has(path[i + 1]):
+			need *= 2.0
+		if need > c["fuel_units"]:
+			return false
+	return true
 
 # ---------------------------------------------------------------- routing and rates
 
@@ -580,7 +606,7 @@ func _bundle(c: Dictionary, first: Dictionary, offered: Array) -> Array:
 	var out: Array = [first]
 	var scu: float = first["scu"]
 	var mass: float = first["mass_kg"]
-	var cap_mass: float = c["capacity_scu"] * scu_mass_kg
+	var cap_mass: float = c["capacity_kg"]
 	for k in offered:
 		if k == first or k["status"] != "offered" or not _eligible(c, k):
 			continue
@@ -594,7 +620,7 @@ func _bundle(c: Dictionary, first: Dictionary, offered: Array) -> Array:
 
 func _evaluate(c: Dictionary, bundle: Array) -> Dictionary:
 	var first: Dictionary = bundle[0]
-	if first["scu"] > c["capacity_scu"]:
+	if first["scu"] > c["capacity_scu"] or first["mass_kg"] > c["capacity_kg"]:
 		return {}
 	var revenue := 0.0
 	var scu := 0.0
@@ -609,6 +635,8 @@ func _evaluate(c: Dictionary, bundle: Array) -> Dictionary:
 	for s in repo:
 		if not (s in c["network"]):
 			return {}
+	if not _path_feasible(c, repo, 0.0) or not _path_feasible(c, first["systems"], mass / 1000.0):
+		return {}
 	var cost := _trip_cost(c, repo, 0.0) + _trip_cost(c, first["systems"], mass / 1000.0)
 	var back := net.path(first["dest_sys"], c["home"])    # deadhead back to the home port
 	if back.size() > 1:
@@ -650,7 +678,7 @@ func _accept(c: Dictionary, ev: Dictionary) -> void:
 func _queue_path(c: Dictionary, path: Array, loaded: bool) -> void:
 	for i in range(path.size() - 1):
 		c["queue"].append({"type": "travel", "from": path[i], "to": path[i + 1],
-				"hours": _leg_hours(net.adj[path[i]][path[i + 1]]), "loaded": loaded})
+				"hours": _leg_hours(net.adj[path[i]][path[i + 1]], c["speed"]), "loaded": loaded})
 		if i < path.size() - 2:
 			c["queue"].append({"type": "wait", "hours": int(p["port_dwell_hours"])})
 
@@ -814,3 +842,73 @@ func summary() -> Dictionary:
 	out["cash_error"] = total_cash() - cash_initial
 	out["violations"] = violations.size()
 	return out
+
+
+# ---------------------------------------------------------------- economy probe
+
+## Expected economics of one ship on the world's direct lanes, under a difficulty level. This is the
+## yardstick for "how close to insolvency is the player": it uses the same rates and costs the
+## simulation uses, so retuning the economy retunes the probe. `ship` is a carrier-shaped dictionary
+## (see SimShip.profile). `level` holds the multipliers from economy_levels.json.
+##
+## One lane = a round trip: loaded out, back empty (or partly loaded, per backhaul_fraction), plus
+## loading time at both ends. The ship then sits idle so that paid time is `utilisation` of the cycle.
+func probe_ship(profile: Dictionary, level: Dictionary, bench: Dictionary, lanes: Array = []) -> Dictionary:
+	var ship := {"capacity_scu": profile["capacity_scu"], "capacity_kg": profile["capacity_kg"], "dry_mass_t": profile["dry_mass_t"],
+			"crew": profile["crew"], "wage": profile["wage_cr_per_day"], "fixed": profile["fixed_cr_per_day"],
+			"speed": profile.get("ly_per_day", float(p["ly_per_day"])), "fuel_units": profile.get("fuel_units", 1.0e12)}
+	var scu_ref := _reference_mass_per_scu()
+	var util := float(bench.get("utilisation", 0.7))
+	var back := float(bench.get("backhaul_fraction", 0.35))
+	var tot_rev := 0.0
+	var tot_cost := 0.0
+	var tot_days := 0.0
+	var n := 0
+	var seen := {}
+	if lanes.is_empty():
+		for a in net.adj:
+			for b in net.adj[a]:
+				var key: String = (a + "|" + b) if a < b else (b + "|" + a)
+				if not seen.has(key):
+					seen[key] = true
+					lanes.append([a, b])
+	for lane in lanes:
+		var out: Array = [lane[0], lane[1]]
+		var home: Array = [lane[1], lane[0]]
+		var scu := minf(ship["capacity_scu"], ship["capacity_kg"] / scu_ref)
+		if scu < 0.5:
+			continue
+		var load_t: float = scu * scu_ref / 1000.0
+		if not _path_feasible(ship, out, load_t) or not _path_feasible(ship, home, 0.0):
+			continue
+		var rev_out := _segment_rate(out, scu, scu * scu_ref, 1.0) * float(level["freight_pay_mult"])
+		var rev_back := _segment_rate(home, scu, scu * scu_ref, 1.0) * float(level["freight_pay_mult"]) * back
+		var a := _trip_parts(ship, out, load_t)
+		var b := _trip_parts(ship, home, load_t * back)
+		var handling := (_handling_cost(net.primary_port(lane[0]), scu) + _handling_cost(net.primary_port(lane[1]), scu)) * (1.0 + back)
+		var load_days := 2.0 * (float(p["loading_hours_base"]) + float(p["loading_hours_per_scu"]) * scu) / 24.0
+		var paid_days: float = a["days"] + b["days"] + load_days
+		var cycle_days := paid_days / maxf(util, 0.05)
+		var per_day_wages: float = ship["crew"] * ship["wage"] * float(level["wage_mult"])
+		var per_day_fixed: float = ship["fixed"] * float(level["ownership_mult"])
+		var rev := rev_out + rev_back
+		var cost: float = (a["fuel"] + b["fuel"]) * float(level["fuel_price_mult"]) + (a["fees"] + b["fees"]) * float(level["port_fee_mult"]) \
+				+ handling + cycle_days * (per_day_wages + per_day_fixed) \
+				+ rev * float(p["maintenance_reserve_fraction"]) * float(level["maintenance_mult"])
+		tot_rev += rev
+		tot_cost += cost
+		tot_days += cycle_days
+		n += 1
+	if n == 0 or tot_rev <= 0.0:
+		return {"lanes": 0, "margin": -1.0, "net_per_day": 0.0, "revenue_per_day": 0.0}
+	return {"lanes": n, "margin": (tot_rev - tot_cost) / tot_rev, "net_per_day": (tot_rev - tot_cost) / tot_days,
+			"revenue_per_day": tot_rev / tot_days, "cost_per_day": tot_cost / tot_days}
+
+## Median kilograms per SCU across the catalogue: the "typical" cargo the probe loads.
+func _reference_mass_per_scu() -> float:
+	var v: Array = []
+	for c in commodities.values():
+		if float(c.get("scu_per_unit", 0)) > 0.0:
+			v.append(float(c["mass_kg_per_unit"]) / float(c["scu_per_unit"]))
+	v.sort()
+	return v[v.size() / 2] if not v.is_empty() else 1000.0

@@ -1,0 +1,34 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "note": "How a ship built in the ship builder becomes a carrier in the economy simulation. Everything here is a PLACEHOLDER ASSUMPTION unless marked canon: the builder has no jump drive or crew modules yet, so speed, crew and fuel units are derived from what it does have (thrust, mass, tanks, cargo slots, cost).",
+  "cargo": {
+    "nominal_kg_per_scu": 1000,
+    "note": "The builder models cargo in tonnes per container, not volume. Volume is derived at a nominal 1,000 kg per SCU (grain and most bulk goods), so a 24 t hold is 24 SCU of space. Mass stays a separate hard limit, so dense goods hit the tonnage first and light goods hit the volume first (units.json: mass and volume are independent)."
+  },
+  "crew": {
+    "minimum": 1,
+    "wage_cr_per_day": 340,
+    "scu_per_extra_crew": 40
+  },
+  "ownership": {
+    "insurance_annual": 0.02,
+    "financed_share": 0.6,
+    "interest_annual": 0.07,
+    "depreciation_annual": 0.05,
+    "berth_and_misc_cr_per_day": 15,
+    "note": "Insurance and financed share sit inside the canon ranges in economic_calibration.json (0.8-3.5% and 40-85%). Interest and depreciation are assumed."
+  },
+  "speed": {
+    "reference_twr": 0.28,
+    "reference_ly_per_day": 1.5,
+    "exponent": 0.5,
+    "min_ly_per_day": 0.6,
+    "max_ly_per_day": 2.4,
+    "note": "ly/day = reference * (empty thrust-to-weight / reference)^exponent, clamped. The starter ship (TWR 0.28) flies at the reference speed."
+  },
+  "fuel": {
+    "units_per_tonne": 4,
+    "note": "Tank tonnes x this = drive-feedstock units. A leg burns route.base_jump_fuel_units_per_mass_unit x ship mass (tonnes)."
+  }
+}

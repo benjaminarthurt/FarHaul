@@ -81,6 +81,37 @@ checks both. Going lower than about 57 pushes small carriers underwater; going h
 - **Open:** freight still costs about 0.5 to 0.8 times the goods bought, and about 20% of contracts finish
   after their deadline.
 
+## Ships and difficulty
+
+**Ship link.** `SimShip.profile(ship)` turns a builder ship into a carrier: cargo mass from the hold
+tonnage, cargo volume at a nominal 1,000 kg per SCU, dry-plus-fuel mass, tank size, a crew count,
+ownership cost from the ship's price (insurance, financing, depreciation) and speed from thrust-to-weight.
+The sim enforces three physical limits per carrier: mass, volume, and fuel range (a leg must fit one
+tank; a stop with no priced fuel also needs the way back). Tuning is in `data/runtime/ship_economy.json`.
+The starter ship works out at 24 SCU, 24 t, 1 crew, 43 cr/day ownership, 1.5 ly/day, five reachable lanes.
+
+**Difficulty levels.** `data/runtime/economy_levels.json` holds easy / normal / hard (the same ids as
+`Worlds.DIFFICULTIES`). Each level scales the player's freight pay, fuel price, port fees, wages,
+ownership cost and maintenance. NPC carriers and prices never change with level. `probe_ship()` measures
+a ship's expected margin on the world's direct lanes at a given share of time with paid cargo, and
+`tests/test_economy_levels.gd` checks the starter ship lands in each level's band:
+
+| Level | Starter margin | Net per day | Idle-heavy captain (45% paid time) |
+|---|---|---|---|
+| Easy | 29% | about 330 cr | stays near break-even |
+| Normal | 15% | about 150 cr | thin |
+| Hard | 3% | about 30 cr | loses money |
+
+On hard the ship is a few credits a day from the red, and a captain who lets it sit idle goes under, which
+is the point. To retune, edit the multipliers or targets and run `tests/solve_levels.gd`, which bisects
+the pay multiplier to hit each target margin. Rerun it whenever base rates, fuel, ship costs or the
+starter change.
+
+**Known gaps.** Lots are 40 SCU, so a 24 SCU ship cannot take a whole lot; small-parcel contracts (split
+lots) are needed before the player runs freight inside the sim. The builder has no drive or crew modules,
+so speed, crew and fuel units are derived, not designed. The level multipliers apply in the probe only; the
+simulated player carrier does not exist yet.
+
 ## Assumptions to replace with data
 
 Travel speed 1.5 ly/day (chosen because it gives Ben's 5 to 12 day window for Hopewell), fuel price and

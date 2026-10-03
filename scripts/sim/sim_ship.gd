@@ -1,0 +1,61 @@
+class_name SimShip
+extends RefCounted
+## Turns a ship from the builder into the physical numbers the economy simulation needs.
+## All tuning lives in data/runtime/ship_economy.json; nothing about a particular ship is hard-coded.
+
+const CONFIG_PATH := "res://data/runtime/ship_economy.json"
+
+
+static func config() -> Dictionary:
+	var parsed = JSON.parse_string(FileAccess.get_file_as_string(CONFIG_PATH))
+	return parsed if typeof(parsed) == TYPE_DICTIONARY else {}
+
+
+## `ship` is a ShipData. Returns a carrier-shaped dictionary (see EconomySim._add_carrier) plus a few
+## display fields. `cfg` defaults to ship_economy.json.
+static func profile(ship: ShipData, cfg: Dictionary = {}) -> Dictionary:
+	if cfg.is_empty():
+		cfg = config()
+	var st := ShipStats.compute(ship)
+	var crew_cfg: Dictionary = cfg["crew"]
+	var own: Dictionary = cfg["ownership"]
+	var spd: Dictionary = cfg["speed"]
+	var scu := float(st["cargo_capacity"]) * 1000.0 / float(cfg["cargo"]["nominal_kg_per_scu"])
+	var crew := int(crew_cfg["minimum"]) + int(floor(scu / float(crew_cfg["scu_per_extra_crew"])))
+	var annual := float(own["insurance_annual"]) + float(own["financed_share"]) * float(own["interest_annual"]) + float(own["depreciation_annual"])
+	var fixed := float(st["cost"]) * annual / 365.0 + float(own["berth_and_misc_cr_per_day"])
+	var twr := float(st["twr"])
+	var ly_day := clampf(float(spd["reference_ly_per_day"]) * pow(maxf(twr, 0.0001) / float(spd["reference_twr"]), float(spd["exponent"])),
+			float(spd["min_ly_per_day"]), float(spd["max_ly_per_day"]))
+	return {
+		"capacity_scu": scu,
+		"capacity_kg": float(st["cargo_capacity"]) * 1000.0,
+		"dry_mass_t": float(st["wet"]),      # dry plus full tanks: what the drive pushes when empty
+		"crew": crew,
+		"wage_cr_per_day": float(crew_cfg["wage_cr_per_day"]),
+		"fixed_cr_per_day": fixed,
+		"ly_per_day": ly_day,
+		"fuel_units": float(st["fuel"]) * float(cfg["fuel"]["units_per_tonne"]),
+		"ship_cost": float(st["cost"]),
+		"twr": twr,
+	}
+
+
+const LEVELS_PATH := "res://data/runtime/economy_levels.json"
+
+
+static func levels() -> Dictionary:
+	var parsed = JSON.parse_string(FileAccess.get_file_as_string(LEVELS_PATH))
+	return parsed if typeof(parsed) == TYPE_DICTIONARY else {}
+
+
+## The economy level for a difficulty id (easy / normal / hard). Unknown ids get normal.
+static func level(id: String) -> Dictionary:
+	var all := levels()
+	var fallback := {}
+	for L in all.get("levels", []):
+		if L["id"] == id:
+			return L
+		if L["id"] == "normal":
+			fallback = L
+	return fallback
