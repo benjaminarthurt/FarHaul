@@ -37,6 +37,7 @@ var impacts := 0
 var last_impact := 0.0           # speed of the latest hit, m/s
 var fuel_burned_t := 0.0
 var elapsed_s := 0.0
+var station_solid := true         # false on a transfer between sites: nothing to hit
 
 
 static func load_tuning() -> Dictionary:
@@ -167,7 +168,8 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0) ->
 			throttle = 0.0
 	_heat(dt)
 	pos += vel * dt
-	_collide()
+	if station_solid:
+		_collide()
 	elapsed_s += dt
 
 

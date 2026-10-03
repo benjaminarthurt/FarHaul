@@ -417,6 +417,68 @@ static func drive_price() -> int:
 	return ship_cost(b, lib) - ship_cost(a, lib)
 
 
+## The run being flown in the flight scene ({} when the helm is just practice).
+static var flight_job: Dictionary = {}
+
+
+## Check the ship is ready and hand the active local contract to the flight scene.
+static func begin_local_flight() -> Dictionary:
+	var c := active_contract()
+	if c.is_empty() or not bool(c.get("local", false)):
+		return {"ok": false, "message": "There is no local run to fly."}
+	if String(c.origin_port_id) != String(profile.get("port_id", "")) or String(c.get("status", "")) == "arrived":
+		return {"ok": false, "message": "This run does not start from here."}
+	var loaded_ship := _load_ship(SaveSlots.read(slot))
+	if loaded_ship.is_empty():
+		return {"ok": false, "message": "Could not load the current ship."}
+	var stats := ship_stats(loaded_ship.ship, loaded_ship.manifest)
+	if not Contracts.ready(Contracts.check(stats, loaded_ship.manifest, c)):
+		return {"ok": false, "message": "The ship is not ready to depart with this load."}
+	flight_job = {"contract_id": String(c.id), "dv_kms": float(c.dv_kms), "hours": int(c.hours),
+			"destination": String(LocalSpace.node(String(c.destination_port_id)).get("name", "the destination")), "key": String(c.id)}
+	return {"ok": true, "message": "Take the helm."}
+
+
+## Close out a flown local run. `arrived`: the ship stopped at the destination. Otherwise it came home
+## (Esc) or ran dry and was towed; either way the contract stays loaded at the origin.
+static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: float, arrived: bool, stranded: bool = false) -> String:
+	var job := flight_job
+	flight_job = {}
+	var c := active_contract()
+	if slot < 0 or sim == null or c.is_empty() or job.is_empty():
+		return ""
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return ""
+	_sync_sim(loaded.ship)
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	var cfg: Dictionary = LocalSpace.config()["board"]
+	var clock := float(int(job.hours)) * 3600.0 if arrived else seconds
+	var r := SimWorld.settle_flight(sim, fuel_burned_t, clock, damage, float(ship_cost(loaded.ship, loaded.ship.library)))
+	var extra := 0.0
+	if arrived:
+		extra = float(cfg["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+	elif stranded:
+		extra = float(cfg["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+	sim._pay(SimWorld.PLAYER, "world", extra)
+	var msg := ""
+	if arrived:
+		profile["port_id"] = String(c.destination_port_id)
+		c["status"] = "arrived"
+		data["active_contract"] = c
+		msg = "Arrived at %s. Fuel %s cr, berth fee %s cr." % [job.destination, ShipStats.commas(int(r.fuel_cost) + 0), ShipStats.commas(roundi(extra))]
+	elif stranded:
+		msg = "Out of fuel. A tug brought you back for %s cr plus %s cr of fuel. The load is still aboard." % [ShipStats.commas(roundi(extra)), ShipStats.commas(int(r.fuel_cost))]
+	else:
+		msg = "Turned back to the start. Fuel %s cr. The load is still aboard." % ShipStats.commas(int(r.fuel_cost))
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	flash = msg
+	return msg
+
+
 static func _depart_local(c: Dictionary) -> Dictionary:
 	if String(c.origin_port_id) != String(profile.get("port_id", "")):
 		return {"ok": false, "message": "This run does not start from here."}

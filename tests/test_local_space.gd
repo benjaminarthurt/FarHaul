@@ -116,6 +116,28 @@ func _run() -> void:
 	var price := Session.drive_price()
 	check(price > 40000 and price < 60000, "a first drive costs about %d cr" % price)
 
+	print("a flown run that does not arrive")
+	var j2: Dictionary = {}
+	for o in Contracts.offers_from("new_houston"):
+		if bool(o.get("local", false)):
+			j2 = o
+			break
+	check(not j2.is_empty() and bool(Session.accept_contract(j2).ok), "take another run")
+	var site0 := String(Session.profile.port_id)
+	var cr1 := int(Session.profile.credits)
+	check(bool(Session.begin_local_flight().ok), "hand it to the helm")
+	Session.finish_local_flight(0.5, 600.0, 0.0, false, false)
+	check(String(Session.profile.port_id) == site0 and String(Session.active_contract().get("status", "")) == "loaded", "turning back leaves the load aboard at the start")
+	var turned := cr1 - int(Session.profile.credits)
+	check(turned > 0, "fuel and time cost %d cr" % turned)
+	check(bool(Session.begin_local_flight().ok), "and it can be flown again")
+	var cr2 := int(Session.profile.credits)
+	Session.finish_local_flight(0.5, 600.0, 0.0, false, true)
+	check(cr2 - int(Session.profile.credits) > turned, "a tow costs more than turning back (%d cr)" % (cr2 - int(Session.profile.credits)))
+	check(not bool(Session.begin_local_flight().ok) == false, "still flyable after a tow")
+	Session.flight_job = {}
+	check(bool(Session.depart_active_contract().ok) and bool(Session.deliver_active_contract().ok), "or take the autopilot and deliver")
+
 	print("old saves keep their jump ability")
 	var data := SaveSlots.read(0)
 	var p: Dictionary = data["profile"]

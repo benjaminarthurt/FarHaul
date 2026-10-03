@@ -27,5 +27,8 @@
   "restitution": 0.25,
   "soft_impact_m_s": 1.5,
   "damage_per_m_s": 0.02,
-  "repair_cost_fraction_of_ship": 0.15
+  "repair_cost_fraction_of_ship": 0.15,
+  "transfer_arrival_range_m": 1500.0,
+  "transfer_arrival_speed_m_s": 8.0,
+  "transfer_max_warp": 60
 }

@@ -15,6 +15,7 @@ var deliver_btn: Button
 var wait_btn: Button
 var helm_btn: Button
 var fly_btn: Button
+var run_btn: Button
 var fly_panel: PanelContainer
 var fly_list: VBoxContainer
 var leaving := false
@@ -364,6 +365,9 @@ func _refresh_actions() -> void:
 		if _sublight():
 			fly_btn.tooltip_text = "Fly without cargo to another site in this system, to reach better jobs."
 	var site := String(Session.profile.get("port_id", ""))
+	if run_btn != null:
+		run_btn.visible = bool(c.get("local", false))
+		run_btn.disabled = not bool(c.get("local", false)) or String(c.get("origin_port_id", "")) != site or String(c.get("status", "")) == "arrived"
 	if bool(c.get("local", false)):
 		depart_btn.disabled = String(c.get("origin_port_id", "")) != site or String(c.get("status", "")) == "arrived"
 		deliver_btn.disabled = String(c.get("destination_port_id", "")) != site or String(c.get("status", "")) != "arrived"
@@ -380,6 +384,7 @@ func _restructure() -> void:
 
 
 func _take_helm() -> void:
+	Session.flight_job = {}   # practice flight, not a run
 	_go(Session.FLIGHT_SCENE)
 
 
@@ -444,6 +449,14 @@ func _fly(system_id: String) -> void:
 	status.text = result.message
 	if bool(result.ok):
 		get_tree().reload_current_scene()
+
+
+func _fly_run() -> void:
+	var r := Session.begin_local_flight()
+	if bool(r.ok):
+		_go(Session.FLIGHT_SCENE)
+	else:
+		status.text = r.message
 
 
 func _depart() -> void:

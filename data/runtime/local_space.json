@@ -26,6 +26,7 @@
     "variance": 0.1,
     "unload_hours": 3,
     "dock_fee_cr": 60,
+    "tow_fee_cr": 900,
     "deadline_days": 6
   },
   "eligible_containers": ["standard", "sealed", "bulk", "dry_bulk", "refrigerated", "chemical_tank", "sealed_tank", "mixed_food", "module_rack", "liquid_tank", "fuel_tank", "shock_isolated"]

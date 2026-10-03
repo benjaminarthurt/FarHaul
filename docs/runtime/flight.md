@@ -30,8 +30,21 @@ The player's saved ship (or the starter) is rebuilt around its centre of mass, w
 cockpit cameras and a HUD for speed, closing rate, distance, throttle, fuel, delta-v and mass.
 Keys: W/S throttle, Z cut, arrows pitch and yaw, Q/E roll, X brake, R assist, C camera, F dock, Esc dock.
 
+## Flying a local run (`scripts/transfer_flight.gd`)
+
+An active local contract can be flown instead of autopiloted: the dock's FLY THE RUN opens the flight scene in
+transfer mode (`Session.flight_job`). There is no station. The destination is a diamond marker far off
+(`TransferFlight.plan` sets the distance so a perfect full-burn, flip, full-brake run spends exactly the hop's
+delta-v, which is the figure the board prices fuel on; tested to match to 0.2%). The ship leaves loaded and
+about 35 degrees off the heading, and the pilot has to line up, burn, flip at the BRAKE NOW cue (X runs the
+retrograde autopilot) and stop within 1.5 km at under 8 m/s. `,` and `.` change time compression (x1 to x60); it
+drops to x1 when the target is near or closing fast. Fuel is whatever the flight actually burned, so sloppy flying
+costs more than the DEPART autopilot's textbook figure. Esc turns back (fuel and hours charged, the load stays
+aboard at the start). Running dry means a tug and a tow fee. Arriving settles fuel, the berth fee and the hop's
+hours into the sim, then the run is delivered at the dock as before.
+
 ## Not built yet
 
-Star jumps and their link to the economy (a trip is still resolved by the sim), atmosphere and landing,
+Star jumps and their link to the economy (an interstellar trip is still resolved by the sim), a proper approach and docking at a local site (a flown run just stops at the marker), atmosphere and landing,
 collision with anything but the station, and walking inside the ship.
 All tuning numbers are placeholders.

@@ -22,6 +22,12 @@ var com := Vector3.ZERO
 var view: ShipView
 var leaving := false
 var sparks: Array[MeshInstance3D] = []
+var xfer: TransferFlight = null   ## set when a local run is being flown; null for free flight at the dock
+var job: Dictionary = {}
+var warp_index := 0
+var beacon: Label
+var _arrived := false
+const WARPS := [1, 2, 5, 10, 25, 60]
 var _impact_shown := -10.0
 var _impacts_seen := 0
 
@@ -30,6 +36,8 @@ func _ready() -> void:
 	_build_world()
 	_build_ship()
 	_build_hud()
+	if not Session.flight_job.is_empty():
+		_setup_transfer()
 
 
 func _build_world() -> void:
@@ -135,6 +143,22 @@ func _make_station() -> Node3D:
 	return root
 
 
+## A flown local run: no station, a destination far off, and the clock can be sped up.
+func _setup_transfer() -> void:
+	job = Session.flight_job
+	xfer = TransferFlight.plan(stats, float(job.dv_kms), String(job.key))
+	station.visible = false
+	model.station_solid = false
+	model.pos = Vector3.ZERO
+	# Leave pointing about 35 degrees off the destination, so the first job is to line up.
+	var off := Basis(Vector3.UP, deg_to_rad(35.0)) * xfer.direction
+	model.basis = Basis.looking_at(off, Vector3.UP)
+	beacon = Label.new()
+	beacon.add_theme_font_size_override("font_size", 18)
+	beacon.add_theme_color_override("font_color", Brand.AMBER)
+	hud.get_parent().add_child(beacon)
+
+
 func _build_ship() -> void:
 	var ship := ShipData.new(ModuleLibrary.new())
 	var manifest: CargoManifest = null
@@ -187,7 +211,7 @@ func _build_hud() -> void:
 	bar.show_percentage = false
 	bar.position = Vector2(28, 230)
 	layer.add_child(bar)
-	var help := Brand.note("W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   Esc back to the dock", 13)
+	var help := Brand.note("W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   , . time   Esc back to the dock", 13)
 	help.autowrap_mode = TextServer.AUTOWRAP_OFF
 	help.custom_minimum_size = Vector2(1000, 0)
 	help.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT, Control.PRESET_MODE_MINSIZE, 20)
@@ -211,16 +235,48 @@ func _process(delta: float) -> void:
 		model.throttle = 0.0
 	if turn != Vector3.ZERO or thr != 0.0:
 		model.braking = false          # any pilot input takes the controls back
-	model.step(minf(delta, 0.05), turn, thr)
+	if xfer == null:
+		model.step(minf(delta, 0.05), turn, thr)
+	else:
+		var total := minf(delta, 0.05) * float(_warp())
+		var n := maxi(1, ceili(total / 0.05))
+		for i in n:
+			model.step(total / float(n), turn, thr)
+			if xfer.arrived(model):
+				_arrived = true
+				break
+		_wrap_markers()
 	if model.impacts != _impacts_seen:
 		_impacts_seen = model.impacts
 		_impact_shown = model.elapsed_s
 	_apply_pose()
 	_update_hud()
+	if _arrived:
+		_return_to_dock()
+		return
 	view.set_flames(model.throttle > 0.02 and model.has_fuel())
 	for ring in station.get_children():
 		if ring.has_meta("spin"):
 			ring.rotate_z(delta * 0.05)
+
+
+## Time compression, held to 1x when the target is close or the ship is closing fast on it.
+func _warp() -> int:
+	var w: int = WARPS[warp_index]
+	if xfer == null or w == 1:
+		return w
+	var eta := xfer.eta_s(model)
+	if xfer.range_to(model) < 25000.0 or (eta >= 0.0 and eta < 60.0) or xfer.brake_now(model) or model.braking:
+		return 1
+	return w
+
+
+## Keep the speed markers around the ship however far it has come.
+func _wrap_markers() -> void:
+	for m in sparks:
+		var rel := m.position - model.pos
+		rel = Vector3(fposmod(rel.x + 700.0, 1400.0) - 700.0, fposmod(rel.y + 700.0, 1400.0) - 700.0, fposmod(rel.z + 700.0, 1400.0) - 700.0)
+		m.position = model.pos + rel
 
 
 func _apply_pose() -> void:
@@ -236,7 +292,50 @@ func _apply_pose() -> void:
 		camera.global_basis = model.basis
 
 
+func _update_transfer_hud() -> void:
+	var rng := xfer.range_to(model)
+	var eta := xfer.eta_s(model)
+	var lines := PackedStringArray([
+		"RUN TO  %s    HOP  %.1f km/s" % [String(job.destination).to_upper(), float(job.dv_kms)],
+		"TARGET  %.1f km    CLOSING  %+.0f m/s    ETA  %s" % [rng / 1000.0, xfer.closing(model), "%d s" % roundi(eta) if eta >= 0.0 else "-"],
+		"SPEED  %.0f m/s    STOPS IN  %.1f km" % [model.speed(), xfer.stopping_distance(model) / 1000.0],
+		"THROTTLE  %d%%    THRUST  %d%%    TIME x%d" % [roundi(model.throttle * 100.0), roundi(model.thrust_scale() * 100.0), _warp()],
+		"FUEL  %.2f t    ΔV %.0f m/s    PERFECT RUN %.2f t" % [model.fuel_t, model.delta_v(), xfer.ideal_burn_t],
+		"MASS  %.1f t    ACCEL %.2f m/s²" % [model.mass_t(), model.accel() if model.throttle > 0.0 else model.max_accel()],
+		"HEAT  %d%%    HULL  %d%%" % [roundi(model.heat_fraction() * 100.0), roundi((1.0 - model.damage) * 100.0)],
+		"ASSIST %s   %s" % ["ON" if model.assist else "OFF", "AUTOPILOT BRAKING" if model.braking else ""]])
+	hud.text = "\n".join(lines)
+	bar.value = model.throttle
+	var to := xfer.target - model.pos
+	if not camera.is_position_behind(camera.global_position + to):
+		beacon.visible = true
+		var sp := camera.unproject_position(camera.global_position + to.normalized() * 1000.0)
+		beacon.position = sp + Vector2(12, -12)
+		beacon.text = "◆ %s  %.1f km" % [String(job.destination), rng / 1000.0]
+	else:
+		beacon.visible = false
+	var hint := ""
+	if not model.has_fuel() and not xfer.arrived(model):
+		hint = "OUT OF FUEL. Press Esc to call a tug."
+	elif model.overheated:
+		hint = "ENGINES OVERHEATED. Wait for them to cool."
+	elif model.braking:
+		hint = "Braking. It stops the ship where it is: start it at the BRAKE NOW cue to stop at the target."
+	elif xfer.brake_now(model):
+		hint = "BRAKE NOW: press X to flip and stop."
+	elif xfer.closing(model) < -1.0:
+		hint = "You are moving away from the destination."
+	elif beacon != null and not beacon.visible:
+		hint = "The destination is behind you."
+	elif model.speed() < 5.0:
+		hint = "Point at the diamond, open the throttle (W) and speed time up with period. Esc turns back."
+	prompt.text = hint
+
+
 func _update_hud() -> void:
+	if xfer != null:
+		_update_transfer_hud()
+		return
 	var dist := model.pos.length()
 	var closing := -model.vel.dot(model.pos.normalized()) if dist > 0.01 else 0.0
 	var al := model.dock_alignment()
@@ -295,5 +394,8 @@ func _return_to_dock() -> void:
 	if leaving:
 		return
 	leaving = true
-	Session.finish_flight(model.fuel_burned_t, model.elapsed_s, model.damage)
+	if xfer != null:
+		Session.finish_local_flight(model.fuel_burned_t, model.elapsed_s, model.damage, _arrived, not _arrived and not model.has_fuel())
+	else:
+		Session.finish_flight(model.fuel_burned_t, model.elapsed_s, model.damage)
 	get_tree().change_scene_to_file(Session.DOCK_SCENE)
