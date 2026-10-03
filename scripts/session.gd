@@ -357,6 +357,66 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 	return {"ok": true, "message": "Loaded %.1f t of %s." % [loaded, Worlds.commodity(String(contract.commodity)).name]}
 
 
+## Sites in this system the ship could fly to empty, with the hop's cost and the jobs posted there.
+static func local_sites() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if slot < 0 or sim == null:
+		return out
+	var loaded := _load_ship(SaveSlots.read(slot))
+	if loaded.is_empty():
+		return out
+	var st := ship_stats(loaded.ship)
+	var here := LocalSpace.node(String(profile.get("port_id", "")))
+	if here.is_empty():
+		return out
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	for n in LocalSpace.nodes(system_id()):
+		if String(n["id"]) == String(here["id"]):
+			continue
+		var h := LocalSpace.hop(String(here["kind"]), String(n["kind"]))
+		if LocalSpace.max_cargo_t(float(st["wet"]), float(st["fuel"]), float(h["dv_kms"])) < 0.0:
+			continue   # out of reach of the tank even empty
+		var cost := local_trip_cost(st, 0.0, float(h["dv_kms"]))
+		var jobs := LocalSpace.board(String(n["id"]), day() + int(h["hours"]) / 24, st, lv, profile.get("local_taken", []))
+		out.append({"id": n["id"], "name": n["name"], "dv_kms": h["dv_kms"], "hours": h["hours"], "cost": cost["total"], "jobs": jobs.size()})
+	return out
+
+
+## Fly empty to another site in this system.
+static func local_reposition(dest_id: String) -> Dictionary:
+	if slot < 0 or sim == null:
+		return {"ok": false, "message": "Travel only happens in a saved game."}
+	if not active_contract().is_empty():
+		return {"ok": false, "message": "Deliver or finish the active contract first."}
+	for site in local_sites():
+		if String(site["id"]) != dest_id:
+			continue
+		var data := SaveSlots.read(slot)
+		var loaded := _load_ship(data)
+		if loaded.is_empty():
+			return {"ok": false, "message": "Could not load the current ship."}
+		_sync_sim(loaded.ship)
+		var before := int(profile.credits)
+		sim._pay(SimWorld.PLAYER, "world", float(site["cost"]))
+		sim.run_hours(int(site["hours"]))
+		profile["port_id"] = dest_id
+		_commit_sim(data, loaded.ship)
+		data["profile"] = profile
+		SaveSlots.write(slot, data)
+		return {"ok": true, "message": "Flew empty to %s in %d hours. Fuel and running costs: %s cr." % [String(site["name"]), int(site["hours"]), ShipStats.commas(before - int(profile.credits))]}
+	return {"ok": false, "message": "That site is out of reach."}
+
+
+## What fitting a first FTL drive and its radiator costs: the gap between the starter and the FTL starter.
+static func drive_price() -> int:
+	var lib := ModuleLibrary.new()
+	var a := ShipData.new(lib)
+	var b := ShipData.new(lib)
+	ShipPresets.build(a)
+	ShipPresets.build(b, ShipPresets.STARTER_FTL)
+	return ship_cost(b, lib) - ship_cost(a, lib)
+
+
 static func _depart_local(c: Dictionary) -> Dictionary:
 	if String(c.origin_port_id) != String(profile.get("port_id", "")):
 		return {"ok": false, "message": "This run does not start from here."}

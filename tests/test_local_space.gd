@@ -103,6 +103,19 @@ func _run() -> void:
 			seen = true
 	check(not seen, "the finished job is gone from the board")
 
+	print("flying empty between sites")
+	var sites := Session.local_sites()
+	check(not sites.is_empty() and float(sites[0].cost) > 0.0, "reachable sites listed (%d)" % sites.size())
+	var hs := Session.sim.hour
+	var cs := int(Session.profile.credits)
+	var tgt := String(sites[0].id)
+	var rp := Session.local_reposition(tgt)
+	check(bool(rp.ok) and String(Session.profile.port_id) == tgt and Session.sim.hour == hs + int(sites[0].hours), "repositioned: %s" % rp.message)
+	check(int(Session.profile.credits) < cs and absf(float(Session.sim.summary()["cash_error"])) < 0.01, "it cost money and the books balance")
+	check(not bool(Session.local_reposition("nowhere__belt").ok), "an unreachable site is refused")
+	var price := Session.drive_price()
+	check(price > 40000 and price < 60000, "a first drive costs about %d cr" % price)
+
 	print("old saves keep their jump ability")
 	var data := SaveSlots.read(0)
 	var p: Dictionary = data["profile"]

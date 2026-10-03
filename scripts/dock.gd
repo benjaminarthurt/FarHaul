@@ -141,6 +141,10 @@ func _build_ui() -> void:
 		var pay: Array[String] = []
 		for r in SimWorld.payroll_lines(Session.sim):
 			pay.append("%s %s" % [String(r.role).get_slice(" (", 0), ShipStats.commas(roundi(r.pay))])
+		if _sublight():
+			var price := Session.drive_price()
+			_row(grid, "FTL drive", "not fitted  ·  drive and radiator cost about %s cr  ·  %s" % [ShipStats.commas(price),
+					"you can afford it" if int(p.credits) >= price else "%s cr to save" % ShipStats.commas(price - int(p.credits))])
 		_row(grid, "Crew pay", "%s cr/day  ·  %s rates" % [", ".join(pay), String(Session.sim.carriers[SimWorld.PLAYER]["home"]).replace("_", " ").capitalize()])
 	if Session.insolvent():
 		var broke := Brand.note("INSOLVENT. Your cash is gone and the bank is taking the ship. This run is over: start a new game from the main menu.", 16)
@@ -356,9 +360,9 @@ func _refresh_actions() -> void:
 		var idle := c.is_empty() and Session.sim != null and not Session.insolvent()
 		wait_btn.disabled = not idle
 		helm_btn.disabled = Session.insolvent()
-		fly_btn.disabled = not idle or _sublight()
+		fly_btn.disabled = not idle
 		if _sublight():
-			fly_btn.tooltip_text = "Needs an FTL drive. Fit one in the shipyard."
+			fly_btn.tooltip_text = "Fly without cargo to another site in this system, to reach better jobs."
 	var site := String(Session.profile.get("port_id", ""))
 	if bool(c.get("local", false)):
 		depart_btn.disabled = String(c.get("origin_port_id", "")) != site or String(c.get("status", "")) == "arrived"
@@ -392,6 +396,9 @@ func _show_destinations() -> void:
 		child.queue_free()
 	if not fly_panel.visible or Session.sim == null:
 		return
+	if _sublight():
+		_show_sites()
+		return
 	fly_list.add_child(Brand.heading("FLY EMPTY — NEAREST FIRST", 15))
 	var options := SimWorld.destinations(Session.sim)
 	if options.is_empty():
@@ -406,6 +413,30 @@ func _show_destinations() -> void:
 		Brand.style_button(line, 14)
 		line.pressed.connect(func() -> void: _fly(sid))
 		fly_list.add_child(line)
+
+
+func _show_sites() -> void:
+	fly_list.add_child(Brand.heading("FLY EMPTY — SITES IN THIS SYSTEM", 15))
+	var sites := Session.local_sites()
+	if sites.is_empty():
+		fly_list.add_child(Brand.note("Nowhere else in this system is within reach of your tanks."))
+		return
+	fly_list.add_child(Brand.note("You pay fuel, a berth fee and running costs and earn nothing until you load a job there.", 14))
+	for o in sites:
+		var sid: String = o.id
+		var line := Button.new()
+		line.text = "%s\n%.1f km/s  ·  %d h  ·  about %s cr  ·  %s" % [o.name, float(o.dv_kms), int(o.hours), ShipStats.commas(roundi(float(o.cost))),
+				"%d jobs posted" % int(o.jobs) if int(o.jobs) > 0 else "no jobs posted"]
+		Brand.style_button(line, 14)
+		line.pressed.connect(func() -> void: _hop(sid))
+		fly_list.add_child(line)
+
+
+func _hop(site_id: String) -> void:
+	var result := Session.local_reposition(site_id)
+	status.text = result.message
+	if bool(result.ok):
+		get_tree().reload_current_scene()
 
 
 func _fly(system_id: String) -> void:
