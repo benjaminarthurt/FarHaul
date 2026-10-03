@@ -98,6 +98,7 @@ static func check(stats: Dictionary, manifest: CargoManifest, c: Dictionary) -> 
 	var rows: Array[Dictionary] = []
 	rows.append(_row("Cockpit", stats.has_helm, "" if stats.has_helm else "nothing to fly it from"))
 	rows.append(_row("Engines", stats.thrust_fwd > 0.0, "" if stats.thrust_fwd > 0.0 else "no thrust"))
+	rows.append(_row("Crew berths", int(stats.get("berths", 0)) >= int(stats.get("crew_needed", 0)), "%d berths for %d crew" % [int(stats.get("berths", 0)), int(stats.get("crew_needed", 0))]))
 	rows.append(_row("Hull sealed", stats.open_doors == 0, "%d open doorways" % stats.open_doors))
 	rows.append(_row("Airlock", stats.airlocks > 0, "" if stats.airlocks > 0 else "none fitted"))
 	rows.append(_row("Power", stats.power_use <= stats.power_gen, "%.0f of %.0f kW" % [stats.power_use, stats.power_gen]))

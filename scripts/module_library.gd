@@ -77,10 +77,13 @@ func _add_defaults() -> void:
 			_door(Vector3i(0, 0, 0), DIR_N), _door(Vector3i(1, 0, 1), DIR_S),
 			_door(Vector3i(0, 0, 1), DIR_W), _door(Vector3i(1, 0, 0), DIR_E),
 		],
-		{"mass": 4.0, "cost": 9000})
+		{"mass": 4.0, "cost": 9000, "berths": 2})
+	_def(&"bunk", "Crew bunk", one, Color(0.30, 0.45, 0.40),
+		[_door(o, DIR_N), _door(o, DIR_S)],
+		{"mass": 1.0, "cost": 3000, "berths": 1})
 	_def(&"cockpit", "Cockpit", one, Color(0.28, 0.42, 0.62),
 		[_door(o, DIR_S)],
-		{"mass": 2.0, "cost": 12000, "power": -3.0, "heat": 3.0, "helm": true})
+		{"mass": 2.0, "cost": 12000, "power": -3.0, "heat": 3.0, "helm": true, "berths": 1})
 	_def(&"engineering", "Engineering", one, Color(0.55, 0.28, 0.25),
 		[_door(o, DIR_N)],
 		{"mass": 6.0, "cost": 30000, "power": 100.0, "heat": 120.0})
@@ -128,3 +131,9 @@ func _add_defaults() -> void:
 		[_mount(o, DIR_N)],
 		{"group": &"external", "pressurized": false, "shape": &"engine", "mass": 3.0, "cost": 20000,
 			"thrust": 80.0, "power": -15.0, "heat": 25.0})
+	# Jump drive: bolts on like any external part and makes the ship faster between stars. It needs
+	# power and sheds heat, and its mass counts against thrust-to-weight like everything else.
+	_def(&"jump_drive", "Jump drive", one, Color(0.35, 0.50, 0.75),
+		[_mount(o, DIR_W)],
+		{"group": &"external", "pressurized": false, "shape": &"drive", "mass": 4.0, "cost": 45000,
+			"drive": 0.30, "power": -40.0, "heat": 50.0})

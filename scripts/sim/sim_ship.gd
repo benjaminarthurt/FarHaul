@@ -11,6 +11,15 @@ static func config() -> Dictionary:
 	return parsed if typeof(parsed) == TYPE_DICTIONARY else {}
 
 
+## Crew a hold of `cargo_tonnes` needs: the minimum plus one more for each block of space.
+static func crew_for(cargo_tonnes: float, cfg: Dictionary = {}) -> int:
+	if cfg.is_empty():
+		cfg = config()
+	var crew_cfg: Dictionary = cfg["crew"]
+	var scu := cargo_tonnes * 1000.0 / float(cfg["cargo"]["nominal_kg_per_scu"])
+	return int(crew_cfg["minimum"]) + int(floor(scu / float(crew_cfg["scu_per_extra_crew"])))
+
+
 ## `ship` is a ShipData. Returns a carrier-shaped dictionary (see EconomySim._add_carrier) plus a few
 ## display fields. `cfg` defaults to ship_economy.json.
 static func profile(ship: ShipData, cfg: Dictionary = {}) -> Dictionary:
@@ -21,12 +30,13 @@ static func profile(ship: ShipData, cfg: Dictionary = {}) -> Dictionary:
 	var own: Dictionary = cfg["ownership"]
 	var spd: Dictionary = cfg["speed"]
 	var scu := float(st["cargo_capacity"]) * 1000.0 / float(cfg["cargo"]["nominal_kg_per_scu"])
-	var crew := int(crew_cfg["minimum"]) + int(floor(scu / float(crew_cfg["scu_per_extra_crew"])))
+	var crew := crew_for(float(st["cargo_capacity"]), cfg)
 	var annual := float(own["insurance_annual"]) + float(own["financed_share"]) * float(own["interest_annual"]) + float(own["depreciation_annual"])
 	var fixed := float(st["cost"]) * annual / 365.0 + float(own["berth_and_misc_cr_per_day"])
 	var twr := float(st["twr"])
 	var ly_day := clampf(float(spd["reference_ly_per_day"]) * pow(maxf(twr, 0.0001) / float(spd["reference_twr"]), float(spd["exponent"])),
 			float(spd["min_ly_per_day"]), float(spd["max_ly_per_day"]))
+	ly_day = minf(ly_day * (1.0 + float(st.get("drive", 0.0))), float(spd.get("max_with_drive_ly_per_day", spd["max_ly_per_day"])))
 	return {
 		"capacity_scu": scu,
 		"capacity_kg": float(st["cargo_capacity"]) * 1000.0,
@@ -38,6 +48,7 @@ static func profile(ship: ShipData, cfg: Dictionary = {}) -> Dictionary:
 		"fuel_units": float(st["fuel"]) * float(cfg["fuel"]["units_per_tonne"]),
 		"ship_cost": float(st["cost"]),
 		"twr": twr,
+		"berths": int(st.get("berths", 0)),
 	}
 
 

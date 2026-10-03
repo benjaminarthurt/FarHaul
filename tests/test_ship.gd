@@ -259,6 +259,31 @@ func _init() -> void:
 	check(not s8.from_json('{"modules":[{"id":"nope","cell":[0,0,0]}]}'), "unknown module rejected")
 	check(s8.modules.size() == ship.modules.size(), "failed load leaves ship untouched")
 
+	print("crew berths and jump drive")
+	var st_ship := ShipData.new(lib)
+	check(ShipPresets.build(st_ship) == "", "starter builds")
+	var st0 := ShipStats.compute(st_ship)
+	check(st0.berths == 1 and st0.crew_needed == 1 and not has_warning(st0, "Crew"), "starter: pilot berth covers a one-person crew")
+	var p0 := SimShip.profile(st_ship)
+	check(absf(float(p0.ly_per_day) - 1.5) < 0.1, "starter flies about 1.5 ly/day (%.2f)" % float(p0.ly_per_day))
+	var drive_ship := ShipData.new(lib)
+	ShipPresets.build(drive_ship)
+	var placed_drive := false
+	for cell in [Vector3i(-1, 0, 0), Vector3i(1, 0, 0), Vector3i(-1, 0, 3), Vector3i(1, 0, 2)]:
+		for rot in 4:
+			if not placed_drive and drive_ship.add(&"jump_drive", cell, rot) == "":
+				placed_drive = true
+	check(placed_drive, "a jump drive bolts onto the hull")
+	if placed_drive:
+		var sd := ShipStats.compute(drive_ship)
+		var pd := SimShip.profile(drive_ship)
+		check(sd.drive > 0.29, "stats report the drive (+%d%%)" % roundi(sd.drive * 100.0))
+		check(float(pd.ly_per_day) > float(p0.ly_per_day) * 1.15, "the drive makes the ship faster (%.2f vs %.2f ly/day)" % [float(pd.ly_per_day), float(p0.ly_per_day)])
+	var sbig := ShipStats.compute(st_ship)
+	check(sbig.crew_needed == SimShip.crew_for(sbig.cargo_capacity), "crew need follows hold size (%d for %.0f t)" % [sbig.crew_needed, sbig.cargo_capacity])
+	check(SimShip.crew_for(120.0) == 4 and SimShip.crew_for(24.0) == 1, "crew formula: 24 t needs 1, 120 t needs 4")
+	check(lib.has_def(&"bunk") and lib.get_def(&"bunk").berths == 1 and lib.get_def(&"room_2x2").berths == 2, "bunk and quarters provide berths")
+
 	print("")
 	print("FAILED: %d" % failures if failures > 0 else "all passed")
 	quit(1 if failures > 0 else 0)

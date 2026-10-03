@@ -37,6 +37,8 @@ const FACES := [
 @export var fuel := 0.0  ## tonnes of propellant held when full
 @export var helm := false  ## true if the ship can be flown from here
 @export var airlock := false  ## true if crew can get in and out of the ship here
+@export var berths := 0  ## crew who can sleep aboard
+@export var drive := 0.0  ## jump drive: fraction added to cruising speed (0.3 is +30%)
 @export var cargo_slots := 0  ## standard containers this module can carry
 @export var cargo_capacity := 0.0  ## tonnes of freight when every slot is full
 
@@ -354,6 +356,18 @@ func _build_external(root: Node3D) -> void:
 			label.position = Vector3(side * 1.215, 0, mid_z)
 			label.rotation_degrees.y = 90.0 * side
 			root.add_child(label)
+	elif shape == &"drive":
+		# A heavy ring on a short spine: the jump coil.
+		var ring := TorusMesh.new()
+		ring.inner_radius = 0.75
+		ring.outer_radius = 1.2
+		ring.material = mat
+		var ri := MeshInstance3D.new()
+		ri.mesh = ring
+		ri.rotation_degrees.x = 90.0
+		root.add_child(ri)
+		_add_box(root, Vector3(-0.9, 0, 0), Vector3(0.5, 0.5, 0.5), dark)
+		_add_box(root, Vector3.ZERO, Vector3(0.5, 0.5, 0.5), _glow(Color(0.5, 0.8, 1.0)))
 	elif shape == &"radiator":
 		# Flat panel standing off the west face on a short stub.
 		_add_box(root, Vector3(-1.1, 0, 0), Vector3(0.12, 2.6, 2.6), dark)

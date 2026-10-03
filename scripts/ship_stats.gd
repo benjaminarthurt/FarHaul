@@ -28,6 +28,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 	var has_helm := false
 	var airlocks := 0
 	var cargo_slots := 0
+	var berths := 0
+	var drive := 0.0
 	var cargo_capacity := 0.0
 	var cargo_carried := 0.0
 
@@ -47,6 +49,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		fuel += d.fuel
 		cost += d.cost
 		cargo_slots += d.cargo_slots
+		berths += d.berths
+		drive += d.drive
 		cargo_capacity += d.cargo_capacity
 		var carried := d.cargo_capacity * cargo_load
 		if manifest != null:
@@ -91,6 +95,7 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		thrust_pos = thrust_weighted / thrust_total
 	var thrust_offset := Vector2(thrust_pos.x - com.x, thrust_pos.y - com.y).length()
 
+	var crew_needed := SimShip.crew_for(cargo_capacity)
 	var open_doors := ship.open_doors().size()
 	var warnings: Array[String] = []
 	if not ship.modules.is_empty():
@@ -108,6 +113,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 			warnings.append("Some engines aren't pointing aft")
 		if thrust_total > 0.0 and thrust_offset > 1.0:
 			warnings.append("Thrust is %.1f m off the centre of mass: costs manoeuvring fuel" % thrust_offset)
+		if berths < crew_needed:
+			warnings.append("Crew: this hold needs %d berths, you have %d. Add crew bunks or quarters" % [crew_needed, berths])
 		if cargo_capacity <= 0.0:
 			warnings.append("No cargo capacity: add a hold or rack to haul freight")
 
@@ -122,6 +129,9 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		"dry": dry,
 		"fuel": fuel,
 		"wet": wet,  # dry plus full tanks, no cargo
+		"berths": berths,
+		"crew_needed": crew_needed,
+		"drive": drive,
 		"cargo_slots": cargo_slots,
 		"cargo_capacity": cargo_capacity,  # tonnes when full
 		"cargo_load": load_frac,
@@ -153,6 +163,7 @@ static func format(s: Dictionary) -> String:
 		"Mass  dry %.1f   wet %.1f   loaded %.1f t" % [s.dry, s.wet, s.loaded],
 		"Fuel  %.1f t full" % s.fuel,
 		"Hull  %s   airlocks %d" % [hull, s.airlocks],
+		"Crew  %d needed, %d berths%s" % [s.crew_needed, s.berths, "   Jump drive +%d%%" % roundi(s.drive * 100.0) if s.drive > 0.0 else ""],
 		"Thrust  %.0f kN   T/W %.2f empty, %.2f loaded" % [s.thrust_fwd, s.twr, s.twr_loaded],
 	])
 	if s.cargo_used_slots >= 0:

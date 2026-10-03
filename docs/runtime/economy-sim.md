@@ -144,10 +144,15 @@ scenario to 13 carriers with three insolvent; it is back to 11 carriers with at 
 appears when cash covers under a week; a captain in debt with no contract is insolvent and the run is
 over (`Session.insolvent`).
 
-**Known gaps.** The builder has no drive or crew modules, so speed, crew and fuel units are derived, not
-designed. Dead-end consumer ports (for example Talos) have no outbound freight, so the captain must fly
-empty. When the sim is absent the legacy contract board is used. Insolvency ends the run but there is
-no restart or ship-sale screen yet.
+**Builder parts.** Crew berths (cockpit 1, crew bunk 1, crew quarters 2) must cover the crew a hold needs
+(one, plus one per 40 t of hold). A short crew shows a builder warning and blocks departure. The jump
+drive adds 30% cruising speed each (capped at 4 ly/day), draws 40 kW, sheds 50 kW of heat and weighs
+4 t, so it also cuts thrust-to-weight. The starter ship has neither and is unchanged.
+
+**Known gaps.** Crew wages and ownership costs still come from `ship_economy.json`, not from parts, and
+a drive does not yet change fuel burn. Dead-end consumer ports (for example Talos) have no outbound
+freight, so the captain must fly empty. When the sim is absent the legacy contract board is used.
+Insolvency ends the run but there is no restart or ship-sale screen yet.
 
 ## Assumptions to replace with data
 
