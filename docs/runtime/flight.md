@@ -32,19 +32,26 @@ Keys: W/S throttle, Z cut, arrows pitch and yaw, Q/E roll, X brake, R assist, C 
 
 ## Flying a local run (`scripts/transfer_flight.gd`)
 
-An active local contract can be flown instead of autopiloted: the dock's FLY THE RUN opens the flight scene in
-transfer mode (`Session.flight_job`). There is no station. The destination is a diamond marker far off
-(`TransferFlight.plan` sets the distance so a perfect full-burn, flip, full-brake run spends exactly the hop's
-delta-v, which is the figure the board prices fuel on; tested to match to 0.2%). The ship leaves loaded and
-about 35 degrees off the heading, and the pilot has to line up, burn, flip at the BRAKE NOW cue (X runs the
-retrograde autopilot) and stop within 1.5 km at under 8 m/s. `,` and `.` change time compression (x1 to x60); it
-drops to x1 when the target is near or closing fast. Fuel is whatever the flight actually burned, so sloppy flying
-costs more than the DEPART autopilot's textbook figure. Esc turns back (fuel and hours charged, the load stays
-aboard at the start). Running dry means a tug and a tow fee. Arriving settles fuel, the berth fee and the hop's
-hours into the sim, then the run is delivered at the dock as before.
+An active local contract can be flown instead of autopiloted: the dock's FLY THE RUN opens the flight scene with
+the run (`Session.flight_job`). It has three phases.
+
+1. **Depart.** The ship undocks from the origin site's station as in free flight, and the destination is a diamond
+   marker about 35 degrees off the way the ship leaves. Time runs at x1 until the ship is 3 km clear.
+2. **Cruise.** The station drops away. `TransferFlight.plan` sets the distance so a perfect full burn, flip and full
+   brake spends exactly the hop's delta-v, the figure the board prices fuel on (tested to match to 0.2%). Line up,
+   burn, flip at the BRAKE NOW cue (X runs the retrograde autopilot) and stop within 1.5 km at under 8 m/s.
+   `,` and `.` change time compression (x1 to x60); it drops to x1 when the target is near or closing fast.
+3. **Approach.** Arriving at the marker brings up the destination's station and rests the ship 1.5 km off its
+   collar. Docking uses the free-flight rules (nose down the axis, close, under 3 m/s) and settles the run. Esc
+   in this phase is an autopilot dock, so the approach is never a trap.
+
+Fuel is whatever the flight actually burned, so sloppy flying costs more than the DEPART autopilot's textbook
+figure; hull repairs from collisions are charged too. Esc or F at the origin during depart or cruise turns back
+(fuel and hours charged, the load stays aboard at the start). Running dry means a tug and a tow fee. Settling
+runs the hop's hours and the berth fee through the sim; the run is then delivered at the dock as before.
 
 ## Not built yet
 
-Star jumps and their link to the economy (an interstellar trip is still resolved by the sim), a proper approach and docking at a local site (a flown run just stops at the marker), atmosphere and landing,
+Star jumps and their link to the economy (an interstellar trip is still resolved by the sim), atmosphere and landing,
 collision with anything but the station, and walking inside the ship.
 All tuning numbers are placeholders.

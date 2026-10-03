@@ -27,6 +27,9 @@ var job: Dictionary = {}
 var warp_index := 0
 var beacon: Label
 var _arrived := false
+var phase := "free"   ## free flight, or for a flown run: depart (leaving the origin site), cruise, approach (docking at the destination)
+var station_label: Label3D
+const CLEAR_M := 3000.0
 const WARPS := [1, 2, 5, 10, 25, 60]
 var _impact_shown := -10.0
 var _impacts_seen := 0
@@ -140,23 +143,40 @@ func _make_station() -> Node3D:
 	label.position = Vector3(0, STATION_RADIUS + 10.0, 0)
 	label.modulate = Color(1.0, 0.8, 0.4)
 	root.add_child(label)
+	station_label = label
 	return root
 
 
-## A flown local run: no station, a destination far off, and the clock can be sped up.
+## A flown local run: undock from the origin site, fly clear, cruise to the destination (the clock can be
+## sped up), then dock there.
 func _setup_transfer() -> void:
 	job = Session.flight_job
 	xfer = TransferFlight.plan(stats, float(job.dv_kms), String(job.key))
-	station.visible = false
-	model.station_solid = false
-	model.pos = Vector3.ZERO
-	# Leave pointing about 35 degrees off the destination, so the first job is to line up.
-	var off := Basis(Vector3.UP, deg_to_rad(35.0)) * xfer.direction
-	model.basis = Basis.looking_at(off, Vector3.UP)
+	phase = "depart"
+	var dock_dir := Vector3(0.35, 0.15, 1.0).normalized()
+	# The destination lies about 35 degrees off the way the ship leaves the dock.
+	xfer.aim(Basis(Vector3.UP, deg_to_rad(35.0)) * dock_dir)
+	model.station_solid = true
+	model.place_at_dock(Vector3(0.35, 0.15, 1.0))
 	beacon = Label.new()
 	beacon.add_theme_font_size_override("font_size", 18)
 	beacon.add_theme_color_override("font_color", Brand.AMBER)
 	hud.get_parent().add_child(beacon)
+
+
+## Arrived at the marker: the destination's station comes up and the ship is brought to rest 1.5 km
+## off its docking collar.
+func _begin_approach() -> void:
+	phase = "approach"
+	station.visible = true
+	station_label.text = String(job.destination).to_upper()
+	model.station_solid = true
+	model.pos = Vector3(0.35, 0.15, 1.0).normalized() * 1500.0
+	model.vel = Vector3.ZERO
+	model.braking = false
+	model.throttle = 0.0
+	beacon.visible = false
+	warp_index = 0
 
 
 func _build_ship() -> void:
@@ -242,18 +262,19 @@ func _process(delta: float) -> void:
 		var n := maxi(1, ceili(total / 0.05))
 		for i in n:
 			model.step(total / float(n), turn, thr)
-			if xfer.arrived(model):
-				_arrived = true
+			if phase == "cruise" and xfer.arrived(model):
+				_begin_approach()
 				break
+		if phase == "depart" and model.pos.length() > CLEAR_M:
+			phase = "cruise"
+			station.visible = false
+			model.station_solid = false
 		_wrap_markers()
 	if model.impacts != _impacts_seen:
 		_impacts_seen = model.impacts
 		_impact_shown = model.elapsed_s
 	_apply_pose()
 	_update_hud()
-	if _arrived:
-		_return_to_dock()
-		return
 	view.set_flames(model.throttle > 0.02 and model.has_fuel())
 	for ring in station.get_children():
 		if ring.has_meta("spin"):
@@ -263,8 +284,8 @@ func _process(delta: float) -> void:
 ## Time compression, held to 1x when the target is close or the ship is closing fast on it.
 func _warp() -> int:
 	var w: int = WARPS[warp_index]
-	if xfer == null or w == 1:
-		return w
+	if xfer == null or w == 1 or phase != "cruise":
+		return 1
 	var eta := xfer.eta_s(model)
 	if xfer.range_to(model) < 25000.0 or (eta >= 0.0 and eta < 60.0) or xfer.brake_now(model) or model.braking:
 		return 1
@@ -333,7 +354,7 @@ func _update_transfer_hud() -> void:
 
 
 func _update_hud() -> void:
-	if xfer != null:
+	if xfer != null and phase != "approach":
 		_update_transfer_hud()
 		return
 	var dist := model.pos.length()
@@ -347,6 +368,8 @@ func _update_hud() -> void:
 		"MASS  %.1f t    ACCEL %.2f m/s²" % [model.mass_t(), model.accel() if model.throttle > 0.0 else model.max_accel()],
 		"HEAT  %d%%    HULL  %d%%" % [roundi(model.heat_fraction() * 100.0), roundi((1.0 - model.damage) * 100.0)],
 		"ASSIST %s   %s" % ["ON" if model.assist else "OFF", "AUTOPILOT BRAKING" if model.braking else ""]])
+	if phase == "approach":
+		lines.insert(0, "APPROACH  %s    Esc: autopilot dock" % String(job.destination).to_upper())
 	hud.text = "\n".join(lines)
 	bar.value = model.throttle
 	if model.can_dock():
@@ -383,10 +406,19 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_C:
 			chase = not chase
 			_apply_pose()
+		KEY_PERIOD:
+			if xfer != null:
+				warp_index = mini(warp_index + 1, WARPS.size() - 1)
+		KEY_COMMA:
+			warp_index = maxi(warp_index - 1, 0)
 		KEY_F:
 			if model.can_dock():
+				if phase == "approach":
+					_arrived = true   # docked at the destination
 				_return_to_dock()
 		KEY_ESCAPE:
+			if phase == "approach":
+				_arrived = true   # the station's traffic control brings the ship in
 			_return_to_dock()
 
 
@@ -395,7 +427,7 @@ func _return_to_dock() -> void:
 		return
 	leaving = true
 	if xfer != null:
-		Session.finish_local_flight(model.fuel_burned_t, model.elapsed_s, model.damage, _arrived, not _arrived and not model.has_fuel())
+		Session.finish_local_flight(model.fuel_burned_t, model.elapsed_s, model.damage, _arrived, not model.has_fuel() and (phase != "approach" or not model.can_dock()))
 	else:
 		Session.finish_flight(model.fuel_burned_t, model.elapsed_s, model.damage)
 	get_tree().change_scene_to_file(Session.DOCK_SCENE)

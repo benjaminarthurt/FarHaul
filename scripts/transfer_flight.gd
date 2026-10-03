@@ -61,6 +61,12 @@ static func plan(stats: Dictionary, dv_kms: float, seed_key: String = "") -> Tra
 	return t
 
 
+## Point the run along `dir` (unit vector), keeping its distance.
+func aim(dir: Vector3) -> void:
+	direction = dir.normalized()
+	target = direction * distance_m
+
+
 func range_to(model: FlightModel) -> float:
 	return (target - model.pos).length()
 

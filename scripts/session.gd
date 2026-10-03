@@ -459,15 +459,16 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	var extra := 0.0
 	if arrived:
 		extra = float(cfg["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
-	elif stranded:
-		extra = float(cfg["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+	if stranded:
+		extra += float(cfg["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
 	sim._pay(SimWorld.PLAYER, "world", extra)
 	var msg := ""
 	if arrived:
 		profile["port_id"] = String(c.destination_port_id)
 		c["status"] = "arrived"
 		data["active_contract"] = c
-		msg = "Arrived at %s. Fuel %s cr, berth fee %s cr." % [job.destination, ShipStats.commas(int(r.fuel_cost) + 0), ShipStats.commas(roundi(extra))]
+		msg = "Docked at %s. Fuel %s cr, berth fee %s cr%s.%s" % [job.destination, ShipStats.commas(int(r.fuel_cost)), ShipStats.commas(roundi(extra)),
+				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", " A tug towed you in." if stranded else ""]
 	elif stranded:
 		msg = "Out of fuel. A tug brought you back for %s cr plus %s cr of fuel. The load is still aboard." % [ShipStats.commas(roundi(extra)), ShipStats.commas(int(r.fuel_cost))]
 	else:
