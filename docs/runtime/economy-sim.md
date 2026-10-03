@@ -113,10 +113,36 @@ paid time with 30% of return legs carrying freight. A captain who idles more los
 retune, edit the targets or secondary multipliers and run `tests/solve_levels.gd`, which bisects the pay
 multiplier to hit each target margin; rerun it whenever base rates, fuel, ship costs or the starter change.
 
+## The player in the living world
+
+`scripts/sim/sim_world.gd` builds one world per saved game and keeps the player's ship in it as a
+manually flown carrier (`manual: true`, so the dispatcher never gives it work). `Session` owns the sim.
+
+- **New game**: the sim warms up 14 days so orders are already in flight, then the player's carrier is
+  added from the real ship (`SimShip.profile`) and the world runs on, off the player's books, until the
+  home port has freight.
+- **Time passes only when the player acts**: depart (runs to arrival), deliver, `wait_days`, and
+  `travel_empty` (reposition with no cargo, the way out of a dead-end port). Every day costs wages and
+  ownership, so idling and stranding hurt.
+- **Board**: `Contracts.offers_from` shows live sim freight first. NPC carriers see new contracts only
+  after `npc_board_delay_hours` (12), so the player gets first look. Oversize lots become parcels.
+- **Money**: `profile.credits` follows the sim carrier's cash. `SimWorld.sync` folds builder spending into
+  `cash_initial` so total money stays conserved.
+- **Saving**: the sim is stored in the slot as `data["sim"]`, base64 of `var_to_bytes`. Do not use
+  `var_to_str` for this: it rounds floats to about six digits, and reloading then loses credits and breaks
+  conservation (this was a real bug, caught by `test_player_flow.gd`). Finished orders older than 20 days are pruned on save.
+
+Tests: `test_player_flow.gd` plays accept, depart, deliver, wait, save, load, a builder spend and 60 days
+of work, and checks ledger and money conservation throughout.
+
+**Calibration note.** The solvency calibration is noisy: a single run's margins swing about 10 points with
+small parameter changes, so tests use bands, not exact figures. A past commit briefly regressed the
+scenario to 13 carriers with three insolvent; it is back to 11 carriers with at most one loser.
+
 **Known gaps.** The builder has no drive or crew modules, so speed, crew and fuel units are derived, not
-designed. There is no live player carrier in the game yet: the sim treats the player as an NPC-style
-carrier that auto-accepts work. The player's own contract board (`contracts.gd`) is still separate from
-the simulated one.
+designed. Dead-end consumer ports (for example Talos) have no outbound freight, so the captain must
+reposition empty. The dock has no "wait a day" or "fly empty" buttons yet (`Session.wait_days` and
+`Session.travel_empty` exist). When the sim is absent the legacy contract board is used.
 
 ## Assumptions to replace with data
 
@@ -127,4 +153,4 @@ distributor stock, consumer budgets, carrier fleets and bases. No world file nam
 ## Not modelled yet
 
 Production inputs, port capacity and queues, information latency, cargo damage or loss, insurance,
-financing, passenger traffic, and the player.
+financing and passenger traffic.

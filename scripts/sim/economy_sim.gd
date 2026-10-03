@@ -101,6 +101,8 @@ func _add_carrier(c: Dictionary) -> void:
 		# Difficulty multipliers from economy_levels.json. Only the player's ships carry one; NPC
 		# carriers leave it empty and run on the base economy.
 		"level": c.get("level", {}),
+		# A manual carrier is flown by the player: it never takes work or goes home on its own.
+		"manual": bool(c.get("manual", false)),
 	}
 	carriers[c["id"]] = cr
 	cash_initial += cr["cash"]
@@ -291,6 +293,20 @@ func _trip_cost(ship: Dictionary, path: Array, cargo_mass_t: float) -> float:
 ## Fuel units a leg burns for a ship of this total mass.
 func _leg_fuel_units(from_sys: String, to_sys: String, mass_t: float) -> float:
 	return float(net.route(from_sys, to_sys).get("base_jump_fuel_units_per_mass_unit", 0.0)) * mass_t
+
+## The most cargo (kg) a ship can lift along `path` and still cover every leg on one tank, because a
+## heavier ship burns more. Unlimited-range ships return a huge number.
+func _fuel_cargo_limit_kg(c: Dictionary, path: Array) -> float:
+	if c["fuel_units"] >= 1.0e11:
+		return 1.0e12
+	var limit_t := 1.0e9
+	for i in range(path.size() - 1):
+		var coef: float = float(net.route(path[i], path[i + 1]).get("base_jump_fuel_units_per_mass_unit", 0.0))
+		if coef <= 0.0:
+			continue
+		var mult := 1.0 if fuel_factor.has(path[i + 1]) else 2.0
+		limit_t = minf(limit_t, c["fuel_units"] / (coef * mult) - c["dry_mass_t"])
+	return maxf(limit_t, 0.0) * 1000.0
 
 ## Can the ship fly this path on one tank per leg? It refuels at every stop that sells fuel; a stop
 ## with no priced fuel (frontier) also needs enough left to fly back out.
@@ -570,8 +586,13 @@ func _dispatch_carriers() -> void:
 		if k["status"] == "offered":
 			offered.append(k)
 	offered.sort_custom(func(a, b): return a["offered"] < b["offered"])
+	# Freight sits on the board for a while before the AI fleets look at it, so the player gets a
+	# real choice instead of whatever the fleets happened to leave in the same hour.
+	var delay := int(p.get("npc_board_delay_hours", 0))
+	if delay > 0:
+		offered = offered.filter(func(k): return hour - k["offered"] >= delay)
 	for c in carriers.values():
-		if c["state"] != "idle":
+		if c["state"] != "idle" or c["manual"]:
 			continue
 		var best: Dictionary = {}
 		var seen := {}
@@ -615,10 +636,11 @@ func _return_home(c: Dictionary) -> void:
 ## the hold (by volume or mass) is offered as a part-lot ("parcel"): a copy sized to what fits, with the
 ## rate pro rata. Nothing is split until the carrier accepts it (see _split_for).
 func _fit_contract(c: Dictionary, k: Dictionary) -> Dictionary:
-	if k["scu"] <= c["capacity_scu"] and k["mass_kg"] <= c["capacity_kg"]:
+	var fuel_kg := _fuel_cargo_limit_kg(c, k["systems"])
+	if k["scu"] <= c["capacity_scu"] and k["mass_kg"] <= minf(c["capacity_kg"], fuel_kg):
 		return k
 	var lot: Dictionary = lots[k["lot"]]
-	var frac := minf(c["capacity_scu"] / k["scu"], c["capacity_kg"] / k["mass_kg"])
+	var frac := minf(c["capacity_scu"] / k["scu"], minf(c["capacity_kg"], fuel_kg) / k["mass_kg"])
 	var units := floorf(lot["units"] * frac)
 	if units < 1.0 or units < float(p.get("min_parcel_units", 1)):
 		return {}
@@ -977,3 +999,138 @@ func _reference_mass_per_scu() -> float:
 			v.append(float(c["mass_kg_per_unit"]) / float(c["scu_per_unit"]))
 	v.sort()
 	return v[v.size() / 2] if not v.is_empty() else 1000.0
+
+
+# ---------------------------------------------------------------- the player's carrier
+
+## Contracts the manual carrier could take from its current system: still on offer, starting here.
+func offers_at(carrier_id: String) -> Array:
+	var c: Dictionary = carriers[carrier_id]
+	var out: Array = []
+	for k in contracts.values():
+		if k["status"] != "offered" or k["origin_sys"] != c["sys"]:
+			continue
+		var part := _fit_contract(c, k)
+		if part.is_empty() or not _path_feasible(c, k["systems"], float(part["mass_kg"]) / 1000.0):
+			continue
+		out.append(part)
+	out.sort_custom(func(a, b): return a["offered"] < b["offered"])
+	return out
+
+## What the carrier is paid for a contract after its difficulty level.
+func pay_for(carrier_id: String, k: Dictionary) -> float:
+	return float(k["rate"]) * _lv(carriers[carrier_id], "freight_pay_mult")
+
+## Take a contract (or the part of it that fits). Returns {ok, message, contract, hours} where
+## `contract` is the real contract now assigned and `hours` is the time until it can be delivered.
+func player_accept(carrier_id: String, contract_id: String) -> Dictionary:
+	var c: Dictionary = carriers.get(carrier_id, {})
+	var k: Dictionary = contracts.get(contract_id, {})
+	if c.is_empty() or k.is_empty() or k["status"] != "offered":
+		return {"ok": false, "message": "That contract is no longer on offer."}
+	if c["state"] != "idle":
+		return {"ok": false, "message": "The ship is already working a contract."}
+	if k["origin_sys"] != c["sys"]:
+		return {"ok": false, "message": "That freight is not at this port."}
+	var part := _fit_contract(c, k)
+	if part.is_empty():
+		return {"ok": false, "message": "The ship cannot carry any of this load."}
+	if not _path_feasible(c, k["systems"], float(part["mass_kg"]) / 1000.0):
+		return {"ok": false, "message": "The tanks cannot cover that jump."}
+	var taken: Dictionary = _split_for(part) if part.has("parent") else k
+	var ev := {"bundle": [taken], "margin_frac": 0.0, "repo": [c["sys"]]}
+	_accept(c, ev)
+	return {"ok": true, "message": "Contract accepted.", "contract": taken, "hours": _queue_hours(c)}
+
+## Fly the manual carrier empty to another system (to reach freight, or to leave a dead-end port).
+func player_reposition(carrier_id: String, dest_sys: String) -> Dictionary:
+	var c: Dictionary = carriers.get(carrier_id, {})
+	if c.is_empty():
+		return {"ok": false, "message": "No such ship."}
+	if c["state"] != "idle":
+		return {"ok": false, "message": "The ship is already working a contract."}
+	if dest_sys == c["sys"]:
+		return {"ok": false, "message": "The ship is already there."}
+	var path := net.path(c["sys"], dest_sys)
+	if path.is_empty():
+		return {"ok": false, "message": "There is no route there."}
+	if not _path_feasible(c, path, 0.0):
+		return {"ok": false, "message": "The tanks cannot cover that route."}
+	c["state"] = "working"
+	c["job"] = []
+	c["queue"] = [{"type": "wait", "hours": int(p["dispatch_lag_hours"])}]
+	_queue_path(c, path, false)
+	return {"ok": true, "message": "Underway empty.", "hours": _queue_hours(c)}
+
+func _queue_hours(c: Dictionary) -> int:
+	var h := 0
+	for a in c["queue"]:
+		h += int(a.get("hours", 0)) if a["type"] != "load" and a["type"] != "unload" else int(ceil(float(p["loading_hours_base"])))
+	return h
+
+## Run the clock until the manual carrier reaches `stage`: "arrival" (about to unload) or "done".
+## Returns the hours that passed. Everyone else keeps working while the player travels.
+func run_player_until(carrier_id: String, stage: String, max_hours: int = 24 * 90) -> int:
+	var start := hour
+	var c: Dictionary = carriers[carrier_id]
+	while hour - start < max_hours:
+		if c["state"] == "idle":
+			break
+		if stage == "arrival" and not c["queue"].is_empty() and c["queue"][0]["type"] == "unload":
+			break
+		step_hour()
+	return hour - start
+
+# ---------------------------------------------------------------- saving
+
+## Everything that changes while the sim runs, as plain data. Static data (routes, commodities,
+## market multipliers, params) is reloaded from the scenario, so it is not saved.
+func to_state(keep_days: int = 20) -> Dictionary:
+	_prune(keep_days)
+	return {"hour": hour, "id": _id, "world_cash": world_cash, "cash_initial": cash_initial,
+			"facilities": facilities, "carriers": carriers, "lots": lots, "orders": orders,
+			"contracts": contracts, "violations": violations,
+			"ledger": {"entries": ledger.entries, "produced": ledger.produced_total,
+					"consumed": ledger.consumed_total, "initial": ledger.initial_total},
+			"events": events.slice(maxi(0, events.size() - 200))}
+
+func load_state(st: Dictionary) -> void:
+	hour = int(st["hour"])
+	_id = int(st["id"])
+	world_cash = float(st["world_cash"])
+	cash_initial = float(st["cash_initial"])
+	facilities = st["facilities"]
+	carriers = st["carriers"]
+	lots = st["lots"]
+	orders = st["orders"]
+	contracts = st["contracts"]
+	violations = st.get("violations", [])
+	ledger.entries = st["ledger"]["entries"]
+	ledger.produced_total = st["ledger"]["produced"]
+	ledger.consumed_total = st["ledger"]["consumed"]
+	ledger.initial_total = st["ledger"]["initial"]
+	events = st.get("events", [])
+
+## Drop orders that finished more than `keep_days` ago, with their lots and contracts, so a long
+## game does not grow without bound.
+func _prune(keep_days: int) -> void:
+	var cutoff := hour - keep_days * 24
+	var dead: Array = []
+	for oid in orders:
+		var o: Dictionary = orders[oid]
+		if o["received"] + 0.001 < o["units"]:
+			continue
+		var newest := 0
+		for lid in o["lots"]:
+			for k in contracts.values():
+				if k["lot"] == lid:
+					newest = maxi(newest, int(k["delivered"]))
+		if newest < cutoff:
+			dead.append(oid)
+	for oid in dead:
+		for lid in orders[oid]["lots"]:
+			for kid in contracts.keys():
+				if contracts[kid]["lot"] == lid:
+					contracts.erase(kid)
+			lots.erase(lid)
+		orders.erase(oid)

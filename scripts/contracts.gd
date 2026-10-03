@@ -5,6 +5,17 @@ extends RefCounted
 
 
 static func offers_from(system_id: String, limit: int = 8) -> Array[Dictionary]:
+	# In a saved game the board is the live economy: real stock moving between real facilities.
+	if Session.sim != null:
+		if Session.slot >= 0:
+			var loaded := Session._load_ship(SaveSlots.read(Session.slot))
+			if not loaded.is_empty():
+				Session._sync_sim(loaded.ship)
+		var live := SimWorld.board(Session.sim, system_id, limit)
+		if not live.is_empty():
+			return live
+		# Outside the slice the live economy covers (or when nothing is posted), fall back to the
+		# scheduled market freight below so every port still has something to haul.
 	var origin := Worlds.market(system_id)
 	if origin.is_empty():
 		return []

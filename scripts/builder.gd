@@ -979,6 +979,12 @@ func _save_dict() -> Dictionary:
 	data["earned"] = earned
 	Session.profile["credits"] = _credits()
 	data["profile"] = Session.profile
+	# The builder only knows about the ship; keep what other screens saved in the same slot.
+	if Session.slot >= 0:
+		var existing := SaveSlots.read(Session.slot)
+		for key in ["sim", "active_contract"]:
+			if existing.has(key) and not data.has(key):
+				data[key] = existing[key]
 	return data
 
 

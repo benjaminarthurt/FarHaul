@@ -11,7 +11,7 @@
     {
       "id": "easy",
       "name": "Easy",
-      "freight_pay_mult": 1.21,
+      "freight_pay_mult": 1.28,
       "fuel_price_mult": 0.9,
       "port_fee_mult": 0.9,
       "wage_mult": 1.0,
@@ -25,7 +25,7 @@
     {
       "id": "normal",
       "name": "Normal",
-      "freight_pay_mult": 1.04,
+      "freight_pay_mult": 1.1,
       "fuel_price_mult": 1.0,
       "port_fee_mult": 1.0,
       "wage_mult": 1.0,
@@ -39,7 +39,7 @@
     {
       "id": "hard",
       "name": "Hard",
-      "freight_pay_mult": 1.02,
+      "freight_pay_mult": 1.09,
       "fuel_price_mult": 1.2,
       "port_fee_mult": 1.2,
       "wage_mult": 1.1,
