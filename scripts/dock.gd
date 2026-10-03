@@ -133,6 +133,8 @@ func _build_ui() -> void:
 	_row(grid, "Difficulty", Worlds.difficulty(p.difficulty).name)
 	if Session.sim != null:
 		_row(grid, "Day", str(Session.day()))
+		if int(p.get("bankruptcies", 0)) > 0:
+			_row(grid, "Bankruptcies", str(int(p.bankruptcies)))
 		var runway := SimWorld.runway_days(Session.sim)
 		_row(grid, "Running costs", "%s cr/day  ·  cash lasts %s" % [ShipStats.commas(roundi(SimWorld.daily_cost(Session.sim))),
 				"over a year" if runway > 365 else "%d days" % runway])
@@ -146,6 +148,9 @@ func _build_ui() -> void:
 				ShipStats.commas(roundi(float(rep.revenue))), ShipStats.commas(roundi(float(rep.costs)))], 15)
 		recap.custom_minimum_size = Vector2(440, 0)
 		col.add_child(recap)
+		var offer := Brand.note("Or let the bank step in: it takes the ship at half price, clears your debt and lends you a starter hauler with ten days of running costs. It goes on your record.", 15)
+		offer.custom_minimum_size = Vector2(440, 0)
+		col.add_child(offer)
 	elif Session.sim != null and SimWorld.runway_days(Session.sim) < 7 and Session.active_contract().is_empty():
 		var warn := Brand.note("Cash covers less than a week of running costs. Take freight now.", 15)
 		warn.add_theme_color_override("font_color", Brand.AMBER)
@@ -157,6 +162,8 @@ func _build_ui() -> void:
 	menu.custom_minimum_size = Vector2(340, 0)
 	menu.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	col.add_child(menu)
+	if Session.insolvent():
+		_button(menu, "LET THE BANK STEP IN", _restructure)
 	var yard_btn := _button(menu, "ENTER SHIPYARD", _enter_yard)
 	_button(menu, "CONTRACT BOARD", _show_contracts)
 	depart_btn = _button(menu, "DEPART", _depart)
@@ -210,6 +217,9 @@ func _build_ui() -> void:
 	if not w.neighbours.is_empty():
 		info.add_child(Brand.note("Direct routes to %s." % ", ".join(PackedStringArray(w.neighbours)), 14))
 	_refresh_actions()
+	if Session.flash != "":
+		status.text = Session.flash
+		Session.flash = ""
 	yard_btn.grab_focus()
 	if Session.insolvent():
 		yard_btn.disabled = true
@@ -319,6 +329,13 @@ func _refresh_actions() -> void:
 		fly_btn.disabled = not idle
 	depart_btn.disabled = c.is_empty() or String(c.get("origin_system_id", "")) != Session.system_id()
 	deliver_btn.disabled = c.is_empty() or String(c.get("destination_system_id", "")) != Session.system_id()
+
+
+func _restructure() -> void:
+	var result := Session.restructure()
+	status.text = result.message
+	if bool(result.ok):
+		get_tree().reload_current_scene()
 
 
 func _take_helm() -> void:

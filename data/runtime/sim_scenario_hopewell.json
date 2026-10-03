@@ -2,7 +2,7 @@
   "schema_version": "0.1.0",
   "canon_status": "draft",
   "id": "hopewell_filters",
-  "note": "Simulation seed for the headless economy prototype. Everything here is a PLACEHOLDER ASSUMPTION used to make existing world data run; values marked (assumed) are not yet canon and are the first things calibration will change. No world file names a filter producer, so the producer and distributor below are assumed. Procurement policy: reorder_point and target_stock in the facility items are FLOORS; companies raise them to cover estimated lead time plus safety_days of planning demand (the larger of consumption and the outflow they supply to others). STOCK-OUT TUNING (2026-10-03): Chandlers safety stock 40->100 so the distributor does not sell its own cover to downstream orders; base rate re-set to 63 after procurement changes (more orders in flight) moved fleet margin. FLEET (2026-10-03): sol_transit_a and redline_coop_a removed (they lost money every run: the slice has far more hulls than freight). npc_board_delay_hours 12 keeps new freight on the board for half a day before AI fleets look at it, so the player gets a real choice. Fleet margin swings by 10+ points between nearby settings because carriers compete for the same lots; treat single runs as noisy.",
+  "note": "Simulation seed for the headless economy prototype. Everything here is a PLACEHOLDER ASSUMPTION used to make existing world data run; values marked (assumed) are not yet canon and are the first things calibration will change. No world file names a filter producer, so the producer and distributor below are assumed. Procurement policy: reorder_point and target_stock in the facility items are FLOORS; companies raise them to cover estimated lead time plus safety_days of planning demand (the larger of consumption and the outflow they supply to others). STOCK-OUT TUNING (2026-10-03): Chandlers safety stock 40->100 so the distributor does not sell its own cover to downstream orders; base rate re-set to 63 after procurement changes (more orders in flight) moved fleet margin. FLEET (2026-10-03): sol_transit_a and redline_coop_a removed (they lost money every run: the slice has far more hulls than freight). npc_board_delay_hours 12 keeps new freight on the board for half a day before AI fleets look at it, so the player gets a real choice. Fleet margin swings by 10+ points between nearby settings because carriers compete for the same lots; treat single runs as noisy. A second chain runs the other way so the frontier port Talos has outbound freight: Hopewell Brine Works (assumed) sells rare dissolved minerals to Roosevelt Mineral Refinery (assumed). Fleet is 12 carriers (one more Concord Interstellar ship than before the brine chain). Stale freight (sitting more than 8 days) escalates faster and past the normal cap so stranded parcels eventually move.",
   "start_day": 286030,
   "params": {
     "ly_per_day": 1.5,
@@ -40,7 +40,10 @@
     "cycle_days": 14,
     "idle_return_hours": 24,
     "lead_learning_cap": 2.5,
-    "npc_board_delay_hours": 12
+    "npc_board_delay_hours": 12,
+    "stale_after_days": 8.0,
+    "stale_escalation_per_day": 0.06,
+    "stale_cap_growth_per_day": 0.12
   },
   "facilities": [
     {
@@ -140,6 +143,48 @@
           "max_stock": 6000,
           "unit_cost": 2100,
           "price_mult": 0.9
+        }
+      }
+    },
+    {
+      "id": "hopewell_brine_works",
+      "name": "Hopewell Brine Works (assumed)",
+      "kind": "supplier",
+      "system_id": "talos",
+      "port_id": "talos_hopewell_field",
+      "cash": 800000,
+      "income_cr_per_day": 0,
+      "reliability": 0.96,
+      "items": {
+        "rare_dissolved_minerals": {
+          "on_hand": 600,
+          "reorder_point": 0,
+          "target_stock": 0,
+          "safety_stock": 0,
+          "daily_demand": 0,
+          "produce_per_day": 14,
+          "max_stock": 1500,
+          "unit_cost": 5200,
+          "price_mult": 0.9
+        }
+      }
+    },
+    {
+      "id": "roosevelt_mineral_refinery",
+      "name": "Roosevelt Mineral Refinery (assumed)",
+      "kind": "consumer",
+      "system_id": "new_houston",
+      "port_id": "roosevelt_orbital_freight",
+      "cash": 2000000,
+      "income_cr_per_day": 60000,
+      "reliability": 1.0,
+      "items": {
+        "rare_dissolved_minerals": {
+          "on_hand": 200,
+          "reorder_point": 120,
+          "target_stock": 260,
+          "safety_stock": 60,
+          "daily_demand": 4.0
         }
       }
     }
@@ -347,6 +392,25 @@
         "talos",
         "waystation",
         "lastlight"
+      ]
+    },
+    {
+      "id": "concord_interstellar_g",
+      "company": "concord_interstellar_freight",
+      "home_system_id": "concord",
+      "capacity_scu": 200,
+      "dry_mass_t": 420,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "concord",
+        "carver",
+        "bradbury",
+        "new_houston",
+        "port_meridian"
       ]
     }
   ]

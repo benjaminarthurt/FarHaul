@@ -54,6 +54,8 @@ func _initialize() -> void:
 	var over := 0
 	for k in sim.contracts.values():
 		var lot: Dictionary = sim.lots[k["lot"]]
+		if int(k["seg_i"]) != int(lot["seg_i"]) and k["status"] == "delivered":
+			continue   # an earlier leg of a multi-hop trip is history: the lot may have been split since
 		if absf(float(k["scu"]) - float(lot["scu"])) > 0.001:
 			over += 1
 	check(over == 0, "contract and lot sizes agree after splitting")

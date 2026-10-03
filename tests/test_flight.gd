@@ -89,11 +89,69 @@ func _init() -> void:
 	var d := FlightModel.from_stats(stats)
 	d.place_at_dock()
 	check(not d.can_dock(), "too far away to dock at the start")
-	d.pos = Vector3(0, 0, 40)
+	d.pos = Vector3(0, 0, 50)
+	d.basis = Basis.looking_at(Vector3(0, 0, -1), Vector3.UP)   # nose toward the station
 	d.vel = Vector3(0, 0, -2)
-	check(d.can_dock(), "close and slow can dock")
+	check(d.can_dock(), "nose-in, slow and on the axis can dock")
 	d.vel = Vector3(0, 0, -12)
-	check(not d.can_dock(), "close but fast cannot")
+	check(not d.can_dock(), "too fast cannot")
+	d.vel = Vector3(0, 0, -2)
+	d.basis = Basis.looking_at(Vector3(0, 0, 1), Vector3.UP)
+	check(not d.can_dock(), "tail-first cannot")
+	d.basis = Basis.looking_at(Vector3(0, 0, -1), Vector3.UP)
+	d.pos = Vector3(14, 0, 50)
+	check(not d.can_dock(), "well off the axis cannot")
+
+	print("collisions")
+	var c := FlightModel.from_stats(stats)
+	c.pos = Vector3(0, 0, 60)
+	c.vel = Vector3(0, 0, -20)
+	for i in 100:
+		c.step(0.1)
+	check(c.impacts >= 1 and c.damage > 0.1, "a fast hit on the station damages the hull (%.0f%%)" % (c.damage * 100.0))
+	check(c.station_clearance(c.pos).gap >= 0.0, "the ship is pushed back out of the structure")
+	check(c.vel.z > -20.0, "and bounced")
+	var soft := FlightModel.from_stats(stats)
+	soft.pos = Vector3(0, 0, 60)
+	soft.vel = Vector3(0, 0, -1.0)
+	for i in 400:
+		soft.step(0.1)
+	check(soft.damage == 0.0, "a gentle touch does no harm")
+	var hurt := FlightModel.from_stats(stats)
+	hurt.damage = 0.8
+	hurt.throttle = 1.0
+	var fresh := FlightModel.from_stats(stats)
+	fresh.throttle = 1.0
+	check(hurt.accel() < fresh.accel() * 0.7, "a damaged hull loses thrust (%.2f vs %.2f m/s^2)" % [hurt.accel(), fresh.accel()])
+
+	print("power and heat")
+	var ok_ship := FlightModel.from_stats(stats)
+	ok_ship.throttle = 1.0
+	for i in 600:
+		ok_ship.step(0.5)
+		ok_ship.throttle = 1.0
+		ok_ship.fuel_t = 10.0
+	check(not ok_ship.overheated and ok_ship.heat_fraction() < 0.2, "the starter's radiators keep up at full burn (%.0f%% of the limit)" % (ok_ship.heat_fraction() * 100.0))
+	var hot := FlightModel.from_stats(stats)
+	hot.cooling_kw = hot.heat_base_kw * 0.5            # radiators knocked out
+	hot.throttle = 1.0
+	var t_hot := 0.0
+	while not hot.overheated and t_hot < 3000.0:
+		hot.step(0.5)
+		hot.throttle = 1.0
+		hot.fuel_t = 10.0
+		t_hot += 0.5
+	check(hot.overheated, "weak cooling overheats the engines after %.0f s" % t_hot)
+	check(hot.thrust_scale() == 0.0, "an overheated ship has no thrust")
+	hot.cooling_kw = 1.0e6
+	for i in 200:
+		hot.step(0.5)
+	check(not hot.overheated, "and it restarts after cooling")
+	var weak := FlightModel.from_stats(stats)
+	weak.power_gen_kw = weak.power_base_kw + weak.engine_power_kw * 0.5
+	weak.throttle = 1.0
+	check(weak.thrust_scale() < 0.99 and weak.thrust_scale() > 0.3, "a power shortfall browns the engines out (%.0f%% thrust)" % (weak.thrust_scale() * 100.0))
+	check(fresh.thrust_scale() > 0.999, "the starter has enough power")
 
 	print("DONE fails=", fails)
 	quit(1 if fails > 0 else 0)

@@ -2,6 +2,7 @@ extends Node3D
 ## Flying the ship. Leaves the dock, burns, turns, brakes and comes back in. Free flight for now:
 ## no sim time passes and jumps between stars are not here yet (see docs/runtime/economy-sim.md).
 ##
+## Costs: fuel burned and hull repairs are charged and the clock advances when the flight ends.
 ## Controls: W/S throttle up/down, Z cut throttle, arrow keys pitch and yaw, Q/E roll, X braking
 ## autopilot, R toggle rotation assist, C camera, F dock when close and slow, Esc back to the dock.
 
@@ -21,6 +22,8 @@ var com := Vector3.ZERO
 var view: ShipView
 var leaving := false
 var sparks: Array[MeshInstance3D] = []
+var _impact_shown := -10.0
+var _impacts_seen := 0
 
 
 func _ready() -> void:
@@ -209,6 +212,9 @@ func _process(delta: float) -> void:
 	if turn != Vector3.ZERO or thr != 0.0:
 		model.braking = false          # any pilot input takes the controls back
 	model.step(minf(delta, 0.05), turn, thr)
+	if model.impacts != _impacts_seen:
+		_impacts_seen = model.impacts
+		_impact_shown = model.elapsed_s
 	_apply_pose()
 	_update_hud()
 	view.set_flames(model.throttle > 0.02 and model.has_fuel())
@@ -233,17 +239,36 @@ func _apply_pose() -> void:
 func _update_hud() -> void:
 	var dist := model.pos.length()
 	var closing := -model.vel.dot(model.pos.normalized()) if dist > 0.01 else 0.0
-	hud.text = "SPEED  %.1f m/s\nCLOSING  %+.1f m/s\nSTATION  %.0f m\nTHROTTLE  %d%%\nFUEL  %.2f t   ΔV %.0f m/s\nMASS  %.1f t   ACCEL %.2f m/s²\nASSIST %s   %s" % [
-		model.speed(), closing, dist, roundi(model.throttle * 100.0), model.fuel_t, model.delta_v(), model.mass_t(),
-		model.accel() if model.throttle > 0.0 else model.max_accel(), "ON" if model.assist else "OFF",
-		"AUTOPILOT BRAKING" if model.braking else ""]
+	var al := model.dock_alignment()
+	var lines := PackedStringArray([
+		"SPEED  %.1f m/s    CLOSING  %+.1f m/s" % [model.speed(), closing],
+		"STATION  %.0f m    PORT  %.0f m" % [dist, al.distance],
+		"THROTTLE  %d%%    THRUST  %d%%" % [roundi(model.throttle * 100.0), roundi(model.thrust_scale() * 100.0)],
+		"FUEL  %.2f t    ΔV %.0f m/s" % [model.fuel_t, model.delta_v()],
+		"MASS  %.1f t    ACCEL %.2f m/s²" % [model.mass_t(), model.accel() if model.throttle > 0.0 else model.max_accel()],
+		"HEAT  %d%%    HULL  %d%%" % [roundi(model.heat_fraction() * 100.0), roundi((1.0 - model.damage) * 100.0)],
+		"ASSIST %s   %s" % ["ON" if model.assist else "OFF", "AUTOPILOT BRAKING" if model.braking else ""]])
+	hud.text = "\n".join(lines)
 	bar.value = model.throttle
 	if model.can_dock():
 		prompt.text = "Press F to dock"
-	elif dist < float(model.tune.get("dock_range_m", 70.0)):
-		prompt.text = "Too fast to dock: slow below %.0f m/s (X brakes)" % float(model.tune.get("dock_speed_m_s", 4.0))
+	elif al.distance < 60.0:
+		var hints := PackedStringArray()
+		if al.nose_deg > float(model.tune.get("dock_nose_deg", 25.0)):
+			hints.append("point the nose at the collar (%d° off)" % roundi(al.nose_deg))
+		if al.lateral > float(model.tune.get("dock_lateral_m", 8.0)):
+			hints.append("line up on the axis (%.0f m off)" % al.lateral)
+		if model.speed() > float(model.tune.get("dock_speed_m_s", 3.0)):
+			hints.append("slow below %.0f m/s" % float(model.tune.get("dock_speed_m_s", 3.0)))
+		if al.distance > float(model.tune.get("dock_range_m", 18.0)):
+			hints.append("close in")
+		prompt.text = "To dock: " + ", ".join(hints)
 	else:
 		prompt.text = ""
+	if model.overheated:
+		prompt.text = "ENGINES OVERHEATED. Wait for them to cool."
+	elif model.last_impact > float(model.tune.get("soft_impact_m_s", 1.5)) and model.elapsed_s - _impact_shown < 3.0:
+		prompt.text = "HULL IMPACT"
 	if not model.has_fuel() and model.speed() > 1.0:
 		prompt.text = "OUT OF FUEL. You are drifting."
 
@@ -270,4 +295,5 @@ func _return_to_dock() -> void:
 	if leaving:
 		return
 	leaving = true
+	Session.finish_flight(model.fuel_burned_t, model.elapsed_s, model.damage)
 	get_tree().change_scene_to_file(Session.DOCK_SCENE)

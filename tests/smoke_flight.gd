@@ -25,7 +25,8 @@ func _run() -> void:
 	f.chase = false
 	f._apply_pose()
 	check(f.camera.current, "cockpit camera works")
-	f.model.pos = Vector3(0, 0, 30)
+	f.model.pos = Vector3(0, 0, 50)
+	f.model.basis = Basis.looking_at(Vector3(0, 0, -1), Vector3.UP)
 	f.model.vel = Vector3(0, 0, -1)
 	f._update_hud()
 	check(f.prompt.text.contains("dock"), "prompt offers docking when close and slow")

@@ -29,6 +29,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 	var airlocks := 0
 	var cargo_slots := 0
 	var berths := 0
+	var engine_power := 0.0
+	var engine_heat := 0.0
 	var drive := 0.0
 	var cargo_capacity := 0.0
 	var cargo_carried := 0.0
@@ -66,6 +68,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		else:
 			cooling -= d.heat
 		if d.thrust > 0.0:
+			engine_power += maxf(-d.power, 0.0)
+			engine_heat += maxf(d.heat, 0.0)
 			var dir := ShipGrid.rotate_cell(Vector3i(0, 0, -1), m.rot)  # engines push along local -Z
 			thrust_total += d.thrust
 			thrust_fwd += d.thrust * float(-dir.z)
@@ -130,6 +134,9 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		"fuel": fuel,
 		"wet": wet,  # dry plus full tanks, no cargo
 		"berths": berths,
+		"engine_power": engine_power,   # kW the engines draw at full throttle (part of power_use)
+		"engine_heat": engine_heat,     # kW of waste heat the engines make at full throttle (part of heat_gen)
+		"radius": (hi - lo).length() * 0.5 + 1.5 if not ship.modules.is_empty() else 0.0,
 		"crew_needed": crew_needed,
 		"drive": drive,
 		"cargo_slots": cargo_slots,

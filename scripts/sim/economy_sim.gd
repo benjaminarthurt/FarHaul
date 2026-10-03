@@ -551,8 +551,12 @@ func _offer_contract(lot: Dictionary) -> void:
 func _escalate_open_contracts() -> void:
 	for c in contracts.values():
 		if c["status"] == "offered" and hour - c["offered"] >= 24:
-			var cap: float = c["rate0"] * float(p["rate_cap_modifier"])
-			c["rate"] = minf(c["rate"] * (1.0 + float(p["rate_escalation_per_day"])), cap)
+			# Freight nobody wants gets dearer without limit once it has sat long enough: a stranded parcel
+			# eventually pays someone to fetch it (and shows up on the player's board as a fat contract).
+			var stale_days: float = maxf(0.0, float(hour - c["offered"]) / 24.0 - float(p.get("stale_after_days", 10)))
+			var cap: float = c["rate0"] * (float(p["rate_cap_modifier"]) + float(p.get("stale_cap_growth_per_day", 0.15)) * stale_days)
+			var step: float = float(p["rate_escalation_per_day"]) + (float(p.get("stale_escalation_per_day", 0.10)) if stale_days > 0.0 else 0.0)
+			c["rate"] = minf(c["rate"] * (1.0 + step), cap)
 
 func _update_markets() -> void:
 	for f in facilities.values():

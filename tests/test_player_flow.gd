@@ -97,6 +97,19 @@ func _run() -> void:
 	check(int(rep.days) > 0 and int(rep.jobs) >= 1 and float(rep.tonnes) > 0.0, "run report: %d days, %d jobs, %.0f t" % [int(rep.days), int(rep.jobs), float(rep.tonnes)])
 	Session.profile["credits"] = saved_credits
 
+	print("flights and the bank")
+	var cr_before := int(Session.profile.credits)
+	var hr_before := Session.sim.hour
+	var msg := Session.finish_flight(0.5, 7300.0, 0.2)
+	check(msg != "" and int(Session.profile.credits) < cr_before, "a flight costs fuel and repairs (%d cr): %s" % [cr_before - int(Session.profile.credits), msg])
+	check(Session.sim.hour >= hr_before + 2, "and the clock moved on (%d h)" % (Session.sim.hour - hr_before))
+	check(absf(float(Session.sim.summary()["cash_error"])) < 0.01 and Session.sim.violations.is_empty(), "the books still balance after a flight")
+	Session.profile["credits"] = -5000
+	check(Session.insolvent() and bool(Session.restructure().ok), "the bank steps in for a bankrupt captain")
+	check(int(Session.profile.credits) > 0 and not Session.insolvent(), "debts cleared, cash %d cr" % int(Session.profile.credits))
+	check(int(Session.profile.bankruptcies) == 1, "the failure is on the record")
+	check(SaveSlots.read(Session.slot).modules.size() == 10, "the player flies the starter hauler again")
+	check(absf(float(Session.sim.summary()["cash_error"])) < 0.01, "money is still conserved after the bailout")
 	print("a captain working steadily for 60 days")
 	var trips := 0
 	var days_start := Session.day()

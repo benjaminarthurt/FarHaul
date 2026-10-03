@@ -11,6 +11,7 @@ const FLIGHT_SCENE := "res://scenes/flight.tscn"
 static var slot := -1  ## -1 when a scene was opened on its own, outside a saved game
 static var profile: Dictionary = default_profile()
 static var skip_intro := false  ## set when returning to the title so the splash and video don't replay
+static var flash := ""  ## one-shot message for the next dock screen
 static var sim: EconomySim = null  ## the living economy for this game (see SimWorld); null outside a saved game
 
 
@@ -146,6 +147,55 @@ static func _commit_sim(data: Dictionary, ship: ShipData) -> void:
 ## Days the world has run since this game began its warm-up, for display.
 static func day() -> int:
 	return SimWorld.day(sim) if sim != null else 0
+
+
+## Close out a flight: fuel burned and repairs are paid, and the clock moves on. Returns a line to show.
+static func finish_flight(fuel_burned_t: float, seconds: float, damage: float) -> String:
+	if slot < 0 or sim == null:
+		return ""
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return ""
+	_sync_sim(loaded.ship)
+	var r := SimWorld.settle_flight(sim, fuel_burned_t, seconds, damage, float(ship_cost(loaded.ship, loaded.ship.library)))
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	flash = "Flight over (%d min). Fuel %s cr%s." % [roundi(seconds / 60.0), ShipStats.commas(int(r.fuel_cost)),
+			", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else ""]
+	return flash
+
+
+## What the bank will do for a bankrupt captain: take the ship at half its price, clear what is still
+## owed, and hand over a plain starter hauler with ten days of running costs in the till. The run
+## goes on, but you start again from the bottom and the count of failures stays on the record.
+static func restructure() -> Dictionary:
+	if not insolvent():
+		return {"ok": false, "message": "The bank only steps in when you are in debt."}
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return {"ok": false, "message": "Could not load the current ship."}
+	var sale := roundi(float(ship_cost(loaded.ship, loaded.ship.library)) * 0.5)
+	var left := maxi(0, int(profile.credits) + sale)
+	var fresh := ShipData.new(ModuleLibrary.new())
+	ShipPresets.build(fresh)
+	var parsed: Dictionary = JSON.parse_string(fresh.to_json())
+	data["modules"] = parsed["modules"]
+	data["cargo"] = CargoManifest.new(fresh).to_dict()
+	data.erase("active_contract")
+	profile["bankruptcies"] = int(profile.get("bankruptcies", 0)) + 1
+	profile["credits"] = left
+	_sync_sim(fresh)
+	var grant := roundi(SimWorld.daily_cost(sim) * 10.0)
+	profile["credits"] = left + grant
+	_sync_sim(fresh)
+	_commit_sim(data, fresh)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	flash = "The bank took your ship for %s cr, cleared your debts and lent you a starter hauler with %s cr." % [ShipStats.commas(sale), ShipStats.commas(int(profile.credits))]
+	return {"ok": true, "message": flash}
 
 
 ## How the captain's run went, for the bankruptcy screen and anything that wants a summary.

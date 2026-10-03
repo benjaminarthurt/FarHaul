@@ -1,7 +1,7 @@
 # Flight
 
-Free flight around the dock, reached from the dock's TAKE THE HELM button. No sim time passes and
-nothing is spent, so it is practice until star jumps exist.
+Free flight around the dock, reached from the dock's TAKE THE HELM button. It is still free flight: it costs
+fuel and repairs and takes some time, but there are no star jumps yet.
 
 ## Model (`scripts/flight_model.gd`)
 
@@ -14,7 +14,15 @@ acceleration is thrust over current mass, and mass is dry plus fuel plus cargo.
 - Turning slows with mass (a loaded ship is sluggish) and with how far the thrust line sits off the
   centre of mass. The rotation assist damps spin when the pilot lets go.
 - The braking autopilot (X) turns the ship retrograde and burns in proportion to the speed left.
-- Docking needs the ship within 70 m of the station and under 4 m/s.
+- Power and heat follow `flight_physics.json`: the engines draw power and shed heat in proportion to throttle.
+  A power shortfall browns the engines out (thrust scales by generation over demand); heat builds when the
+  ship makes more than its radiators shed, and past the limit the engines shut down until they cool.
+  The starter's radiators keep up at full burn; a design with too little cooling will overheat.
+- The station is solid (spine and ring). A hit above 1.5 m/s bounces the ship and damages the hull, which also
+  costs thrust; repairs are charged when the flight ends.
+- Docking needs the nose pointed down the station's axis (within 25 degrees), within 8 m of that axis, within
+  18 m of the port, and under 3 m/s. The ship leaves facing away, so the pilot has to turn round.
+- Fuel burned and repairs are charged, and the clock advances, when the flight ends (see economy-sim.md).
 
 ## Scene (`scripts/flight.gd`)
 
@@ -24,6 +32,6 @@ Keys: W/S throttle, Z cut, arrows pitch and yaw, Q/E roll, X brake, R assist, C 
 
 ## Not built yet
 
-Star jumps and their link to the economy (a trip is still resolved by the sim), heat and power
-limits in flight, collisions, atmosphere and landing, docking alignment, and walking inside the ship.
+Star jumps and their link to the economy (a trip is still resolved by the sim), atmosphere and landing,
+collision with anything but the station, and walking inside the ship.
 All tuning numbers are placeholders.

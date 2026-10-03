@@ -103,12 +103,12 @@ margin on the world's direct lanes; the full simulation confirms it. Three start
 
 | Level | Probe | Simulated | Net per ship per day | Pay multiplier |
 |---|---|---|---|---|
-| Easy | 31% | 30% | about 280 cr | 1.21 |
-| Normal | 16% | 16% | about 125 cr | 1.04 |
-| Hard | 2% | 2% | about 13 cr | 1.02 (costs 10-20% higher) |
+| Easy | 31% | 30% | about 290 cr | 1.00 |
+| Normal | 17% | 15% | about 130 cr | 0.86 |
+| Hard | 2% | 0-3% | a few cr | 0.84 (costs 10-20% higher) |
 
 On hard the ship is a few credits a day from the red, and paid time is the skill: the benchmark is 65%
-paid time with 30% of return legs carrying freight. A captain who idles more loses money. Tests:
+paid time with 74% of return legs carrying freight (it was 30% before the brine chain below gave the frontier outbound freight, and the pay multipliers were re-solved then; they are now at or below 1 because the world has more freight to find). A captain who idles more loses money. Tests:
 `test_economy_levels.gd` (probe, quick) and `test_player_economy.gd` (simulation, about two minutes). To
 retune, edit the targets or secondary multipliers and run `tests/solve_levels.gd`, which bisects the pay
 multiplier to hit each target margin; rerun it whenever base rates, fuel, ship costs or the starter change.
@@ -149,11 +149,24 @@ over (`Session.insolvent`).
 drive adds 30% cruising speed each (capped at 4 ly/day) and burns 15% more fuel per drive (`fuel_burn_per_drive_speed`), draws 40 kW, sheds 50 kW of heat and weighs
 4 t, so it also cuts thrust-to-weight. The starter ship has neither and is unchanged.
 
+**Return freight.** A second chain runs the other way so the frontier port Talos is no longer a dead end:
+Hopewell Brine Works (assumed) sells rare dissolved minerals to Roosevelt Mineral Refinery (assumed) through
+the Meridian and Concord hubs. The refinery stocks out about 13-16% of the time (tested under 25%), looser than
+the filter consumers because its supply line is three hops. Freight nobody wants gets dearer without the
+normal cap once it has waited 8 days (`stale_*` parameters), so stranded parcels move, and show up on the
+player's board as fat contracts. The fleet is now 12 carriers.
+
+**Flight and the economy.** A flight in free flight costs the fuel burned (at the port's price and the level's
+fuel multiplier) plus hull repairs, and the clock moves on by the hours it took (`SimWorld.settle_flight`).
+
+**Bankruptcy.** A captain in debt with no contract can let the bank step in (`Session.restructure`): it takes
+the ship at half its price, clears what is owed, and lends a starter hauler with ten days of running costs.
+It is recorded as a bankruptcy on the profile.
+
 **Known gaps.** Crew wages are a flat rate per crew member in `ship_economy.json`; ownership cost does follow
-the parts, because it is a share of the ship's total price. Dead-end consumer ports (for example Talos)
-have no outbound freight, so the captain must fly empty. When the sim is absent the legacy contract
-board is used. Bankruptcy shows a recap of the run (`Session.run_report`) and ends it; there is no
-second chance or ship-sale mechanic.
+the parts, because it is a share of the ship's total price. Lastlight and Waystation still have no outbound
+freight of their own. When the sim is absent the legacy contract board is used. The sim covers two goods;
+more commodities would make the board richer and need another calibration pass.
 
 ## Assumptions to replace with data
 
