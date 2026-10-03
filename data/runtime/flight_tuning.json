@@ -30,5 +30,12 @@
   "repair_cost_fraction_of_ship": 0.15,
   "transfer_arrival_range_m": 1500.0,
   "transfer_arrival_speed_m_s": 8.0,
-  "transfer_max_warp": 60
+  "transfer_max_warp": 60,
+  "jump_clear_m": 3000.0,
+  "jump_max_speed_m_s": 60.0,
+  "jump_max_heat_fraction": 0.9,
+  "jump_spool_s": 5.0,
+  "jump_accel_s": 3.5,
+  "jump_flash_s": 0.5,
+  "jump_decel_s": 4.5
 }

@@ -366,8 +366,11 @@ func _refresh_actions() -> void:
 			fly_btn.tooltip_text = "Fly without cargo to another site in this system, to reach better jobs."
 	var site := String(Session.profile.get("port_id", ""))
 	if run_btn != null:
-		run_btn.visible = bool(c.get("local", false))
-		run_btn.disabled = not bool(c.get("local", false)) or String(c.get("origin_port_id", "")) != site or String(c.get("status", "")) == "arrived"
+		var local := bool(c.get("local", false))
+		run_btn.visible = not c.is_empty()
+		run_btn.text = "FLY THE RUN" if local else "FLY THE JUMP"
+		var at_start := String(c.get("origin_port_id", "")) == site if local else String(c.get("origin_system_id", "")) == Session.system_id()
+		run_btn.disabled = c.is_empty() or not at_start or String(c.get("status", "")) == "arrived"
 	if bool(c.get("local", false)):
 		depart_btn.disabled = String(c.get("origin_port_id", "")) != site or String(c.get("status", "")) == "arrived"
 		deliver_btn.disabled = String(c.get("destination_port_id", "")) != site or String(c.get("status", "")) != "arrived"
@@ -452,7 +455,8 @@ func _fly(system_id: String) -> void:
 
 
 func _fly_run() -> void:
-	var r := Session.begin_local_flight()
+	var c := Session.active_contract()
+	var r := Session.begin_local_flight() if bool(c.get("local", false)) else Session.begin_jump_flight()
 	if bool(r.ok):
 		_go(Session.FLIGHT_SCENE)
 	else:

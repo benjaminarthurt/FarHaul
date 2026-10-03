@@ -50,6 +50,25 @@ figure; hull repairs from collisions are charged too. Esc or F at the origin dur
 (fuel and hours charged, the load stays aboard at the start). Running dry means a tug and a tow fee. Settling
 runs the hop's hours and the berth fee through the sim; the run is then delivered at the dock as before.
 
+## Flying a star jump (`scripts/jump_fx.gd`)
+
+An interstellar contract can be flown too (FLY THE JUMP at the dock; DEPART is still the instant autopilot).
+The ship undocks, and once it is 3 km clear of the station, slower than 60 m/s and cool enough (under 90%
+heat) the prompt offers J to engage the FTL drive. Then, in the flight scene with no cut:
+
+1. **Spool** (5 s): the star field appears and the stars lengthen from dots to short dashes.
+2. **Accelerate** (3.5 s): the stars stretch into long streaks and flow past ever faster, and the field of view
+   widens from 70 to 118 degrees.
+3. **Flash** (0.5 s): the screen goes white. At the height of it the sim runs the trip (fuel, fees, crew and the
+   days it takes) and the world changes: the destination's station is named and the sun moves.
+4. **Decelerate** (4.5 s): the white fades and the streaks collapse back to dots as the view returns to 70 degrees.
+5. **Approach**: the ship is at rest 3 km off the destination's collar. Docking works as for a local run, and
+   docking settles the manoeuvring fuel and any repairs.
+
+Inputs are locked from J until the approach. Before J, Esc or docking back turns the flight round (fuel
+charged, the load stays aboard). `tests/smoke_jump.gd` runs the whole sequence headless;
+`tests/capture_jump.gd` renders its frames to PNGs under xvfb-run for looking at it.
+
 ## Not built yet
 
 Star jumps and their link to the economy (an interstellar trip is still resolved by the sim), atmosphere and landing,

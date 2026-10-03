@@ -29,6 +29,15 @@ var beacon: Label
 var _arrived := false
 var phase := "free"   ## free flight, or for a flown run: depart (leaving the origin site), cruise, approach (docking at the destination)
 var station_label: Label3D
+var sun: DirectionalLight3D
+var fx: JumpFx
+var flash_rect: ColorRect
+var jump_t := 0.0
+var _jump_committed := false
+var _jump_result := {}
+var jump_peak_flash := 0.0   # for tests: the brightest the flash got
+var jump_peak_streak := 0.0
+var jump_peak_fov := 0.0
 const CLEAR_M := 3000.0
 const WARPS := [1, 2, 5, 10, 25, 60]
 var _impact_shown := -10.0
@@ -40,7 +49,11 @@ func _ready() -> void:
 	_build_ship()
 	_build_hud()
 	if not Session.flight_job.is_empty():
-		_setup_transfer()
+		job = Session.flight_job
+		if String(job.get("kind", "run")) == "jump":
+			_setup_jump()
+		else:
+			_setup_transfer()
 
 
 func _build_world() -> void:
@@ -56,7 +69,7 @@ func _build_world() -> void:
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
-	var sun := DirectionalLight3D.new()
+	sun = DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-30, 40, 0)
 	sun.light_color = Color(1.0, 0.94, 0.85)
 	sun.light_energy = 1.4
@@ -150,7 +163,6 @@ func _make_station() -> Node3D:
 ## A flown local run: undock from the origin site, fly clear, cruise to the destination (the clock can be
 ## sped up), then dock there.
 func _setup_transfer() -> void:
-	job = Session.flight_job
 	xfer = TransferFlight.plan(stats, float(job.dv_kms), String(job.key))
 	phase = "depart"
 	var dock_dir := Vector3(0.35, 0.15, 1.0).normalized()
@@ -164,18 +176,141 @@ func _setup_transfer() -> void:
 	hud.get_parent().add_child(beacon)
 
 
+## A flown jump: undock, fly clear of the station, then engage the FTL drive (J).
+func _setup_jump() -> void:
+	phase = "depart"
+	model.station_solid = true
+	model.place_at_dock(Vector3(0.35, 0.15, 1.0))
+	fx = JumpFx.new()
+	fx.visible = false
+	add_child(fx)
+	flash_rect = ColorRect.new()
+	flash_rect.color = Color(0.9, 0.95, 1.0, 0.0)
+	flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud.get_parent().add_child(flash_rect)
+	flash_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+
+func _jumping() -> bool:
+	return phase == "spool" or phase == "warp" or phase == "decel"
+
+
+func _tune(key: String, fallback: float) -> float:
+	return float(model.tune.get(key, fallback))
+
+
+## Why the drive cannot be engaged right now, or "" when it can.
+func _jump_blocker() -> String:
+	if phase != "depart" or String(job.get("kind", "")) != "jump":
+		return "no jump planned"
+	var clear := _tune("jump_clear_m", 3000.0)
+	if model.pos.length() < clear:
+		return "fly clear of the station: %.0f of %.0f m" % [model.pos.length(), clear]
+	if model.overheated or model.heat_fraction() > _tune("jump_max_heat_fraction", 0.9):
+		return "let the ship cool before engaging the drive"
+	if model.speed() > _tune("jump_max_speed_m_s", 60.0):
+		return "slow below %.0f m/s to engage (X brakes)" % _tune("jump_max_speed_m_s", 60.0)
+	return ""
+
+
+func _start_jump() -> void:
+	phase = "spool"
+	jump_t = 0.0
+	_jump_committed = false
+	model.braking = false
+	model.throttle = 0.0
+	fx.visible = true
+	fx.streak = 0.0
+	prompt.text = "FTL DRIVE SPOOLING"
+
+
+## The jump timeline: spool, accelerate into streaks, flash (the trip happens), decelerate out.
+func _jump_step(delta: float) -> void:
+	jump_t += delta
+	var spool := _tune("jump_spool_s", 5.0)
+	var accel := _tune("jump_accel_s", 3.5)
+	var flash := _tune("jump_flash_s", 0.5)
+	var decel := _tune("jump_decel_s", 4.5)
+	var t_flash := spool + accel
+	var t_commit := t_flash + flash
+	var t_end := t_commit + decel
+	var streak := 0.0
+	var speed := 0.0
+	var fov := 70.0
+	var white := 0.0
+	if jump_t < spool:
+		var u := jump_t / spool
+		streak = 0.12 * u
+		speed = 30.0 + 250.0 * u
+		fov = 70.0 + 4.0 * u
+		prompt.text = "FTL DRIVE SPOOLING"
+	elif jump_t < t_flash:
+		phase = "warp"
+		var u := (jump_t - spool) / accel
+		streak = 0.12 + 0.88 * u * u
+		speed = 280.0 + 30000.0 * u * u
+		fov = 74.0 + 44.0 * u * u
+		prompt.text = ""
+	elif jump_t < t_commit:
+		var u := (jump_t - t_flash) / flash
+		streak = 1.0
+		speed = 30280.0
+		fov = 118.0
+		white = u
+		if white >= 0.98 and not _jump_committed:
+			_jump_committed = true
+			_arrive_in_system()
+	elif jump_t < t_end:
+		phase = "decel"
+		var u := (jump_t - t_commit) / decel
+		var inv := 1.0 - u
+		streak = inv * inv
+		speed = 30280.0 * inv * inv * inv + 20.0
+		fov = 70.0 + 48.0 * inv * inv
+		white = maxf(0.0, 1.0 - u * 4.0)
+		prompt.text = ""
+	else:
+		fx.visible = false
+		fx.streak = 0.0
+		camera.fov = 70.0
+		flash_rect.color = Color(0.9, 0.95, 1.0, 0.0)
+		_begin_approach(3000.0)
+		return
+	fx.streak = streak
+	fx.advance(delta, speed)
+	camera.fov = fov
+	flash_rect.color = Color(0.9, 0.95, 1.0, white)
+	jump_peak_flash = maxf(jump_peak_flash, white)
+	jump_peak_streak = maxf(jump_peak_streak, streak)
+	jump_peak_fov = maxf(jump_peak_fov, fov)
+
+
+## At the height of the flash the sim runs the trip and the world changes: the destination's station is
+## named, and the sun sits somewhere else.
+func _arrive_in_system() -> void:
+	_jump_result = Session.commit_jump()
+	station.visible = false
+	station_label.text = String(job.destination).to_upper()
+	var h := hash(String(job.get("dest_system", "")))
+	sun.rotation_degrees = Vector3(-15.0 - float(h % 50), float((h / 50) % 360), 0.0)
+	var warmth := float((h / 7) % 100) / 100.0
+	sun.light_color = Color(1.0, 0.82 + 0.16 * (1.0 - warmth), 0.65 + 0.3 * (1.0 - warmth))
+	model.vel = Vector3.ZERO
+
+
 ## Arrived at the marker: the destination's station comes up and the ship is brought to rest 1.5 km
 ## off its docking collar.
-func _begin_approach() -> void:
+func _begin_approach(distance_m: float = 1500.0) -> void:
 	phase = "approach"
 	station.visible = true
 	station_label.text = String(job.destination).to_upper()
 	model.station_solid = true
-	model.pos = Vector3(0.35, 0.15, 1.0).normalized() * 1500.0
+	model.pos = Vector3(0.35, 0.15, 1.0).normalized() * distance_m
 	model.vel = Vector3.ZERO
 	model.braking = false
 	model.throttle = 0.0
-	beacon.visible = false
+	if beacon != null:
+		beacon.visible = false
 	warp_index = 0
 
 
@@ -231,7 +366,7 @@ func _build_hud() -> void:
 	bar.show_percentage = false
 	bar.position = Vector2(28, 230)
 	layer.add_child(bar)
-	var help := Brand.note("W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   , . time   Esc back to the dock", 13)
+	var help := Brand.note("W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time   Esc back to the dock", 13)
 	help.autowrap_mode = TextServer.AUTOWRAP_OFF
 	help.custom_minimum_size = Vector2(1000, 0)
 	help.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT, Control.PRESET_MODE_MINSIZE, 20)
@@ -240,6 +375,14 @@ func _build_hud() -> void:
 
 func _process(delta: float) -> void:
 	if leaving or model == null:
+		return
+	if fx != null:
+		fx.global_position = model.pos
+		fx.global_basis = model.basis
+	if _jumping():
+		_jump_step(delta)
+		_apply_pose()
+		_update_hud()
 		return
 	var turn := Vector3.ZERO
 	if Input.is_key_pressed(KEY_UP): turn.x += 1.0
@@ -265,7 +408,7 @@ func _process(delta: float) -> void:
 			if phase == "cruise" and xfer.arrived(model):
 				_begin_approach()
 				break
-		if phase == "depart" and model.pos.length() > CLEAR_M:
+		if phase == "depart" and xfer != null and model.pos.length() > CLEAR_M:
 			phase = "cruise"
 			station.visible = false
 			model.station_solid = false
@@ -393,9 +536,16 @@ func _update_hud() -> void:
 		prompt.text = "HULL IMPACT"
 	if not model.has_fuel() and model.speed() > 1.0:
 		prompt.text = "OUT OF FUEL. You are drifting."
+	if String(job.get("kind", "")) == "jump" and phase == "depart" and not model.overheated:
+		var why := _jump_blocker()
+		prompt.text = "J: engage the FTL drive for %s (%.1f ly)" % [String(job.destination), float(job.ly)] if why == "" else "Jump to %s: %s" % [String(job.destination), why]
+	elif _jumping():
+		prompt.text = "FTL DRIVE SPOOLING" if phase == "spool" else ""
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _jumping():
+		return
 	if leaving or not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 	match event.keycode:
@@ -406,6 +556,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_C:
 			chase = not chase
 			_apply_pose()
+		KEY_J:
+			if String(job.get("kind", "")) == "jump" and phase == "depart" and _jump_blocker() == "":
+				_start_jump()
 		KEY_PERIOD:
 			if xfer != null:
 				warp_index = mini(warp_index + 1, WARPS.size() - 1)
@@ -426,7 +579,9 @@ func _return_to_dock() -> void:
 	if leaving:
 		return
 	leaving = true
-	if xfer != null:
+	if String(job.get("kind", "")) == "jump":
+		Session.finish_jump_flight(model.fuel_burned_t, model.elapsed_s, model.damage, not model.has_fuel() and (phase != "approach" or not model.can_dock()))
+	elif xfer != null:
 		Session.finish_local_flight(model.fuel_burned_t, model.elapsed_s, model.damage, _arrived, not model.has_fuel() and (phase != "approach" or not model.can_dock()))
 	else:
 		Session.finish_flight(model.fuel_burned_t, model.elapsed_s, model.damage)

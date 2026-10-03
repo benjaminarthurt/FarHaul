@@ -434,9 +434,83 @@ static func begin_local_flight() -> Dictionary:
 	var stats := ship_stats(loaded_ship.ship, loaded_ship.manifest)
 	if not Contracts.ready(Contracts.check(stats, loaded_ship.manifest, c)):
 		return {"ok": false, "message": "The ship is not ready to depart with this load."}
-	flight_job = {"contract_id": String(c.id), "dv_kms": float(c.dv_kms), "hours": int(c.hours),
+	flight_job = {"kind": "run", "contract_id": String(c.id), "dv_kms": float(c.dv_kms), "hours": int(c.hours),
 			"destination": String(LocalSpace.node(String(c.destination_port_id)).get("name", "the destination")), "key": String(c.id)}
 	return {"ok": true, "message": "Take the helm."}
+
+
+## Hand an active interstellar contract to the flight scene as a flown jump: undock, fly clear, engage the
+## FTL drive, arrive in the destination system and dock there.
+static func begin_jump_flight() -> Dictionary:
+	var c := active_contract()
+	if c.is_empty() or bool(c.get("local", false)) or not c.has("sim_taken"):
+		return {"ok": false, "message": "There is no interstellar contract to fly."}
+	if String(c.origin_system_id) != system_id() or String(c.get("status", "")) == "arrived":
+		return {"ok": false, "message": "This contract does not depart from here."}
+	var loaded_ship := _load_ship(SaveSlots.read(slot))
+	if loaded_ship.is_empty():
+		return {"ok": false, "message": "Could not load the current ship."}
+	var stats := ship_stats(loaded_ship.ship, loaded_ship.manifest)
+	if not Contracts.ready(Contracts.check(stats, loaded_ship.manifest, c)):
+		return {"ok": false, "message": "The ship is not ready to depart with this load."}
+	flight_job = {"kind": "jump", "contract_id": String(c.id), "destination": String(Worlds.port(String(c.destination_port_id)).get("name", "the destination")),
+			"dest_system": String(c.destination_system_id), "ly": float(c.distance_ly), "key": String(c.id), "jumped": false}
+	return {"ok": true, "message": "Take the helm."}
+
+
+## The moment of the jump: the sim runs the trip (fuel, fees, crew and the days it takes) and the ship
+## is now in the destination system. Returns {ok, days, message}.
+static func commit_jump() -> Dictionary:
+	var c := active_contract()
+	if flight_job.is_empty() or c.is_empty() or not c.has("sim_taken"):
+		return {"ok": false, "days": 0.0, "message": "No jump to make."}
+	var data := SaveSlots.read(slot)
+	var loaded_ship := _load_ship(data)
+	if loaded_ship.is_empty():
+		return {"ok": false, "days": 0.0, "message": "Could not load the current ship."}
+	_sync_sim(loaded_ship.ship)
+	var hours := sim.run_player_until(SimWorld.PLAYER, "arrival")
+	profile["system_id"] = String(c.destination_system_id)
+	profile["port_id"] = String(c.destination_port_id)
+	c["status"] = "arrived"
+	data["active_contract"] = c
+	data["profile"] = profile
+	_commit_sim(data, loaded_ship.ship)
+	SaveSlots.write(slot, data)
+	flight_job["jumped"] = true
+	return {"ok": true, "days": hours / 24.0, "message": "Jumped %.2f ly in %.1f days." % [float(c.distance_ly), hours / 24.0]}
+
+
+## Close out a flown jump. Before the jump (`jumped` false) the ship just came home; after it, it has
+## docked at the destination (or been towed in) and the load is ready to deliver.
+static func finish_jump_flight(fuel_burned_t: float, seconds: float, damage: float, stranded: bool) -> String:
+	var job := flight_job
+	flight_job = {}
+	var c := active_contract()
+	if slot < 0 or sim == null or c.is_empty() or job.is_empty():
+		return ""
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return ""
+	_sync_sim(loaded.ship)
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	var r := SimWorld.settle_flight(sim, fuel_burned_t, seconds, damage, float(ship_cost(loaded.ship, loaded.ship.library)))
+	var tow := 0.0
+	if stranded:
+		tow = float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+		sim._pay(SimWorld.PLAYER, "world", tow)
+	var msg := ""
+	if bool(job.get("jumped", false)):
+		msg = "Docked at %s. Manoeuvring fuel %s cr%s.%s" % [job.destination, ShipStats.commas(int(r.fuel_cost)),
+				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", " A tug towed you in (%s cr)." % ShipStats.commas(roundi(tow)) if stranded else ""]
+	else:
+		msg = "Turned back before the jump. Fuel %s cr. The load is still aboard.%s" % [ShipStats.commas(int(r.fuel_cost)), " A tug brought you in (%s cr)." % ShipStats.commas(roundi(tow)) if stranded else ""]
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	flash = msg
+	return msg
 
 
 ## Close out a flown local run. `arrived`: the ship stopped at the destination. Otherwise it came home
