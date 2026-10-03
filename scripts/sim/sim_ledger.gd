@@ -91,8 +91,11 @@ func check() -> Array:
 			bad.append("%s/%s on_hand %.3f reserved %.3f" % [e["entity"], e["commodity"], e["on_hand"], e["reserved"]])
 		if absf(e["on_hand"] - (e["initial"] + e["audit"])) > 1e-6:
 			bad.append("%s/%s on_hand does not match audit trail" % [e["entity"], e["commodity"]])
+	var totals := {}                         # one pass over the entries, not one per commodity
+	for e in entries.values():
+		totals[e["commodity"]] = totals.get(e["commodity"], 0.0) + e["on_hand"]
 	for com in initial_total:
 		var expect: float = initial_total[com] + produced_total.get(com, 0.0) - consumed_total.get(com, 0.0)
-		if absf(total_on_hand(com) - expect) > 1e-4:
-			bad.append("%s not conserved: have %.3f expect %.3f" % [com, total_on_hand(com), expect])
+		if absf(totals.get(com, 0.0) - expect) > 1e-4:
+			bad.append("%s not conserved: have %.3f expect %.3f" % [com, totals.get(com, 0.0), expect])
 	return bad

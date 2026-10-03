@@ -31,6 +31,9 @@ var verbose := false
 var world_cash := 0.0                # the rest of the economy (fuel, fees, wages, household income)
 var cash_initial := 0.0
 var _id := 0
+var _open_idx := {}                  # "buyer|commodity" -> orders still being delivered (so reorder checks do not scan every order ever placed)
+var _seg_cache := {}                 # (route, ports) -> segment list; routes and hubs are fixed for a scenario
+var check_every_hours := 24          # how often the full ledger audit runs (it walks every stock record)
 
 # ---------------------------------------------------------------- loading
 
@@ -326,6 +329,14 @@ func _path_feasible(c: Dictionary, path: Array, cargo_t: float) -> bool:
 # ---------------------------------------------------------------- routing and rates
 
 func _segments(from_sys: String, to_sys: String, from_port: String, to_port: String) -> Array:
+	var ck := from_port + ">" + to_port                # ports belong to one system each, so this fixes the route
+	if _seg_cache.has(ck):
+		return _seg_cache[ck]
+	var res := _segments_uncached(from_sys, to_sys, from_port, to_port)
+	_seg_cache[ck] = res
+	return res
+
+func _segments_uncached(from_sys: String, to_sys: String, from_port: String, to_port: String) -> Array:
 	var path := net.path(from_sys, to_sys)
 	if path.is_empty():
 		return []
@@ -349,7 +360,9 @@ func _segments(from_sys: String, to_sys: String, from_port: String, to_port: Str
 func _est_hours(segs: Array) -> int:
 	var h := 0
 	for s in segs:
-		h += int(p["dispatch_lag_hours"]) + _path_hours(s["systems"]) + 2 * int(p["loading_hours_base"])
+		if not s.has("h"):
+			s["h"] = int(p["dispatch_lag_hours"]) + _path_hours(s["systems"]) + 2 * int(p["loading_hours_base"])
+		h += int(s["h"])
 	return h
 
 func _urgency_modifier(buyer_id: String, com: String) -> float:
@@ -385,7 +398,7 @@ func step_hour() -> void:
 		_escalate_open_contracts()              # generate_contract_offers (rate pressure)
 	_dispatch_carriers()                        # dispatch_npc_carriers
 	_advance_freight()                          # advance_freight
-	var bad := ledger.check()                   # validate_invariants
+	var bad: Array = ledger.check() if hour % check_every_hours == 0 else []   # validate_invariants
 	for b in bad:
 		if not (b in violations):
 			violations.append(b)
@@ -424,11 +437,22 @@ func _consume_and_produce() -> void:
 
 # ---------------------------------------------------------------- procurement
 
+func _open_orders(fid: String, com: String) -> Array:
+	return _open_idx.get(fid + "|" + com, [])
+
+func _rebuild_open_idx() -> void:
+	_open_idx.clear()
+	for o in orders.values():
+		if o["received"] + 0.001 < o["units"]:
+			var k: String = o["buyer"] + "|" + o["com"]
+			if not _open_idx.has(k):
+				_open_idx[k] = []
+			_open_idx[k].append(o)
+
 func _inbound_units(fid: String, com: String) -> float:
 	var t := 0.0
-	for o in orders.values():
-		if o["buyer"] == fid and o["com"] == com:
-			t += o["units"] - o["received"]
+	for o in _open_orders(fid, com):
+		t += o["units"] - o["received"]
 	return t
 
 ## Inbound units that will land before the shelf is empty. A shipment due after the stock-out
@@ -436,8 +460,8 @@ func _inbound_units(fid: String, com: String) -> float:
 func _inbound_in_time(fid: String, com: String, avail: float, demand: float) -> float:
 	var runway_h := hour + int((avail / maxf(demand, 0.001) + float(p["safety_days"]) * 0.5) * 24.0)
 	var t := 0.0
-	for o in orders.values():
-		if o["buyer"] == fid and o["com"] == com and o["eta"] <= runway_h:
+	for o in _open_orders(fid, com):
+		if o["eta"] <= runway_h:
 			t += o["units"] - o["received"]
 	return t
 
@@ -511,6 +535,10 @@ func _place_order(buyer: Dictionary, seller: Dictionary, com: String, units: flo
 			"unit_price": price, "placed": hour, "deadline": deadline, "received": 0.0, "lots": [],
 			"eta": hour + int(maxf(float(est_hours), float(buyer["items"][com]["lead_obs"]) * 24.0))}
 	orders[oid] = order
+	var ik: String = buyer["id"] + "|" + com
+	if not _open_idx.has(ik):
+		_open_idx[ik] = []
+	_open_idx[ik].append(order)
 	seller["items"][com]["outflow_today"] += units
 	var lot_units: float = maxf(1.0, floorf(float(p["lot_size_scu"]) / float(commodities[com]["scu_per_unit"])))
 	var left := units
@@ -602,6 +630,8 @@ func _dispatch_carriers() -> void:
 	# choose before the fleets do, exactly as the human player does.
 	var order: Array = carriers.values()
 	order.sort_custom(func(a, b): return bool(a.get("first_look", false)) and not bool(b.get("first_look", false)))
+	var groups_all := _group_by_pair(all_offered)
+	var groups_seen := _group_by_pair(offered)
 	for c in order:
 		if c["state"] != "idle" or c["manual"]:
 			continue
@@ -618,7 +648,7 @@ func _dispatch_carriers() -> void:
 			var fitted := _fit_contract(c, k)
 			if fitted.is_empty():
 				continue
-			var bundle := _bundle(c, fitted, offered_here)
+			var bundle := _bundle(c, fitted, (groups_all if bool(c.get("first_look", false)) else groups_seen).get(key, []))
 			var ev := _evaluate(c, bundle)
 			if ev.is_empty():
 				continue
@@ -700,6 +730,16 @@ func _split_for(part: Dictionary) -> Dictionary:
 	_log("contract_split", {"contract": k["id"], "parcel": cid, "lot": lid, "units": units, "remaining_units": lot["units"]})
 	return nk
 
+func _group_by_pair(offered: Array) -> Dictionary:
+	var g := {}
+	for k in offered:
+		var key: String = k["origin_port"] + ">" + k["dest_port"]
+		if not g.has(key):
+			g[key] = []
+		g[key].append(k)
+	return g
+
+## `offered` is the open freight on the same port pair as `first` (see _group_by_pair).
 func _bundle(c: Dictionary, first: Dictionary, offered: Array) -> Array:
 	var out: Array = [first]
 	var scu: float = first["scu"]
@@ -874,6 +914,9 @@ func _deliver(c: Dictionary) -> void:
 			lot["holder"] = buyer["id"]
 			lot["status"] = "delivered"
 			order["received"] += lot["units"]
+			if order["received"] + 0.001 >= order["units"]:
+				var oi: Array = _open_idx.get(order["buyer"] + "|" + order["com"], [])
+				oi.erase(order)
 			var lead_days: float = (hour - order["placed"]) / 24.0
 			var bit: Dictionary = buyer["items"][lot["com"]]
 			bit["lead_obs"] = lead_days if bit["lead_obs"] <= 0.0 else 0.7 * bit["lead_obs"] + 0.3 * lead_days
@@ -959,6 +1002,7 @@ func probe_ship(profile: Dictionary, level: Dictionary, bench: Dictionary, lanes
 	var scu_ref := _reference_mass_per_scu()
 	var util := float(bench.get("utilisation", 0.7))
 	var back := float(bench.get("backhaul_fraction", 0.35))
+	var premium := float(bench.get("rate_premium", 1.0))      # realised rates against the list rate: urgency and escalation on a world with shortages
 	var tot_rev := 0.0
 	var tot_cost := 0.0
 	var tot_days := 0.0
@@ -980,8 +1024,8 @@ func probe_ship(profile: Dictionary, level: Dictionary, bench: Dictionary, lanes
 		var load_t: float = scu * scu_ref / 1000.0
 		if not _path_feasible(ship, out, load_t) or not _path_feasible(ship, home, 0.0):
 			continue
-		var rev_out := _segment_rate(out, scu, scu * scu_ref, 1.0) * float(level["freight_pay_mult"])
-		var rev_back := _segment_rate(home, scu, scu * scu_ref, 1.0) * float(level["freight_pay_mult"]) * back
+		var rev_out := _segment_rate(out, scu, scu * scu_ref, 1.0) * float(level["freight_pay_mult"]) * premium
+		var rev_back := _segment_rate(home, scu, scu * scu_ref, 1.0) * float(level["freight_pay_mult"]) * back * premium
 		var a := _trip_parts(ship, out, load_t)
 		var b := _trip_parts(ship, home, load_t * back)
 		var handling := (_handling_cost(net.primary_port(lane[0]), scu) + _handling_cost(net.primary_port(lane[1]), scu)) * (1.0 + back)
@@ -1122,11 +1166,18 @@ func load_state(st: Dictionary) -> void:
 	ledger.consumed_total = st["ledger"]["consumed"]
 	ledger.initial_total = st["ledger"]["initial"]
 	events = st.get("events", [])
+	_rebuild_open_idx()
 
 ## Drop orders that finished more than `keep_days` ago, with their lots and contracts, so a long
 ## game does not grow without bound.
 func _prune(keep_days: int) -> void:
 	var cutoff := hour - keep_days * 24
+	var by_lot := {}
+	for kid in contracts:
+		var lid: String = contracts[kid]["lot"]
+		if not by_lot.has(lid):
+			by_lot[lid] = []
+		by_lot[lid].append(kid)
 	var dead: Array = []
 	for oid in orders:
 		var o: Dictionary = orders[oid]
@@ -1134,15 +1185,13 @@ func _prune(keep_days: int) -> void:
 			continue
 		var newest := 0
 		for lid in o["lots"]:
-			for k in contracts.values():
-				if k["lot"] == lid:
-					newest = maxi(newest, int(k["delivered"]))
+			for kid in by_lot.get(lid, []):
+				newest = maxi(newest, int(contracts[kid]["delivered"]))
 		if newest < cutoff:
 			dead.append(oid)
 	for oid in dead:
 		for lid in orders[oid]["lots"]:
-			for kid in contracts.keys():
-				if contracts[kid]["lot"] == lid:
-					contracts.erase(kid)
+			for kid in by_lot.get(lid, []):
+				contracts.erase(kid)
 			lots.erase(lid)
 		orders.erase(oid)

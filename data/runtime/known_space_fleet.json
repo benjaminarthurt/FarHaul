@@ -1,0 +1,189 @@
+{
+ "note": "ASSUMED. Inputs to tools/gen_known_space.py: how much freight each good moves and which carrier fleets haul it. Freight is carried by ships HOMED at the system it starts from (the sim sends idle ships home, and a lane only pays when the ship starts at its end). The generator adds ships to each home until capacity covers the generated freight at effective_utilisation. Tuned by running tests/probe_known_space.gd.",
+ "base_scu_per_day": 0.45,
+ "max_users_per_good": 3,
+ "income_factor": 1.0,
+ "unit_cost_fraction": 0.62,
+ "min_batch_scu": 12,
+ "effective_utilisation": 0.38,
+ "big_ship_above_scu_ly_per_day": 120,
+ "ships": {
+  "big": {
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage": 420,
+   "fixed": 430,
+   "cash": 400000,
+   "min_margin": 0.08
+  },
+  "small": {
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage": 300,
+   "fixed": 300,
+   "cash": 250000,
+   "min_margin": 0.08
+  }
+ },
+ "trunk": [
+  "concord",
+  "carver",
+  "bradbury",
+  "new_houston",
+  "port_meridian"
+ ],
+ "homes": {
+  "sol": {
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord"
+   ]
+  },
+  "new_houston": {
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "bradbury",
+    "port_meridian"
+   ]
+  },
+  "hesperus": {
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord"
+   ]
+  },
+  "concord": {
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  "carver": {
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  "iron_gate": {
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  "keshar": {
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  "bradbury": {
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  "ilos": {
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  "port_meridian": {
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  "pelagos": {
+   "network": [
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara"
+   ]
+  },
+  "tidemark": {
+   "network": [
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara"
+   ]
+  },
+  "veyara": {
+   "network": [
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara"
+   ]
+  },
+  "foundry": {
+   "network": [
+    "port_meridian",
+    "foundry",
+    "orun"
+   ]
+  },
+  "orun": {
+   "network": [
+    "port_meridian",
+    "foundry",
+    "orun"
+   ]
+  }
+ }
+}

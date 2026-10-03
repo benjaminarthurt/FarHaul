@@ -10,7 +10,7 @@ extends RefCounted
 
 const WORLD_DIR := "res://data/world/"
 const RUNTIME_DIR := "res://data/runtime/"
-const SCENARIO := "sim_scenario_hopewell.json"
+const SCENARIO := "sim_scenario_known_space.json"
 const PLAYER := "player"
 const WARMUP_DAYS := 14
 

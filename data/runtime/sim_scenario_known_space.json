@@ -1,0 +1,4964 @@
+{
+ "schema_version": "0.1.0",
+ "canon_status": "draft",
+ "id": "known_space",
+ "note": "Simulation seed for the headless economy prototype. Everything here is a PLACEHOLDER ASSUMPTION used to make existing world data run; values marked (assumed) are not yet canon and are the first things calibration will change. No world file names a filter producer, so the producer and distributor below are assumed. Procurement policy: reorder_point and target_stock in the facility items are FLOORS; companies raise them to cover estimated lead time plus safety_days of planning demand (the larger of consumption and the outflow they supply to others). STOCK-OUT TUNING (2026-10-03): Chandlers safety stock 40->100 so the distributor does not sell its own cover to downstream orders; base rate re-set to 63 after procurement changes (more orders in flight) moved fleet margin. FLEET (2026-10-03): sol_transit_a and redline_coop_a removed (they lost money every run: the slice has far more hulls than freight). npc_board_delay_hours 12 keeps new freight on the board for half a day before AI fleets look at it, so the player gets a real choice. Fleet margin swings by 10+ points between nearby settings because carriers compete for the same lots; treat single runs as noisy. Three frontier export chains give each frontier port outbound freight, from the world data's own export lists: Talos Ore Works sells rare minerals to Meridian Smelter Guild; Waystation Fuel Depot sells fuel to Meridian Bunkering Company; Lastlight Survey Mining Co-op sells platinum-group metals to Roosevelt Instrument Works. All six facilities are assumed. Fleet is 12 carriers (one more Concord Interstellar ship than before the brine chain). Stale freight (sitting more than 8 days) escalates faster and past the normal cap so stranded parcels eventually move. KNOWN SPACE: tools/gen_known_space.py adds a maker and users for every freight good (data/runtime/goods_roles.json) and the carriers to move them. Do not hand-edit the generated entries (ids ending _works, _exchange and the pool carriers); change the roles or the fleet file and regenerate.",
+ "start_day": 286030,
+ "params": {
+  "ly_per_day": 1.5,
+  "port_dwell_hours": 12,
+  "loading_hours_base": 6,
+  "loading_hours_per_scu": 0.05,
+  "dispatch_lag_hours": 12,
+  "lot_size_scu": 40,
+  "hub_systems": [
+   "concord",
+   "port_meridian"
+  ],
+  "base_rate_cr_per_scu_ly": 58,
+  "frontier_systems": [
+   "talos",
+   "waystation",
+   "lastlight"
+  ],
+  "frontier_modifier": 1.15,
+  "rate_escalation_per_day": 0.04,
+  "rate_cap_modifier": 2.4,
+  "fuel_cr_per_unit": 38,
+  "handling_cr_per_scu": 6,
+  "transfer_fee_cr_per_scu": 18,
+  "maintenance_reserve_fraction": 0.09,
+  "reference_ship": {
+   "capacity_scu": 60,
+   "dry_mass_t": 180,
+   "crew": 3,
+   "wage_cr_per_day": 340,
+   "fixed_cr_per_day": 380
+  },
+  "deadline_slack": 1.5,
+  "safety_days": 4,
+  "cycle_days": 14,
+  "idle_return_hours": 24,
+  "lead_learning_cap": 2.5,
+  "npc_board_delay_hours": 12,
+  "stale_after_days": 8.0,
+  "stale_escalation_per_day": 0.06,
+  "stale_cap_growth_per_day": 0.12
+ },
+ "facilities": [
+  {
+   "id": "hopewell_water_one",
+   "name": "Hopewell Water Plant One",
+   "kind": "consumer",
+   "system_id": "talos",
+   "port_id": "talos_hopewell_field",
+   "cash": 2500000,
+   "income_cr_per_day": 95000,
+   "reliability": 1.0,
+   "items": {
+    "filters": {
+     "on_hand": 47,
+     "reorder_point": 120,
+     "target_stock": 310,
+     "safety_stock": 0,
+     "daily_demand": 13.4
+    }
+   }
+  },
+  {
+   "id": "beacon_heatplant",
+   "name": "Beacon Heatplant",
+   "kind": "consumer",
+   "system_id": "lastlight",
+   "port_id": "lastlight_orbital",
+   "cash": 600000,
+   "income_cr_per_day": 22000,
+   "reliability": 1.0,
+   "items": {
+    "filters": {
+     "on_hand": 90,
+     "reorder_point": 40,
+     "target_stock": 110,
+     "safety_stock": 10,
+     "daily_demand": 3.0
+    }
+   }
+  },
+  {
+   "id": "tank_farm_coop",
+   "name": "Tank Farm Cooperative",
+   "kind": "consumer",
+   "system_id": "waystation",
+   "port_id": "waystation_main_dock",
+   "cash": 700000,
+   "income_cr_per_day": 30000,
+   "reliability": 1.0,
+   "items": {
+    "filters": {
+     "on_hand": 120,
+     "reorder_point": 48,
+     "target_stock": 135,
+     "safety_stock": 8,
+     "daily_demand": 5.0
+    }
+   }
+  },
+  {
+   "id": "meridian_chandlers_union",
+   "name": "Meridian Chandlers Union",
+   "kind": "distributor",
+   "system_id": "port_meridian",
+   "port_id": "port_meridian_main",
+   "cash": 3000000,
+   "income_cr_per_day": 20000,
+   "reliability": 0.95,
+   "items": {
+    "filters": {
+     "on_hand": 600,
+     "reorder_point": 220,
+     "target_stock": 600,
+     "safety_stock": 100,
+     "daily_demand": 4.0,
+     "price_mult": 1.12
+    }
+   }
+  },
+  {
+   "id": "roosevelt_filter_works",
+   "name": "Roosevelt Filter Works (assumed)",
+   "kind": "supplier",
+   "system_id": "new_houston",
+   "port_id": "roosevelt_orbital_freight",
+   "cash": 1000000,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "filters": {
+     "on_hand": 4000,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 70,
+     "max_stock": 6000,
+     "unit_cost": 2100,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "talos_ore_works",
+   "name": "Talos Ore Works (assumed)",
+   "kind": "supplier",
+   "system_id": "talos",
+   "port_id": "talos_hopewell_field",
+   "cash": 800000,
+   "income_cr_per_day": 0,
+   "reliability": 0.95,
+   "items": {
+    "rare_minerals": {
+     "on_hand": 300,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 10,
+     "max_stock": 800,
+     "unit_cost": 6200,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "meridian_smelter_guild",
+   "name": "Meridian Smelter Guild (assumed)",
+   "kind": "consumer",
+   "system_id": "port_meridian",
+   "port_id": "port_meridian_main",
+   "cash": 1500000,
+   "income_cr_per_day": 70000,
+   "reliability": 1.0,
+   "items": {
+    "rare_minerals": {
+     "on_hand": 160,
+     "reorder_point": 110,
+     "target_stock": 230,
+     "safety_stock": 40,
+     "daily_demand": 5.0
+    }
+   }
+  },
+  {
+   "id": "waystation_fuel_depot",
+   "name": "Waystation Fuel Depot (assumed)",
+   "kind": "supplier",
+   "system_id": "waystation",
+   "port_id": "waystation_main_dock",
+   "cash": 800000,
+   "income_cr_per_day": 0,
+   "reliability": 0.95,
+   "items": {
+    "fuel": {
+     "on_hand": 400,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 12,
+     "max_stock": 900,
+     "unit_cost": 1500,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "meridian_bunkering",
+   "name": "Meridian Bunkering Company (assumed)",
+   "kind": "consumer",
+   "system_id": "port_meridian",
+   "port_id": "port_meridian_main",
+   "cash": 1500000,
+   "income_cr_per_day": 50000,
+   "reliability": 1.0,
+   "items": {
+    "fuel": {
+     "on_hand": 200,
+     "reorder_point": 120,
+     "target_stock": 260,
+     "safety_stock": 40,
+     "daily_demand": 6.0
+    }
+   }
+  },
+  {
+   "id": "lastlight_survey_mining",
+   "name": "Lastlight Survey Mining Co-op (assumed)",
+   "kind": "supplier",
+   "system_id": "lastlight",
+   "port_id": "lastlight_orbital",
+   "cash": 800000,
+   "income_cr_per_day": 0,
+   "reliability": 0.95,
+   "items": {
+    "platinum_group_metals": {
+     "on_hand": 60,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.5,
+     "max_stock": 200,
+     "unit_cost": 17000,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "roosevelt_instrument_works",
+   "name": "Roosevelt Instrument Works (assumed)",
+   "kind": "consumer",
+   "system_id": "new_houston",
+   "port_id": "roosevelt_orbital_freight",
+   "cash": 1500000,
+   "income_cr_per_day": 40000,
+   "reliability": 1.0,
+   "items": {
+    "platinum_group_metals": {
+     "on_hand": 120,
+     "reorder_point": 80,
+     "target_stock": 150,
+     "safety_stock": 40,
+     "daily_demand": 1.2
+    }
+   }
+  },
+  {
+   "id": "bradbury_exchange",
+   "name": "Bradbury Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "bradbury",
+   "port_id": "bradbury_research_port",
+   "cash": 1198332,
+   "income_cr_per_day": 13315,
+   "reliability": 1.0,
+   "items": {
+    "biological_feedstocks": {
+     "on_hand": 19.1,
+     "reorder_point": 9.2,
+     "target_stock": 21.2,
+     "safety_stock": 0.4,
+     "daily_demand": 0.27
+    },
+    "biological_materials": {
+     "on_hand": 21.3,
+     "reorder_point": 11.6,
+     "target_stock": 23.6,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "chemical_feedstocks": {
+     "on_hand": 23.6,
+     "reorder_point": 14.3,
+     "target_stock": 26.3,
+     "safety_stock": 0.6,
+     "daily_demand": 0.39
+    },
+    "furniture": {
+     "on_hand": 8.3,
+     "reorder_point": 3.2,
+     "target_stock": 9.2,
+     "safety_stock": 0.3,
+     "daily_demand": 0.19
+    },
+    "lubricants": {
+     "on_hand": 23.6,
+     "reorder_point": 14.3,
+     "target_stock": 26.3,
+     "safety_stock": 0.6,
+     "daily_demand": 0.39
+    },
+    "paint_coatings": {
+     "on_hand": 23.6,
+     "reorder_point": 14.3,
+     "target_stock": 26.3,
+     "safety_stock": 0.6,
+     "daily_demand": 0.39
+    },
+    "specialty_chemicals": {
+     "on_hand": 27.0,
+     "reorder_point": 18.0,
+     "target_stock": 30.0,
+     "safety_stock": 0.7,
+     "daily_demand": 0.49
+    }
+   }
+  },
+  {
+   "id": "bradbury_works",
+   "name": "Bradbury Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "bradbury",
+   "port_id": "bradbury_research_port",
+   "cash": 1141645,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "lab_supplies": {
+     "on_hand": 14.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.18,
+     "max_stock": 47.0,
+     "unit_cost": 4898.0,
+     "price_mult": 0.9
+    },
+    "pharmaceuticals": {
+     "on_hand": 6.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.54,
+     "max_stock": 21.6,
+     "unit_cost": 10044.0,
+     "price_mult": 0.9
+    },
+    "precision_equipment": {
+     "on_hand": 13.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.11,
+     "max_stock": 44.5,
+     "unit_cost": 7750.0,
+     "price_mult": 0.9
+    },
+    "scientific_instruments": {
+     "on_hand": 14.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.18,
+     "max_stock": 47.0,
+     "unit_cost": 11606.4,
+     "price_mult": 0.9
+    },
+    "sensors": {
+     "on_hand": 9.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.83,
+     "max_stock": 33.0,
+     "unit_cost": 5592.4,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "carver_exchange",
+   "name": "Carver Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "carver",
+   "port_id": "carver_habitat_exchange",
+   "cash": 648764,
+   "income_cr_per_day": 7208,
+   "reliability": 1.0,
+   "items": {
+    "animal_feed": {
+     "on_hand": 14.7,
+     "reorder_point": 4.3,
+     "target_stock": 16.3,
+     "safety_stock": 0.3,
+     "daily_demand": 0.18
+    },
+    "appliances": {
+     "on_hand": 14.0,
+     "reorder_point": 3.5,
+     "target_stock": 15.5,
+     "safety_stock": 0.3,
+     "daily_demand": 0.22
+    },
+    "clothing": {
+     "on_hand": 14.0,
+     "reorder_point": 3.5,
+     "target_stock": 15.5,
+     "safety_stock": 0.3,
+     "daily_demand": 0.22
+    },
+    "consumer_goods": {
+     "on_hand": 14.4,
+     "reorder_point": 4.0,
+     "target_stock": 16.0,
+     "safety_stock": 0.4,
+     "daily_demand": 0.25
+    },
+    "office_supplies": {
+     "on_hand": 14.0,
+     "reorder_point": 3.5,
+     "target_stock": 15.5,
+     "safety_stock": 0.3,
+     "daily_demand": 0.22
+    },
+    "paper_products": {
+     "on_hand": 14.0,
+     "reorder_point": 3.5,
+     "target_stock": 15.5,
+     "safety_stock": 0.3,
+     "daily_demand": 0.22
+    },
+    "replacement_parts": {
+     "on_hand": 12.9,
+     "reorder_point": 2.4,
+     "target_stock": 14.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "seed_stock": {
+     "on_hand": 14.7,
+     "reorder_point": 4.3,
+     "target_stock": 16.3,
+     "safety_stock": 0.3,
+     "daily_demand": 0.18
+    }
+   }
+  },
+  {
+   "id": "carver_works",
+   "name": "Carver Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "carver",
+   "port_id": "carver_habitat_exchange",
+   "cash": 383104,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "cement": {
+     "on_hand": 20.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.7,
+     "max_stock": 67.8,
+     "unit_cost": 558.0,
+     "price_mult": 0.9
+    },
+    "furniture": {
+     "on_hand": 6.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.53,
+     "max_stock": 21.2,
+     "unit_cost": 1984.0,
+     "price_mult": 0.9
+    },
+    "iron": {
+     "on_hand": 44.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 3.71,
+     "max_stock": 148.3,
+     "unit_cost": 204.6,
+     "price_mult": 0.9
+    },
+    "metals": {
+     "on_hand": 22.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.86,
+     "max_stock": 74.4,
+     "unit_cost": 1116.0,
+     "price_mult": 0.9
+    },
+    "nickel": {
+     "on_hand": 43.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 3.62,
+     "max_stock": 144.8,
+     "unit_cost": 427.8,
+     "price_mult": 0.9
+    },
+    "titanium": {
+     "on_hand": 56.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 4.73,
+     "max_stock": 189.3,
+     "unit_cost": 1349.1,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "concord_exchange",
+   "name": "Concord Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "concord",
+   "port_id": "concord_central_exchange",
+   "cash": 8605411,
+   "income_cr_per_day": 95616,
+   "reliability": 1.0,
+   "items": {
+    "animal_feed": {
+     "on_hand": 21.1,
+     "reorder_point": 11.4,
+     "target_stock": 23.4,
+     "safety_stock": 0.8,
+     "daily_demand": 0.56
+    },
+    "aquatic_food_products": {
+     "on_hand": 43.5,
+     "reorder_point": 32.8,
+     "target_stock": 48.3,
+     "safety_stock": 1.7,
+     "daily_demand": 1.11
+    },
+    "beverages": {
+     "on_hand": 34.6,
+     "reorder_point": 22.9,
+     "target_stock": 38.4,
+     "safety_stock": 1.7,
+     "daily_demand": 1.11
+    },
+    "cement": {
+     "on_hand": 26.2,
+     "reorder_point": 15.4,
+     "target_stock": 29.1,
+     "safety_stock": 1.5,
+     "daily_demand": 0.97
+    },
+    "chemical_feedstocks": {
+     "on_hand": 30.9,
+     "reorder_point": 22.4,
+     "target_stock": 34.4,
+     "safety_stock": 1.0,
+     "daily_demand": 0.7
+    },
+    "engines": {
+     "on_hand": 8.1,
+     "reorder_point": 3.0,
+     "target_stock": 9.0,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "fruit": {
+     "on_hand": 34.6,
+     "reorder_point": 22.9,
+     "target_stock": 38.4,
+     "safety_stock": 1.7,
+     "daily_demand": 1.11
+    },
+    "glass": {
+     "on_hand": 39.5,
+     "reorder_point": 30.3,
+     "target_stock": 43.9,
+     "safety_stock": 1.5,
+     "daily_demand": 0.97
+    },
+    "grain": {
+     "on_hand": 34.6,
+     "reorder_point": 22.9,
+     "target_stock": 38.4,
+     "safety_stock": 1.7,
+     "daily_demand": 1.11
+    },
+    "insulation": {
+     "on_hand": 29.8,
+     "reorder_point": 19.4,
+     "target_stock": 33.1,
+     "safety_stock": 1.5,
+     "daily_demand": 0.97
+    },
+    "lab_supplies": {
+     "on_hand": 14.9,
+     "reorder_point": 4.6,
+     "target_stock": 16.6,
+     "safety_stock": 0.4,
+     "daily_demand": 0.28
+    },
+    "livestock_products": {
+     "on_hand": 34.6,
+     "reorder_point": 22.9,
+     "target_stock": 38.4,
+     "safety_stock": 1.7,
+     "daily_demand": 1.11
+    },
+    "lubricants": {
+     "on_hand": 30.9,
+     "reorder_point": 22.4,
+     "target_stock": 34.4,
+     "safety_stock": 1.0,
+     "daily_demand": 0.7
+    },
+    "medical_consumables": {
+     "on_hand": 18.9,
+     "reorder_point": 9.0,
+     "target_stock": 21.0,
+     "safety_stock": 0.6,
+     "daily_demand": 0.42
+    },
+    "medical_gases": {
+     "on_hand": 22.9,
+     "reorder_point": 13.4,
+     "target_stock": 25.4,
+     "safety_stock": 0.6,
+     "daily_demand": 0.42
+    },
+    "paint_coatings": {
+     "on_hand": 30.9,
+     "reorder_point": 22.4,
+     "target_stock": 34.4,
+     "safety_stock": 1.0,
+     "daily_demand": 0.7
+    },
+    "pharmaceuticals": {
+     "on_hand": 17.8,
+     "reorder_point": 7.7,
+     "target_stock": 19.7,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    },
+    "pipe": {
+     "on_hand": 28.1,
+     "reorder_point": 17.6,
+     "target_stock": 31.3,
+     "safety_stock": 1.5,
+     "daily_demand": 0.97
+    },
+    "protein_products": {
+     "on_hand": 34.6,
+     "reorder_point": 22.9,
+     "target_stock": 38.4,
+     "safety_stock": 1.7,
+     "daily_demand": 1.11
+    },
+    "reactors": {
+     "on_hand": 6.0,
+     "reorder_point": 2.6,
+     "target_stock": 6.6,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "scientific_instruments": {
+     "on_hand": 14.9,
+     "reorder_point": 4.6,
+     "target_stock": 16.6,
+     "safety_stock": 0.4,
+     "daily_demand": 0.28
+    },
+    "seed_stock": {
+     "on_hand": 21.1,
+     "reorder_point": 11.4,
+     "target_stock": 23.4,
+     "safety_stock": 0.8,
+     "daily_demand": 0.56
+    },
+    "ship_modules": {
+     "on_hand": 7.8,
+     "reorder_point": 2.6,
+     "target_stock": 8.6,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "specialty_chemicals": {
+     "on_hand": 30.9,
+     "reorder_point": 22.4,
+     "target_stock": 34.4,
+     "safety_stock": 1.0,
+     "daily_demand": 0.7
+    },
+    "sterile_goods": {
+     "on_hand": 18.9,
+     "reorder_point": 9.0,
+     "target_stock": 21.0,
+     "safety_stock": 0.6,
+     "daily_demand": 0.42
+    },
+    "structural_materials": {
+     "on_hand": 25.0,
+     "reorder_point": 15.7,
+     "target_stock": 27.8,
+     "safety_stock": 1.3,
+     "daily_demand": 0.86
+    },
+    "wire_cable": {
+     "on_hand": 30.8,
+     "reorder_point": 20.6,
+     "target_stock": 34.3,
+     "safety_stock": 1.5,
+     "daily_demand": 0.97
+    }
+   }
+  },
+  {
+   "id": "concord_works",
+   "name": "Concord Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "concord",
+   "port_id": "concord_central_exchange",
+   "cash": 826320,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "appliances": {
+     "on_hand": 10.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.88,
+     "max_stock": 35.2,
+     "unit_cost": 2976.0,
+     "price_mult": 0.9
+    },
+    "cleaning_supplies": {
+     "on_hand": 25.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.1,
+     "max_stock": 83.8,
+     "unit_cost": 992.0,
+     "price_mult": 0.9
+    },
+    "clothing": {
+     "on_hand": 10.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.88,
+     "max_stock": 35.2,
+     "unit_cost": 1860.0,
+     "price_mult": 0.9
+    },
+    "consumer_goods": {
+     "on_hand": 6.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.5,
+     "max_stock": 20.1,
+     "unit_cost": 1612.0,
+     "price_mult": 0.9
+    },
+    "detergents": {
+     "on_hand": 25.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.1,
+     "max_stock": 83.8,
+     "unit_cost": 1054.0,
+     "price_mult": 0.9
+    },
+    "electronics": {
+     "on_hand": 11.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.97,
+     "max_stock": 38.8,
+     "unit_cost": 5270.0,
+     "price_mult": 0.9
+    },
+    "expedition_consumables": {
+     "on_hand": 9.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.78,
+     "max_stock": 31.1,
+     "unit_cost": 1860.0,
+     "price_mult": 0.9
+    },
+    "furniture": {
+     "on_hand": 6.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.53,
+     "max_stock": 21.2,
+     "unit_cost": 1984.0,
+     "price_mult": 0.9
+    },
+    "manufactured_goods": {
+     "on_hand": 8.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.71,
+     "max_stock": 28.3,
+     "unit_cost": 2108.0,
+     "price_mult": 0.9
+    },
+    "office_supplies": {
+     "on_hand": 18.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.57,
+     "max_stock": 62.9,
+     "unit_cost": 1302.0,
+     "price_mult": 0.9
+    },
+    "packaged_food": {
+     "on_hand": 29.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.43,
+     "max_stock": 97.4,
+     "unit_cost": 1116.0,
+     "price_mult": 0.9
+    },
+    "packaging_materials": {
+     "on_hand": 32.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.7,
+     "max_stock": 107.9,
+     "unit_cost": 868.0,
+     "price_mult": 0.9
+    },
+    "paper_products": {
+     "on_hand": 10.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.88,
+     "max_stock": 35.2,
+     "unit_cost": 744.0,
+     "price_mult": 0.9
+    },
+    "replacement_parts": {
+     "on_hand": 3.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.31,
+     "max_stock": 12.6,
+     "unit_cost": 4216.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "foundry_exchange",
+   "name": "Foundry Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "foundry",
+   "port_id": "foundry_lift_terminal",
+   "cash": 1036655,
+   "income_cr_per_day": 11518,
+   "reliability": 1.0,
+   "items": {
+    "automation_systems": {
+     "on_hand": 14.4,
+     "reorder_point": 4.0,
+     "target_stock": 16.0,
+     "safety_stock": 0.4,
+     "daily_demand": 0.24
+    },
+    "coolant": {
+     "on_hand": 17.4,
+     "reorder_point": 7.3,
+     "target_stock": 19.3,
+     "safety_stock": 0.4,
+     "daily_demand": 0.26
+    },
+    "industrial_gases": {
+     "on_hand": 18.0,
+     "reorder_point": 8.0,
+     "target_stock": 20.0,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    },
+    "iron": {
+     "on_hand": 25.7,
+     "reorder_point": 16.6,
+     "target_stock": 28.6,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    },
+    "metals": {
+     "on_hand": 25.7,
+     "reorder_point": 16.6,
+     "target_stock": 28.6,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    },
+    "nickel": {
+     "on_hand": 25.7,
+     "reorder_point": 16.6,
+     "target_stock": 28.6,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    },
+    "rare_dissolved_minerals": {
+     "on_hand": 22.6,
+     "reorder_point": 13.1,
+     "target_stock": 25.1,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    }
+   }
+  },
+  {
+   "id": "foundry_works",
+   "name": "Foundry Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "foundry",
+   "port_id": "foundry_lift_terminal",
+   "cash": 2190517,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "agricultural_machinery": {
+     "on_hand": 9.7,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.8,
+     "max_stock": 32.2,
+     "unit_cost": 6076.0,
+     "price_mult": 0.9
+    },
+    "bearings": {
+     "on_hand": 32.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.7,
+     "max_stock": 107.9,
+     "unit_cost": 3658.0,
+     "price_mult": 0.9
+    },
+    "ceramics": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 1652.3,
+     "price_mult": 0.9
+    },
+    "fasteners": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 1922.0,
+     "price_mult": 0.9
+    },
+    "glass": {
+     "on_hand": 20.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.7,
+     "max_stock": 67.8,
+     "unit_cost": 1488.0,
+     "price_mult": 0.9
+    },
+    "lightweight_structural_materials": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 3844.0,
+     "price_mult": 0.9
+    },
+    "machine_components": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 1996.4,
+     "price_mult": 0.9
+    },
+    "machinery": {
+     "on_hand": 10.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.85,
+     "max_stock": 34.1,
+     "unit_cost": 4464.0,
+     "price_mult": 0.9
+    },
+    "mining_equipment": {
+     "on_hand": 6.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.53,
+     "max_stock": 21.2,
+     "unit_cost": 8990.0,
+     "price_mult": 0.9
+    },
+    "power_electronics": {
+     "on_hand": 9.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.83,
+     "max_stock": 33.0,
+     "unit_cost": 7130.0,
+     "price_mult": 0.9
+    },
+    "structural_components": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 2232.0,
+     "price_mult": 0.9
+    },
+    "structural_materials": {
+     "on_hand": 24.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.05,
+     "max_stock": 81.9,
+     "unit_cost": 1054.0,
+     "price_mult": 0.9
+    },
+    "thermal_equipment": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 4017.6,
+     "price_mult": 0.9
+    },
+    "valves": {
+     "on_hand": 32.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.7,
+     "max_stock": 107.9,
+     "unit_cost": 3782.0,
+     "price_mult": 0.9
+    },
+    "vehicles": {
+     "on_hand": 6.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.53,
+     "max_stock": 21.2,
+     "unit_cost": 9920.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "hesperus_exchange",
+   "name": "Hesperus Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "hesperus",
+   "port_id": "hesperus_agricultural_terminal",
+   "cash": 1766759,
+   "income_cr_per_day": 19631,
+   "reliability": 1.0,
+   "items": {
+    "agricultural_machinery": {
+     "on_hand": 11.1,
+     "reorder_point": 6.4,
+     "target_stock": 12.4,
+     "safety_stock": 0.4,
+     "daily_demand": 0.24
+    },
+    "electronics": {
+     "on_hand": 17.3,
+     "reorder_point": 7.2,
+     "target_stock": 19.2,
+     "safety_stock": 0.5,
+     "daily_demand": 0.35
+    },
+    "fertilizer_precursors": {
+     "on_hand": 26.7,
+     "reorder_point": 17.7,
+     "target_stock": 29.7,
+     "safety_stock": 0.7,
+     "daily_demand": 0.43
+    },
+    "manufactured_goods": {
+     "on_hand": 16.5,
+     "reorder_point": 6.4,
+     "target_stock": 18.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.31
+    },
+    "power_electronics": {
+     "on_hand": 21.9,
+     "reorder_point": 12.3,
+     "target_stock": 24.3,
+     "safety_stock": 0.5,
+     "daily_demand": 0.31
+    },
+    "sensors": {
+     "on_hand": 17.8,
+     "reorder_point": 7.7,
+     "target_stock": 19.7,
+     "safety_stock": 0.5,
+     "daily_demand": 0.31
+    }
+   }
+  },
+  {
+   "id": "hesperus_works",
+   "name": "Hesperus Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "hesperus",
+   "port_id": "hesperus_agricultural_terminal",
+   "cash": 789698,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "animal_feed": {
+     "on_hand": 17.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.44,
+     "max_stock": 57.4,
+     "unit_cost": 434.0,
+     "price_mult": 0.9
+    },
+    "beverages": {
+     "on_hand": 27.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.29,
+     "max_stock": 91.4,
+     "unit_cost": 930.0,
+     "price_mult": 0.9
+    },
+    "food": {
+     "on_hand": 39.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 3.27,
+     "max_stock": 130.6,
+     "unit_cost": 744.0,
+     "price_mult": 0.9
+    },
+    "fruit": {
+     "on_hand": 49.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 4.08,
+     "max_stock": 163.3,
+     "unit_cost": 824.6,
+     "price_mult": 0.9
+    },
+    "grain": {
+     "on_hand": 49.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 4.08,
+     "max_stock": 163.3,
+     "unit_cost": 161.4,
+     "price_mult": 0.9
+    },
+    "live_animals": {
+     "on_hand": 4.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.38,
+     "max_stock": 15.0,
+     "unit_cost": 2976.0,
+     "price_mult": 0.9
+    },
+    "livestock_products": {
+     "on_hand": 49.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 4.08,
+     "max_stock": 163.3,
+     "unit_cost": 1085.0,
+     "price_mult": 0.9
+    },
+    "packaged_food": {
+     "on_hand": 29.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.43,
+     "max_stock": 97.4,
+     "unit_cost": 1116.0,
+     "price_mult": 0.9
+    },
+    "protein_products": {
+     "on_hand": 49.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 4.08,
+     "max_stock": 163.3,
+     "unit_cost": 647.3,
+     "price_mult": 0.9
+    },
+    "seed_stock": {
+     "on_hand": 17.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.44,
+     "max_stock": 57.4,
+     "unit_cost": 2604.0,
+     "price_mult": 0.9
+    },
+    "clothing": {
+     "on_hand": 10.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.88,
+     "max_stock": 35.2,
+     "unit_cost": 1860.0,
+     "price_mult": 0.9
+    },
+    "paper_products": {
+     "on_hand": 10.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.88,
+     "max_stock": 35.2,
+     "unit_cost": 744.0,
+     "price_mult": 0.9
+    },
+    "water": {
+     "on_hand": 7.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.61,
+     "max_stock": 24.3,
+     "unit_cost": 310.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "ilos_exchange",
+   "name": "Ilos Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "ilos",
+   "port_id": "ilos_lattice_port",
+   "cash": 3125822,
+   "income_cr_per_day": 34731,
+   "reliability": 1.0,
+   "items": {
+    "iron": {
+     "on_hand": 57.4,
+     "reorder_point": 40.1,
+     "target_stock": 63.7,
+     "safety_stock": 2.5,
+     "daily_demand": 1.68
+    },
+    "machinery": {
+     "on_hand": 18.6,
+     "reorder_point": 13.4,
+     "target_stock": 20.6,
+     "safety_stock": 0.8,
+     "daily_demand": 0.51
+    },
+    "metals": {
+     "on_hand": 50.7,
+     "reorder_point": 35.5,
+     "target_stock": 56.4,
+     "safety_stock": 2.2,
+     "daily_demand": 1.49
+    },
+    "nickel": {
+     "on_hand": 50.7,
+     "reorder_point": 35.5,
+     "target_stock": 56.4,
+     "safety_stock": 2.2,
+     "daily_demand": 1.49
+    },
+    "precision_equipment": {
+     "on_hand": 22.2,
+     "reorder_point": 12.7,
+     "target_stock": 24.7,
+     "safety_stock": 1.1,
+     "daily_demand": 0.75
+    },
+    "ship_modules": {
+     "on_hand": 9.2,
+     "reorder_point": 4.2,
+     "target_stock": 10.2,
+     "safety_stock": 0.2,
+     "daily_demand": 0.17
+    },
+    "titanium": {
+     "on_hand": 50.7,
+     "reorder_point": 35.5,
+     "target_stock": 56.4,
+     "safety_stock": 2.2,
+     "daily_demand": 1.49
+    }
+   }
+  },
+  {
+   "id": "ilos_works",
+   "name": "Ilos Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "ilos",
+   "port_id": "ilos_lattice_port",
+   "cash": 576448,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "engines": {
+     "on_hand": 7.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.58,
+     "max_stock": 23.3,
+     "unit_cost": 18376.8,
+     "price_mult": 0.9
+    },
+    "insulation": {
+     "on_hand": 36.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 3.03,
+     "max_stock": 121.1,
+     "unit_cost": 1178.0,
+     "price_mult": 0.9
+    },
+    "sensors": {
+     "on_hand": 9.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.83,
+     "max_stock": 33.0,
+     "unit_cost": 6001.6,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "iron_gate_exchange",
+   "name": "Iron Gate Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "iron_gate",
+   "port_id": "iron_gate_grand_terminal",
+   "cash": 2570065,
+   "income_cr_per_day": 28556,
+   "reliability": 1.0,
+   "items": {
+    "automation_systems": {
+     "on_hand": 25.5,
+     "reorder_point": 16.3,
+     "target_stock": 28.3,
+     "safety_stock": 0.6,
+     "daily_demand": 0.4
+    },
+    "electronics": {
+     "on_hand": 19.1,
+     "reorder_point": 9.2,
+     "target_stock": 21.2,
+     "safety_stock": 0.8,
+     "daily_demand": 0.51
+    },
+    "industrial_gases": {
+     "on_hand": 27.8,
+     "reorder_point": 18.9,
+     "target_stock": 30.9,
+     "safety_stock": 0.7,
+     "daily_demand": 0.49
+    },
+    "iron": {
+     "on_hand": 22.2,
+     "reorder_point": 12.7,
+     "target_stock": 24.7,
+     "safety_stock": 1.2,
+     "daily_demand": 0.81
+    },
+    "power_electronics": {
+     "on_hand": 24.3,
+     "reorder_point": 15.0,
+     "target_stock": 27.0,
+     "safety_stock": 0.6,
+     "daily_demand": 0.4
+    },
+    "sensors": {
+     "on_hand": 19.0,
+     "reorder_point": 9.1,
+     "target_stock": 21.1,
+     "safety_stock": 0.6,
+     "daily_demand": 0.4
+    },
+    "titanium": {
+     "on_hand": 22.2,
+     "reorder_point": 12.7,
+     "target_stock": 24.7,
+     "safety_stock": 1.2,
+     "daily_demand": 0.81
+    }
+   }
+  },
+  {
+   "id": "iron_gate_works",
+   "name": "Iron Gate Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "iron_gate",
+   "port_id": "iron_gate_grand_terminal",
+   "cash": 2248924,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "agricultural_machinery": {
+     "on_hand": 9.7,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.8,
+     "max_stock": 32.2,
+     "unit_cost": 6076.0,
+     "price_mult": 0.9
+    },
+    "ceramics": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 2542.0,
+     "price_mult": 0.9
+    },
+    "habitation_modules": {
+     "on_hand": 4.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.38,
+     "max_stock": 15.0,
+     "unit_cost": 16120.0,
+     "price_mult": 0.9
+    },
+    "lightweight_structural_materials": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 3844.0,
+     "price_mult": 0.9
+    },
+    "machine_components": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 2852.0,
+     "price_mult": 0.9
+    },
+    "machinery": {
+     "on_hand": 10.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.85,
+     "max_stock": 34.1,
+     "unit_cost": 4464.0,
+     "price_mult": 0.9
+    },
+    "mining_equipment": {
+     "on_hand": 6.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.53,
+     "max_stock": 21.2,
+     "unit_cost": 7371.8,
+     "price_mult": 0.9
+    },
+    "pipe": {
+     "on_hand": 36.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 3.03,
+     "max_stock": 121.1,
+     "unit_cost": 1612.0,
+     "price_mult": 0.9
+    },
+    "pumps": {
+     "on_hand": 32.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.7,
+     "max_stock": 107.9,
+     "unit_cost": 4464.0,
+     "price_mult": 0.9
+    },
+    "replacement_parts": {
+     "on_hand": 3.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.31,
+     "max_stock": 12.6,
+     "unit_cost": 4216.0,
+     "price_mult": 0.9
+    },
+    "structural_components": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 1741.0,
+     "price_mult": 0.9
+    },
+    "structural_materials": {
+     "on_hand": 24.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.05,
+     "max_stock": 81.9,
+     "unit_cost": 1054.0,
+     "price_mult": 0.9
+    },
+    "thermal_equipment": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 5580.0,
+     "price_mult": 0.9
+    },
+    "vehicles": {
+     "on_hand": 6.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.53,
+     "max_stock": 21.2,
+     "unit_cost": 9920.0,
+     "price_mult": 0.9
+    },
+    "metals": {
+     "on_hand": 22.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.86,
+     "max_stock": 74.4,
+     "unit_cost": 1116.0,
+     "price_mult": 0.9
+    },
+    "ship_modules": {
+     "on_hand": 3.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.33,
+     "max_stock": 13.0,
+     "unit_cost": 10912.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "keshar_exchange",
+   "name": "Keshar Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "keshar",
+   "port_id": "keshar_highport",
+   "cash": 4607175,
+   "income_cr_per_day": 51191,
+   "reliability": 1.0,
+   "items": {
+    "appliances": {
+     "on_hand": 26.6,
+     "reorder_point": 17.6,
+     "target_stock": 29.6,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "beverages": {
+     "on_hand": 52.2,
+     "reorder_point": 39.4,
+     "target_stock": 58.0,
+     "safety_stock": 2.0,
+     "daily_demand": 1.32
+    },
+    "clothing": {
+     "on_hand": 26.6,
+     "reorder_point": 17.6,
+     "target_stock": 29.6,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "engines": {
+     "on_hand": 9.7,
+     "reorder_point": 4.8,
+     "target_stock": 10.8,
+     "safety_stock": 0.2,
+     "daily_demand": 0.17
+    },
+    "food": {
+     "on_hand": 59.0,
+     "reorder_point": 44.6,
+     "target_stock": 65.6,
+     "safety_stock": 2.2,
+     "daily_demand": 1.5
+    },
+    "furniture": {
+     "on_hand": 12.4,
+     "reorder_point": 7.8,
+     "target_stock": 13.8,
+     "safety_stock": 0.6,
+     "daily_demand": 0.41
+    },
+    "office_supplies": {
+     "on_hand": 26.6,
+     "reorder_point": 17.6,
+     "target_stock": 29.6,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "packaged_food": {
+     "on_hand": 42.0,
+     "reorder_point": 28.1,
+     "target_stock": 46.7,
+     "safety_stock": 2.0,
+     "daily_demand": 1.32
+    },
+    "paper_products": {
+     "on_hand": 26.6,
+     "reorder_point": 17.6,
+     "target_stock": 29.6,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "precision_equipment": {
+     "on_hand": 30.2,
+     "reorder_point": 21.6,
+     "target_stock": 33.6,
+     "safety_stock": 1.3,
+     "daily_demand": 0.84
+    },
+    "titanium": {
+     "on_hand": 44.1,
+     "reorder_point": 28.1,
+     "target_stock": 49.0,
+     "safety_stock": 2.2,
+     "daily_demand": 1.49
+    }
+   }
+  },
+  {
+   "id": "keshar_works",
+   "name": "Keshar Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "keshar",
+   "port_id": "keshar_highport",
+   "cash": 2275676,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "electric_motors": {
+     "on_hand": 32.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.7,
+     "max_stock": 107.9,
+     "unit_cost": 4216.0,
+     "price_mult": 0.9
+    },
+    "fasteners": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 1922.0,
+     "price_mult": 0.9
+    },
+    "wire_cable": {
+     "on_hand": 36.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 3.03,
+     "max_stock": 121.1,
+     "unit_cost": 2418.0,
+     "price_mult": 0.9
+    },
+    "agricultural_machinery": {
+     "on_hand": 9.7,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.8,
+     "max_stock": 32.2,
+     "unit_cost": 6076.0,
+     "price_mult": 0.9
+    },
+    "ceramics": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 2542.0,
+     "price_mult": 0.9
+    },
+    "lightweight_structural_materials": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 3844.0,
+     "price_mult": 0.9
+    },
+    "machine_components": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 2852.0,
+     "price_mult": 0.9
+    },
+    "machinery": {
+     "on_hand": 10.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.85,
+     "max_stock": 34.1,
+     "unit_cost": 4464.0,
+     "price_mult": 0.9
+    },
+    "mining_equipment": {
+     "on_hand": 6.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.53,
+     "max_stock": 21.2,
+     "unit_cost": 7911.2,
+     "price_mult": 0.9
+    },
+    "reactors": {
+     "on_hand": 3.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.31,
+     "max_stock": 12.6,
+     "unit_cost": 29016.0,
+     "price_mult": 0.9
+    },
+    "structural_components": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 1607.0,
+     "price_mult": 0.9
+    },
+    "structural_materials": {
+     "on_hand": 24.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.05,
+     "max_stock": 81.9,
+     "unit_cost": 1054.0,
+     "price_mult": 0.9
+    },
+    "thermal_equipment": {
+     "on_hand": 18.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.51,
+     "max_stock": 60.4,
+     "unit_cost": 5580.0,
+     "price_mult": 0.9
+    },
+    "vehicles": {
+     "on_hand": 6.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.53,
+     "max_stock": 21.2,
+     "unit_cost": 9920.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "lastlight_exchange",
+   "name": "Lastlight Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "lastlight",
+   "port_id": "lastlight_orbital",
+   "cash": 1478490,
+   "income_cr_per_day": 16428,
+   "reliability": 1.0,
+   "items": {
+    "biofilters": {
+     "on_hand": 14.6,
+     "reorder_point": 4.2,
+     "target_stock": 16.2,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "life_support_equipment": {
+     "on_hand": 15.5,
+     "reorder_point": 5.3,
+     "target_stock": 17.3,
+     "safety_stock": 0.2,
+     "daily_demand": 0.16
+    },
+    "manufactured_goods": {
+     "on_hand": 18.1,
+     "reorder_point": 8.1,
+     "target_stock": 20.1,
+     "safety_stock": 0.4,
+     "daily_demand": 0.23
+    },
+    "medical_supplies": {
+     "on_hand": 15.5,
+     "reorder_point": 5.3,
+     "target_stock": 17.3,
+     "safety_stock": 0.2,
+     "daily_demand": 0.16
+    },
+    "membranes": {
+     "on_hand": 15.3,
+     "reorder_point": 5.0,
+     "target_stock": 17.1,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "replacement_parts": {
+     "on_hand": 13.9,
+     "reorder_point": 3.4,
+     "target_stock": 15.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "water_processing_equipment": {
+     "on_hand": 9.9,
+     "reorder_point": 5.0,
+     "target_stock": 11.1,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    }
+   }
+  },
+  {
+   "id": "new_houston_exchange",
+   "name": "New Houston Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "new_houston",
+   "port_id": "roosevelt_orbital_freight",
+   "cash": 5816448,
+   "income_cr_per_day": 64627,
+   "reliability": 1.0,
+   "items": {
+    "animal_feed": {
+     "on_hand": 17.0,
+     "reorder_point": 6.9,
+     "target_stock": 18.9,
+     "safety_stock": 0.6,
+     "daily_demand": 0.41
+    },
+    "aquatic_food_products": {
+     "on_hand": 36.9,
+     "reorder_point": 28.9,
+     "target_stock": 40.9,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "automation_systems": {
+     "on_hand": 27.5,
+     "reorder_point": 18.6,
+     "target_stock": 30.6,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    },
+    "beverages": {
+     "on_hand": 23.1,
+     "reorder_point": 13.7,
+     "target_stock": 25.7,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "chemical_feedstocks": {
+     "on_hand": 28.3,
+     "reorder_point": 19.5,
+     "target_stock": 31.5,
+     "safety_stock": 0.8,
+     "daily_demand": 0.52
+    },
+    "coolant": {
+     "on_hand": 28.3,
+     "reorder_point": 19.5,
+     "target_stock": 31.5,
+     "safety_stock": 0.8,
+     "daily_demand": 0.52
+    },
+    "electronics": {
+     "on_hand": 19.1,
+     "reorder_point": 9.2,
+     "target_stock": 21.2,
+     "safety_stock": 0.8,
+     "daily_demand": 0.53
+    },
+    "fruit": {
+     "on_hand": 23.1,
+     "reorder_point": 13.7,
+     "target_stock": 25.7,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "grain": {
+     "on_hand": 23.1,
+     "reorder_point": 13.7,
+     "target_stock": 25.7,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "live_animals": {
+     "on_hand": 7.6,
+     "reorder_point": 2.5,
+     "target_stock": 8.5,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "livestock_products": {
+     "on_hand": 23.1,
+     "reorder_point": 13.7,
+     "target_stock": 25.7,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "lubricants": {
+     "on_hand": 28.3,
+     "reorder_point": 19.5,
+     "target_stock": 31.5,
+     "safety_stock": 0.8,
+     "daily_demand": 0.52
+    },
+    "manufactured_goods": {
+     "on_hand": 18.1,
+     "reorder_point": 8.1,
+     "target_stock": 20.1,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    },
+    "nickel": {
+     "on_hand": 29.6,
+     "reorder_point": 19.9,
+     "target_stock": 32.9,
+     "safety_stock": 1.4,
+     "daily_demand": 0.93
+    },
+    "packaged_food": {
+     "on_hand": 23.1,
+     "reorder_point": 13.7,
+     "target_stock": 25.7,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "paint_coatings": {
+     "on_hand": 28.3,
+     "reorder_point": 19.5,
+     "target_stock": 31.5,
+     "safety_stock": 0.8,
+     "daily_demand": 0.52
+    },
+    "power_electronics": {
+     "on_hand": 26.1,
+     "reorder_point": 17.1,
+     "target_stock": 29.1,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    },
+    "protein_products": {
+     "on_hand": 23.1,
+     "reorder_point": 13.7,
+     "target_stock": 25.7,
+     "safety_stock": 1.2,
+     "daily_demand": 0.83
+    },
+    "rare_dissolved_minerals": {
+     "on_hand": 43.3,
+     "reorder_point": 35.1,
+     "target_stock": 48.1,
+     "safety_stock": 1.4,
+     "daily_demand": 0.93
+    },
+    "seed_stock": {
+     "on_hand": 17.0,
+     "reorder_point": 6.9,
+     "target_stock": 18.9,
+     "safety_stock": 0.6,
+     "daily_demand": 0.41
+    },
+    "sensors": {
+     "on_hand": 20.0,
+     "reorder_point": 10.2,
+     "target_stock": 22.2,
+     "safety_stock": 0.7,
+     "daily_demand": 0.47
+    },
+    "specialty_chemicals": {
+     "on_hand": 30.6,
+     "reorder_point": 22.0,
+     "target_stock": 34.0,
+     "safety_stock": 0.9,
+     "daily_demand": 0.58
+    }
+   }
+  },
+  {
+   "id": "new_houston_works",
+   "name": "New Houston Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "new_houston",
+   "port_id": "roosevelt_orbital_freight",
+   "cash": 853435,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "cement": {
+     "on_hand": 20.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.7,
+     "max_stock": 67.8,
+     "unit_cost": 558.0,
+     "price_mult": 0.9
+    },
+    "reactors": {
+     "on_hand": 3.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.31,
+     "max_stock": 12.6,
+     "unit_cost": 29016.0,
+     "price_mult": 0.9
+    },
+    "ship_modules": {
+     "on_hand": 3.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.33,
+     "max_stock": 13.0,
+     "unit_cost": 11184.8,
+     "price_mult": 0.9
+    },
+    "switchgear": {
+     "on_hand": 32.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.7,
+     "max_stock": 107.9,
+     "unit_cost": 5456.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "orun_exchange",
+   "name": "Orun Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "orun",
+   "port_id": "orun_transfer_crown",
+   "cash": 1077226,
+   "income_cr_per_day": 11969,
+   "reliability": 1.0,
+   "items": {
+    "biological_feedstocks": {
+     "on_hand": 25.6,
+     "reorder_point": 16.4,
+     "target_stock": 28.4,
+     "safety_stock": 0.9,
+     "daily_demand": 0.58
+    },
+    "biological_materials": {
+     "on_hand": 27.5,
+     "reorder_point": 18.5,
+     "target_stock": 30.5,
+     "safety_stock": 1.0,
+     "daily_demand": 0.65
+    },
+    "food": {
+     "on_hand": 63.6,
+     "reorder_point": 47.3,
+     "target_stock": 70.6,
+     "safety_stock": 2.5,
+     "daily_demand": 1.67
+    }
+   }
+  },
+  {
+   "id": "orun_works",
+   "name": "Orun Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "orun",
+   "port_id": "orun_transfer_crown",
+   "cash": 462815,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "automation_systems": {
+     "on_hand": 16.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.38,
+     "max_stock": 55.3,
+     "unit_cost": 5077.8,
+     "price_mult": 0.9
+    },
+    "glass": {
+     "on_hand": 20.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.7,
+     "max_stock": 67.8,
+     "unit_cost": 1488.0,
+     "price_mult": 0.9
+    },
+    "power_electronics": {
+     "on_hand": 9.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.83,
+     "max_stock": 33.0,
+     "unit_cost": 7130.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "pelagos_exchange",
+   "name": "Pelagos Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "pelagos",
+   "port_id": "pelagos_highport",
+   "cash": 2915738,
+   "income_cr_per_day": 32397,
+   "reliability": 1.0,
+   "items": {
+    "bearings": {
+     "on_hand": 18.4,
+     "reorder_point": 8.4,
+     "target_stock": 20.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "ceramics": {
+     "on_hand": 18.4,
+     "reorder_point": 8.4,
+     "target_stock": 20.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "electric_motors": {
+     "on_hand": 22.5,
+     "reorder_point": 13.0,
+     "target_stock": 25.0,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "fasteners": {
+     "on_hand": 18.4,
+     "reorder_point": 8.4,
+     "target_stock": 20.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "lightweight_structural_materials": {
+     "on_hand": 18.4,
+     "reorder_point": 8.4,
+     "target_stock": 20.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "machine_components": {
+     "on_hand": 18.4,
+     "reorder_point": 8.4,
+     "target_stock": 20.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "machinery": {
+     "on_hand": 9.7,
+     "reorder_point": 4.7,
+     "target_stock": 10.7,
+     "safety_stock": 0.3,
+     "daily_demand": 0.19
+    },
+    "metals": {
+     "on_hand": 31.6,
+     "reorder_point": 23.1,
+     "target_stock": 35.1,
+     "safety_stock": 1.0,
+     "daily_demand": 0.69
+    },
+    "packaging_materials": {
+     "on_hand": 19.7,
+     "reorder_point": 9.9,
+     "target_stock": 21.9,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "pumps": {
+     "on_hand": 21.6,
+     "reorder_point": 12.0,
+     "target_stock": 24.0,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "structural_components": {
+     "on_hand": 18.4,
+     "reorder_point": 8.4,
+     "target_stock": 20.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "switchgear": {
+     "on_hand": 21.4,
+     "reorder_point": 11.8,
+     "target_stock": 23.8,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "thermal_equipment": {
+     "on_hand": 18.4,
+     "reorder_point": 8.4,
+     "target_stock": 20.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    },
+    "valves": {
+     "on_hand": 18.4,
+     "reorder_point": 8.4,
+     "target_stock": 20.4,
+     "safety_stock": 0.5,
+     "daily_demand": 0.34
+    }
+   }
+  },
+  {
+   "id": "pelagos_works",
+   "name": "Pelagos Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "pelagos",
+   "port_id": "pelagos_highport",
+   "cash": 428817,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "aquatic_food_products": {
+     "on_hand": 49.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 4.08,
+     "max_stock": 163.3,
+     "unit_cost": 885.4,
+     "price_mult": 0.9
+    },
+    "biofilters": {
+     "on_hand": 6.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.56,
+     "max_stock": 22.5,
+     "unit_cost": 5208.0,
+     "price_mult": 0.9
+    },
+    "biological_feedstocks": {
+     "on_hand": 12.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.0,
+     "max_stock": 40.1,
+     "unit_cost": 1071.4,
+     "price_mult": 0.9
+    },
+    "biological_materials": {
+     "on_hand": 13.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.1,
+     "max_stock": 44.2,
+     "unit_cost": 3844.0,
+     "price_mult": 0.9
+    },
+    "food": {
+     "on_hand": 39.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 3.27,
+     "max_stock": 130.6,
+     "unit_cost": 744.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "port_meridian_exchange",
+   "name": "Port Meridian Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "port_meridian",
+   "port_id": "port_meridian_main",
+   "cash": 4814002,
+   "income_cr_per_day": 53489,
+   "reliability": 1.0,
+   "items": {
+    "appliances": {
+     "on_hand": 15.2,
+     "reorder_point": 4.9,
+     "target_stock": 16.9,
+     "safety_stock": 0.3,
+     "daily_demand": 0.21
+    },
+    "biofilters": {
+     "on_hand": 13.2,
+     "reorder_point": 2.6,
+     "target_stock": 14.6,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "cement": {
+     "on_hand": 18.0,
+     "reorder_point": 8.0,
+     "target_stock": 20.0,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    },
+    "cleaning_supplies": {
+     "on_hand": 14.8,
+     "reorder_point": 4.4,
+     "target_stock": 16.4,
+     "safety_stock": 0.3,
+     "daily_demand": 0.19
+    },
+    "clothing": {
+     "on_hand": 15.2,
+     "reorder_point": 4.9,
+     "target_stock": 16.9,
+     "safety_stock": 0.3,
+     "daily_demand": 0.21
+    },
+    "consumer_goods": {
+     "on_hand": 15.8,
+     "reorder_point": 5.6,
+     "target_stock": 17.6,
+     "safety_stock": 0.4,
+     "daily_demand": 0.23
+    },
+    "coolant": {
+     "on_hand": 14.6,
+     "reorder_point": 4.2,
+     "target_stock": 16.2,
+     "safety_stock": 0.3,
+     "daily_demand": 0.21
+    },
+    "detergents": {
+     "on_hand": 14.8,
+     "reorder_point": 4.4,
+     "target_stock": 16.4,
+     "safety_stock": 0.3,
+     "daily_demand": 0.19
+    },
+    "engines": {
+     "on_hand": 9.7,
+     "reorder_point": 4.8,
+     "target_stock": 10.8,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "expedition_consumables": {
+     "on_hand": 15.2,
+     "reorder_point": 4.9,
+     "target_stock": 16.9,
+     "safety_stock": 0.3,
+     "daily_demand": 0.21
+    },
+    "furniture": {
+     "on_hand": 8.6,
+     "reorder_point": 3.6,
+     "target_stock": 9.6,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "glass": {
+     "on_hand": 15.8,
+     "reorder_point": 5.6,
+     "target_stock": 17.6,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    },
+    "habitation_modules": {
+     "on_hand": 6.7,
+     "reorder_point": 4.5,
+     "target_stock": 7.5,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "industrial_gases": {
+     "on_hand": 15.0,
+     "reorder_point": 4.6,
+     "target_stock": 16.6,
+     "safety_stock": 0.3,
+     "daily_demand": 0.23
+    },
+    "insulation": {
+     "on_hand": 19.1,
+     "reorder_point": 9.2,
+     "target_stock": 21.2,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    },
+    "life_support_equipment": {
+     "on_hand": 13.9,
+     "reorder_point": 3.4,
+     "target_stock": 15.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "live_animals": {
+     "on_hand": 9.8,
+     "reorder_point": 4.9,
+     "target_stock": 10.9,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "medical_consumables": {
+     "on_hand": 13.9,
+     "reorder_point": 3.4,
+     "target_stock": 15.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "medical_gases": {
+     "on_hand": 13.5,
+     "reorder_point": 3.1,
+     "target_stock": 15.1,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "membranes": {
+     "on_hand": 13.9,
+     "reorder_point": 3.4,
+     "target_stock": 15.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "office_supplies": {
+     "on_hand": 15.2,
+     "reorder_point": 4.9,
+     "target_stock": 16.9,
+     "safety_stock": 0.3,
+     "daily_demand": 0.21
+    },
+    "paper_products": {
+     "on_hand": 15.2,
+     "reorder_point": 4.9,
+     "target_stock": 16.9,
+     "safety_stock": 0.3,
+     "daily_demand": 0.21
+    },
+    "pharmaceuticals": {
+     "on_hand": 13.9,
+     "reorder_point": 3.4,
+     "target_stock": 15.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "pipe": {
+     "on_hand": 18.6,
+     "reorder_point": 8.7,
+     "target_stock": 20.7,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    },
+    "reactors": {
+     "on_hand": 7.6,
+     "reorder_point": 4.4,
+     "target_stock": 8.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "ship_modules": {
+     "on_hand": 9.4,
+     "reorder_point": 4.4,
+     "target_stock": 10.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "sterile_goods": {
+     "on_hand": 13.9,
+     "reorder_point": 3.4,
+     "target_stock": 15.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "water": {
+     "on_hand": 16.1,
+     "reorder_point": 5.9,
+     "target_stock": 17.9,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    },
+    "water_processing_equipment": {
+     "on_hand": 8.5,
+     "reorder_point": 3.4,
+     "target_stock": 9.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "wire_cable": {
+     "on_hand": 19.4,
+     "reorder_point": 9.6,
+     "target_stock": 21.6,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    }
+   }
+  },
+  {
+   "id": "port_meridian_works",
+   "name": "Port Meridian Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "port_meridian",
+   "port_id": "port_meridian_main",
+   "cash": 300000,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "replacement_parts": {
+     "on_hand": 3.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.31,
+     "max_stock": 12.6,
+     "unit_cost": 4974.9,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "sol_exchange",
+   "name": "Sol Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "sol",
+   "port_id": "earth_orbital_freight",
+   "cash": 13819200,
+   "income_cr_per_day": 153547,
+   "reliability": 1.0,
+   "items": {
+    "agricultural_machinery": {
+     "on_hand": 17.1,
+     "reorder_point": 12.6,
+     "target_stock": 18.9,
+     "safety_stock": 0.7,
+     "daily_demand": 0.46
+    },
+    "aquatic_food_products": {
+     "on_hand": 63.1,
+     "reorder_point": 51.6,
+     "target_stock": 70.1,
+     "safety_stock": 2.0,
+     "daily_demand": 1.32
+    },
+    "bearings": {
+     "on_hand": 44.7,
+     "reorder_point": 37.0,
+     "target_stock": 49.7,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "biological_feedstocks": {
+     "on_hand": 31.1,
+     "reorder_point": 22.6,
+     "target_stock": 34.6,
+     "safety_stock": 0.9,
+     "daily_demand": 0.58
+    },
+    "biological_materials": {
+     "on_hand": 31.1,
+     "reorder_point": 22.6,
+     "target_stock": 34.6,
+     "safety_stock": 0.9,
+     "daily_demand": 0.58
+    },
+    "cement": {
+     "on_hand": 32.8,
+     "reorder_point": 20.2,
+     "target_stock": 36.5,
+     "safety_stock": 1.7,
+     "daily_demand": 1.16
+    },
+    "ceramics": {
+     "on_hand": 34.1,
+     "reorder_point": 25.1,
+     "target_stock": 37.9,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "cleaning_supplies": {
+     "on_hand": 25.2,
+     "reorder_point": 16.0,
+     "target_stock": 28.0,
+     "safety_stock": 1.1,
+     "daily_demand": 0.75
+    },
+    "detergents": {
+     "on_hand": 25.2,
+     "reorder_point": 16.0,
+     "target_stock": 28.0,
+     "safety_stock": 1.1,
+     "daily_demand": 0.75
+    },
+    "electric_motors": {
+     "on_hand": 36.6,
+     "reorder_point": 27.9,
+     "target_stock": 40.7,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "fasteners": {
+     "on_hand": 36.6,
+     "reorder_point": 27.9,
+     "target_stock": 40.7,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "food": {
+     "on_hand": 46.5,
+     "reorder_point": 30.7,
+     "target_stock": 51.7,
+     "safety_stock": 2.2,
+     "daily_demand": 1.5
+    },
+    "fruit": {
+     "on_hand": 41.2,
+     "reorder_point": 27.2,
+     "target_stock": 45.7,
+     "safety_stock": 2.0,
+     "daily_demand": 1.32
+    },
+    "glass": {
+     "on_hand": 56.9,
+     "reorder_point": 47.0,
+     "target_stock": 63.3,
+     "safety_stock": 1.7,
+     "daily_demand": 1.16
+    },
+    "grain": {
+     "on_hand": 41.2,
+     "reorder_point": 27.2,
+     "target_stock": 45.7,
+     "safety_stock": 2.0,
+     "daily_demand": 1.32
+    },
+    "insulation": {
+     "on_hand": 45.3,
+     "reorder_point": 34.1,
+     "target_stock": 50.3,
+     "safety_stock": 1.7,
+     "daily_demand": 1.16
+    },
+    "lab_supplies": {
+     "on_hand": 18.5,
+     "reorder_point": 8.6,
+     "target_stock": 20.6,
+     "safety_stock": 0.5,
+     "daily_demand": 0.33
+    },
+    "lightweight_structural_materials": {
+     "on_hand": 34.1,
+     "reorder_point": 25.1,
+     "target_stock": 37.9,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "livestock_products": {
+     "on_hand": 41.2,
+     "reorder_point": 27.2,
+     "target_stock": 45.7,
+     "safety_stock": 2.0,
+     "daily_demand": 1.32
+    },
+    "machine_components": {
+     "on_hand": 34.1,
+     "reorder_point": 25.1,
+     "target_stock": 37.9,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "mining_equipment": {
+     "on_hand": 11.4,
+     "reorder_point": 8.4,
+     "target_stock": 12.6,
+     "safety_stock": 0.5,
+     "daily_demand": 0.3
+    },
+    "packaged_food": {
+     "on_hand": 41.2,
+     "reorder_point": 27.2,
+     "target_stock": 45.7,
+     "safety_stock": 2.0,
+     "daily_demand": 1.32
+    },
+    "packaging_materials": {
+     "on_hand": 29.1,
+     "reorder_point": 19.6,
+     "target_stock": 32.3,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "pipe": {
+     "on_hand": 43.4,
+     "reorder_point": 32.0,
+     "target_stock": 48.2,
+     "safety_stock": 1.7,
+     "daily_demand": 1.16
+    },
+    "protein_products": {
+     "on_hand": 41.2,
+     "reorder_point": 27.2,
+     "target_stock": 45.7,
+     "safety_stock": 2.0,
+     "daily_demand": 1.32
+    },
+    "pumps": {
+     "on_hand": 34.1,
+     "reorder_point": 25.1,
+     "target_stock": 37.9,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "scientific_instruments": {
+     "on_hand": 18.5,
+     "reorder_point": 8.6,
+     "target_stock": 20.6,
+     "safety_stock": 0.5,
+     "daily_demand": 0.33
+    },
+    "structural_components": {
+     "on_hand": 34.1,
+     "reorder_point": 25.1,
+     "target_stock": 37.9,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "structural_materials": {
+     "on_hand": 38.5,
+     "reorder_point": 28.4,
+     "target_stock": 42.8,
+     "safety_stock": 1.5,
+     "daily_demand": 1.03
+    },
+    "switchgear": {
+     "on_hand": 25.8,
+     "reorder_point": 15.9,
+     "target_stock": 28.7,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "thermal_equipment": {
+     "on_hand": 34.1,
+     "reorder_point": 25.1,
+     "target_stock": 37.9,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "valves": {
+     "on_hand": 44.7,
+     "reorder_point": 37.0,
+     "target_stock": 49.7,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "vehicles": {
+     "on_hand": 11.4,
+     "reorder_point": 8.4,
+     "target_stock": 12.6,
+     "safety_stock": 0.5,
+     "daily_demand": 0.3
+    },
+    "wire_cable": {
+     "on_hand": 46.6,
+     "reorder_point": 35.6,
+     "target_stock": 51.8,
+     "safety_stock": 1.7,
+     "daily_demand": 1.16
+    }
+   }
+  },
+  {
+   "id": "sol_works",
+   "name": "Sol Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "sol",
+   "port_id": "earth_orbital_freight",
+   "cash": 927939,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "electronics": {
+     "on_hand": 11.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.97,
+     "max_stock": 38.8,
+     "unit_cost": 4743.0,
+     "price_mult": 0.9
+    },
+    "manufactured_goods": {
+     "on_hand": 8.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.71,
+     "max_stock": 28.3,
+     "unit_cost": 1728.6,
+     "price_mult": 0.9
+    },
+    "medical_consumables": {
+     "on_hand": 6.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.5,
+     "max_stock": 20.1,
+     "unit_cost": 3472.0,
+     "price_mult": 0.9
+    },
+    "sterile_goods": {
+     "on_hand": 6.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.5,
+     "max_stock": 20.1,
+     "unit_cost": 4030.0,
+     "price_mult": 0.9
+    },
+    "appliances": {
+     "on_hand": 10.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.88,
+     "max_stock": 35.2,
+     "unit_cost": 2976.0,
+     "price_mult": 0.9
+    },
+    "beverages": {
+     "on_hand": 27.4,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.29,
+     "max_stock": 91.4,
+     "unit_cost": 930.0,
+     "price_mult": 0.9
+    },
+    "consumer_goods": {
+     "on_hand": 6.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.5,
+     "max_stock": 20.1,
+     "unit_cost": 1612.0,
+     "price_mult": 0.9
+    },
+    "medical_supplies": {
+     "on_hand": 3.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.32,
+     "max_stock": 13.0,
+     "unit_cost": 4464.0,
+     "price_mult": 0.9
+    },
+    "pharmaceuticals": {
+     "on_hand": 6.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.54,
+     "max_stock": 21.6,
+     "unit_cost": 10602.0,
+     "price_mult": 0.9
+    },
+    "precision_equipment": {
+     "on_hand": 13.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.11,
+     "max_stock": 44.5,
+     "unit_cost": 7750.0,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "talos_exchange",
+   "name": "Talos Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "talos",
+   "port_id": "talos_hopewell_field",
+   "cash": 4673707,
+   "income_cr_per_day": 51930,
+   "reliability": 1.0,
+   "items": {
+    "biofilters": {
+     "on_hand": 14.0,
+     "reorder_point": 3.5,
+     "target_stock": 15.5,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "expedition_consumables": {
+     "on_hand": 16.3,
+     "reorder_point": 6.1,
+     "target_stock": 18.1,
+     "safety_stock": 0.3,
+     "daily_demand": 0.21
+    },
+    "habitation_modules": {
+     "on_hand": 7.5,
+     "reorder_point": 5.4,
+     "target_stock": 8.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "life_support_equipment": {
+     "on_hand": 14.7,
+     "reorder_point": 4.3,
+     "target_stock": 16.3,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "medical_supplies": {
+     "on_hand": 14.9,
+     "reorder_point": 4.5,
+     "target_stock": 16.5,
+     "safety_stock": 0.2,
+     "daily_demand": 0.16
+    },
+    "membranes": {
+     "on_hand": 14.7,
+     "reorder_point": 4.3,
+     "target_stock": 16.3,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "mining_equipment": {
+     "on_hand": 7.0,
+     "reorder_point": 3.8,
+     "target_stock": 7.8,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "reactors": {
+     "on_hand": 8.3,
+     "reorder_point": 5.3,
+     "target_stock": 9.3,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "vehicles": {
+     "on_hand": 7.0,
+     "reorder_point": 3.8,
+     "target_stock": 7.8,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "water": {
+     "on_hand": 17.6,
+     "reorder_point": 7.6,
+     "target_stock": 19.6,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    },
+    "water_processing_equipment": {
+     "on_hand": 9.3,
+     "reorder_point": 4.3,
+     "target_stock": 10.3,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    }
+   }
+  },
+  {
+   "id": "tidemark_works",
+   "name": "Tidemark Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "tidemark",
+   "port_id": "tidemark_platform_exchange",
+   "cash": 1004206,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "chemical_feedstocks": {
+     "on_hand": 24.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.0,
+     "max_stock": 80.1,
+     "unit_cost": 969.7,
+     "price_mult": 0.9
+    },
+    "coolant": {
+     "on_hand": 14.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.24,
+     "max_stock": 49.4,
+     "unit_cost": 2046.0,
+     "price_mult": 0.9
+    },
+    "fertilizer_precursors": {
+     "on_hand": 6.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.54,
+     "max_stock": 21.7,
+     "unit_cost": 806.0,
+     "price_mult": 0.9
+    },
+    "industrial_gases": {
+     "on_hand": 15.2,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.26,
+     "max_stock": 50.5,
+     "unit_cost": 992.0,
+     "price_mult": 0.9
+    },
+    "lubricants": {
+     "on_hand": 24.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.0,
+     "max_stock": 80.1,
+     "unit_cost": 1302.0,
+     "price_mult": 0.9
+    },
+    "medical_gases": {
+     "on_hand": 10.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.9,
+     "max_stock": 35.9,
+     "unit_cost": 2728.0,
+     "price_mult": 0.9
+    },
+    "paint_coatings": {
+     "on_hand": 24.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.0,
+     "max_stock": 80.1,
+     "unit_cost": 1736.0,
+     "price_mult": 0.9
+    },
+    "rare_dissolved_minerals": {
+     "on_hand": 21.1,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.76,
+     "max_stock": 70.3,
+     "unit_cost": 3772.1,
+     "price_mult": 0.9
+    },
+    "specialty_chemicals": {
+     "on_hand": 26.6,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 2.21,
+     "max_stock": 88.6,
+     "unit_cost": 3348.0,
+     "price_mult": 0.9
+    },
+    "water": {
+     "on_hand": 7.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.61,
+     "max_stock": 24.3,
+     "unit_cost": 310.0,
+     "price_mult": 0.9
+    },
+    "biological_feedstocks": {
+     "on_hand": 12.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.0,
+     "max_stock": 40.1,
+     "unit_cost": 1488.0,
+     "price_mult": 0.9
+    },
+    "biological_materials": {
+     "on_hand": 13.3,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 1.1,
+     "max_stock": 44.2,
+     "unit_cost": 2767.7,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "veyara_exchange",
+   "name": "Veyara Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "veyara",
+   "port_id": "veyara_bluewater_orbital",
+   "cash": 10598736,
+   "income_cr_per_day": 117764,
+   "reliability": 1.0,
+   "items": {
+    "agricultural_machinery": {
+     "on_hand": 18.2,
+     "reorder_point": 13.8,
+     "target_stock": 20.2,
+     "safety_stock": 0.7,
+     "daily_demand": 0.46
+    },
+    "bearings": {
+     "on_hand": 36.3,
+     "reorder_point": 27.6,
+     "target_stock": 40.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "ceramics": {
+     "on_hand": 36.3,
+     "reorder_point": 27.6,
+     "target_stock": 40.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "cleaning_supplies": {
+     "on_hand": 34.1,
+     "reorder_point": 25.9,
+     "target_stock": 37.9,
+     "safety_stock": 1.1,
+     "daily_demand": 0.75
+    },
+    "detergents": {
+     "on_hand": 34.1,
+     "reorder_point": 25.9,
+     "target_stock": 37.9,
+     "safety_stock": 1.1,
+     "daily_demand": 0.75
+    },
+    "electric_motors": {
+     "on_hand": 47.5,
+     "reorder_point": 40.1,
+     "target_stock": 52.8,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "fasteners": {
+     "on_hand": 36.3,
+     "reorder_point": 27.6,
+     "target_stock": 40.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "lab_supplies": {
+     "on_hand": 22.5,
+     "reorder_point": 13.0,
+     "target_stock": 25.0,
+     "safety_stock": 0.5,
+     "daily_demand": 0.33
+    },
+    "lightweight_structural_materials": {
+     "on_hand": 36.3,
+     "reorder_point": 27.6,
+     "target_stock": 40.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "machine_components": {
+     "on_hand": 36.3,
+     "reorder_point": 27.6,
+     "target_stock": 40.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "machinery": {
+     "on_hand": 20.5,
+     "reorder_point": 15.6,
+     "target_stock": 22.8,
+     "safety_stock": 0.8,
+     "daily_demand": 0.51
+    },
+    "mining_equipment": {
+     "on_hand": 12.1,
+     "reorder_point": 9.2,
+     "target_stock": 13.5,
+     "safety_stock": 0.5,
+     "daily_demand": 0.3
+    },
+    "packaging_materials": {
+     "on_hand": 40.0,
+     "reorder_point": 31.7,
+     "target_stock": 44.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "pumps": {
+     "on_hand": 45.0,
+     "reorder_point": 37.3,
+     "target_stock": 50.0,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "scientific_instruments": {
+     "on_hand": 22.5,
+     "reorder_point": 13.0,
+     "target_stock": 25.0,
+     "safety_stock": 0.5,
+     "daily_demand": 0.33
+    },
+    "structural_components": {
+     "on_hand": 36.3,
+     "reorder_point": 27.6,
+     "target_stock": 40.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "structural_materials": {
+     "on_hand": 41.1,
+     "reorder_point": 31.2,
+     "target_stock": 45.6,
+     "safety_stock": 1.5,
+     "daily_demand": 1.03
+    },
+    "switchgear": {
+     "on_hand": 44.5,
+     "reorder_point": 36.7,
+     "target_stock": 49.5,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "thermal_equipment": {
+     "on_hand": 36.3,
+     "reorder_point": 27.6,
+     "target_stock": 40.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "valves": {
+     "on_hand": 36.3,
+     "reorder_point": 27.6,
+     "target_stock": 40.4,
+     "safety_stock": 1.4,
+     "daily_demand": 0.91
+    },
+    "vehicles": {
+     "on_hand": 12.1,
+     "reorder_point": 9.2,
+     "target_stock": 13.5,
+     "safety_stock": 0.5,
+     "daily_demand": 0.3
+    }
+   }
+  },
+  {
+   "id": "veyara_works",
+   "name": "Veyara Industrial Works (assumed)",
+   "kind": "supplier",
+   "system_id": "veyara",
+   "port_id": "veyara_bluewater_orbital",
+   "cash": 623988,
+   "income_cr_per_day": 0,
+   "reliability": 0.96,
+   "items": {
+    "life_support_equipment": {
+     "on_hand": 6.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.57,
+     "max_stock": 22.8,
+     "unit_cost": 5654.4,
+     "price_mult": 0.9
+    },
+    "medical_consumables": {
+     "on_hand": 6.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.5,
+     "max_stock": 20.1,
+     "unit_cost": 3472.0,
+     "price_mult": 0.9
+    },
+    "medical_supplies": {
+     "on_hand": 3.9,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.32,
+     "max_stock": 13.0,
+     "unit_cost": 4464.0,
+     "price_mult": 0.9
+    },
+    "membranes": {
+     "on_hand": 6.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.56,
+     "max_stock": 22.5,
+     "unit_cost": 6014.0,
+     "price_mult": 0.9
+    },
+    "pharmaceuticals": {
+     "on_hand": 6.5,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.54,
+     "max_stock": 21.6,
+     "unit_cost": 9820.8,
+     "price_mult": 0.9
+    },
+    "sterile_goods": {
+     "on_hand": 6.0,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.5,
+     "max_stock": 20.1,
+     "unit_cost": 4030.0,
+     "price_mult": 0.9
+    },
+    "water_processing_equipment": {
+     "on_hand": 6.8,
+     "reorder_point": 0,
+     "target_stock": 0,
+     "safety_stock": 0,
+     "daily_demand": 0,
+     "produce_per_day": 0.56,
+     "max_stock": 22.5,
+     "unit_cost": 6528.6,
+     "price_mult": 0.9
+    }
+   }
+  },
+  {
+   "id": "waystation_exchange",
+   "name": "Waystation Commercial Exchange (assumed)",
+   "kind": "consumer",
+   "system_id": "waystation",
+   "port_id": "waystation_main_dock",
+   "cash": 1069604,
+   "income_cr_per_day": 11884,
+   "reliability": 1.0,
+   "items": {
+    "consumer_goods": {
+     "on_hand": 17.1,
+     "reorder_point": 7.0,
+     "target_stock": 19.0,
+     "safety_stock": 0.4,
+     "daily_demand": 0.23
+    },
+    "expedition_consumables": {
+     "on_hand": 16.4,
+     "reorder_point": 6.2,
+     "target_stock": 18.2,
+     "safety_stock": 0.3,
+     "daily_demand": 0.21
+    },
+    "medical_consumables": {
+     "on_hand": 14.7,
+     "reorder_point": 4.4,
+     "target_stock": 16.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "medical_gases": {
+     "on_hand": 14.4,
+     "reorder_point": 4.0,
+     "target_stock": 16.0,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "medical_supplies": {
+     "on_hand": 14.7,
+     "reorder_point": 4.4,
+     "target_stock": 16.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "pharmaceuticals": {
+     "on_hand": 14.7,
+     "reorder_point": 4.4,
+     "target_stock": 16.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "replacement_parts": {
+     "on_hand": 13.3,
+     "reorder_point": 2.7,
+     "target_stock": 14.7,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "sterile_goods": {
+     "on_hand": 14.7,
+     "reorder_point": 4.4,
+     "target_stock": 16.4,
+     "safety_stock": 0.2,
+     "daily_demand": 0.15
+    },
+    "water": {
+     "on_hand": 17.7,
+     "reorder_point": 7.7,
+     "target_stock": 19.7,
+     "safety_stock": 0.4,
+     "daily_demand": 0.29
+    }
+   }
+  }
+ ],
+ "carriers": [
+  {
+   "id": "meridian_outbound_a",
+   "company": "meridian_outbound",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "meridian_outbound_b",
+   "company": "meridian_outbound",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 90,
+   "dry_mass_t": 230,
+   "crew": 4,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 380,
+   "cash": 300000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "concord_interstellar_a",
+   "company": "concord_interstellar_freight",
+   "home_system_id": "concord",
+   "capacity_scu": 200,
+   "dry_mass_t": 420,
+   "crew": 6,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 700,
+   "cash": 900000,
+   "min_margin": 0.1,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_interstellar_b",
+   "company": "concord_interstellar_freight",
+   "home_system_id": "concord",
+   "capacity_scu": 200,
+   "dry_mass_t": 420,
+   "crew": 6,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 700,
+   "cash": 900000,
+   "min_margin": 0.1,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_interstellar_c",
+   "company": "concord_interstellar_freight",
+   "home_system_id": "concord",
+   "capacity_scu": 200,
+   "dry_mass_t": 420,
+   "crew": 6,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 700,
+   "cash": 900000,
+   "min_margin": 0.1,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_interstellar_d",
+   "company": "concord_interstellar_freight",
+   "home_system_id": "concord",
+   "capacity_scu": 200,
+   "dry_mass_t": 420,
+   "crew": 6,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 700,
+   "cash": 900000,
+   "min_margin": 0.1,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_interstellar_e",
+   "company": "concord_interstellar_freight",
+   "home_system_id": "concord",
+   "capacity_scu": 200,
+   "dry_mass_t": 420,
+   "crew": 6,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 700,
+   "cash": 900000,
+   "min_margin": 0.1,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_interstellar_f",
+   "company": "concord_interstellar_freight",
+   "home_system_id": "concord",
+   "capacity_scu": 200,
+   "dry_mass_t": 420,
+   "crew": 6,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 700,
+   "cash": 900000,
+   "min_margin": 0.1,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "meridian_outbound_c",
+   "company": "meridian_outbound",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 90,
+   "dry_mass_t": 230,
+   "crew": 4,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 380,
+   "cash": 300000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "meridian_outbound_d",
+   "company": "meridian_outbound",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 90,
+   "dry_mass_t": 230,
+   "crew": 4,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 380,
+   "cash": 300000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "meridian_outbound_e",
+   "company": "meridian_outbound",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 90,
+   "dry_mass_t": 230,
+   "crew": 4,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 380,
+   "cash": 300000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "meridian_outbound_f",
+   "company": "meridian_outbound",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 90,
+   "dry_mass_t": 230,
+   "crew": 4,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 380,
+   "cash": 300000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "concord_interstellar_g",
+   "company": "concord_interstellar_freight",
+   "home_system_id": "concord",
+   "capacity_scu": 200,
+   "dry_mass_t": 420,
+   "crew": 6,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 700,
+   "cash": 900000,
+   "min_margin": 0.1,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "sol_haulers_a",
+   "company": "sol_haulers",
+   "home_system_id": "sol",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord"
+   ]
+  },
+  {
+   "id": "new_houston_haulers_a",
+   "company": "new_houston_haulers",
+   "home_system_id": "new_houston",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "bradbury",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "hesperus_haulers_a",
+   "company": "hesperus_haulers",
+   "home_system_id": "hesperus",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord"
+   ]
+  },
+  {
+   "id": "hesperus_haulers_b",
+   "company": "hesperus_haulers",
+   "home_system_id": "hesperus",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord"
+   ]
+  },
+  {
+   "id": "hesperus_haulers_c",
+   "company": "hesperus_haulers",
+   "home_system_id": "hesperus",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord"
+   ]
+  },
+  {
+   "id": "hesperus_haulers_d",
+   "company": "hesperus_haulers",
+   "home_system_id": "hesperus",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord"
+   ]
+  },
+  {
+   "id": "concord_haulers_a",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_b",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_c",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_d",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_e",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_f",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_g",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_h",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_i",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_j",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "concord_haulers_k",
+   "company": "concord_haulers",
+   "home_system_id": "concord",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "sol",
+    "new_houston",
+    "hesperus",
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "carver_haulers_a",
+   "company": "carver_haulers",
+   "home_system_id": "carver",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "carver_haulers_b",
+   "company": "carver_haulers",
+   "home_system_id": "carver",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "iron_gate_haulers_a",
+   "company": "iron_gate_haulers",
+   "home_system_id": "iron_gate",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  {
+   "id": "iron_gate_haulers_b",
+   "company": "iron_gate_haulers",
+   "home_system_id": "iron_gate",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  {
+   "id": "iron_gate_haulers_c",
+   "company": "iron_gate_haulers",
+   "home_system_id": "iron_gate",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  {
+   "id": "iron_gate_haulers_d",
+   "company": "iron_gate_haulers",
+   "home_system_id": "iron_gate",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  {
+   "id": "keshar_haulers_a",
+   "company": "keshar_haulers",
+   "home_system_id": "keshar",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  {
+   "id": "keshar_haulers_b",
+   "company": "keshar_haulers",
+   "home_system_id": "keshar",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  {
+   "id": "bradbury_haulers_a",
+   "company": "bradbury_haulers",
+   "home_system_id": "bradbury",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos",
+    "new_houston",
+    "port_meridian"
+   ]
+  },
+  {
+   "id": "ilos_haulers_a",
+   "company": "ilos_haulers",
+   "home_system_id": "ilos",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "iron_gate",
+    "keshar",
+    "bradbury",
+    "ilos"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_a",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_b",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_c",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_d",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_e",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_f",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_g",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_h",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_i",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_j",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "port_meridian_haulers_k",
+   "company": "port_meridian_haulers",
+   "home_system_id": "port_meridian",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "concord",
+    "carver",
+    "bradbury",
+    "new_houston",
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara",
+    "foundry",
+    "orun",
+    "talos",
+    "waystation",
+    "lastlight"
+   ]
+  },
+  {
+   "id": "pelagos_haulers_a",
+   "company": "pelagos_haulers",
+   "home_system_id": "pelagos",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara"
+   ]
+  },
+  {
+   "id": "pelagos_haulers_b",
+   "company": "pelagos_haulers",
+   "home_system_id": "pelagos",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara"
+   ]
+  },
+  {
+   "id": "tidemark_haulers_a",
+   "company": "tidemark_haulers",
+   "home_system_id": "tidemark",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara"
+   ]
+  },
+  {
+   "id": "tidemark_haulers_b",
+   "company": "tidemark_haulers",
+   "home_system_id": "tidemark",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara"
+   ]
+  },
+  {
+   "id": "veyara_haulers_a",
+   "company": "veyara_haulers",
+   "home_system_id": "veyara",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "pelagos",
+    "tidemark",
+    "veyara"
+   ]
+  },
+  {
+   "id": "foundry_haulers_a",
+   "company": "foundry_haulers",
+   "home_system_id": "foundry",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "foundry",
+    "orun"
+   ]
+  },
+  {
+   "id": "foundry_haulers_b",
+   "company": "foundry_haulers",
+   "home_system_id": "foundry",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "foundry",
+    "orun"
+   ]
+  },
+  {
+   "id": "foundry_haulers_c",
+   "company": "foundry_haulers",
+   "home_system_id": "foundry",
+   "capacity_scu": 120,
+   "dry_mass_t": 260,
+   "crew": 4,
+   "wage_cr_per_day": 420,
+   "fixed_cr_per_day": 430,
+   "cash": 400000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "foundry",
+    "orun"
+   ]
+  },
+  {
+   "id": "orun_haulers_a",
+   "company": "orun_haulers",
+   "home_system_id": "orun",
+   "capacity_scu": 60,
+   "dry_mass_t": 170,
+   "crew": 3,
+   "wage_cr_per_day": 300,
+   "fixed_cr_per_day": 300,
+   "cash": 250000,
+   "min_margin": 0.08,
+   "network": [
+    "port_meridian",
+    "foundry",
+    "orun"
+   ]
+  }
+ ]
+}

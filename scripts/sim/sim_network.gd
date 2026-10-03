@@ -7,6 +7,7 @@ var adj: Dictionary = {}          # system -> {neighbour: distance_ly}
 var routes: Dictionary = {}       # "a|b" (sorted) -> route dict
 var ports: Dictionary = {}        # port_id -> port dict
 var ports_by_system: Dictionary = {}
+var _path_cache: Dictionary = {}
 
 static func read_json(path: String) -> Variant:
 	var f := FileAccess.open(path, FileAccess.READ)
@@ -19,7 +20,7 @@ static func pair_key(a: String, b: String) -> String:
 	return (a + "|" + b) if a < b else (b + "|" + a)
 
 func load_from(world_dir: String) -> void:
-	adj.clear(); routes.clear(); ports.clear(); ports_by_system.clear()
+	_path_cache.clear(); adj.clear(); routes.clear(); ports.clear(); ports_by_system.clear()
 	var rd: Dictionary = read_json(world_dir + "routes.json")
 	for r in rd.get("routes", []):
 		var a: String = r["a"]
@@ -44,6 +45,14 @@ func route(a: String, b: String) -> Dictionary:
 
 ## Shortest path (by distance) as an array of system ids, endpoints included.
 func path(from_sys: String, to_sys: String) -> Array:
+	var ck := from_sys + ">" + to_sys               # the graph never changes after load, so remember answers
+	if _path_cache.has(ck):
+		return (_path_cache[ck] as Array).duplicate()
+	var res := _path(from_sys, to_sys)
+	_path_cache[ck] = res
+	return res.duplicate()
+
+func _path(from_sys: String, to_sys: String) -> Array:
 	if from_sys == to_sys:
 		return [from_sys]
 	var dist := {from_sys: 0.0}
