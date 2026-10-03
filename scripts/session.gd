@@ -147,6 +147,11 @@ static func day() -> int:
 	return SimWorld.day(sim) if sim != null else 0
 
 
+## True once the captain is in debt with no contract in hand: the bank takes the ship and the run ends.
+static func insolvent() -> bool:
+	return sim != null and int(profile.get("credits", 0)) < 0 and active_contract().is_empty()
+
+
 ## Let the world run while the ship sits in port. Wages and ownership still cost money.
 static func wait_days(days: int) -> Dictionary:
 	if slot < 0 or sim == null or days < 1:

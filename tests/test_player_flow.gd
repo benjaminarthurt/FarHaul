@@ -61,6 +61,12 @@ func _run() -> void:
 	check(bool(w.ok) and Session.sim.hour == h_before + 72, "three days pass")
 	check(int(Session.profile.credits) < c_before, "wages and ownership cost %d cr" % (c_before - int(Session.profile.credits)))
 
+	print("dock helpers")
+	check(SimWorld.daily_cost(Session.sim) > 0.0 and SimWorld.runway_days(Session.sim) > 0, "running costs %d cr/day, cash lasts %d days" % [roundi(SimWorld.daily_cost(Session.sim)), SimWorld.runway_days(Session.sim)])
+	var dests := SimWorld.destinations(Session.sim)
+	check(not dests.is_empty() and float(dests[0].cost) > 0.0, "fly-empty options listed (%d, nearest %s)" % [dests.size(), String(dests[0].system_id) if not dests.is_empty() else "-"])
+	check(not bool(Session.travel_empty(Session.system_id()).ok), "cannot fly empty to where you already are")
+
 	print("save and load keep the world")
 	var hour_now := Session.sim.hour
 	var cash_now := SimWorld.credits(Session.sim)
@@ -81,6 +87,13 @@ func _run() -> void:
 	SimWorld.sync(Session.sim, Session.profile, ship)
 	check(SimWorld.credits(Session.sim) == int(Session.profile.credits), "sim cash follows the profile")
 	check(absf(float(Session.sim.summary()["cash_error"])) < 0.01, "money is still conserved")
+
+	print("insolvency")
+	var saved_credits := int(Session.profile.credits)
+	check(not Session.insolvent(), "a captain with cash is not insolvent")
+	Session.profile["credits"] = -50
+	check(Session.insolvent(), "a captain in debt with no contract is insolvent")
+	Session.profile["credits"] = saved_credits
 
 	print("a captain working steadily for 60 days")
 	var trips := 0

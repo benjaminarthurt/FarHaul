@@ -150,3 +150,42 @@ static func nearest_freight(sim: EconomySim) -> String:
 			best = k["origin_sys"]
 	return best
 
+
+
+## What the ship costs every day it exists, crew and ownership after the difficulty level.
+static func daily_cost(sim: EconomySim) -> float:
+	var c := player(sim)
+	if c.is_empty():
+		return 0.0
+	return float(c["crew"]) * float(c["wage"]) * sim._lv(c, "wage_mult") + float(c["fixed"]) * sim._lv(c, "ownership_mult")
+
+
+## Whole days the player's cash would last if the ship did nothing.
+static func runway_days(sim: EconomySim) -> int:
+	var d := daily_cost(sim)
+	return 9999 if d <= 0.0 else int(floorf(float(player(sim).get("cash", 0.0)) / d))
+
+
+## Where the ship could fly empty from here: every system on a feasible route, with the trip's
+## distance, time, estimated cost and how many freight offers wait there. Nearest first.
+static func destinations(sim: EconomySim) -> Array[Dictionary]:
+	var c := player(sim)
+	var out: Array[Dictionary] = []
+	if c.is_empty() or c["state"] != "idle":
+		return out
+	var freight := {}
+	for k in sim.contracts.values():
+		if k["status"] == "offered":
+			freight[k["origin_sys"]] = int(freight.get(k["origin_sys"], 0)) + 1
+	for s in sim.net.adj.keys():
+		if s == c["sys"] or not (s in c["network"]):
+			continue
+		var path := sim.net.path(c["sys"], s)
+		if path.is_empty() or not sim._path_feasible(c, path, 0.0):
+			continue
+		var t: Dictionary = sim._trip_parts(c, path, 0.0)
+		var cost: float = float(t["fuel"]) * sim._lv(c, "fuel_price_mult") + float(t["fees"]) * sim._lv(c, "port_fee_mult") \
+				+ float(t["wages"]) * sim._lv(c, "wage_mult") + float(t["fixed"]) * sim._lv(c, "ownership_mult")
+		out.append({"system_id": s, "ly": sim.net.path_ly(path), "days": float(t["days"]), "cost": cost, "freight": int(freight.get(s, 0))})
+	out.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.ly < b.ly)
+	return out

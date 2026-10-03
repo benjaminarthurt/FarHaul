@@ -12,6 +12,10 @@ var contract_panel: PanelContainer
 var contract_list: VBoxContainer
 var depart_btn: Button
 var deliver_btn: Button
+var wait_btn: Button
+var fly_btn: Button
+var fly_panel: PanelContainer
+var fly_list: VBoxContainer
 var leaving := false
 
 
@@ -126,6 +130,20 @@ func _build_ui() -> void:
 	_row(grid, "Ship", Session.ship_label())
 	_row(grid, "Credits", "%s cr" % ShipStats.commas(int(p.credits)))
 	_row(grid, "Difficulty", Worlds.difficulty(p.difficulty).name)
+	if Session.sim != null:
+		_row(grid, "Day", str(Session.day()))
+		var runway := SimWorld.runway_days(Session.sim)
+		_row(grid, "Running costs", "%s cr/day  ·  cash lasts %s" % [ShipStats.commas(roundi(SimWorld.daily_cost(Session.sim))),
+				"over a year" if runway > 365 else "%d days" % runway])
+	if Session.insolvent():
+		var broke := Brand.note("INSOLVENT. Your cash is gone and the bank is taking the ship. This run is over: start a new game from the main menu.", 16)
+		broke.add_theme_color_override("font_color", Color(0.95, 0.4, 0.3))
+		broke.custom_minimum_size = Vector2(440, 0)
+		col.add_child(broke)
+	elif Session.sim != null and SimWorld.runway_days(Session.sim) < 7 and Session.active_contract().is_empty():
+		var warn := Brand.note("Cash covers less than a week of running costs. Take freight now.", 15)
+		warn.add_theme_color_override("font_color", Brand.AMBER)
+		col.add_child(warn)
 	col.add_child(_gap(10))
 
 	var menu := VBoxContainer.new()
@@ -137,6 +155,10 @@ func _build_ui() -> void:
 	_button(menu, "CONTRACT BOARD", _show_contracts)
 	depart_btn = _button(menu, "DEPART", _depart)
 	deliver_btn = _button(menu, "DELIVER FREIGHT", _deliver)
+	wait_btn = _button(menu, "WAIT A DAY", _wait_day)
+	fly_btn = _button(menu, "FLY EMPTY", _show_destinations)
+	wait_btn.tooltip_text = "Let a day pass. The rest of the economy keeps moving; your crew and ship still cost money."
+	fly_btn.tooltip_text = "Fly without cargo to another system, to reach freight or leave a port with none."
 	_button(menu, "SAVE GAME", _save)
 	_button(menu, "MAIN MENU", _main_menu)
 	status = Label.new()
@@ -152,6 +174,14 @@ func _build_ui() -> void:
 	contract_list = VBoxContainer.new()
 	contract_list.add_theme_constant_override("separation", 4)
 	contract_panel.add_child(contract_list)
+	fly_panel = PanelContainer.new()
+	fly_panel.visible = false
+	fly_panel.add_theme_stylebox_override("panel", Brand.panel_box())
+	fly_panel.custom_minimum_size = Vector2(520, 0)
+	col.add_child(fly_panel)
+	fly_list = VBoxContainer.new()
+	fly_list.add_theme_constant_override("separation", 4)
+	fly_panel.add_child(fly_list)
 	var note := Brand.note("The shipyard is where you build and fit your ship. It is only open at a yard like this one.")
 	note.custom_minimum_size = Vector2(380, 0)
 	col.add_child(note)
@@ -173,6 +203,8 @@ func _build_ui() -> void:
 		info.add_child(Brand.note("Direct routes to %s." % ", ".join(PackedStringArray(w.neighbours)), 14))
 	_refresh_actions()
 	yard_btn.grab_focus()
+	if Session.insolvent():
+		yard_btn.disabled = true
 
 	fade = ColorRect.new()
 	fade.color = Color(0, 0, 0, 1)
@@ -226,6 +258,9 @@ func _go(scene: String) -> void:
 
 
 func _show_contracts() -> void:
+	if Session.insolvent():
+		status.text = "No one will give a bankrupt captain freight."
+		return
 	contract_panel.visible = not contract_panel.visible
 	for child in contract_list.get_children():
 		child.queue_free()
@@ -247,9 +282,10 @@ func _show_contracts() -> void:
 		var goods := Worlds.commodity(String(c.commodity))
 		var destination := Worlds.port(String(c.destination_port_id))
 		var line := Button.new()
-		line.text = "%s  →  %s\n%.1f t available  ·  %.2f ly  ·  %s cr/t  ·  up to %s cr\nACCEPT & LOAD" % [
+		line.text = "%s  →  %s\n%.1f t available  ·  %.2f ly  ·  %s cr/t  ·  up to %s cr%s\nACCEPT & LOAD" % [
 			goods.name, destination.get("name", c.destination_system_id), float(c.offer), float(c.distance_ly),
-			ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate)))]
+			ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate))),
+			"  ·  due in %.0f days" % float(c.deadline_days) if c.has("sim_contract") else ""]
 		Brand.style_button(line, 14)
 		line.pressed.connect(func() -> void: _accept(c))
 		contract_list.add_child(line)
@@ -268,8 +304,48 @@ func _refresh_actions() -> void:
 	if depart_btn == null or deliver_btn == null:
 		return
 	var c := Session.active_contract()
+	if wait_btn != null:
+		var idle := c.is_empty() and Session.sim != null and not Session.insolvent()
+		wait_btn.disabled = not idle
+		fly_btn.disabled = not idle
 	depart_btn.disabled = c.is_empty() or String(c.get("origin_system_id", "")) != Session.system_id()
 	deliver_btn.disabled = c.is_empty() or String(c.get("destination_system_id", "")) != Session.system_id()
+
+
+func _wait_day() -> void:
+	var result := Session.wait_days(1)
+	status.text = result.message
+	if bool(result.ok):
+		get_tree().reload_current_scene()
+
+
+func _show_destinations() -> void:
+	fly_panel.visible = not fly_panel.visible
+	for child in fly_list.get_children():
+		child.queue_free()
+	if not fly_panel.visible or Session.sim == null:
+		return
+	fly_list.add_child(Brand.heading("FLY EMPTY — NEAREST FIRST", 15))
+	var options := SimWorld.destinations(Session.sim)
+	if options.is_empty():
+		fly_list.add_child(Brand.note("No other system is within reach of your tanks."))
+		return
+	fly_list.add_child(Brand.note("You pay fuel, port fees, crew and ship costs for the trip and earn nothing until you load freight."))
+	for o in options.slice(0, 8):
+		var sid: String = o.system_id
+		var line := Button.new()
+		line.text = "%s\n%.2f ly  ·  %.1f days  ·  about %s cr  ·  %s" % [Worlds.system(sid).get("name", sid), float(o.ly), float(o.days),
+				ShipStats.commas(roundi(float(o.cost))), "%d freight posted" % int(o.freight) if int(o.freight) > 0 else "no freight posted"]
+		Brand.style_button(line, 14)
+		line.pressed.connect(func() -> void: _fly(sid))
+		fly_list.add_child(line)
+
+
+func _fly(system_id: String) -> void:
+	var result := Session.travel_empty(system_id)
+	status.text = result.message
+	if bool(result.ok):
+		get_tree().reload_current_scene()
 
 
 func _depart() -> void:

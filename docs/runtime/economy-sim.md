@@ -139,10 +139,15 @@ of work, and checks ledger and money conservation throughout.
 small parameter changes, so tests use bands, not exact figures. A past commit briefly regressed the
 scenario to 13 carriers with three insolvent; it is back to 11 carriers with at most one loser.
 
+**Dock.** The dock shows the day, running costs and how long cash lasts, plus WAIT A DAY and FLY EMPTY
+(a nearest-first list with distance, days, estimated cost and freight posted at each stop). A warning
+appears when cash covers under a week; a captain in debt with no contract is insolvent and the run is
+over (`Session.insolvent`).
+
 **Known gaps.** The builder has no drive or crew modules, so speed, crew and fuel units are derived, not
-designed. Dead-end consumer ports (for example Talos) have no outbound freight, so the captain must
-reposition empty. The dock has no "wait a day" or "fly empty" buttons yet (`Session.wait_days` and
-`Session.travel_empty` exist). When the sim is absent the legacy contract board is used.
+designed. Dead-end consumer ports (for example Talos) have no outbound freight, so the captain must fly
+empty. When the sim is absent the legacy contract board is used. Insolvency ends the run but there is
+no restart or ship-sale screen yet.
 
 ## Assumptions to replace with data
 
