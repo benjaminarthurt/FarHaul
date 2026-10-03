@@ -103,12 +103,12 @@ margin on the world's direct lanes; the full simulation confirms it. Three start
 
 | Level | Probe | Simulated | Net per ship per day | Pay multiplier |
 |---|---|---|---|---|
-| Easy | 31% | 30% | about 275 cr | 1.15 |
-| Normal | 16% | 16% | about 120 cr | 0.98 |
-| Hard | 2% | 1-2% | about 10 cr | 0.96 (costs 10-20% higher) |
+| Easy | 31% | 31% | about 240 cr | 0.91 |
+| Normal | 16% | 16% | about 105 cr | 0.78 |
+| Hard | 2% | 2% | about 13 cr | 0.77 (costs 10-20% higher) |
 
 On hard the ship is a few credits a day from the red, and paid time is the skill: the benchmark is 60%
-paid time with 55% of return legs carrying freight (it was 30% before the frontier export chains below, then 74% with the first single chain; refit each time the world changed, and the pay multipliers were re-solved). The stand-in captains in `test_player_economy.gd` carry the `first_look` flag: they see new freight before the NPC fleets do, as the human does, so a larger NPC fleet does not starve them. A captain who idles more loses money. Tests:
+paid time with 70% of return legs carrying freight (it was 30% before the frontier export chains below, then 74% with the first single chain; refit each time the world changed, and the pay multipliers were re-solved). The stand-in captains in `test_player_economy.gd` carry the `first_look` flag: they see new freight before the NPC fleets do, as the human does, so a larger NPC fleet does not starve them. A captain who idles more loses money. Tests:
 `test_economy_levels.gd` (probe, quick) and `test_player_economy.gd` (simulation, about two minutes). To
 retune, edit the targets or secondary multipliers and run `tests/solve_levels.gd`, which bisects the pay
 multiplier to hit each target margin; rerun it whenever base rates, fuel, ship costs or the starter change.
@@ -161,6 +161,16 @@ second Meridian outbound ship absorb the new volume). Return-chain consumers sto
 wants gets dearer without the normal cap once it has waited 8 days (`stale_*` parameters), so stranded
 parcels move and show up on the player's board as fat contracts. `first_look` (carrier flag) lets a carrier
 see contracts before the board delay; only the player stand-ins use it.
+
+**Crew wages.** The player's payroll is no longer a flat 340 cr per head (`ship_economy.json`, `wages` block, all
+assumed). The captain is the owner and takes a draw (240 cr/day), the second crew member is an engineer (400),
+any further crew are hands (300). Hired crew are paid at their home port's rate: index = 1 + 0.04 per decade of
+population against New Houston (the reference, 1.00), clamped to 0.8-1.2, so Sol is about 1.06 and Talos about
+0.84. `SimShip.payroll` and `SimShip.wage_index` compute it; the carrier's `wage` is the average per head so
+the rest of the simulation is unchanged, and each level's `wage_mult` scales the whole payroll. NPC carriers keep
+their own wages. The dock shows a Crew pay row. The pay multipliers above were re-solved for it (cheaper starter
+running costs, so lower pay multipliers). Not built yet: moving the home port changes the rate (the index follows
+`home`, which is fixed at the start port), and bunk versus quarters comfort does not affect pay.
 
 **Flight and the economy.** A flight in free flight costs the fuel burned (at the port's price and the level's
 fuel multiplier) plus hull repairs, and the clock moves on by the hours it took (`SimWorld.settle_flight`).

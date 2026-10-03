@@ -26,6 +26,7 @@ static func create(profile: Dictionary, ship: ShipData) -> EconomySim:
 	c["id"] = PLAYER
 	c["company"] = "player"
 	c["home_system_id"] = String(profile.system_id)
+	c["wage_cr_per_day"] = float(c["wage_cr_per_day"]) * SimShip.wage_index(String(profile.system_id))   # crew hired here are paid local rates
 	c["cash"] = float(profile.credits)
 	c["min_margin"] = 0.0
 	c["network"] = sim.net.adj.keys()
@@ -75,6 +76,7 @@ static func sync(sim: EconomySim, profile: Dictionary, ship: ShipData) -> void:
 	c["capacity_kg"] = fresh["capacity_kg"]
 	c["dry_mass_t"] = fresh["dry_mass_t"]
 	c["crew"] = fresh["crew"]
+	c["wage"] = float(fresh["wage_cr_per_day"]) * SimShip.wage_index(String(c["home"]))
 	c["fixed"] = fresh["fixed_cr_per_day"]
 	c["speed"] = fresh["ly_per_day"]
 	c["fuel_units"] = fresh["fuel_units"]
@@ -159,6 +161,18 @@ static func daily_cost(sim: EconomySim) -> float:
 	if c.is_empty():
 		return 0.0
 	return float(c["crew"]) * float(c["wage"]) * sim._lv(c, "wage_mult") + float(c["fixed"]) * sim._lv(c, "ownership_mult")
+
+
+## What each person aboard costs per day: role and pay after the home port's rate and the level.
+static func payroll_lines(sim: EconomySim) -> Array[Dictionary]:
+	var c := player(sim)
+	var out: Array[Dictionary] = []
+	if c.is_empty():
+		return out
+	var k := SimShip.wage_index(String(c["home"])) * sim._lv(c, "wage_mult")
+	for r in SimShip.payroll(int(c["crew"])):
+		out.append({"role": r["role"], "pay": float(r["pay"]) * k})
+	return out
 
 
 ## Whole days the player's cash would last if the ship did nothing.

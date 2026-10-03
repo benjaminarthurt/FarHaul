@@ -287,6 +287,22 @@ func _init() -> void:
 	check(SimShip.crew_for(120.0) == 4 and SimShip.crew_for(24.0) == 1, "crew formula: 24 t needs 1, 120 t needs 4")
 	check(lib.has_def(&"bunk") and lib.get_def(&"bunk").berths == 1 and lib.get_def(&"room_2x2").berths == 2, "bunk and quarters provide berths")
 
+	print("wages")
+	var pr1 := SimShip.payroll(1)
+	var pr3 := SimShip.payroll(3)
+	check(pr1.size() == 1 and String(pr1[0].role).begins_with("Captain"), "a one-person ship pays only the owner's draw")
+	check(float(pr1[0].pay) < float(SimShip.config()["crew"]["wage_cr_per_day"]), "the owner's draw is below the old flat wage")
+	check(pr3.size() == 3 and pr3[1].role == "Engineer" and pr3[2].role == "Hand", "crew of three: captain, engineer, hand")
+	check(float(pr3[1].pay) > float(pr3[2].pay), "engineers earn more than hands")
+	check(absf(SimShip.wage_index("new_houston") - 1.0) < 0.001, "the reference port pays the base rate")
+	check(SimShip.wage_index("sol") > 1.0 and SimShip.wage_index("talos") < 1.0, "core pays more, frontier pays less (sol %.2f, talos %.2f)" % [SimShip.wage_index("sol"), SimShip.wage_index("talos")])
+	check(SimShip.wage_index("nowhere") == 1.0, "unknown systems pay the base rate")
+	check(absf(float(SimShip.profile(st_ship).wage_cr_per_day) * float(SimShip.profile(st_ship).crew) - (func() -> float:
+		var t := 0.0
+		for r in SimShip.payroll(int(SimShip.profile(st_ship).crew)):
+			t += float(r.pay)
+		return t).call()) < 0.01, "average wage times crew equals the payroll")
+
 	print("")
 	print("FAILED: %d" % failures if failures > 0 else "all passed")
 	quit(1 if failures > 0 else 0)

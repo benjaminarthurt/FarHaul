@@ -9,7 +9,15 @@
   "crew": {
     "minimum": 1,
     "wage_cr_per_day": 340,
-    "scu_per_extra_crew": 40
+    "scu_per_extra_crew": 40,
+    "note": "wage_cr_per_day is now only the fallback for NPC carriers; ships built by the player are paid by the 'wages' block below."
+  },
+  "wages": {
+    "owner_draw_cr_per_day": 240,
+    "role_wage_cr_per_day": {"engineer": 400, "hand": 300},
+    "regional": {"reference_population": 640000000, "per_decade": 0.04, "min": 0.8, "max": 1.2,
+      "note": "Hired crew are paid at their home port's rate (home_system_id). Index = 1 + per_decade x log10(population / reference), clamped. New Houston, the starting port, is 1.00; Sol is about 1.06, Talos about 0.84."},
+    "note": "ASSUMED. The captain is the owner and takes a draw, not a wage; the second crew member is the engineer, any further crew are hands. Each level's wage_mult scales the whole payroll, so Hard pays dearer for the same crew."
   },
   "ownership": {
     "insurance_annual": 0.02,

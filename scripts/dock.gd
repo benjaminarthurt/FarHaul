@@ -138,6 +138,10 @@ func _build_ui() -> void:
 		var runway := SimWorld.runway_days(Session.sim)
 		_row(grid, "Running costs", "%s cr/day  ·  cash lasts %s" % [ShipStats.commas(roundi(SimWorld.daily_cost(Session.sim))),
 				"over a year" if runway > 365 else "%d days" % runway])
+		var pay: Array[String] = []
+		for r in SimWorld.payroll_lines(Session.sim):
+			pay.append("%s %s" % [String(r.role).get_slice(" (", 0), ShipStats.commas(roundi(r.pay))])
+		_row(grid, "Crew pay", "%s cr/day  ·  %s rates" % [", ".join(pay), String(Session.sim.carriers[SimWorld.PLAYER]["home"]).replace("_", " ").capitalize()])
 	if Session.insolvent():
 		var broke := Brand.note("INSOLVENT. Your cash is gone and the bank is taking the ship. This run is over: start a new game from the main menu.", 16)
 		broke.add_theme_color_override("font_color", Color(0.95, 0.4, 0.3))

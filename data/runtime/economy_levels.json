@@ -4,14 +4,14 @@
   "note": "Economy difficulty. These multipliers change the PLAYER's operating position only; NPC carriers, prices and the rest of the world run on the base economy at every level, so a harder level means a harder life for you, not a different universe. target_margin is the net margin the benchmark ship (the starter) should earn on the reference lane mix; tests/test_economy_levels.gd checks each level lands inside its band, and tools like it retune the multipliers when the economy changes. Multipliers were solved with tests/solve_levels.gd (bisect freight_pay_mult against target margin); rerun it whenever base rates, fuel, ship costs or the starter ship change. freight_pay_mult above 1 is the owner-operator premium (small, odd and urgent loads pay more per SCU than trunk freight); the consignee pays it, so money is conserved.",
   "benchmark": {
     "utilisation": 0.6,
-    "backhaul_fraction": 0.55,
-    "note": "Share of time the ship has paid cargo (0.60) and the share of return legs that also carry paid cargo (0.55). Both are measured on starter-class stand-in captains in the Hopewell scenario (tests/test_player_economy.gd): 57-65% paid time. The stand-ins see freight before the NPC fleets, as the human does (carrier flag first_look). The backhaul figure fits the probe to the full simulation at the normal level; it has moved as the world gained frontier export chains and more carriers (30% -> 74% -> 55%). A sloppier captain idles more and loses money."
+    "backhaul_fraction": 0.70,
+    "note": "Share of time the ship has paid cargo (0.60) and the share of return legs that also carry paid cargo (0.70). Both are measured on starter-class stand-in captains in the Hopewell scenario (tests/test_player_economy.gd): 57-65% paid time. The stand-ins see freight before the NPC fleets, as the human does (carrier flag first_look). The backhaul figure fits the probe to the full simulation at the normal level; it has moved as the world gained frontier export chains and more carriers (30% -> 74% -> 55% -> 70%). A sloppier captain idles more and loses money."
   },
   "levels": [
     {
       "id": "easy",
       "name": "Easy",
-      "freight_pay_mult": 1.15,
+      "freight_pay_mult": 0.91,
       "fuel_price_mult": 0.9,
       "port_fee_mult": 0.9,
       "wage_mult": 1.0,
@@ -25,7 +25,7 @@
     {
       "id": "normal",
       "name": "Normal",
-      "freight_pay_mult": 0.98,
+      "freight_pay_mult": 0.78,
       "fuel_price_mult": 1.0,
       "port_fee_mult": 1.0,
       "wage_mult": 1.0,
@@ -39,7 +39,7 @@
     {
       "id": "hard",
       "name": "Hard",
-      "freight_pay_mult": 0.96,
+      "freight_pay_mult": 0.77,
       "fuel_price_mult": 1.2,
       "port_fee_mult": 1.2,
       "wage_mult": 1.1,
