@@ -1,0 +1,387 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "id": "hopewell_filters",
+  "note": "Simulation seed for the headless economy prototype. Everything here is a PLACEHOLDER ASSUMPTION used to make existing world data run; values marked (assumed) are not yet canon and are the first things calibration will change. No world file names a filter producer, so the producer and distributor below are assumed. Procurement policy: reorder_point and target_stock in the facility items are FLOORS; companies raise them to cover estimated lead time plus safety_days of planning demand (the larger of consumption and the outflow they supply to others).",
+  "start_day": 286030,
+  "params": {
+    "ly_per_day": 1.5,
+    "port_dwell_hours": 12,
+    "loading_hours_base": 6,
+    "loading_hours_per_scu": 0.05,
+    "dispatch_lag_hours": 12,
+    "lot_size_scu": 40,
+    "hub_systems": [
+      "concord",
+      "port_meridian"
+    ],
+    "base_rate_cr_per_scu_ly": 75,
+    "frontier_systems": [
+      "talos",
+      "waystation",
+      "lastlight"
+    ],
+    "frontier_modifier": 1.15,
+    "rate_escalation_per_day": 0.04,
+    "rate_cap_modifier": 2.4,
+    "fuel_cr_per_unit": 38,
+    "handling_cr_per_scu": 6,
+    "transfer_fee_cr_per_scu": 18,
+    "maintenance_reserve_fraction": 0.09,
+    "reference_ship": {
+      "capacity_scu": 60,
+      "dry_mass_t": 180,
+      "crew": 3,
+      "wage_cr_per_day": 340,
+      "fixed_cr_per_day": 380
+    },
+    "deadline_slack": 1.5,
+    "safety_days": 4,
+    "cycle_days": 14,
+    "idle_return_hours": 24,
+    "lead_learning_cap": 2.5
+  },
+  "facilities": [
+    {
+      "id": "hopewell_water_one",
+      "name": "Hopewell Water Plant One",
+      "kind": "consumer",
+      "system_id": "talos",
+      "port_id": "talos_hopewell_field",
+      "cash": 2500000,
+      "income_cr_per_day": 95000,
+      "reliability": 1.0,
+      "items": {
+        "filters": {
+          "on_hand": 47,
+          "reorder_point": 120,
+          "target_stock": 310,
+          "safety_stock": 0,
+          "daily_demand": 13.4
+        }
+      }
+    },
+    {
+      "id": "beacon_heatplant",
+      "name": "Beacon Heatplant",
+      "kind": "consumer",
+      "system_id": "lastlight",
+      "port_id": "lastlight_orbital",
+      "cash": 600000,
+      "income_cr_per_day": 22000,
+      "reliability": 1.0,
+      "items": {
+        "filters": {
+          "on_hand": 90,
+          "reorder_point": 30,
+          "target_stock": 90,
+          "safety_stock": 0,
+          "daily_demand": 3.0
+        }
+      }
+    },
+    {
+      "id": "tank_farm_coop",
+      "name": "Tank Farm Cooperative",
+      "kind": "consumer",
+      "system_id": "waystation",
+      "port_id": "waystation_main_dock",
+      "cash": 700000,
+      "income_cr_per_day": 30000,
+      "reliability": 1.0,
+      "items": {
+        "filters": {
+          "on_hand": 120,
+          "reorder_point": 40,
+          "target_stock": 120,
+          "safety_stock": 0,
+          "daily_demand": 5.0
+        }
+      }
+    },
+    {
+      "id": "meridian_chandlers_union",
+      "name": "Meridian Chandlers Union",
+      "kind": "distributor",
+      "system_id": "port_meridian",
+      "port_id": "port_meridian_main",
+      "cash": 3000000,
+      "income_cr_per_day": 20000,
+      "reliability": 0.95,
+      "items": {
+        "filters": {
+          "on_hand": 600,
+          "reorder_point": 220,
+          "target_stock": 600,
+          "safety_stock": 40,
+          "daily_demand": 4.0,
+          "price_mult": 1.12
+        }
+      }
+    },
+    {
+      "id": "roosevelt_filter_works",
+      "name": "Roosevelt Filter Works (assumed)",
+      "kind": "supplier",
+      "system_id": "new_houston",
+      "port_id": "roosevelt_orbital_freight",
+      "cash": 1000000,
+      "income_cr_per_day": 0,
+      "reliability": 0.96,
+      "items": {
+        "filters": {
+          "on_hand": 4000,
+          "reorder_point": 0,
+          "target_stock": 0,
+          "safety_stock": 0,
+          "daily_demand": 0,
+          "produce_per_day": 70,
+          "max_stock": 6000,
+          "unit_cost": 2100,
+          "price_mult": 0.9
+        }
+      }
+    }
+  ],
+  "carriers": [
+    {
+      "id": "meridian_outbound_a",
+      "company": "meridian_outbound",
+      "home_system_id": "port_meridian",
+      "capacity_scu": 60,
+      "dry_mass_t": 170,
+      "crew": 3,
+      "wage_cr_per_day": 300,
+      "fixed_cr_per_day": 300,
+      "cash": 250000,
+      "min_margin": 0.08,
+      "network": [
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ]
+    },
+    {
+      "id": "meridian_outbound_b",
+      "company": "meridian_outbound",
+      "home_system_id": "port_meridian",
+      "capacity_scu": 90,
+      "dry_mass_t": 230,
+      "crew": 4,
+      "wage_cr_per_day": 300,
+      "fixed_cr_per_day": 380,
+      "cash": 300000,
+      "min_margin": 0.08,
+      "network": [
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ]
+    },
+    {
+      "id": "concord_interstellar_a",
+      "company": "concord_interstellar_freight",
+      "home_system_id": "concord",
+      "capacity_scu": 200,
+      "dry_mass_t": 420,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "concord",
+        "carver",
+        "bradbury",
+        "new_houston",
+        "port_meridian"
+      ]
+    },
+    {
+      "id": "sol_transit_a",
+      "company": "sol_transit_combined",
+      "home_system_id": "new_houston",
+      "capacity_scu": 220,
+      "dry_mass_t": 460,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "sol",
+        "new_houston",
+        "concord"
+      ]
+    },
+    {
+      "id": "redline_coop_a",
+      "company": "redline_independent_coop",
+      "home_system_id": "new_houston",
+      "capacity_scu": 45,
+      "dry_mass_t": 140,
+      "crew": 2,
+      "wage_cr_per_day": 340,
+      "fixed_cr_per_day": 260,
+      "cash": 180000,
+      "min_margin": 0.06,
+      "network": [
+        "new_houston",
+        "hesperus",
+        "concord",
+        "carver"
+      ]
+    },
+    {
+      "id": "concord_interstellar_b",
+      "company": "concord_interstellar_freight",
+      "home_system_id": "concord",
+      "capacity_scu": 200,
+      "dry_mass_t": 420,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "concord",
+        "carver",
+        "bradbury",
+        "new_houston",
+        "port_meridian"
+      ]
+    },
+    {
+      "id": "concord_interstellar_c",
+      "company": "concord_interstellar_freight",
+      "home_system_id": "concord",
+      "capacity_scu": 200,
+      "dry_mass_t": 420,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "concord",
+        "carver",
+        "bradbury",
+        "new_houston",
+        "port_meridian"
+      ]
+    },
+    {
+      "id": "concord_interstellar_d",
+      "company": "concord_interstellar_freight",
+      "home_system_id": "concord",
+      "capacity_scu": 200,
+      "dry_mass_t": 420,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "concord",
+        "carver",
+        "bradbury",
+        "new_houston",
+        "port_meridian"
+      ]
+    },
+    {
+      "id": "concord_interstellar_e",
+      "company": "concord_interstellar_freight",
+      "home_system_id": "concord",
+      "capacity_scu": 200,
+      "dry_mass_t": 420,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "concord",
+        "carver",
+        "bradbury",
+        "new_houston",
+        "port_meridian"
+      ]
+    },
+    {
+      "id": "concord_interstellar_f",
+      "company": "concord_interstellar_freight",
+      "home_system_id": "concord",
+      "capacity_scu": 200,
+      "dry_mass_t": 420,
+      "crew": 6,
+      "wage_cr_per_day": 420,
+      "fixed_cr_per_day": 700,
+      "cash": 900000,
+      "min_margin": 0.1,
+      "network": [
+        "concord",
+        "carver",
+        "bradbury",
+        "new_houston",
+        "port_meridian"
+      ]
+    },
+    {
+      "id": "meridian_outbound_c",
+      "company": "meridian_outbound",
+      "home_system_id": "port_meridian",
+      "capacity_scu": 90,
+      "dry_mass_t": 230,
+      "crew": 4,
+      "wage_cr_per_day": 300,
+      "fixed_cr_per_day": 380,
+      "cash": 300000,
+      "min_margin": 0.08,
+      "network": [
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ]
+    },
+    {
+      "id": "meridian_outbound_d",
+      "company": "meridian_outbound",
+      "home_system_id": "port_meridian",
+      "capacity_scu": 90,
+      "dry_mass_t": 230,
+      "crew": 4,
+      "wage_cr_per_day": 300,
+      "fixed_cr_per_day": 380,
+      "cash": 300000,
+      "min_margin": 0.08,
+      "network": [
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ]
+    },
+    {
+      "id": "meridian_outbound_e",
+      "company": "meridian_outbound",
+      "home_system_id": "port_meridian",
+      "capacity_scu": 90,
+      "dry_mass_t": 230,
+      "crew": 4,
+      "wage_cr_per_day": 300,
+      "fixed_cr_per_day": 380,
+      "cash": 300000,
+      "min_margin": 0.08,
+      "network": [
+        "port_meridian",
+        "talos",
+        "waystation",
+        "lastlight"
+      ]
+    }
+  ]
+}
