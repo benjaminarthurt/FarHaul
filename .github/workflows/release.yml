@@ -1,0 +1,98 @@
+name: Release
+
+# Push a version tag (v0.2.0, v1.0.0-beta.1, ...) and this builds the portable Windows exe and publishes it
+# as a GitHub Release with the zip attached. Release notes come from docs/releases/<tag>.md if that file
+# exists, otherwise GitHub writes them from the commits since the last tag.
+# Tags starting v0. are marked pre-release, as is any tag with a dash (v1.0.0-beta.1).
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to build a release for (e.g. v0.1.0)"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  GODOT_VERSION: "4.4.1"
+
+jobs:
+  windows:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Work out the tag and version
+        id: v
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+          if [[ "$TAG" == v0.* || "$TAG" == *-* ]]; then echo "pre=true" >> "$GITHUB_OUTPUT"; else echo "pre=false" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.v.outputs.tag }}
+
+      - name: Cache Godot and its export templates
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot
+            ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable
+          key: godot-${{ env.GODOT_VERSION }}-windows-templates
+
+      - name: Download Godot and the Windows export templates
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          curl -sSL -o /tmp/godot.zip "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot
+          mv ~/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64 ~/godot/godot
+          curl -sSL -o /tmp/templates.tpz "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          T=~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          mkdir -p "$T"
+          unzip -q -j /tmp/templates.tpz templates/version.txt templates/windows_release_x86_64.exe templates/windows_release_x86_64_console.exe -d "$T"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Install go-winres (puts the icon and version into the exe)
+        run: go install github.com/tc-hib/go-winres@latest
+
+      - name: Stamp the version into the game
+        run: sed -i 's/^config\/version=".*"/config\/version="${{ steps.v.outputs.version }}"/' project.godot
+
+      - name: Import the project
+        run: ~/godot/godot --headless --path . --import || true
+
+      - name: Build FarHaul.exe
+        run: VERSION="${{ steps.v.outputs.version }}" PATH="$PATH:$(go env GOPATH)/bin" bash tools/build_windows.sh ~/godot/godot
+
+      - name: Zip it
+        run: |
+          mkdir -p dist/FarHaul
+          cp build/windows/FarHaul.exe dist/FarHaul/
+          cd dist && zip -q -9 -r "FarHaul-windows-${{ steps.v.outputs.version }}.zip" FarHaul
+          ls -l
+
+      - name: Release notes
+        id: notes
+        run: |
+          f="docs/releases/${{ steps.v.outputs.tag }}.md"
+          if [ -f "$f" ]; then echo "path=$f" >> "$GITHUB_OUTPUT"; echo "auto=false" >> "$GITHUB_OUTPUT"; else echo "path=" >> "$GITHUB_OUTPUT"; echo "auto=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.v.outputs.tag }}
+          name: Far Haul ${{ steps.v.outputs.version }}
+          body_path: ${{ steps.notes.outputs.path }}
+          generate_release_notes: ${{ steps.notes.outputs.auto == 'true' }}
+          prerelease: ${{ steps.v.outputs.pre == 'true' }}
+          files: dist/FarHaul-windows-${{ steps.v.outputs.version }}.zip
