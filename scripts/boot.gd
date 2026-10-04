@@ -2,14 +2,14 @@ extends Node
 ## Start-up flow: splash, then the intro video, then the title screen (continue, new game, load,
 ## settings). A game then opens at the dock or shipyard where it was saved.
 ## Any key, click or tap skips the splash and the intro. Missing or broken video is skipped.
-## The theme song starts with the splash, sits under the intro video, and loops on the title screen.
+## The theme song waits for the title screen (the intro video carries its own music), then fades in and loops.
 ## Env vars for testing: FARHAUL_SKIP_INTRO=1 goes straight to the title screen.
 
 enum Stage { SPLASH, INTRO, TITLE }
 
 const SPLASH_HOLD := 1.8
-const MUSIC_DB := -4.0        ## theme level on the splash and title screen
-const MUSIC_DUCK_DB := -16.0  ## while the intro video's own sound plays
+const MUSIC_DB := -4.0        ## theme level on the title screen
+const MUSIC_FADE_IN := 1.5    ## seconds to come up from silence when the menu appears
 
 var stage := Stage.SPLASH
 var stage_time := 0.0
@@ -55,10 +55,8 @@ func _ready() -> void:
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	if OS.has_environment("FARHAUL_SKIP_INTRO") or Session.skip_intro:
 		Session.skip_intro = false
-		_start_music(MUSIC_DB)
 		_enter_title(false)
 	else:
-		_start_music(MUSIC_DB)
 		_enter_splash()
 
 
@@ -74,11 +72,13 @@ func _build_music() -> void:
 	add_child(music)
 
 
+## Starts the theme from silence and fades it up to `db`. Does nothing if it is already playing.
 func _start_music(db: float) -> void:
 	if music.stream == null or music.playing:
 		return
-	music.volume_db = db
+	music.volume_db = -40.0
 	music.play()
+	_fade_music(db, MUSIC_FADE_IN)
 
 
 func _fade_music(db: float, seconds: float) -> void:
@@ -131,7 +131,6 @@ func _enter_intro() -> void:
 	intro_layer.visible = true
 	player.stream = stream
 	player.play()
-	_fade_music(MUSIC_DUCK_DB, 0.6)
 	skip_hint.modulate.a = 0.0
 	var tw := create_tween()
 	tw.tween_interval(1.5)
@@ -144,7 +143,6 @@ func _enter_title(animate: bool) -> void:
 	_kill_splash_tween()
 	player.stop()
 	_start_music(MUSIC_DB)
-	_fade_music(MUSIC_DB, 1.2)
 	stage = Stage.TITLE
 	stage_time = 0.0
 	splash_layer.visible = false
