@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Far Haul: docs and launch</title>
-<meta name="description" content="Far Haul is a first-person freight, ship-building and exploration game. Play the ship builder prototype in your browser, see screenshots, and read what is built and what is still ahead.">
+<meta name="description" content="Far Haul is a first-person freight, ship-building and exploration game. Play the prototype in your browser: build a ship, take freight, fly it and jump between stars. See screenshots and read what is built and what is still ahead.">
 <meta property="og:title" content="Far Haul">
 <meta property="og:description" content="Build your ship. Haul the freight. Push the frontier. Play the prototype in your browser.">
 <meta property="og:image" content="https://benjaminarthurt.github.io/FarHaul/img/builder-cargo.jpg">
@@ -41,16 +41,16 @@
         <a class="launch" href="play/">Launch game</a>
         <a class="ghost-btn" href="#vision">What is built so far</a>
       </div>
-      <p class="note">Runs in your browser with no install. About 10 MB on the first load. Works best on a laptop or desktop with a mouse.</p>
+      <p class="note">Runs in your browser with no install. About 20 MB on the first load. Works best on a laptop or desktop with a mouse.</p>
       <dl class="slip">
-        <div><dt>Version</dt><dd>0.1.0, ship builder prototype</dd></div>
-        <div><dt>You can</dt><dd>Start a game, save in five slots, build and name a ship at your world's yard</dd></div>
-        <div><dt>Not yet</dt><dd>Flying, walking the ship, planets, space walks</dd></div>
+        <div><dt>Version</dt><dd>0.1.0, prototype</dd></div>
+        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars</dd></div>
+        <div><dt>Not yet</dt><dd>Walking the ship, planets, space walks</dd></div>
       </dl>
     </div>
     <figure>
-      <img src="img/builder-cargo.jpg" width="1280" height="720" alt="The ship builder: a small freighter with cargo loaded, the parts palette on the left and the ship stats and cargo preview on the right.">
-      <figcaption>The ship builder as it plays today. Parts on the left, engineering numbers and the cargo preview on the right.</figcaption>
+      <img src="img/jump.jpg" width="1280" height="720" alt="The ship at the middle of a star jump, with the stars stretched into long white streaks.">
+      <figcaption>Mid-jump. The stars stretch into streaks, then a flash, then the ship slows at the other end.</figcaption>
     </figure>
   </div>
 </section>
@@ -64,12 +64,12 @@
     <h2 id="vision-h">The game, and where it is today</h2>
     <p class="lede">Far Haul is about owning a working spaceship. The ship is a place you walk through, and freight is how you pay for it.</p>
     <p>You start as an independent operator with a cheap ship and enough money to keep it flying. You take contracts, load containers, work out whether a job is worth the fuel, and run goods between established worlds. Over time you build bigger, buy range, and head out past the end of the charts, where there is no repair yard, no fuel depot and nobody to call. The farther you go, the less is there to help you.</p>
-    <p>What exists right now is the first piece: the shipyard. You can design a ship from modules, check that it works, fill it with cargo and send it on a delivery. Everything after that is still on the drawing board.</p>
+    <p>What you can play today: design a ship from modules and check that it works, take freight from a simulated economy of eighteen systems, and fly it. You start with a sublight ship, so your first jobs are runs between the port, fuel depot, moon and belt of your own system, flown by hand or left to the autopilot. Save up for an FTL drive and the other systems open up, with a jump that takes you there without a cut. Walking the ship, landing and space walks are still on the drawing board.</p>
 
     <h3>Build order</h3>
     <ol class="chain">
       <li class="now">Ship builder<small>Playable now</small></li>
-      <li>Flight<small>Fly it from the cockpit</small></li>
+      <li class="now">Flight<small>Playable now, with star jumps</small></li>
       <li>Walking inside<small>Cockpit to engineering on foot</small></li>
       <li>Landing and exploring<small>Flat procedural planets first</small></li>
       <li>Tethered space walks<small>Repair the outside</small></li>
@@ -80,17 +80,17 @@
       <table class="ledger">
         <thead><tr><th scope="col">Area</th><th scope="col">What the game will be</th><th scope="col">Today</th><th scope="col">Status</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Ship building</th><td>Ships assembled from physical modules: cockpit, hull, cargo holds, tanks, engines, radiators. Every compartment exists in the world. Balance, power, heat and thrust all matter.</td><td>A 3 m grid builder with 13 parts. Parts snap together at doors and mounts. Live checks for sealed hull, airlock, power, cooling, thrust-to-weight and centre of mass. Undo, redo, autosave.</td><td><span class="chip playable">Playable</span></td></tr>
-          <tr><th scope="row">Menus, saves and the dock</th><td>A proper start: pick who you are and where you begin, keep several games, and always return to the last place you stood.</td><td>New game with name, species, difficulty and starting system, taken from the known-space data. Five save slots. A dock at your starting system's yard, with the shipyard opening from it. Settings are placeholders. Species gives no bonuses.</td><td><span class="chip playable">Playable</span></td></tr>
-          <tr><th scope="row">Known space</th><td>Eighteen systems from the five home worlds out to the last settlement at Lastlight, joined by trade routes and named corridors. Every place needs something from somewhere else.</td><td>The setting is written as data: five species, eighteen systems, nineteen routes and the corridors between them. The new game screen reads it for species and starting systems. Nothing else uses it yet.</td><td><span class="chip rough">Rough</span></td></tr>
+          <tr><th scope="row">Ship building</th><td>Ships assembled from physical modules: cockpit, hull, cargo holds, tanks, engines, radiators. Every compartment exists in the world. Balance, power, heat and thrust all matter.</td><td>A 3 m grid builder. Parts snap together at doors and mounts. Live checks for sealed hull, airlock, power, cooling, thrust-to-weight, centre of mass and an FTL drive. Undo, redo, autosave.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Menus, saves and the dock</th><td>A proper start: pick who you are and where you begin, keep several games, and always return to the last place you stood.</td><td>New game with name, species, difficulty and starting system. Five save slots. A dock at your starting system's yard with the contract board, the shipyard, the helm and your running costs. The theme song plays from the splash and loops on the title screen. Settings are placeholders. Species gives no bonuses.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Known space</th><td>Eighteen systems from the five home worlds out to the last settlement at Lastlight, joined by trade routes and named corridors. Every place needs something from somewhere else.</td><td>Written as data and now running: five species, eighteen systems, nineteen routes. The economy simulation uses all of it, and the new game screen reads it for species and starting systems.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Interiors</th><td>Cramped, practical, lived-in. Cabins, galleys, engine rooms and cockpits that look like they were built to do a job.</td><td>Each part has its own fitted interior: cockpit seats and controls, a reactor room, crew quarters with bunks and a galley, an airlock with suit lockers. You can see them from the builder camera.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>Not in the builder, which is design only. The rules for five placeholder contracts exist in the code, but nothing in the game uses them yet. The builder has a cargo preview so you can see a loaded ship.</td><td><span class="chip planned">Planned</span></td></tr>
-          <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>You cannot fly yet.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>A contract board with live freight, deadlines and pay. You load, deliver and get paid. Sublight ships get in-system runs between the port, depot, moon and belt; interstellar freight needs an FTL drive. The hold is limited by what the tank can lift.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>Free flight from the dock, flown local runs (burn, flip, brake, time compression, docking at the far station) and star jumps with a spool-up, streaking stars, a flash and a slowdown. Fuel, heat, power and hull damage all count. Jump sounds are synthesised placeholders.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Walking the ship</th><td>Leave the seat and walk the corridors while underway. A longer ship means a longer walk to engineering.</td><td>The interiors are modelled and furnished, but there is no first-person view yet.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Landing and exploring</th><td>Land on rocky worlds and moons, then explore by ship, rover and on foot.</td><td>Nothing yet. Flat procedural terrain comes first.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Space walks and repair</th><td>Go out through the airlock on a tether to fix radiators, engines and hull damage.</td><td>Airlocks exist and the builder checks for one. Nothing outside the hull yet.</td><td><span class="chip planned">Planned</span></td></tr>
-          <tr><th scope="row">Living economy</th><td>Freight demand that comes from what places produce and need. Frontier outposts that grow because you supplied them.</td><td>Nothing yet.</td><td><span class="chip planned">Planned</span></td></tr>
-          <tr><th scope="row">Manufacturers and wear</th><td>Parts from companies with recognisable engineering habits. Components wear and fail where you can see it.</td><td>One generic part for each job.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Living economy</th><td>Freight demand that comes from what places produce and need. Frontier outposts that grow because you supplied them.</td><td>A simulation of production, stock, orders and shipping carriers across all eighteen systems runs alongside you. Easy, Normal and Hard change your costs and pay, not the world; Hard sits close to insolvency. Frontier growth is not built.</td><td><span class="chip rough">Rough</span></td></tr>
+          <tr><th scope="row">Manufacturers and wear</th><td>Parts from companies with recognisable engineering habits. Components wear and fail where you can see it.</td><td>One generic part for each job. Hull damage from collisions is charged as repairs.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Crew, passengers, salvage, combat</th><td>People who live aboard, wrecks worth boarding, and danger that is a cost to avoid rather than the main event.</td><td>None of these yet.</td><td><span class="chip planned">Planned</span></td></tr>
         </tbody>
       </table>
@@ -105,6 +105,18 @@
     <h2 id="shots-h">Screenshots</h2>
     <p class="lede">All taken from the game itself. Select any image to see it full size.</p>
     <div class="shots">
+      <figure>
+        <button class="shot" data-full="img/jump.jpg" data-cap="Mid star jump." aria-label="Open the star jump full size"><img src="img/jump.jpg" width="1280" height="720" loading="lazy" alt="The ship in the middle of a star jump, with the stars stretched into long streaks around it."></button>
+        <figcaption><strong>Star jump.</strong> Spool, streaks, a flash and a slowdown. No cut scene: you stay in the ship the whole way.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/flight-run.jpg" data-cap="A local run." aria-label="Open the flight screenshot full size"><img src="img/flight-run.jpg" width="1280" height="720" loading="lazy" alt="The flight view on a local run, with the ship, a diamond marker for the destination and a panel of speed, fuel and delta-v readouts."></button>
+        <figcaption><strong>A local run.</strong> Point at the marker, burn, flip and brake. The readouts show fuel, delta-v and the cost of a perfect run.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/dock-economy.jpg" data-cap="The dock." aria-label="Open the dock full size"><img src="img/dock-economy.jpg" width="1280" height="720" loading="lazy" alt="The dock at Roosevelt Orbital Freight Terminal with credits, running costs per day, the FTL drive price and the dock actions."></button>
+        <figcaption><strong>The dock.</strong> Credits, daily running costs, how long your cash lasts, and what an FTL drive would cost.</figcaption>
+      </figure>
       <figure>
         <button class="shot" data-full="img/builder-cargo.jpg" data-cap="The ship builder with the hold filled to preview a loaded ship." aria-label="Open the builder screenshot full size"><img src="img/builder-cargo.jpg" width="1280" height="720" loading="lazy" alt="The ship builder with a freighter and the hold filled with water."></button>
         <figcaption><strong>Shipyard.</strong> Design the ship and check the engineering numbers. The cargo preview fills the hold so you can see it loaded. The cargo preview does not buy or sell anything.</figcaption>
@@ -166,7 +178,7 @@
   <div class="band"></div>
   <div class="body">
     <h2 id="help-h">Help</h2>
-    <p class="lede">You start with a ready-made hauler and 110,000 to 220,000 credits, depending on difficulty. Change it, check it, name it, save it.</p>
+    <p class="lede">You start with a ready-made sublight hauler and 110,000 to 220,000 credits, depending on difficulty. Take local freight, save for an FTL drive, then go further.</p>
 
     <div class="cols">
       <div>
@@ -178,6 +190,8 @@
           <li>Watch the power, cooling and cargo meters and the warnings on the right. Each warning says what is missing.</li>
           <li>Use <strong>Cargo preview</strong> to fill the hold and see the ship loaded. This only changes how the ship looks and weighs. It does not buy or sell anything.</li>
           <li>Type a name in <strong>Ship name</strong>. Press <kbd>S</kbd> to save. Your game also autosaves. <strong>Leave shipyard</strong> (<kbd>Esc</kbd>) saves and takes you back to the dock.</li>
+          <li>Open the <strong>Contract board</strong>, accept a run and load it. A sublight ship sees runs inside its own system. Press <strong>Depart</strong> to let the autopilot fly it at the textbook fuel cost, or <strong>Fly the run</strong> to do it yourself.</li>
+          <li>Fit an <strong>FTL drive</strong> in the shipyard (about 48,000 cr with its radiator) to take freight to other systems. At the dock, <strong>Fly the jump</strong> undocks you and lets you press <kbd>J</kbd> once you are clear.</li>
         </ol>
 
         <h3>What makes a ship valid</h3>
@@ -189,11 +203,12 @@
           <li>Enough power for everything that draws it.</li>
           <li>Enough cooling for the heat you make.</li>
           <li>Enough thrust for the loaded weight. The stats panel shows thrust-to-weight empty and loaded.</li>
+          <li>An FTL drive, if the freight crosses between systems.</li>
         </ul>
       </div>
 
       <div>
-        <h3>Controls</h3>
+        <h3>Controls: shipyard</h3>
         <table class="keys">
           <tbody>
             <tr><th scope="row">Place a part</th><td><kbd>Left click</kbd></td></tr>
@@ -213,12 +228,26 @@
             <tr><th scope="row">Show the help text</th><td><kbd>F1</kbd></td></tr>
           </tbody>
         </table>
+        <h3>Controls: flying</h3>
+        <table class="keys">
+          <tbody>
+            <tr><th scope="row">Throttle up, down, cut</th><td><kbd>W</kbd> / <kbd>S</kbd> / <kbd>Z</kbd></td></tr>
+            <tr><th scope="row">Pitch and yaw</th><td>Arrow keys</td></tr>
+            <tr><th scope="row">Roll</th><td><kbd>Q</kbd> / <kbd>E</kbd></td></tr>
+            <tr><th scope="row">Brake autopilot</th><td><kbd>X</kbd></td></tr>
+            <tr><th scope="row">Rotation assist</th><td><kbd>R</kbd></td></tr>
+            <tr><th scope="row">Camera</th><td><kbd>C</kbd></td></tr>
+            <tr><th scope="row">Time compression</th><td><kbd>,</kbd> / <kbd>.</kbd></td></tr>
+            <tr><th scope="row">Dock</th><td><kbd>F</kbd>, or <kbd>Esc</kbd> to autopilot in</td></tr>
+            <tr><th scope="row">Engage the FTL drive</th><td><kbd>J</kbd>, when clear of the station and cool</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
     <h3>Questions</h3>
     <details>
-      <summary>Where is my ship saved?</summary>
+      <summary>Where is my game saved?</summary>
       <p>In this browser, automatically, every time you change something. Clearing your browser's site data erases it. Another browser or device starts fresh, because saves are not shared between them yet.</p>
     </details>
     <details>
@@ -226,12 +255,12 @@
       <p>Move the cursor over the ship and read the red message under it. The usual reasons are overlapping another module, no matching door or mount on the neighbouring part, or not enough credits.</p>
     </details>
     <details>
-      <summary>Why does the builder have no contracts?</summary>
-      <p>The builder is only for designing the ship. Parts cost credits from your starting funds, but contracts and payment belong to the game itself, which comes after flight is built. The cargo preview is there so you can see and weigh a loaded ship.</p>
+      <summary>Why can I only see a few jobs?</summary>
+      <p>Without an FTL drive your ship only sees runs inside its own system, and only ones its tank can lift: the hold is limited by fuel, so a long hop means a lighter load. Fit an FTL drive and the interstellar board opens up.</p>
     </details>
     <details>
       <summary>There is no sound.</summary>
-      <p>Browsers block audio until you click the page once. Click anywhere in the game. Press <kbd>M</kbd> to check that sound is not muted.</p>
+      <p>Browsers block audio until you click the page once, so the theme song may start only after your first click or key press. Click anywhere in the game. Press <kbd>M</kbd> to check that sound is not muted.</p>
     </details>
     <details>
       <summary>It runs slowly.</summary>
@@ -242,8 +271,8 @@
       <p>Not properly yet. The builder expects a mouse and keyboard. Touch controls are not built.</p>
     </details>
     <details>
-      <summary>Can I fly the ship?</summary>
-      <p>Not yet. Flight is the next stage after the builder.</p>
+      <summary>How do I get to another star?</summary>
+      <p>Fit an FTL drive in the shipyard, accept an interstellar contract, and use <strong>Fly the jump</strong> at the dock. Get 3 km clear of the station, slow down and let the engines cool, then press <kbd>J</kbd>. A jump costs fuel, fees and days of crew wages, and the world keeps moving while you travel.</p>
     </details>
   </div>
 </section>
@@ -276,9 +305,9 @@
 
     <h3>The prototype</h3>
     <dl class="facts">
-      <dt>Version</dt><dd>0.1.0, ship builder prototype</dd>
+      <dt>Version</dt><dd>0.1.0, prototype</dd>
       <dt>Built with</dt><dd>Godot 4.4, written in GDScript. Runs in the browser through the Compatibility renderer.</dd>
-      <dt>Art and sound</dt><dd>Made in code: the textures, sky, sounds and logo are generated. The intro video is a placeholder.</dd>
+      <dt>Art and sound</dt><dd>The textures, sky, jump sounds and logo are generated in code. The theme song is by the author. The intro video is a placeholder.</dd>
       <dt>Placeholders</dt><dd>Prices, part stats and the intro video will all change.</dd>
       <dt>Source</dt><dd><a href="https://github.com/benjaminarthurt/FarHaul">github.com/benjaminarthurt/FarHaul</a></dd>
     </dl>
