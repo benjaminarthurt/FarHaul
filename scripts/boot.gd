@@ -2,11 +2,14 @@ extends Node
 ## Start-up flow: splash, then the intro video, then the title screen (continue, new game, load,
 ## settings). A game then opens at the dock or shipyard where it was saved.
 ## Any key, click or tap skips the splash and the intro. Missing or broken video is skipped.
+## The theme song starts with the splash, sits under the intro video, and loops on the title screen.
 ## Env vars for testing: FARHAUL_SKIP_INTRO=1 goes straight to the title screen.
 
 enum Stage { SPLASH, INTRO, TITLE }
 
 const SPLASH_HOLD := 1.8
+const MUSIC_DB := -4.0        ## theme level on the splash and title screen
+const MUSIC_DUCK_DB := -16.0  ## while the intro video's own sound plays
 
 var stage := Stage.SPLASH
 var stage_time := 0.0
@@ -31,6 +34,7 @@ var brand_bits: Array[Control] = []  ## logo and tagline, hidden while a panel i
 var new_panel: NewGamePanel
 var load_panel: LoadPanel
 var settings_panel: SettingsPanel
+var music: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -40,6 +44,7 @@ func _ready() -> void:
 	_build_panels()
 	_build_splash()
 	_build_intro()
+	_build_music()
 	fade = ColorRect.new()
 	fade.color = Color.BLACK
 	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -50,9 +55,35 @@ func _ready() -> void:
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	if OS.has_environment("FARHAUL_SKIP_INTRO") or Session.skip_intro:
 		Session.skip_intro = false
+		_start_music(MUSIC_DB)
 		_enter_title(false)
 	else:
+		_start_music(MUSIC_DB)
 		_enter_splash()
+
+
+# --- Music -----------------------------------------------------------------------------------
+
+func _build_music() -> void:
+	music = AudioStreamPlayer.new()
+	music.bus = "Master"
+	var stream := load(Brand.THEME_MUSIC) as AudioStreamMP3
+	if stream != null:
+		stream.loop = true
+		music.stream = stream
+	add_child(music)
+
+
+func _start_music(db: float) -> void:
+	if music.stream == null or music.playing:
+		return
+	music.volume_db = db
+	music.play()
+
+
+func _fade_music(db: float, seconds: float) -> void:
+	if music.stream != null:
+		create_tween().tween_property(music, "volume_db", db, seconds)
 
 
 # --- Stages ----------------------------------------------------------------------------------
@@ -100,6 +131,7 @@ func _enter_intro() -> void:
 	intro_layer.visible = true
 	player.stream = stream
 	player.play()
+	_fade_music(MUSIC_DUCK_DB, 0.6)
 	skip_hint.modulate.a = 0.0
 	var tw := create_tween()
 	tw.tween_interval(1.5)
@@ -111,6 +143,8 @@ func _enter_title(animate: bool) -> void:
 		return
 	_kill_splash_tween()
 	player.stop()
+	_start_music(MUSIC_DB)
+	_fade_music(MUSIC_DB, 1.2)
 	stage = Stage.TITLE
 	stage_time = 0.0
 	splash_layer.visible = false
@@ -222,6 +256,7 @@ func _enter_game() -> void:
 	leaving = true
 	var tw := create_tween()
 	tw.tween_property(fade, "color:a", 1.0, 0.4)
+	_fade_music(-60.0, 0.4)
 	tw.tween_callback(func() -> void: get_tree().change_scene_to_file(Session.scene_path()))
 
 
