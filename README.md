@@ -177,8 +177,21 @@ stick included, and run it.
   into a copy of the template with go-winres, then exports. This works on Linux with no Wine or rcedit.
 - **First run:** Windows SmartScreen says "Windows protected your PC" because the exe is not code-signed.
   Choose More info, then Run anyway.
-- **Sharing:** the exe is too big for the repo. Attach it to a GitHub Release, or zip it and send it
-  (about 42 MB zipped).
+- **Sharing:** the exe is too big for the repo. Releases carry it (see below).
+
+## Releases
+
+Push a version tag and GitHub builds the Windows exe and publishes a release with the zip attached
+(`.github/workflows/release.yml`). In GitHub Desktop: History, right-click the commit, Create Tag, name it
+`v0.2.0`, then Push origin (Desktop pushes the tag with it). From a terminal: `git tag v0.2.0 && git push origin v0.2.0`.
+
+- The tag sets the version shown on the title screen and stamped into the exe.
+- Release notes come from `docs/releases/<tag>.md` (for example `docs/releases/v0.2.0.md`) if you commit
+  one before tagging. Otherwise GitHub writes them from the commit list.
+- `v0.x` tags and tags with a dash (`v1.0.0-beta.1`) are marked pre-release.
+- A tag that is already pushed can be rebuilt from Actions > Release > Run workflow.
+- The first run downloads Godot and its export templates (about 1.2 GB) and caches them. It takes a few
+  minutes; later runs are quicker.
 
 ## Branding
 
