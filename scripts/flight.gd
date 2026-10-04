@@ -55,7 +55,7 @@ const KEY_TURN := 1.8          ## radians per second with the arrow keys
 const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time   G get up   Esc back to the dock"
 const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time   Esc frees the mouse, click to look again"
 const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   Esc autoland   F unload (landed on the pad)   G get up   C camera"
-const SUIT_HELP := "WASD walk   Shift run   Space jump   mouse or arrows look   E go back aboard (at the hatch)   Esc frees the mouse"
+const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   Esc frees the mouse"
 var ship_data: ShipData
 var moon: Node3D
 var hover_hold := false
@@ -73,6 +73,7 @@ var _dv_space := 0.0           ## the part of a run's delta-v spent in space (th
 var _ground_task := -1         ## the moon's ground mesh, built on a worker thread during the cruise
 var _ground_mesh: MeshInstance3D
 var _ground_terrain: SurfaceTerrain
+var ops: SurfaceOps            ## the suit's air, jets and scanner, mission points and crates (on the moon)
 
 
 func _ready() -> void:
@@ -92,6 +93,9 @@ func _ready() -> void:
 		Session.walk_aboard = false
 		get_up.call_deferred()
 		walk_from_airlock.call_deferred()
+	if Session.suit_up:
+		Session.suit_up = false
+		_suit_up.call_deferred()
 
 
 func _build_world() -> void:
@@ -1381,7 +1385,12 @@ func go_outside() -> bool:
 	suit = SurfaceWalker.make(model.terrain, model.gravity, cells, origin, model.basis)
 	suit.place(suit_hatch)
 	suit.face(model.basis * out_dir)
+	if ops == null:
+		ops = SurfaceOps.new()
+		moon.add_child(ops)
+		ops.setup(self, _site_here())
 	outside = true
+	ops.begin_outing()
 	walking = false
 	view.set_interior(false)
 	help.text = SUIT_HELP
@@ -1394,6 +1403,9 @@ func go_outside() -> bool:
 func come_aboard() -> bool:
 	if not outside or suit.distance_to(suit_hatch) > 2.5:
 		return false
+	if ops != null:
+		ops.end_outing()
+	bar.visible = true
 	outside = false
 	walking = true
 	walk.stand_in_airlock()
@@ -1416,7 +1428,9 @@ func _suit_step(delta: float) -> void:
 	if Input.is_key_pressed(KEY_UP): pitch += 1.0
 	if Input.is_key_pressed(KEY_DOWN): pitch -= 1.0
 	suit.look(yaw * KEY_TURN * delta, pitch * KEY_TURN * delta)
-	suit.step(minf(delta, 0.05), dir, Input.is_key_pressed(KEY_SHIFT), Input.is_key_pressed(KEY_SPACE))
+	suit.step(minf(delta, 0.05), dir, Input.is_key_pressed(KEY_SHIFT), Input.is_key_pressed(KEY_SPACE), Input.is_key_pressed(KEY_SPACE))
+	if ops != null:
+		ops.step(minf(delta, 0.05), Input.is_key_pressed(KEY_SHIFT) and dir != Vector2.ZERO)
 
 
 func _suit_input(event: InputEvent) -> void:
@@ -1430,8 +1444,12 @@ func _suit_input(event: InputEvent) -> void:
 		return
 	match event.keycode:
 		KEY_E:
+			if ops != null and ops.use() != "":
+				return
 			if take_find() == "":
 				come_aboard()
+		KEY_Q:
+			come_aboard()
 		KEY_ESCAPE:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
@@ -1439,8 +1457,14 @@ func _suit_input(event: InputEvent) -> void:
 func _suit_prompt() -> void:
 	var d := suit.distance_to(suit_hatch)
 	var parts := PackedStringArray(["%s SURFACE" % String(_body().get("name", "MOON")).to_upper()])
+	if ops != null:
+		hud.text = "\n".join(ops.hud_lines())
+	bar.visible = false
 	var f := find_in_reach()
-	if not f.is_empty():
+	var job_prompt := ops.prompt() if ops != null else ""
+	if job_prompt != "":
+		parts.append(job_prompt)
+	elif not f.is_empty():
 		parts.append("E: take the sample (%s)" % String(f.name) if String(f.kind) == "sample" else "E: strip salvage from the wreck")
 	elif model.elapsed_s - _find_message_t < 4.0:
 		parts.append(_find_message)
@@ -1471,6 +1495,26 @@ func _exit_tree() -> void:
 	if _ground_task >= 0:
 		WorkerThreadPool.wait_for_task_completion(_ground_task)
 		_ground_task = -1
+
+
+## Which surface site the ship is at: "pad" or "camp" (by the nearer pad).
+func _site_here() -> String:
+	var c := SurfaceFinds.camp_xz()
+	return "camp" if Vector2(model.pos.x - c.x, model.pos.z - c.y).length() < Vector2(model.pos.x, model.pos.z).length() else "pad"
+
+
+## From the airlock desk: out on the surface in the suit straight away.
+func _suit_up() -> void:
+	if _on_surface() and model.landed:
+		go_outside()
+
+
+## Out of air: the crew bring you in through the hatch.
+func blackout() -> void:
+	if not outside:
+		return
+	suit.place(suit_hatch)
+	come_aboard()
 
 
 ## Coming aboard from the berth: standing in the airlock instead of behind the seats.

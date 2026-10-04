@@ -496,6 +496,162 @@ static func sell_finds(sample_rate: float = 1.0, salvage_rate: float = 1.0) -> D
 	return {"ok": true, "message": "Sold %d samples and %d salvage parts for %s cr." % [int(f.samples), int(f.salvage), ShipStats.commas(int(f.value))]}
 
 
+## Money between the player and the world outside a run (gear, missions, fees). `amount` > 0 is paid
+## to the player. Returns false when it could not be booked, or the player cannot pay.
+static func _book(amount: float) -> bool:
+	if slot < 0 or sim == null:
+		return false
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return false
+	_sync_sim(loaded.ship)
+	if amount < 0.0 and int(profile.get("credits", 0)) < roundi(-amount):
+		return false
+	if amount >= 0.0:
+		sim._pay("world", SimWorld.PLAYER, amount)
+		var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
+		pc["revenue"] = float(pc["revenue"]) + amount
+	else:
+		sim._pay(SimWorld.PLAYER, "world", -amount)
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return true
+
+
+# --- The suit and surface work (SurfaceWork) ---------------------------------------------------------
+
+static var suit_up := false   ## set by the airlock desk: the flight scene opens with you outside in the suit
+
+
+static func gear_owned() -> Array:
+	return profile.get("gear", [])
+
+
+static func buy_gear(id: String) -> Dictionary:
+	var g := SurfaceWork.gear(id)
+	if g.is_empty():
+		return {"ok": false, "message": "The store has no such thing."}
+	var owned := gear_owned()
+	if id in owned:
+		return {"ok": false, "message": "You already have the %s." % String(g.name).to_lower()}
+	if g.has("needs") and not String(g.needs) in owned:
+		return {"ok": false, "message": "Needs the %s first." % String(SurfaceWork.gear(String(g.needs)).name).to_lower()}
+	var price := int(g.price)
+	if not _book(-float(price)):
+		return {"ok": false, "message": "The %s costs %s cr; you have %s cr." % [String(g.name).to_lower(), ShipStats.commas(price), ShipStats.commas(int(profile.get("credits", 0)))]}
+	owned = owned.duplicate()
+	owned.append(id)
+	profile["gear"] = owned
+	save_profile()
+	return {"ok": true, "message": "Bought the %s for %s cr." % [String(g.name).to_lower(), ShipStats.commas(price)]}
+
+
+## The surface site the ship is at ("pad" or "camp"), or "".
+static func surface_site() -> String:
+	var k := String(LocalSpace.node(String(profile.get("port_id", ""))).get("kind", ""))
+	return k if k in LocalSpace.SURFACE else ""
+
+
+static func missions_here() -> Array[Dictionary]:
+	var site := surface_site()
+	if site == "" or sim == null:
+		return []
+	return SurfaceWork.offered(system_id(), site, day(), profile.get("missions_taken", []))
+
+
+static func mission() -> Dictionary:
+	return profile.get("mission", {})
+
+
+static func take_mission(m: Dictionary) -> Dictionary:
+	if not mission().is_empty():
+		return {"ok": false, "message": "Finish the mission you hold first."}
+	if bool(m.get("taken", false)):
+		return {"ok": false, "message": "Someone else has that one."}
+	var held := m.duplicate(true)
+	var done := []
+	for p in held.points:
+		done.append(false)
+	held["done"] = done
+	held["elapsed_s"] = 0.0
+	held["hold_t"] = 0.0
+	profile["mission"] = held
+	var t: Array = profile.get("missions_taken", [])
+	t = t.duplicate()
+	t.append(String(m.id))
+	profile["missions_taken"] = t.slice(maxi(0, t.size() - 40))
+	save_profile()
+	return {"ok": true, "message": "%s: %s outside. Suit up at the airlock; the clock runs while you are out." % [String(m.title), SurfaceWork.clock(float(m.limit_s))]}
+
+
+## Pay out a finished mission.
+static func complete_mission() -> Dictionary:
+	var m := mission()
+	if m.is_empty():
+		return {"ok": false, "message": ""}
+	profile.erase("mission")
+	_book(float(m.pay))
+	var rep := _add_rep(int(m.get("rep", 2)))
+	save_profile()
+	return {"ok": true, "message": "%s: done. Paid %s cr.%s" % [String(m.title), ShipStats.commas(int(m.pay)), rep]}
+
+
+static func fail_mission(why: String) -> Dictionary:
+	var m := mission()
+	if m.is_empty():
+		return {"ok": false, "message": ""}
+	profile.erase("mission")
+	var rep := _add_rep(int(SurfaceWork.config().get("missions", {}).get("fail_rep", -2)))
+	save_profile()
+	return {"ok": true, "message": "%s: failed, %s.%s" % [String(m.title), why, rep]}
+
+
+## Out of air: the base or camp crew drag you in. A fee, and any mission is lost.
+static func suit_rescue() -> String:
+	var fee := float(SurfaceWork.suit_cfg().get("rescue_fee_cr", 800))
+	var paid := _book(-fee)
+	var msg := "Out of air. The crew dragged you back aboard%s." % (" and billed you %s cr" % ShipStats.commas(roundi(fee)) if paid else "")
+	if not mission().is_empty():
+		msg += " " + String(fail_mission("you ran out of air").message)
+	return msg
+
+
+## Carry the load off yourself at the camp (the crew's fee saved). Returns the crates to carry.
+static func start_manual_unload() -> Dictionary:
+	var c := active_contract()
+	if c.is_empty() or String(c.get("status", "")) != "arrived" or surface_site() != "camp":
+		return {"ok": false, "message": "There is nothing to unload here."}
+	if String(c.get("person_kind", "")) == "passenger":
+		return {"ok": false, "message": "Passengers walk off on their own."}
+	var n := SurfaceWork.crates_for(float(c.get("accepted_tonnes", c.offer)))
+	profile["unloading"] = {"crates": n, "done": 0}
+	save_profile()
+	suit_up = true
+	return {"ok": true, "message": "%d crates to carry to the stack by the hut." % n}
+
+
+static func unloading() -> Dictionary:
+	return profile.get("unloading", {})
+
+
+## One crate carried to the stack. The last one delivers the load.
+static func crate_carried() -> Dictionary:
+	var u := unloading()
+	if u.is_empty():
+		return {"ok": false, "message": ""}
+	u["done"] = int(u.done) + 1
+	if int(u.done) < int(u.crates):
+		profile["unloading"] = u
+		save_profile()
+		return {"ok": true, "message": "Crate %d of %d on the stack." % [int(u.done), int(u.crates)], "finished": false}
+	profile.erase("unloading")
+	var r := deliver_active_contract(true)
+	r["finished"] = true
+	return r
+
+
 ## Fuel here against the system's price: depots are cheap, the surface dear (local_space.json).
 static func site_fuel_mult(site_id: String = "") -> float:
 	var id := site_id if site_id != "" else String(profile.get("port_id", ""))
@@ -737,7 +893,7 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours%s." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), hours, " on a hard burn" if hard else ""]}
 
 
-static func _deliver_local(c: Dictionary) -> Dictionary:
+static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 	var here := String(profile.get("port_id", ""))
 	var landed_for_it := bool(c.get("surface", false)) and here == system_id() + LocalSpace.SEP + "pad" \
 			and String(LocalSpace.node(String(c.destination_port_id)).get("kind", "")) == "moon"   # landed on the base's pad
@@ -759,7 +915,18 @@ static func _deliver_local(c: Dictionary) -> Dictionary:
 		bonus = roundi(float(payment) * float(SurfaceTerrain.config().get("surface_bonus", 0.25)))
 		payment += bonus
 	var rep_note := _add_rep(int(deal.rep))
-	sim.run_hours(int(LocalSpace.config()["board"]["unload_hours"]))
+	var uc := SurfaceWork.unload_cfg()
+	var hours := int(LocalSpace.config()["board"]["unload_hours"])
+	var crew := 0
+	var at_camp := String(LocalSpace.node(here).get("kind", "")) == "camp" and not passengers
+	if at_camp and not manual:   # no crane at the camp: its crew carry it off, for a fee and most of a day
+		hours = int(uc.get("camp_crew_hours", 8))
+		crew = roundi(float(payment) * float(uc.get("camp_crew_share", 0.15)))
+		payment -= crew
+	elif manual or passengers:
+		hours = 0
+	if hours > 0:
+		sim.run_hours(hours)
 	sim._pay("world", SimWorld.PLAYER, float(payment))
 	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
 	pc["revenue"] = float(pc["revenue"]) + float(payment)
@@ -770,6 +937,12 @@ static func _deliver_local(c: Dictionary) -> Dictionary:
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
 	var note := " (includes %s cr for landing it on the surface)" % ShipStats.commas(bonus) if bonus > 0 else ""
+	if crew > 0:
+		note += ", less %s cr to the camp crew for %d hours' unloading" % [ShipStats.commas(crew), hours]
+	elif manual:
+		note += ", unloaded by your own hands"
+	elif hours > 0:
+		note += ", after %d hours' unloading" % hours
 	var dn := String(deal.note)
 	var deal_note := (" " + dn.substr(0, 1).to_upper() + dn.substr(1) + ".") if dn != "" else ""
 	if passengers:
@@ -839,10 +1012,11 @@ static func depart_active_contract(hard := false) -> Dictionary:
 	return {"ok": true, "message": "Arrived at %s after %.2f ly.%s" % [Worlds.port(profile.port_id).name, float(c.distance_ly), days_text]}
 
 
-static func deliver_active_contract() -> Dictionary:
+## `manual`: at the camp, carried off by hand instead of paying the camp crew.
+static func deliver_active_contract(manual := false) -> Dictionary:
 	var c := active_contract()
 	if not c.is_empty() and bool(c.get("local", false)):
-		return _deliver_local(c)
+		return _deliver_local(c, manual)
 	if c.is_empty() or String(c.destination_system_id) != system_id():
 		return {"ok": false, "message": "There is no contract to deliver here."}
 	var data := SaveSlots.read(slot)

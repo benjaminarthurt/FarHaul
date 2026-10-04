@@ -153,6 +153,33 @@ func _run() -> void:
 	check(lab_paid == roundi(3 * SurfaceFinds.value("sample") * 1.4), "the lab pays 1.4 times for samples (%d cr)" % lab_paid)
 	check(int(Session.profile.get("salvage", 0)) == 1, "the lab leaves the salvage in the locker")
 	p.close_desk()
+	p.use_desk("store")
+	await process_frame
+	var gear := 0
+	for b in _buttons(p):
+		if not String(b.text).begins_with("CLOSE"):
+			gear += 1
+	check(gear == SurfaceWork.GEAR_ORDER.size(), "the suit store sells %d pieces of kit" % gear)
+	_buttons(p)[0].pressed.emit()
+	await process_frame
+	check("o2_1" in Session.gear_owned(), "buying the bigger air tank at the store: %s" % p.panel_status.text)
+	p.close_desk()
+	p.use_desk("dispatch")
+	await process_frame
+	var work := 0
+	for b in _buttons(p):
+		for k in ["PLACE SURVEY", "REACH A SURVEYOR", "FIX A STALLED"]:
+			if String(b.text).begins_with(k):
+				work += 1
+	check(work == Session.missions_here().size() and work > 0, "dispatch posts %d surface missions" % work)
+	p.close_desk()
+	p.use_desk("gate")
+	await process_frame
+	var suit := false
+	for b in _buttons(p):
+		suit = suit or String(b.text).begins_with("SUIT UP")
+	check(suit, "the airlock offers to suit up and go outside")
+	p.close_desk()
 	await _close(p)
 	# The camp's hut.
 	Session.profile["port_id"] = sys + LocalSpace.SEP + "camp"

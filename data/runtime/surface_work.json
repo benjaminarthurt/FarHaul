@@ -1,0 +1,101 @@
+{
+  "description": "Work on foot on a moon: the suit and its gear, timed surface missions from the hab's dispatch and the camp foreman, and unloading at the camp. See docs/runtime/surface_work.md. Times are real seconds on foot.",
+  "suit": {
+    "o2_s": 900,
+    "o2_per_tank_s": 600,
+    "run_o2_mult": 1.5,
+    "low_o2_frac": 0.2,
+    "rescue_fee_cr": 800,
+    "jet_fuel_s": 4.0,
+    "jet_accel_g": 1.4,
+    "boots_speed_mult": 1.3,
+    "carry_speed_mult": 0.6,
+    "tag_range_m": 45.0,
+    "scanner_range_m": 1500.0
+  },
+  "gear": {
+    "o2_1": {
+      "name": "Bigger air tank",
+      "price": 4000,
+      "blurb": "Ten more minutes of air (25 in all)."
+    },
+    "o2_2": {
+      "name": "Twin air tanks",
+      "price": 9000,
+      "needs": "o2_1",
+      "blurb": "Ten more again (35 in all)."
+    },
+    "boots": {
+      "name": "Grip boots",
+      "price": 3000,
+      "blurb": "Walk and run 30% faster on loose ground."
+    },
+    "scanner": {
+      "name": "Ground scanner",
+      "price": 6000,
+      "blurb": "Finds samples and work sites up to 1.5 km away and points the way. Without it, sample tags show within 45 m."
+    },
+    "jetpack": {
+      "name": "Suit jets",
+      "price": 15000,
+      "blurb": "Hold Space in the air for four seconds of lift: over boulders, up slopes, across craters."
+    }
+  },
+  "missions": {
+    "per_site": 2,
+    "refresh_days": 2,
+    "fail_rep": -2,
+    "kinds": {
+      "survey": {
+        "title": "Place survey beacons",
+        "points": 3,
+        "range_m": [
+          150,
+          450
+        ],
+        "pay_cr_per_m": 2.6,
+        "pay_min": 1200,
+        "rep": 2,
+        "blurb": "Walk out to three marked points and set a beacon at each (E)."
+      },
+      "rescue": {
+        "title": "Reach a surveyor out of air",
+        "points": 1,
+        "range_m": [
+          350,
+          650
+        ],
+        "pay_cr_per_m": 4.0,
+        "pay_min": 2000,
+        "rep": 4,
+        "blurb": "A surveyor's suit is failing. Get to them (E) before the time runs out."
+      },
+      "drill": {
+        "title": "Fix a stalled drill",
+        "points": 1,
+        "range_m": [
+          200,
+          500
+        ],
+        "pay_cr_per_m": 3.0,
+        "pay_min": 1500,
+        "rep": 2,
+        "hold_s": 5.0,
+        "blurb": "A drill head has jammed. Walk out and hold E on it for five seconds."
+      }
+    },
+    "time_walk_m_s": 1.6,
+    "time_margin": 1.5,
+    "time_extra_s": 90
+  },
+  "unload": {
+    "camp_crew_hours": 8,
+    "crate_t": 2.0,
+    "drop_offset_m": [
+      -26.0,
+      -10.0
+    ],
+    "drop_radius_m": 6.0,
+    "camp_crew_share": 0.15
+  }
+}

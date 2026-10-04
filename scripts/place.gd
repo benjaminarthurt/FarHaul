@@ -438,6 +438,9 @@ func _refresh_info() -> void:
 				var left := int(c.due_hour) - int(Session.sim.hour)
 				due = "  (due in %d h)" % left if left >= 0 else "  (late)"
 			lines.append("Active: %s%s%s" % [String(c.get("title", "")), "  (arrived: deliver it)" if String(c.get("status", "")) == "arrived" else "", due])
+		var held := Session.mission()
+		if not held.is_empty():
+			lines.append("Mission: %s (%s on the clock)" % [String(held.title), SurfaceWork.clock(float(held.limit_s) - float(held.get("elapsed_s", 0.0)))])
 		var f := Session.finds_aboard()
 		if int(f.samples) + int(f.salvage) > 0:
 			lines.append("Locker: %d samples, %d salvage" % [int(f.samples), int(f.salvage)])
@@ -544,13 +547,29 @@ func _desk_freight(id: String) -> void:
 	var c := Session.active_contract()
 	var here := String(Session.profile.get("port_id", ""))
 	if not c.is_empty():
+		if id != "freight":
+			_missions_section()
 		var local := bool(c.get("local", false))
 		var arrived := String(c.get("status", "")) == "arrived"
 		var load_text := "%d passengers aboard" % int(c.seats) if String(c.get("person_kind", "")) == "passenger" else "%.1f t aboard" % float(c.get("accepted_tonnes", c.get("offer", 0.0)))
 		panel_list.add_child(Brand.note("ACTIVE: %s, %s." % [String(c.title), load_text], 15))
 		var at_start := String(c.get("origin_port_id", "")) == here if local else String(c.get("origin_system_id", "")) == Session.system_id()
 		var at_end := (String(c.get("destination_port_id", "")) == here or (bool(c.get("surface", false)) and LocalSpace.is_surface(here))) if local else String(c.get("destination_system_id", "")) == Session.system_id()
-		if arrived and at_end:
+		if arrived and at_end and Session.surface_site() == "camp" and String(c.get("person_kind", "")) != "passenger":
+			var t := float(c.get("accepted_tonnes", c.get("offer", 0.0)))
+			var uc := SurfaceWork.unload_cfg()
+			_action("PAY THE CAMP CREW TO UNLOAD  %d%% of the pay, %d hours" % [roundi(float(uc.get("camp_crew_share", 0.15)) * 100.0), int(uc.get("camp_crew_hours", 8))], func() -> void:
+				var r := Session.deliver_active_contract()
+				_say(String(r.message))
+				_refill())
+			_action("UNLOAD IT YOURSELF  %d crates, in the suit" % SurfaceWork.crates_for(t), func() -> void:
+				var r := Session.start_manual_unload()
+				if bool(r.ok):
+					Session.flight_job = {}
+					_go(Session.FLIGHT_SCENE)
+				else:
+					_say(String(r.message)))
+		elif arrived and at_end:
 			_action("DELIVER THE LOAD", func() -> void:
 				var r := Session.deliver_active_contract()
 				_say(String(r.message))
@@ -574,6 +593,7 @@ func _desk_freight(id: String) -> void:
 					_refill())
 		return
 	if id != "freight":
+		_missions_section()
 		_people_section()
 		panel_list.add_child(Brand.heading("POSTED WORK", 15))
 	var offers := Contracts.offers_from(Session.system_id())
@@ -696,7 +716,48 @@ func _desk_sell(title: String, note: String, sample_rate: float, salvage_rate: f
 
 
 func _desk_store() -> void:
-	_clear_panel("Suit store", "Suits and kit for working on the surface.")
+	var owned := Session.gear_owned()
+	_clear_panel("Suit store", "Kit for working outside. Your suit holds %s of air." % SurfaceWork.clock(SurfaceWork.o2_capacity(owned)))
+	for gid in SurfaceWork.GEAR_ORDER:
+		var g := SurfaceWork.gear(gid)
+		var have: bool = gid in owned
+		var blocked: bool = g.has("needs") and not String(g.needs) in owned
+		var txt := "%s  ·  %s\n%s" % [String(g.name).to_upper(), "OWNED" if have else "%s cr" % ShipStats.commas(int(g.price)), String(g.blurb)]
+		if blocked:
+			txt += "  (needs the %s)" % String(SurfaceWork.gear(String(g.needs)).name).to_lower()
+		var id: String = gid
+		_action(txt, func() -> void:
+			var r := Session.buy_gear(id)
+			_say(String(r.message))
+			_refill(), not have and not blocked)
+
+
+## Timed jobs on foot around this site (SurfaceWork), and the one you hold.
+func _missions_section() -> void:
+	if Session.surface_site() == "":
+		return
+	panel_list.add_child(Brand.heading("SURFACE WORK", 15))
+	var held := Session.mission()
+	if not held.is_empty():
+		var left := 0
+		for d in held.done:
+			if not bool(d):
+				left += 1
+		panel_list.add_child(Brand.note("HELD: %s, %d of %d left, %s on the clock (it runs while you are outside). Pays %s cr. Suit up at the %s." % [
+				String(held.title), left, held.done.size(), SurfaceWork.clock(float(held.limit_s) - float(held.get("elapsed_s", 0.0))),
+				ShipStats.commas(int(held.pay)), "airlock"], 14))
+		_action("GIVE IT UP  (standing −2)", func() -> void:
+			var r := Session.fail_mission("given up")
+			_say(String(r.message))
+			_refill())
+		return
+	for mm in Session.missions_here():
+		var m: Dictionary = mm
+		_action("%s  ·  %d m on foot  ·  %s on the clock  ·  pays %s cr\n%s" % [String(m.title).to_upper(), int(m.walk_m), SurfaceWork.clock(float(m.limit_s)),
+				ShipStats.commas(int(m.pay)), "Taken." if bool(m.taken) else String(m.blurb)], func() -> void:
+			var r := Session.take_mission(m)
+			_say(String(r.message))
+			_refill(), not bool(m.taken))
 
 
 func _desk_gate() -> void:
@@ -720,3 +781,8 @@ func _desk_gate() -> void:
 		Session.flight_job = {}
 		Session.walk_aboard = true
 		_go(Session.FLIGHT_SCENE), not Session.insolvent())
+	if Session.surface_site() != "":
+		_action("SUIT UP AND GO OUTSIDE  (%s of air)" % SurfaceWork.clock(SurfaceWork.o2_capacity(Session.gear_owned())), func() -> void:
+			Session.flight_job = {}
+			Session.suit_up = true
+			_go(Session.FLIGHT_SCENE), not Session.insolvent())

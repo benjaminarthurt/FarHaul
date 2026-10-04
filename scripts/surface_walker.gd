@@ -20,6 +20,11 @@ var on_ground := true
 var ship_origin := Vector3.ZERO  ## where the ship's layout origin sits in the world, and how it is turned
 var ship_basis := Basis.IDENTITY
 var ship_cells: Array[Vector3i] = []
+var speed_mult := 1.0            ## grip boots, or a crate in your arms
+var can_jump := true
+var jet_accel := 0.0             ## suit jets: upward m/s² while Space is held in the air (0 without them)
+var jet_fuel := 0.0              ## seconds of jets left
+var jetting := false             ## the jets fired this step (for the flame and sound)
 
 
 ## `cells`: every occupied cell of the ship (hull and external parts) in layout coordinates.
@@ -63,16 +68,20 @@ func place(p: Vector3) -> void:
 	_resolve()
 
 
-func step(dt: float, input: Vector2, run := false, jump := false) -> void:
+func step(dt: float, input: Vector2, run := false, jump := false, jet := false) -> void:
 	if input.length() > 1.0:
 		input = input.normalized()
-	var speed := run_speed if run else walk_speed
+	var speed := (run_speed if run else walk_speed) * speed_mult
 	var fwd := Vector3(-sin(yaw), 0, -cos(yaw))
 	var right := Vector3(cos(yaw), 0, -sin(yaw))
 	var move := (fwd * input.y + right * input.x) * speed * dt
-	if jump and on_ground:
+	if jump and on_ground and can_jump:
 		vel_y = jump_speed
 		on_ground = false
+	jetting = jet and not on_ground and jet_fuel > 0.0 and jet_accel > 0.0 and can_jump
+	if jetting:
+		vel_y += jet_accel * dt
+		jet_fuel = maxf(0.0, jet_fuel - dt)
 	vel_y -= gravity * dt
 	var n := maxi(1, ceili(move.length() / 0.1))
 	for i in n:
