@@ -54,6 +54,15 @@ const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
 const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time   G get up   Esc back to the dock"
 const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time   Esc frees the mouse, click to look again"
+const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   Esc autoland   F unload (landed on the pad)   G get up   C camera"
+const SUIT_HELP := "WASD walk   Shift run   Space jump   mouse or arrows look   E go back aboard (at the hatch)   Esc frees the mouse"
+var ship_data: ShipData
+var moon: Node3D
+var hover_hold := false
+var _surface := false          ## landed on the destination's pad: the run earns the surface bonus
+var outside := false           ## on foot on the moon, in a suit
+var suit: SurfaceWalker
+var suit_hatch := Vector3.ZERO
 
 
 func _ready() -> void:
@@ -355,7 +364,9 @@ func _build_ship() -> void:
 	if ship.modules.is_empty():
 		ShipPresets.build(ship)
 	stats = ShipStats.compute(ship, 0.0, manifest)
+	ship_data = ship
 	model = FlightModel.from_stats(stats)
+	model.land_cfg = SurfaceTerrain.config()
 	model.place_at_dock(Vector3(0.35, 0.15, 1.0))
 	com = stats.com
 	ship_root = Node3D.new()
@@ -426,7 +437,10 @@ func _process(delta: float) -> void:
 		return
 	var turn := Vector3.ZERO
 	var thr := 0.0
-	if walking:
+	var lift_cmd := _lift_command()
+	if outside:
+		_suit_step(delta)
+	elif walking:
 		_walk_step(delta)    # nobody at the helm: the ship carries on as it was
 	else:
 		if Input.is_key_pressed(KEY_UP): turn.x += 1.0
@@ -442,14 +456,17 @@ func _process(delta: float) -> void:
 	if turn != Vector3.ZERO or thr != 0.0:
 		model.braking = false          # any pilot input takes the controls back
 	if xfer == null:
-		model.step(minf(delta, 0.05), turn, thr)
+		model.step(minf(delta, 0.05), turn, thr, lift_cmd)
 	else:
 		var total := minf(delta, 0.05) * float(_warp())
 		var n := maxi(1, ceili(total / 0.05))
 		for i in n:
-			model.step(total / float(n), turn, thr)
+			model.step(total / float(n), turn, thr, lift_cmd)
 			if phase == "cruise" and xfer.arrived(model):
-				_begin_approach()
+				if _can_land():
+					_begin_descent()
+				else:
+					_begin_approach()
 				break
 		if phase == "depart" and xfer != null and model.pos.length() > CLEAR_M:
 			phase = "cruise"
@@ -462,6 +479,7 @@ func _process(delta: float) -> void:
 	_apply_pose()
 	_update_hud()
 	view.set_flames(model.throttle > 0.02 and model.has_fuel())
+	view.set_lift_flames(model.lift > 0.03 and model.has_fuel())
 	for ring in station.get_children():
 		if ring.has_meta("spin"):
 			ring.rotate_z(delta * 0.05)
@@ -490,7 +508,10 @@ func _apply_pose() -> void:
 	ship_root.position = model.pos
 	ship_root.basis = model.basis
 	# Everything else is placed relative to the ship so the numbers stay small near the origin.
-	if walking:
+	if outside:
+		camera.global_position = suit.eye()
+		camera.global_basis = suit.look_basis()
+	elif walking:
 		camera.global_position = model.pos + model.basis * (view.position + walk.eye())
 		camera.global_basis = model.basis * walk.look_basis()
 	elif chase:
@@ -543,6 +564,13 @@ func _update_transfer_hud() -> void:
 
 
 func _update_hud() -> void:
+	if phase == "descent":
+		_update_descent_hud()
+		if outside:
+			_suit_prompt()
+		elif walking:
+			_walk_prompt()
+		return
 	if xfer != null and phase != "approach":
 		_update_transfer_hud()
 		if walking:
@@ -596,9 +624,30 @@ func _update_hud() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if _jumping():
 		return
+	if outside and not leaving:
+		_suit_input(event)
+		return
 	if walking and not leaving:
 		_walk_input(event)
 		return
+	if phase == "descent" and not leaving and event is InputEventKey and event.pressed and not event.echo:
+		match event.keycode:
+			KEY_ESCAPE:
+				model.autoland = not model.autoland and model.can_hover()
+				hover_hold = false
+				return
+			KEY_H:
+				hover_hold = not hover_hold
+				model.autoland = false
+				return
+			KEY_F:
+				if model.on_pad() or (model.landed and not model.has_fuel()):
+					_arrived = true
+					_surface = model.on_pad()
+					_return_to_dock()
+				return
+			KEY_X:
+				return   # the braking autopilot is for space
 	if leaving or not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 	match event.keycode:
@@ -637,7 +686,7 @@ func _return_to_dock() -> void:
 	if String(job.get("kind", "")) == "jump":
 		Session.finish_jump_flight(model.fuel_burned_t, model.elapsed_s, model.damage, not model.has_fuel() and (phase != "approach" or not model.can_dock()))
 	elif xfer != null:
-		Session.finish_local_flight(model.fuel_burned_t, model.elapsed_s, model.damage, _arrived, not model.has_fuel() and (phase != "approach" or not model.can_dock()))
+		Session.finish_local_flight(model.fuel_burned_t, model.elapsed_s, model.damage, _arrived, _stranded(), _surface)
 	else:
 		Session.finish_flight(model.fuel_burned_t, model.elapsed_s, model.damage)
 	get_tree().change_scene_to_file(Session.DOCK_SCENE)
@@ -672,6 +721,8 @@ func sit_down() -> void:
 
 ## Docked, or still at the berth the flight started from: the airlock lets you off.
 func _berthed() -> bool:
+	if phase == "descent":
+		return model.landed
 	if model.can_dock():
 		return true
 	return phase != "approach" and phase != "cruise" and model.pos.length() < 400.0 and model.speed() < 1.0
@@ -721,6 +772,9 @@ func use() -> String:
 		return "helm"
 	if walk.climb() != 0:
 		return "ladder"
+	if walk.near_airlock() and phase == "descent" and model.landed:
+		go_outside()
+		return "outside"
 	if walk.near_airlock() and _berthed():
 		if phase == "approach":
 			_arrived = true
@@ -739,7 +793,10 @@ func _walk_prompt() -> void:
 		var hx := walk.hatch_here()
 		hint = "E: climb %s (look up or down)" % ("up or down" if bool(hx.up) and bool(hx.down) else ("up" if bool(hx.up) else "down"))
 	elif walk.near_airlock():
-		hint = "E: leave the ship" if _berthed() else "The outer hatch stays shut away from a berth"
+		if phase == "descent":
+			hint = "E: step outside onto the surface" if model.landed else "The outer hatch stays shut until the ship is down"
+		else:
+			hint = "E: leave the ship" if _berthed() else "The outer hatch stays shut away from a berth"
 	var warn := ""
 	if model.overheated:
 		warn = "ENGINES OVERHEATED"
@@ -754,3 +811,249 @@ func _walk_prompt() -> void:
 		if t != "":
 			parts.append(t)
 	prompt.text = "   ".join(parts)
+
+
+# --- Landing on a moon ------------------------------------------------------------------------------
+
+## A run to a moon base lands on its pad when the ship has lander legs with enough lift for the load;
+## otherwise it docks at the base's orbital station as before.
+func _can_land() -> bool:
+	if String(job.get("dest_kind", "")) != "moon" or model.lift_kn <= 0.0:
+		return false
+	var g := float(model.land_cfg.get("bodies", {}).get("moon", {}).get("gravity_m_s2", 1.62))
+	if model.fuel_t < float(model.land_cfg.get("landing_reserve_t", 1.5)):
+		return false   # not enough left in the tanks to come down on the jets: dock in orbit instead
+	return model.lift_accel() >= g * float(model.land_cfg.get("min_lift_margin", 1.15))
+
+
+func _stranded() -> bool:
+	if phase == "descent":
+		return not model.has_fuel() and not model.on_pad()
+	return not model.has_fuel() and (phase != "approach" or not model.can_dock())
+
+
+## Arrived over the moon: high above the base, drifting toward it, level. Gravity on.
+func _begin_descent() -> void:
+	phase = "descent"
+	var cfg := model.land_cfg
+	var body: Dictionary = cfg.get("bodies", {}).get("moon", {})
+	model.gravity = float(body.get("gravity_m_s2", 1.62))
+	model.terrain = SurfaceTerrain.make(String(job.get("dest_id", "moon")))
+	model.pad = Vector3.ZERO
+	model.station_solid = false
+	model.braking = false
+	model.autoland = false
+	model.throttle = 0.0
+	model.ang = Vector3.ZERO
+	var a := float(hash(String(job.get("dest_id", ""))) % 360) * PI / 180.0
+	var dir := Vector3(cos(a), 0, sin(a))
+	model.pos = dir * float(cfg.get("start_offset_m", 900.0)) + Vector3(0, float(cfg.get("start_altitude_m", 1200.0)), 0)
+	model.vel = -dir * float(cfg.get("start_speed_m_s", 25.0))
+	model.basis = Basis.looking_at(-dir, Vector3.UP)
+	station.visible = false
+	for m in sparks:
+		m.visible = false
+	if beacon != null:
+		beacon.visible = false
+	warp_index = 0
+	var sun_deg: Array = body.get("sky_sun_deg", [-28, 35])
+	sun.rotation_degrees = Vector3(float(sun_deg[0]), float(sun_deg[1]), 0)
+	sun.light_color = Color(1.0, 0.97, 0.92)
+	help.text = LAND_HELP
+	_build_moon(body)
+	_apply_pose()
+
+
+func _build_moon(body: Dictionary) -> void:
+	moon = Node3D.new()
+	add_child(moon)
+	var g: Array = body.get("ground", [0.42, 0.41, 0.40])
+	var r: Array = body.get("rock", [0.30, 0.29, 0.28])
+	var ground := model.terrain.build_mesh(float(model.land_cfg.get("terrain_size_m", 4000.0)), int(model.land_cfg.get("terrain_cells", 96)),
+			Color(float(g[0]), float(g[1]), float(g[2])), Color(float(r[0]), float(r[1]), float(r[2])))
+	moon.add_child(ground)
+	var pad_r := float(model.land_cfg.get("pad_radius_m", 25.0))
+	var pad := MeshInstance3D.new()
+	var disc := CylinderMesh.new()
+	disc.top_radius = pad_r
+	disc.bottom_radius = pad_r + 1.0
+	disc.height = 0.4
+	disc.material = Interiors.flat(Color(0.33, 0.34, 0.36), 0.9)
+	pad.mesh = disc
+	pad.position = Vector3(0, 0.05, 0)
+	moon.add_child(pad)
+	var ring := MeshInstance3D.new()
+	var tor := TorusMesh.new()
+	tor.inner_radius = pad_r - 1.4
+	tor.outer_radius = pad_r - 0.6
+	tor.material = SurfaceTextures.hazard_material()
+	ring.mesh = tor
+	ring.position = Vector3(0, 0.26, 0)
+	ring.scale = Vector3(1, 0.05, 1)
+	moon.add_child(ring)
+	for k in 12:   # edge lights, easy to find from above
+		var lamp := MeshInstance3D.new()
+		var b := BoxMesh.new()
+		b.size = Vector3(0.6, 0.4, 0.6)
+		b.material = Interiors.glow(Color(1.0, 0.75, 0.3) if k % 2 == 0 else Color(0.4, 0.9, 1.0), 2.0)
+		lamp.mesh = b
+		var ang := k * TAU / 12.0
+		lamp.position = Vector3(cos(ang), 0, sin(ang)) * (pad_r + 1.5) + Vector3(0, 0.4, 0)
+		moon.add_child(lamp)
+	var label := Label3D.new()
+	label.text = String(job.get("destination", "MOON BASE")).to_upper() + "  PAD 1"
+	label.font_size = 96
+	label.pixel_size = 0.04
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.modulate = Color(1.0, 0.8, 0.4)
+	label.position = Vector3(0, 14, 0)
+	moon.add_child(label)
+	# The base itself: a few domes and boxes off to the side of the pad.
+	var hab := Interiors.flat(Color(0.78, 0.77, 0.72), 0.7)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(String(job.get("dest_id", "")))
+	for i in 6:
+		var at := Vector3(rng.randf_range(45, 80), 0, rng.randf_range(-40, 40)).rotated(Vector3.UP, rng.randf() * TAU)
+		var mi := MeshInstance3D.new()
+		if i % 2 == 0:
+			var dome := SphereMesh.new()
+			dome.radius = rng.randf_range(5, 9)
+			dome.height = dome.radius
+			dome.is_hemisphere = true
+			dome.material = hab
+			mi.mesh = dome
+		else:
+			var box := BoxMesh.new()
+			box.size = Vector3(rng.randf_range(6, 14), rng.randf_range(3, 6), rng.randf_range(6, 12))
+			box.material = hab
+			mi.mesh = box
+			at.y = box.size.y * 0.5
+		mi.position = at
+		moon.add_child(mi)
+		var light := MeshInstance3D.new()
+		var lb := BoxMesh.new()
+		lb.size = Vector3(1.2, 0.5, 0.2)
+		lb.material = Interiors.glow(Color(1.0, 0.85, 0.5), 1.5)
+		light.mesh = lb
+		light.position = at + Vector3(0, 2.0, 0)
+		moon.add_child(light)
+
+
+## Space fires the lift jets; with hover hold on they cancel the fall instead.
+func _lift_command() -> float:
+	if phase != "descent" or model.autoland:
+		return 0.0
+	if not walking and not outside and Input.is_key_pressed(KEY_SPACE):
+		return 1.0
+	if hover_hold and model.lift_accel() > 0.0:
+		var up := maxf(model.basis.y.dot(Vector3.UP), 0.2)
+		return clampf((model.gravity - model.vel.y * 1.2) / (model.lift_accel() * up), 0.0, 1.0)
+	return 0.0
+
+
+func _update_descent_hud() -> void:
+	var to_pad := Vector2(model.pos.x, model.pos.z).length()
+	var alt := model.altitude()
+	var lines := PackedStringArray([
+		"DESCENT  %s    %s" % [String(job.destination).to_upper(), "AUTOLAND ON (Esc)" if model.autoland else ("HOVER HOLD (H)" if hover_hold else "Esc: autoland")],
+		"ALTITUDE  %.0f m    V/S  %+.1f m/s    DRIFT  %.1f m/s" % [alt, model.vel.y, Vector2(model.vel.x, model.vel.z).length()],
+		"PAD  %.0f m    TILT  %.0f°" % [to_pad, model.tilt_deg()],
+		"LIFT  %d%%    %.2f m/s² available, gravity %.2f" % [roundi(model.lift * 100.0), model.lift_accel(), model.gravity],
+		"THROTTLE  %d%%    FUEL  %.2f t" % [roundi(model.throttle * 100.0), model.fuel_t],
+		"HEAT  %d%%    HULL  %d%%" % [roundi(model.heat_fraction() * 100.0), roundi((1.0 - model.damage) * 100.0)]])
+	hud.text = "\n".join(lines)
+	bar.value = model.lift
+	var hint := ""
+	if model.landed and model.on_pad():
+		hint = "Landed on the pad. F: shut down and unload.   G: get up and walk outside."
+	elif model.landed:
+		hint = "Down %.0f m from the pad. Lift off (Space) and set down within %d m%s." % [to_pad, int(model.land_cfg.get("landing_zone_m", 120.0)),
+				"" if model.has_fuel() else ". Out of fuel: F calls a crawler to tow you in"]
+	elif not model.has_fuel():
+		hint = "OUT OF FUEL"
+	elif model.last_impact > float(model.tune.get("soft_impact_m_s", 1.5)) and model.elapsed_s - _impact_shown < 3.0:
+		hint = "HARD LANDING"
+	elif alt < 60.0 and model.vel.y < -float(model.land_cfg.get("touchdown_speed_m_s", 3.0)) * 1.5:
+		hint = "SINKING FAST: hold Space"
+	elif not model.autoland:
+		hint = "Space: lift jets.  H: hover.  Tilt to drift toward the pad.  Esc: let the autopilot land."
+	prompt.text = hint
+
+
+# --- On foot outside --------------------------------------------------------------------------------
+
+## Out through the airlock onto the surface (the ship must be down).
+func go_outside() -> bool:
+	if phase != "descent" or not model.landed or walk.airlock == Vector3.INF:
+		return false
+	var cells: Array[Vector3i] = []
+	for m in ship_data.modules:
+		for c in ship_data.world_cells(m.id, m.cell, m.rot):
+			cells.append(c)
+	var origin := model.pos + model.basis * view.position
+	var out_dir := -walk.airlock_face
+	var hatch_local := Vector3(walk.airlock.x, 0, walk.airlock.z) + out_dir * 2.6
+	suit_hatch = origin + model.basis * hatch_local
+	suit = SurfaceWalker.make(model.terrain, model.gravity, cells, origin, model.basis)
+	suit.place(suit_hatch)
+	suit.face(model.basis * out_dir)
+	outside = true
+	walking = false
+	view.set_interior(false)
+	help.text = SUIT_HELP
+	crosshair.visible = true
+	_apply_pose()
+	return true
+
+
+## Back in through the airlock.
+func come_aboard() -> bool:
+	if not outside or suit.distance_to(suit_hatch) > 2.5:
+		return false
+	outside = false
+	walking = true
+	walk.stand_in_airlock()
+	view.set_interior(true)
+	help.text = WALK_HELP
+	_apply_pose()
+	return true
+
+
+func _suit_step(delta: float) -> void:
+	var dir := Vector2.ZERO
+	if Input.is_key_pressed(KEY_W): dir.y += 1.0
+	if Input.is_key_pressed(KEY_S): dir.y -= 1.0
+	if Input.is_key_pressed(KEY_D): dir.x += 1.0
+	if Input.is_key_pressed(KEY_A): dir.x -= 1.0
+	var yaw := 0.0
+	var pitch := 0.0
+	if Input.is_key_pressed(KEY_LEFT): yaw += 1.0
+	if Input.is_key_pressed(KEY_RIGHT): yaw -= 1.0
+	if Input.is_key_pressed(KEY_UP): pitch += 1.0
+	if Input.is_key_pressed(KEY_DOWN): pitch -= 1.0
+	suit.look(yaw * KEY_TURN * delta, pitch * KEY_TURN * delta)
+	suit.step(minf(delta, 0.05), dir, Input.is_key_pressed(KEY_SHIFT), Input.is_key_pressed(KEY_SPACE))
+
+
+func _suit_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		suit.look(-event.relative.x * MOUSE_TURN, -event.relative.y * MOUSE_TURN)
+		return
+	if event is InputEventMouseButton and event.pressed:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		return
+	if not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	match event.keycode:
+		KEY_E:
+			come_aboard()
+		KEY_ESCAPE:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _suit_prompt() -> void:
+	var d := suit.distance_to(suit_hatch)
+	var parts := PackedStringArray(["%s SURFACE" % String(job.get("destination", "MOON")).to_upper()])
+	parts.append("E: back aboard" if d <= 2.5 else "Airlock hatch %.0f m" % d)
+	prompt.text = "   ".join(parts)
+

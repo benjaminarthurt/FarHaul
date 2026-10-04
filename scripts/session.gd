@@ -434,8 +434,10 @@ static func begin_local_flight() -> Dictionary:
 	var stats := ship_stats(loaded_ship.ship, loaded_ship.manifest)
 	if not Contracts.ready(Contracts.check(stats, loaded_ship.manifest, c)):
 		return {"ok": false, "message": "The ship is not ready to depart with this load."}
+	var dest := LocalSpace.node(String(c.destination_port_id))
 	flight_job = {"kind": "run", "contract_id": String(c.id), "dv_kms": float(c.dv_kms), "hours": int(c.hours),
-			"destination": String(LocalSpace.node(String(c.destination_port_id)).get("name", "the destination")), "key": String(c.id)}
+			"destination": String(dest.get("name", "the destination")), "key": String(c.id),
+			"dest_kind": String(dest.get("kind", "port")), "dest_id": String(c.destination_port_id)}
 	return {"ok": true, "message": "Take the helm."}
 
 
@@ -515,7 +517,9 @@ static func finish_jump_flight(fuel_burned_t: float, seconds: float, damage: flo
 
 ## Close out a flown local run. `arrived`: the ship stopped at the destination. Otherwise it came home
 ## (Esc) or ran dry and was towed; either way the contract stays loaded at the origin.
-static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: float, arrived: bool, stranded: bool = false) -> String:
+## `surface`: the ship landed on the destination's pad (a moon base) instead of docking in orbit, which
+## earns the surface bonus when the load is delivered.
+static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: float, arrived: bool, stranded: bool = false, surface: bool = false) -> String:
 	var job := flight_job
 	flight_job = {}
 	var c := active_contract()
@@ -540,8 +544,10 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	if arrived:
 		profile["port_id"] = String(c.destination_port_id)
 		c["status"] = "arrived"
+		if surface:
+			c["surface"] = true
 		data["active_contract"] = c
-		msg = "Docked at %s. Fuel %s cr, berth fee %s cr%s.%s" % [job.destination, ShipStats.commas(int(r.fuel_cost)), ShipStats.commas(roundi(extra)),
+		msg = (("Landed on the pad at %s." if surface else "Docked at %s.") + " Fuel %s cr, berth fee %s cr%s.%s") % [job.destination, ShipStats.commas(int(r.fuel_cost)), ShipStats.commas(roundi(extra)),
 				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", " A tug towed you in." if stranded else ""]
 	elif stranded:
 		msg = "Out of fuel. A tug brought you back for %s cr plus %s cr of fuel. The load is still aboard." % [ShipStats.commas(roundi(extra)), ShipStats.commas(int(r.fuel_cost))]
@@ -591,6 +597,10 @@ static func _deliver_local(c: Dictionary) -> Dictionary:
 	var manifest: CargoManifest = loaded_ship.manifest
 	var delivered := manifest.unload(StringName(c.commodity), float(c.get("accepted_tonnes", c.offer)))
 	var payment := int(c.get("pay_total", roundi(delivered * float(c.rate))))
+	var bonus := 0
+	if bool(c.get("surface", false)):   # landed straight on the moon base's pad: no lighter up from orbit
+		bonus = roundi(float(payment) * float(SurfaceTerrain.config().get("surface_bonus", 0.25)))
+		payment += bonus
 	_sync_sim(loaded_ship.ship)
 	sim.run_hours(int(LocalSpace.config()["board"]["unload_hours"]))
 	sim._pay("world", SimWorld.PLAYER, float(payment))
@@ -602,7 +612,8 @@ static func _deliver_local(c: Dictionary) -> Dictionary:
 	data.erase("active_contract")
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr." % [delivered, ShipStats.commas(payment)], "payment": payment}
+	var note := " (includes %s cr for landing it on the surface)" % ShipStats.commas(bonus) if bonus > 0 else ""
+	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr%s." % [delivered, ShipStats.commas(payment), note], "payment": payment}
 
 
 static func depart_active_contract() -> Dictionary:

@@ -39,6 +39,7 @@ const FACES := [
 @export var airlock := false  ## true if crew can get in and out of the ship here
 @export var berths := 0  ## crew who can sleep aboard
 @export var drive := 0.0  ## jump drive: fraction added to cruising speed (0.3 is +30%)
+@export var lift := 0.0  ## kN of downward-firing lift jets (push the ship along +Y): needed to land
 @export var cargo_slots := 0  ## standard containers this module can carry
 @export var cargo_capacity := 0.0  ## tonnes of freight when every slot is full
 
@@ -369,6 +370,41 @@ func _build_external(root: Node3D) -> void:
 			label.position = Vector3(side * 1.215, 0, mid_z)
 			label.rotation_degrees.y = 90.0 * side
 			root.add_child(label)
+	elif shape == &"legs":
+		# Lander legs under the hull: four splayed struts to footpads, lift-jet nozzles between them.
+		var steel := _mat(Color(0.55, 0.57, 0.6), 1.0)
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				var top := Vector3(sx * 0.9, h - 0.15, sz * 0.9)
+				var foot := Vector3(sx * 1.3, -h + 0.12, sz * 1.3)
+				var leg := _add_box(root, (top + foot) * 0.5, Vector3(0.16, top.distance_to(foot), 0.16), steel)
+				leg.look_at_from_position((top + foot) * 0.5, foot, Vector3(1, 0, 0) if absf(sx) < 0.5 else Vector3(0, 0, 1))
+				leg.rotate_object_local(Vector3.RIGHT, PI * 0.5)
+				_add_box(root, foot + Vector3(0, -0.05, 0), Vector3(0.6, 0.1, 0.6), dark)
+		_add_box(root, Vector3(0, h - 0.2, 0), Vector3(2.2, 0.3, 2.2), dark)  # mounting plate
+		for k in 4:
+			var a := k * PI * 0.5 + PI * 0.25
+			var nz := Vector3(cos(a) * 0.5, h - 0.6, sin(a) * 0.5)
+			var bell := CylinderMesh.new()
+			bell.top_radius = 0.18
+			bell.bottom_radius = 0.32
+			bell.height = 0.5
+			bell.material = mat
+			var bi := MeshInstance3D.new()
+			bi.mesh = bell
+			bi.position = nz
+			root.add_child(bi)
+			var plume := CylinderMesh.new()  # lift exhaust, shown while the jets fire
+			plume.top_radius = 0.3
+			plume.bottom_radius = 0.04
+			plume.height = 2.2
+			plume.material = _glow(Color(0.6, 0.8, 1.0))
+			var pi_ := MeshInstance3D.new()
+			pi_.mesh = plume
+			pi_.position = nz + Vector3(0, -1.35, 0)
+			pi_.set_meta("lift_flame", true)
+			pi_.visible = false
+			root.add_child(pi_)
 	elif shape == &"drive":
 		# A heavy ring on a short spine: the jump coil.
 		var ring := TorusMesh.new()

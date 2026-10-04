@@ -9,6 +9,8 @@ extends Node3D
 var _rings: Array[Node3D] = []
 var _flames: Array[MeshInstance3D] = []
 var _flames_on := false
+var _lift_flames: Array[MeshInstance3D] = []
+var _lift_dirty := true
 var _time := 0.0
 var _ring_mesh: TorusMesh
 var _ring_mat: StandardMaterial3D
@@ -39,6 +41,7 @@ func rebuild(ship: ShipData, manifest: CargoManifest = null, pop_index := -1) ->
 		child.queue_free()
 	_rings.clear()
 	_flames.clear()
+	_lift_dirty = true
 	for mi in ship.modules.size():
 		var m: Dictionary = ship.modules[mi]
 		var node := ship.library.get_def(m.id).build_visual()
@@ -163,3 +166,19 @@ func _set_ceilings(node: Node, on: bool) -> void:
 	for c in node.get_children():
 		_set_ceilings(c, on)
 
+
+## Lift-jet plumes under lander legs. The plumes are found once per rebuild.
+func set_lift_flames(on: bool) -> void:
+	if _lift_dirty:
+		_lift_flames.clear()
+		_find_lift(self)
+		_lift_dirty = false
+	for f in _lift_flames:
+		f.visible = on
+
+
+func _find_lift(node: Node) -> void:
+	if node is MeshInstance3D and node.has_meta("lift_flame"):
+		_lift_flames.append(node)
+	for c in node.get_children():
+		_find_lift(c)

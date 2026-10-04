@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "note": "Landing on a moon (scripts/flight_model.gd, scripts/surface_terrain.gd). Placeholders tuned so the starter fitted with two lander legs can land with a full hold. Gravity is in m/s^2; speeds in m/s; angles in degrees.",
+  "bodies": {
+    "moon": {"name": "Moon", "gravity_m_s2": 1.62, "ground": [0.42, 0.41, 0.40], "rock": [0.30, 0.29, 0.28], "sky_sun_deg": [-28, 35]}
+  },
+  "min_lift_margin": 1.15,
+  "landing_reserve_t": 1.5,
+  "start_altitude_m": 1200.0,
+  "start_offset_m": 900.0,
+  "start_speed_m_s": 25.0,
+  "pad_radius_m": 25.0,
+  "landing_zone_m": 120.0,
+  "touchdown_speed_m_s": 3.0,
+  "touchdown_drift_m_s": 2.0,
+  "touchdown_tilt_deg": 15.0,
+  "hard_landing_damage_per_m_s": 0.04,
+  "tilt_damage_per_deg": 0.004,
+  "autoland_max_tilt_deg": 25.0,
+  "autoland_cruise_m_s": 15.0,
+  "surface_bonus": 0.25,
+  "terrain_size_m": 9000.0,
+  "terrain_cells": 140,
+  "terrain_relief_m": 18.0,
+  "pad_flat_radius_m": 90.0,
+  "suit_walk_m_s": 1.6,
+  "suit_jump_m_s": 2.2
+}

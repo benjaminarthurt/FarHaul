@@ -38,6 +38,18 @@ var last_impact := 0.0           # speed of the latest hit, m/s
 var fuel_burned_t := 0.0
 var elapsed_s := 0.0
 var station_solid := true         # false on a transfer between sites: nothing to hit
+# Landing (see data/runtime/landing.json). With `terrain` set the ship flies over a moon: gravity pulls
+# it down, the lift jets under the hull push along the ship's +Y, and the feet meet the ground.
+var gravity := 0.0                # m/s^2 down (-Y); 0 in space
+var terrain: SurfaceTerrain = null
+var lift_kn := 0.0                # lift jets at full power
+var lift := 0.0                   # 0..1, set every step
+var foot_m := 3.0                 # centre of mass down to the feet
+var landed := false
+var autoland := false             # autopilot: level out, null the drift, settle on the pad
+var pad := Vector3.ZERO
+var land_cfg: Dictionary = {}
+var last_touchdown := 0.0         # vertical speed of the latest touchdown, m/s
 
 
 static func load_tuning() -> Dictionary:
@@ -61,6 +73,9 @@ static func from_stats(stats: Dictionary) -> FlightModel:
 	m.heat_base_kw = float(stats.get("heat_gen", 0.0)) - m.engine_heat_kw
 	m.cooling_kw = float(stats.get("cooling", 0.0))
 	m.radius_m = float(stats.get("radius", 6.0))
+	m.lift_kn = float(stats.get("lift", 0.0))
+	if stats.has("foot_y") and stats.has("com"):
+		m.foot_m = float((stats["com"] as Vector3).y) - float(stats["foot_y"])
 	return m
 
 
@@ -124,6 +139,35 @@ func _flow_kg_s(thr: float) -> float:
 	return thrust_kn * 1000.0 * thr / (float(tune.get("isp_s", 900.0)) * G0)
 
 
+func _lift_flow_kg_s(l: float) -> float:
+	return lift_kn * 1000.0 * l / (float(tune.get("isp_s", 900.0)) * G0)
+
+
+## m/s^2 the lift jets can give at full power, now.
+func lift_accel() -> float:
+	return lift_kn / mass_t() if mass_t() > 0.0 else 0.0
+
+
+## True when the lift jets can hold this ship up here with the margin landing.json asks for.
+func can_hover() -> bool:
+	return gravity <= 0.0 or lift_accel() >= gravity * float(land_cfg.get("min_lift_margin", 1.15))
+
+
+## Height of the feet above the ground below, metres (INF away from a surface).
+func altitude() -> float:
+	if terrain == null:
+		return INF
+	return pos.y - foot_m - terrain.height(pos.x, pos.z)
+
+
+func tilt_deg() -> float:
+	return rad_to_deg(basis.y.angle_to(Vector3.UP))
+
+
+func on_pad() -> bool:
+	return landed and Vector2(pos.x - pad.x, pos.z - pad.z).length() <= float(land_cfg.get("landing_zone_m", 120.0))
+
+
 func _turn_accel() -> float:
 	var ref := float(tune.get("reference_mass_t", 20.0))
 	var scale := pow(ref / maxf(mass_t(), 0.1), float(tune.get("turn_mass_exponent", 0.5)))
@@ -137,18 +181,35 @@ func _max_turn() -> float:
 
 ## Advance by `dt` seconds. `turn` is the pilot's pitch/yaw/roll command, each -1..1; `throttle_cmd` is
 ## -1 (ease off), 0 (hold) or +1 (open up), applied at throttle_rate_per_s.
-func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0) -> void:
+func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, lift_cmd: float = 0.0) -> void:
 	throttle = clampf(throttle + throttle_cmd * float(tune.get("throttle_rate_per_s", 0.8)) * dt, 0.0, 1.0)
 	var cmd := turn
+	lift = clampf(lift_cmd, 0.0, 1.0)
 	if braking:
 		var auto := _brake(dt)
 		cmd = auto["turn"]
 		throttle = auto["throttle"]
+	if autoland and terrain != null:
+		var al := _autoland()
+		cmd = al["turn"]
+		lift = al["lift"]
+		throttle = 0.0
+	if landed:
+		# Standing on the legs: nothing moves until the jets can lift the ship off.
+		var up := lift * lift_accel() * thrust_scale() if has_fuel() else 0.0
+		if up <= gravity * 1.02 and throttle <= 0.0:
+			vel = Vector3.ZERO
+			ang = Vector3.ZERO
+			lift = 0.0
+			_heat(dt)
+			elapsed_s += dt
+			return
+		landed = false
 	# Rotation: move the angular rate toward what the pilot (or the assist) asks for.
 	var want := cmd * _max_turn()
 	var a := _turn_accel() * dt
 	for i in 3:
-		if cmd[i] != 0.0 or assist or braking:
+		if cmd[i] != 0.0 or assist or braking or autoland:
 			ang[i] = move_toward(ang[i], want[i], a)
 	if ang.length() > 0.0:
 		basis = (basis * Basis(ang.normalized(), ang.length() * dt)).orthonormalized()
@@ -166,11 +227,105 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0) ->
 		if not has_fuel():
 			fuel_t = 0.0
 			throttle = 0.0
+	if lift > 0.0 and has_fuel() and lift_kn > 0.0 and scale > 0.0:
+		var want_l := _lift_flow_kg_s(lift * scale) * dt / 1000.0
+		var burn_l := minf(want_l, fuel_t)
+		var eff_l := burn_l / want_l if want_l > 0.0 else 0.0
+		vel += basis.y * (lift_kn / mass_t()) * lift * scale * eff_l * dt
+		fuel_t -= burn_l
+		fuel_burned_t += burn_l
+	if gravity > 0.0:
+		vel.y -= gravity * dt
 	_heat(dt)
 	pos += vel * dt
 	if station_solid:
 		_collide()
+	if terrain != null:
+		_ground()
 	elapsed_s += dt
+
+
+## The feet meet the ground. Slow, level and not drifting is a landing; anything else is a hard landing
+## that costs hull and bounces.
+func _ground() -> void:
+	var g := terrain.height(pos.x, pos.z)
+	if pos.y - foot_m > g:
+		return
+	var down := -vel.y
+	var drift := Vector2(vel.x, vel.z).length()
+	var tilt := tilt_deg()
+	pos.y = g + foot_m
+	if down <= 0.0 and drift < 0.2:
+		return
+	var ok_v := float(land_cfg.get("touchdown_speed_m_s", 3.0))
+	var ok_h := float(land_cfg.get("touchdown_drift_m_s", 2.0))
+	var ok_t := float(land_cfg.get("touchdown_tilt_deg", 15.0))
+	last_touchdown = maxf(down, 0.0)
+	if down <= ok_v and drift <= ok_h and tilt <= ok_t:
+		landed = true
+		autoland = false
+		vel = Vector3.ZERO
+		ang = Vector3.ZERO
+		var heading := Vector3(basis.z.x, 0, basis.z.z)
+		if heading.length() < 0.01:
+			heading = Vector3(0, 0, 1)
+		basis = Basis.looking_at(-heading.normalized(), Vector3.UP)   # settle level on the legs
+		return
+	impacts += 1
+	last_impact = down
+	damage = minf(1.0, damage + maxf(down - ok_v, 0.0) * float(land_cfg.get("hard_landing_damage_per_m_s", 0.04))
+			+ maxf(drift - ok_h, 0.0) * float(land_cfg.get("hard_landing_damage_per_m_s", 0.04)) * 0.5
+			+ maxf(tilt - ok_t, 0.0) * float(land_cfg.get("tilt_damage_per_deg", 0.004)))
+	vel.y = maxf(down, 0.0) * 0.2
+	vel.x *= 0.5
+	vel.z *= 0.5
+
+
+## Autopilot landing: hold altitude while flying over the pad, then come straight down, slowing as the
+## ground nears. It steers by tilting the ship so the lift jets push it sideways, like a helicopter.
+func _autoland() -> Dictionary:
+	var g := gravity
+	var to_pad := Vector2(pad.x - pos.x, pad.z - pos.z)
+	var v_h := Vector2(vel.x, vel.z)
+	var cruise := float(land_cfg.get("autoland_cruise_m_s", 15.0))
+	var want_vh := to_pad * 0.06
+	if want_vh.length() > cruise:
+		want_vh = want_vh.normalized() * cruise
+	var a_h := (want_vh - v_h) * 0.6
+	if a_h.length() > 2.0:
+		a_h = a_h.normalized() * 2.0
+	var alt := altitude()
+	var want_vy := 0.0
+	if to_pad.length() > 40.0:
+		var a_net0 := maxf(lift_accel() * 0.85 - g, 0.05)
+		want_vy = clampf((150.0 - alt) * 0.15, -minf(12.0, sqrt(2.0 * a_net0 * maxf(alt - 150.0, 0.0)) * 0.7 + 1.0), 4.0)   # cruise over at about 150 m
+	else:
+		# Then down, never faster than the lift jets can stop from at this height, gently at the end.
+		var a_net := maxf(lift_accel() * 0.85 - g, 0.05)
+		want_vy = -clampf(minf(alt * 0.12, sqrt(2.0 * a_net * maxf(alt - 1.0, 0.0)) * 0.7), 0.8, 20.0)
+	var a_v := (want_vy - vel.y) * 0.9
+	var t := Vector3(a_h.x, a_v + g, a_h.y)
+	var max_tilt := deg_to_rad(float(land_cfg.get("autoland_max_tilt_deg", 25.0)))
+	if t.y < 0.1:
+		t.y = 0.1
+	var up_want := t.normalized()
+	if up_want.angle_to(Vector3.UP) > max_tilt:
+		var horiz := Vector3(up_want.x, 0, up_want.z).normalized()
+		up_want = (Vector3.UP * cos(max_tilt) + horiz * sin(max_tilt)).normalized()
+	if alt < 3.0:
+		up_want = Vector3.UP        # last few metres: level for the legs
+	var turn := Vector3.ZERO
+	var up_now := basis.y
+	var angle := up_now.angle_to(up_want)
+	if angle > 0.002:
+		var axis_local := basis.inverse() * up_now.cross(up_want)
+		if axis_local.length() > 0.0001:
+			var rate := sqrt(2.0 * _turn_accel() * angle) / _max_turn()
+			turn = axis_local.normalized() * clampf(rate, 0.0, 1.0)
+	# Damp any yaw spin; heading does not matter.
+	turn.y = -clampf(ang.y, -1.0, 1.0)
+	var need := t.dot(up_now) * mass_t() / maxf(lift_kn, 0.001)
+	return {"turn": turn, "lift": clampf(need, 0.0, 1.0)}
 
 
 ## Autopilot: point at the retrograde marker, then burn in proportion to the speed left.

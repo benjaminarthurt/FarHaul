@@ -35,6 +35,25 @@ const STARTER_FTL := [
 ]
 
 
+## The starter with two lander legs under it (hold and engineering) and a second fuel tank for the
+## descent: what a captain flies to land freight on a moon base. Used by the landing tests.
+const STARTER_LANDER := [
+	[&"cockpit", Vector3i(0, 0, 0), 0],
+	[&"tank", Vector3i(-1, 0, 0), 0],
+	[&"tee", Vector3i(0, 0, 1), 0],
+	[&"airlock", Vector3i(1, 0, 1), 0],
+	[&"cargo_hold", Vector3i(0, 0, 2), 0],
+	[&"engineering", Vector3i(0, 0, 4), 0],
+	[&"engine", Vector3i(0, 0, 5), 0],
+	[&"radiator", Vector3i(1, 0, 4), 0],
+	[&"radiator", Vector3i(-1, 0, 4), 2],
+	[&"radiator", Vector3i(1, 0, 3), 0],
+	[&"tank", Vector3i(-1, 0, 2), 0],
+	[&"lander_legs", Vector3i(0, -1, 2), 0],
+	[&"lander_legs", Vector3i(0, -1, 4), 0],
+]
+
+
 ## Replaces whatever is on `ship`. Returns the first error, or "" if everything placed.
 static func build(ship: ShipData, steps: Array = STARTER) -> String:
 	ship.clear()

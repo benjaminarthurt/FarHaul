@@ -131,6 +131,12 @@ func _add_defaults() -> void:
 		[_mount(o, DIR_N)],
 		{"group": &"external", "pressurized": false, "shape": &"engine", "mass": 3.0, "cost": 20000,
 			"thrust": 80.0, "power": -15.0, "heat": 25.0})
+	# Lander legs: bolt under the hull. Four legs to stand on and lift jets firing downward; with enough lift
+	# for a world's gravity the ship can set down on it. Not needed in space.
+	_def(&"lander_legs", "Lander legs", one, Color(0.62, 0.56, 0.30),
+		[_mount(o, DIR_U)],
+		{"group": &"external", "pressurized": false, "shape": &"legs", "mass": 1.0, "cost": 12000,
+			"lift": 70.0, "power": -4.0, "heat": 4.0})
 	# Jump drive: bolts on like any external part and makes the ship faster between stars. It needs
 	# power and sheds heat, and its mass counts against thrust-to-weight like everything else.
 	_def(&"jump_drive", "FTL drive", one, Color(0.35, 0.50, 0.75),

@@ -35,6 +35,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 	var drive_count := 0
 	var cargo_capacity := 0.0
 	var cargo_carried := 0.0
+	var lift := 0.0
+	var legs := 0
 
 	for mi in ship.modules.size():
 		var m: Dictionary = ship.modules[mi]
@@ -57,6 +59,9 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		if d.drive > 0.0:
 			drive_count += 1
 		cargo_capacity += d.cargo_capacity
+		lift += d.lift
+		if d.lift > 0.0:
+			legs += 1
 		var carried := d.cargo_capacity * cargo_load
 		if manifest != null:
 			carried = manifest.mass_at(mi)
@@ -162,6 +167,10 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		"thrust_offset": thrust_offset,
 		"com": com,  # absolute, in the ship's own coordinates (first module's cell is the origin)
 		"centre": centre,  # middle of the occupied cells' bounding box
+		"lift": lift,      # kN of lift jets (along +Y)
+		"legs": legs,      # lander leg modules fitted
+		"foot_y": lo.y - ShipGrid.CELL * 0.5 if not ship.modules.is_empty() else 0.0,   # lowest point, ship coordinates
+		"lift_g": lift / maxf(loaded, 0.001),   # m/s² the lift jets can hold up at this load: must beat a world's gravity to land
 		"warnings": warnings,
 	}
 
@@ -180,6 +189,8 @@ static func format(s: Dictionary) -> String:
 		"Crew  %d needed, %d berths%s" % [s.crew_needed, s.berths, ("   FTL drive x%d" % s.drive_count) if s.drive_count > 0 else "   no FTL"],
 		"Thrust  %.0f kN   T/W %.2f empty, %.2f loaded" % [s.thrust_fwd, s.twr, s.twr_loaded],
 	])
+	if float(s.get("lift", 0.0)) > 0.0:
+		lines.append("Lift  %.0f kN   lands where gravity is under %.2f g loaded" % [s.lift, float(s.lift_g) / G])
 	if s.cargo_used_slots >= 0:
 		lines.append("Cargo  %.1f t   worth %s cr" % [s.cargo_mass, _commas(roundi(s.cargo_value))])
 	lines.append("Centre of mass  x %+.1f  y %+.1f  z %+.1f m" % [rel.x, rel.y, rel.z])
