@@ -18,7 +18,8 @@ func _initialize() -> void:
 func _run() -> void:
 	print("sites and hops")
 	var ns := LocalSpace.nodes("new_houston")
-	check(ns.size() == 4 and String(ns[0].kind) == "port", "four sites, the first is the main port")
+	check(ns.size() == 6 and String(ns[0].kind) == "port", "six sites (port, depot, moon base, belt, base pad, mining camp), the first is the main port")
+	check(LocalSpace.is_surface(String(ns[4].id)) and LocalSpace.is_surface(String(ns[5].id)) and not LocalSpace.is_surface(String(ns[2].id)), "the pad and the camp are on the surface, the base station is not")
 	check(String(ns[0].id) == String(Worlds.primary_port("new_houston").get("id", "")), "the main port keeps its real id")
 	check(String(LocalSpace.node(String(ns[2].id)).get("kind", "")) == "moon", "synthetic ids resolve back to their site")
 	check(LocalSpace.node("nowhere__moon").is_empty() and LocalSpace.node("nope").is_empty(), "unknown ids give nothing")

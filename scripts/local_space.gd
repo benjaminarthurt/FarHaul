@@ -8,7 +8,8 @@ extends RefCounted
 const PATH := "res://data/runtime/local_space.json"
 const G0 := 9.81
 const SEP := "__"
-const KINDS := ["port", "depot", "moon", "belt"]
+const KINDS := ["port", "depot", "moon", "belt", "pad", "camp"]
+const SURFACE := ["pad", "camp"]   ## on the moon's surface: reached by landing, left by lifting off
 
 static var _cfg: Dictionary = {}
 static var pay_override := -1.0   ## solver hook: replaces the level multiplier when >= 0
@@ -28,10 +29,40 @@ static func nodes(system_id: String) -> Array[Dictionary]:
 	var sys_name := String(Worlds.system(system_id).get("name", system_id.replace("_", " ").capitalize()))
 	out.append({"id": String(main.get("id", system_id + SEP + "port")), "kind": "port", "system_id": system_id,
 			"name": String(main.get("name", sys_name + " Port")), "type": String(main.get("type", "port"))})
-	for kind in ["depot", "moon", "belt"]:
-		out.append({"id": system_id + SEP + kind, "kind": kind, "system_id": system_id,
+	for kind in ["depot", "moon", "belt", "pad", "camp"]:
+		out.append({"id": system_id + SEP + kind, "kind": kind, "system_id": system_id, "surface": kind in SURFACE,
 				"name": "%s %s" % [sys_name, String(config()["kinds"][kind]["name"])], "type": kind})
 	return out
+
+
+static func is_surface(id: String) -> bool:
+	return String(node(id).get("kind", "")) in SURFACE
+
+
+## The body the system's moon base sits on (landing.json "bodies"), picked from the system id so it
+## never changes: gravity, colours and a name.
+static func body(system_id: String) -> Dictionary:
+	var land := SurfaceTerrain.config()
+	var kinds: Array = land.get("body_order", ["moon"])
+	var key := String(kinds[absi(hash(system_id)) % kinds.size()])
+	var b: Dictionary = land.get("bodies", {}).get(key, {}).duplicate()
+	b["id"] = key
+	return b
+
+
+## Whether a ship (stats: lift, wet) carrying `cargo_t` can land in this system: its lift jets must beat
+## the body's gravity by the margin landing.json asks for.
+static func can_land(stats: Dictionary, system_id: String, cargo_t: float = 0.0) -> bool:
+	var g := float(body(system_id).get("gravity_m_s2", 1.62))
+	var margin := float(SurfaceTerrain.config().get("min_lift_margin", 1.15))
+	return float(stats.get("lift", 0.0)) / maxf(float(stats.get("wet", 1.0)) + cargo_t, 0.001) >= g * margin
+
+
+## The most cargo the lift jets can set down in this system (tonnes).
+static func max_landing_cargo_t(stats: Dictionary, system_id: String) -> float:
+	var g := float(body(system_id).get("gravity_m_s2", 1.62))
+	var margin := float(SurfaceTerrain.config().get("min_lift_margin", 1.15))
+	return float(stats.get("lift", 0.0)) / (g * margin) - float(stats.get("wet", 0.0))
 
 
 ## A site by id: a real port, or one of the synthetic sites. {} when the id is neither.
@@ -92,9 +123,13 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 	rng.seed = hash("%s|%d" % [node_id, window])
 	var goods := _goods()
 	var others: Array[Dictionary] = []
-	for n in nodes(String(here["system_id"])):
+	var sys := String(here["system_id"])
+	var lander := max_landing_cargo_t(ship, sys) >= float(b["min_tonnes"]) * 0.5
+	for n in nodes(sys):
 		if String(n["id"]) == node_id:
 			continue
+		if (bool(n.get("surface", false)) or bool(here.get("surface", false))) and not lander:
+			continue   # surface work only shows to a ship that can land
 		var reach := hop(String(here["kind"]), String(n["kind"]))
 		# only post runs this ship's tank can lift a worthwhile load over
 		if min(float(ship.get("cargo_capacity", 0.0)), max_cargo_t(float(ship["wet"]), float(ship["fuel"]), float(reach["dv_kms"]))) >= float(b["min_tonnes"]) * 0.5:
@@ -112,11 +147,16 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 			continue
 		var h := hop(String(here["kind"]), String(dest["kind"]))
 		var cap := minf(float(ship.get("cargo_capacity", 0.0)), max_cargo_t(float(ship["wet"]), float(ship["fuel"]), float(h["dv_kms"])))
+		var surface := bool(dest.get("surface", false)) or bool(here.get("surface", false))
+		if surface:
+			cap = minf(cap, max_landing_cargo_t(ship, sys))
 		if cap < float(b["min_tonnes"]) * 0.5:
-			continue   # the tank cannot lift a worthwhile load that far
+			continue   # the tank (or the lift jets) cannot move a worthwhile load that far
 		var info := Worlds.commodity(good)
 		var value_factor := clampf(float(info.get("base_value", 500)) / 800.0, 0.85, 1.2)
 		var rate := float(b["rate_cr_per_t_per_kms"]) * float(h["dv_kms"]) * spread * value_factor * mult
+		if surface:
+			rate *= float(b.get("surface_rate_mult", 1.5))
 		out.append({
 			"id": id,
 			"local": true,
@@ -133,7 +173,8 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 			"hours": int(h["hours"]),
 			"min_twr": 0.05,
 			"deadline_days": float(b["deadline_days"]),
-			"blurb": "Local run inside the system, sublight.",
+			"blurb": "Surface run: needs lander legs." if surface else "Local run inside the system, sublight.",
+			"surface": surface,
 		})
 	return out
 

@@ -8,6 +8,7 @@ var seed_value := 0
 var relief := 18.0
 var flat_r := 90.0
 var craters: Array = []   # {x, z, r, depth}
+var pads: Array = []      # {x, z, r}: graded flat around each landing site
 
 
 static func config() -> Dictionary:
@@ -15,17 +16,30 @@ static func config() -> Dictionary:
 	return parsed if typeof(parsed) == TYPE_DICTIONARY else {}
 
 
-static func make(key: String) -> SurfaceTerrain:
+## `key` picks the moon (same key, same ground). The base pad is always at the origin; `extra_pads` adds
+## other flattened sites as Vector2(x, z) (the mining camp).
+static func make(key: String, extra_pads: Array = []) -> SurfaceTerrain:
 	var cfg := config()
 	var t := SurfaceTerrain.new()
 	t.seed_value = hash(key)
 	t.relief = float(cfg.get("terrain_relief_m", 18.0))
 	t.flat_r = float(cfg.get("pad_flat_radius_m", 90.0))
+	t.pads.append({"x": 0.0, "z": 0.0, "r": t.flat_r})
+	for p in extra_pads:
+		t.pads.append({"x": float(p.x), "z": float(p.y), "r": t.flat_r * 0.5})
 	var rng := RandomNumberGenerator.new()
 	rng.seed = t.seed_value
 	for i in 14:
 		var a := rng.randf() * TAU
 		var d := rng.randf_range(t.flat_r * 2.5, 1800.0)
+		var cx := cos(a) * d
+		var cz := sin(a) * d
+		var clear := true
+		for p in t.pads:
+			if Vector2(cx - float(p.x), cz - float(p.z)).length() < float(p.r) * 2.5 + 160.0:
+				clear = false
+		if not clear:
+			continue
 		t.craters.append({"x": cos(a) * d, "z": sin(a) * d, "r": rng.randf_range(40.0, 160.0), "depth": rng.randf_range(4.0, 14.0)})
 	return t
 
@@ -43,9 +57,11 @@ func height(x: float, z: float) -> float:
 				h -= float(c.depth) * (1.0 - d * d)          # bowl
 			else:
 				h += float(c.depth) * 0.35 * (1.3 - d) / 0.3  # raised rim
-	# Graded flat around the pad.
-	var r := Vector2(x, z).length()
-	var blend := smoothstep(flat_r, flat_r * 2.0, r)
+	# Graded flat around each pad.
+	var blend := 1.0
+	for p in pads:
+		var r := Vector2(x - float(p.x), z - float(p.z)).length()
+		blend = minf(blend, smoothstep(float(p.r), float(p.r) * 2.0, r))
 	return h * blend
 
 

@@ -65,6 +65,11 @@ var suit: SurfaceWalker
 var suit_hatch := Vector3.ZERO
 var pad_label: Label3D
 var reticle: FlightReticle
+var world_env: Environment
+var auto_ascent := false       ## Esc while lifting off: full lift until clear of the surface
+var _beacon := true            ## the target pad has a landing beacon (the base does, the mining camp does not)
+var _target_kind := "pad"      ## which surface site the descent is for
+var _dv_space := 0.0           ## the part of a run's delta-v spent in space (the rest is landing or lifting off)
 var _ground_task := -1         ## the moon's ground mesh, built on a worker thread during the cruise
 var _ground_mesh: MeshInstance3D
 var _ground_terrain: SurfaceTerrain
@@ -81,10 +86,13 @@ func _ready() -> void:
 			_setup_jump()
 		else:
 			_setup_transfer()
+	elif LocalSpace.is_surface(String(Session.profile.get("port_id", ""))):
+		_begin_surface_free()   # the helm taken on the moon: sitting on the pad
 
 
 func _build_world() -> void:
 	var env := Environment.new()
+	world_env = env
 	env.background_mode = Environment.BG_SKY
 	env.sky = SpaceSky.make()
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
@@ -190,8 +198,12 @@ func _make_station() -> Node3D:
 ## A flown local run: undock from the origin site, fly clear, cruise to the destination (the clock can be
 ## sped up), then dock there.
 func _setup_transfer() -> void:
-	xfer = TransferFlight.plan(stats, float(job.dv_kms), String(job.key))
-	if String(job.get("dest_kind", "")) == "moon" and model.lift_kn > 0.0:
+	var o_s := String(job.get("origin_kind", "")) in LocalSpace.SURFACE
+	var d_s := String(job.get("dest_kind", "")) in LocalSpace.SURFACE
+	var sdv := float(LocalSpace.config().get("surface_dv_kms", 1.8))
+	_dv_space = float(job.dv_kms) - (sdv if o_s else 0.0) - (sdv if d_s else 0.0)
+	xfer = TransferFlight.plan(stats, maxf(_dv_space, 0.3), String(job.key))
+	if (String(job.get("dest_kind", "")) == "moon" or d_s) and model.lift_kn > 0.0 and not o_s:
 		_ground_task = WorkerThreadPool.add_task(_prebuild_ground, false, "moon ground")
 	phase = "depart"
 	var dock_dir := Vector3(0.35, 0.15, 1.0).normalized()
@@ -203,6 +215,15 @@ func _setup_transfer() -> void:
 	beacon.add_theme_font_size_override("font_size", 18)
 	beacon.add_theme_color_override("font_color", Brand.AMBER)
 	hud.get_parent().add_child(beacon)
+	if o_s:
+		# Starting on the moon: sitting on the origin pad, lift off first.
+		_begin_surface(String(job.get("origin_kind", "pad")))
+		if d_s:
+			_aim_descent_at(String(job.get("dest_kind", "pad")))   # a hop across the surface
+			phase = "descent"
+		else:
+			phase = "ascent"
+		help.text = LAND_HELP
 
 
 ## A flown jump: undock, fly clear of the station, then engage the FTL drive (J).
@@ -480,10 +501,16 @@ func _process(delta: float) -> void:
 					_begin_approach()
 				break
 		if phase == "depart" and xfer != null and model.pos.length() > CLEAR_M:
-			phase = "cruise"
-			station.visible = false
-			model.station_solid = false
-		_wrap_markers()
+			if _dv_space <= 0.3 and String(job.get("dest_kind", "")) in LocalSpace.SURFACE:
+				_begin_descent()   # from the base's station straight down to the surface
+			else:
+				phase = "cruise"
+				station.visible = false
+				model.station_solid = false
+		if phase == "ascent" and model.altitude() > float(model.land_cfg.get("ascent_clear_m", 1500.0)):
+			_reach_orbit()
+		if phase == "cruise" or phase == "depart":
+			_wrap_markers()
 	if model.impacts != _impacts_seen:
 		_impacts_seen = model.impacts
 		_impact_shown = model.elapsed_s
@@ -608,7 +635,7 @@ func _update_transfer_hud() -> void:
 
 
 func _update_hud() -> void:
-	if phase == "descent":
+	if _on_surface():
 		_update_descent_hud()
 		if outside:
 			_suit_prompt()
@@ -674,20 +701,30 @@ func _unhandled_input(event: InputEvent) -> void:
 	if walking and not leaving:
 		_walk_input(event)
 		return
-	if phase == "descent" and not leaving and event is InputEventKey and event.pressed and not event.echo:
+	if _on_surface() and not leaving and event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			KEY_ESCAPE:
-				model.autoland = not model.autoland and model.can_hover()
+				if phase == "ascent":
+					auto_ascent = not auto_ascent and model.can_hover()
+				else:
+					model.autoland = not model.autoland and model.can_hover() and _beacon
 				hover_hold = false
 				return
 			KEY_H:
 				hover_hold = not hover_hold
 				model.autoland = false
+				auto_ascent = false
 				return
 			KEY_F:
-				if model.on_pad() or (model.landed and not model.has_fuel()):
+				if not model.landed:
+					return
+				if job.is_empty() or phase == "ascent":
+					if model.on_pad():
+						_return_to_dock()   # shut down where the flight started
+					return
+				if model.on_pad() or not model.has_fuel():
 					_arrived = true
-					_surface = model.on_pad()
+					_surface = model.on_pad() and String(job.get("dest_kind", "")) == "moon"
 					_return_to_dock()
 				return
 			KEY_X:
@@ -757,7 +794,7 @@ func sit_down() -> void:
 		return
 	walking = false
 	view.set_interior(false)
-	help.text = LAND_HELP if phase == "descent" else FLY_HELP
+	help.text = LAND_HELP if _on_surface() else FLY_HELP
 	crosshair.visible = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_apply_pose()
@@ -765,7 +802,7 @@ func sit_down() -> void:
 
 ## Docked, or still at the berth the flight started from: the airlock lets you off.
 func _berthed() -> bool:
-	if phase == "descent":
+	if _on_surface():
 		return model.landed
 	if model.can_dock():
 		return true
@@ -816,7 +853,7 @@ func use() -> String:
 		return "helm"
 	if walk.climb() != 0:
 		return "ladder"
-	if walk.near_airlock() and phase == "descent" and model.landed:
+	if walk.near_airlock() and _on_surface() and model.landed:
 		go_outside()
 		return "outside"
 	if walk.near_airlock() and _berthed():
@@ -837,7 +874,7 @@ func _walk_prompt() -> void:
 		var hx := walk.hatch_here()
 		hint = "E: climb %s (look up or down)" % ("up or down" if bool(hx.up) and bool(hx.down) else ("up" if bool(hx.up) else "down"))
 	elif walk.near_airlock():
-		if phase == "descent":
+		if _on_surface():
 			hint = "E: step outside onto the surface" if model.landed else "The outer hatch stays shut until the ship is down"
 		else:
 			hint = "E: leave the ship" if _berthed() else "The outer hatch stays shut away from a berth"
@@ -858,45 +895,62 @@ func _walk_prompt() -> void:
 
 
 # --- Landing on a moon ------------------------------------------------------------------------------
+# The moon of the run's system: its base pad at the origin of the ground frame and a mining camp some
+# kilometres off (LocalSpace "pad" and "camp"). Descending, lifting off and hopping between them all
+# happen over the same ground.
 
-## A run to a moon base lands on its pad when the ship has lander legs with enough lift for the load;
-## otherwise it docks at the base's orbital station as before.
+func _on_surface() -> bool:
+	return phase == "descent" or phase == "ascent"
+
+
+func _system_id() -> String:
+	return String(job.get("system_id", Session.system_id()))
+
+
+func _body() -> Dictionary:
+	return LocalSpace.body(_system_id())
+
+
+func _make_terrain() -> SurfaceTerrain:
+	return SurfaceTerrain.make(_system_id() + LocalSpace.SEP + "moon", [SurfaceFinds.camp_xz()])
+
+
+## Where a surface site's pad is on the ground (y is the ground there).
+func _pad_pos(kind: String) -> Vector3:
+	if kind == "camp":
+		var c := SurfaceFinds.camp_xz()
+		var t := model.terrain if model.terrain != null else _make_terrain()
+		return Vector3(c.x, t.height(c.x, c.y), c.y)
+	return Vector3.ZERO
+
+
+## A run to a moon base lands on its pad when the ship has lander legs with enough lift for the load and
+## fuel to come down on; otherwise it docks at the base's orbital station. Surface sites must be landed on.
 func _can_land() -> bool:
-	if String(job.get("dest_kind", "")) != "moon" or model.lift_kn <= 0.0:
+	var dk := String(job.get("dest_kind", ""))
+	if not (dk == "moon" or dk in LocalSpace.SURFACE) or model.lift_kn <= 0.0:
 		return false
-	var g := float(model.land_cfg.get("bodies", {}).get("moon", {}).get("gravity_m_s2", 1.62))
-	if model.fuel_t < float(model.land_cfg.get("landing_reserve_t", 1.5)):
+	if dk == "moon" and model.fuel_t < float(model.land_cfg.get("landing_reserve_t", 1.5)):
 		return false   # not enough left in the tanks to come down on the jets: dock in orbit instead
-	return model.lift_accel() >= g * float(model.land_cfg.get("min_lift_margin", 1.15))
+	return model.lift_accel() >= float(_body().get("gravity_m_s2", 1.62)) * float(model.land_cfg.get("min_lift_margin", 1.15))
 
 
 func _stranded() -> bool:
-	if phase == "descent":
+	if _on_surface():
 		return not model.has_fuel() and not model.on_pad()
 	return not model.has_fuel() and (phase != "approach" or not model.can_dock())
 
 
-## Arrived over the moon: high above the base, drifting toward it, level. Gravity on.
-func _begin_descent() -> void:
-	phase = "descent"
-	var cfg := model.land_cfg
-	var body: Dictionary = cfg.get("bodies", {}).get("moon", {})
+## Gravity, ground and the moon's scenery on; space markers and the station off.
+func _ensure_moon() -> void:
+	var body := _body()
 	model.gravity = float(body.get("gravity_m_s2", 1.62))
 	if _ground_task >= 0:
 		WorkerThreadPool.wait_for_task_completion(_ground_task)
 		_ground_task = -1
-	model.terrain = _ground_terrain if _ground_terrain != null else SurfaceTerrain.make(String(job.get("dest_id", "moon")))
-	model.pad = Vector3.ZERO
+	if model.terrain == null:
+		model.terrain = _ground_terrain if _ground_terrain != null else _make_terrain()
 	model.station_solid = false
-	model.braking = false
-	model.autoland = false
-	model.throttle = 0.0
-	model.ang = Vector3.ZERO
-	var a := float(hash(String(job.get("dest_id", ""))) % 360) * PI / 180.0
-	var dir := Vector3(cos(a), 0, sin(a))
-	model.pos = dir * float(cfg.get("start_offset_m", 900.0)) + Vector3(0, float(cfg.get("start_altitude_m", 1200.0)), 0)
-	model.vel = -dir * float(cfg.get("start_speed_m_s", 25.0))
-	model.basis = Basis.looking_at(-dir, Vector3.UP)
 	station.visible = false
 	for m in sparks:
 		m.visible = false
@@ -906,17 +960,113 @@ func _begin_descent() -> void:
 	var sun_deg: Array = body.get("sky_sun_deg", [-28, 35])
 	sun.rotation_degrees = Vector3(float(sun_deg[0]), float(sun_deg[1]), 0)
 	sun.light_color = Color(1.0, 0.97, 0.92)
+	sun.light_energy = 1.05             # bare rock in hard sunlight: keep it from burning out to white
+	world_env.ambient_light_energy = 0.18
 	help.text = LAND_HELP
-	_build_moon(body)
-	GameSettings.apply_scene(self, 400.0)
+	if moon == null:
+		_build_moon(body)
+		GameSettings.apply_scene(self, 400.0)
+	moon.visible = true
+
+
+## Standing on a surface site's pad, landed, level.
+func _begin_surface(kind: String) -> void:
+	_ensure_moon()
+	var p := _pad_pos(kind)
+	model.pos = p + Vector3(0, model.foot_m, 0)
+	model.vel = Vector3.ZERO
+	model.ang = Vector3.ZERO
+	model.throttle = 0.0
+	model.braking = false
+	model.autoland = false
+	model.basis = Basis.looking_at(Vector3(0, 0, -1), Vector3.UP)
+	model.landed = true
+	model.pad = p
+	model.zone_m = float(model.land_cfg.get("camp_zone_m", 60.0)) if kind == "camp" else 0.0
+	_target_kind = kind
 	_apply_pose()
+
+
+## Point the descent at a surface site: its pad becomes the target, and only the base has a beacon.
+func _aim_descent_at(kind: String) -> void:
+	_target_kind = kind
+	model.pad = _pad_pos(kind)
+	model.zone_m = float(model.land_cfg.get("camp_zone_m", 60.0)) if kind == "camp" else 0.0
+	_beacon = kind != "camp"
+
+
+## Arrived over the moon: high above the target pad, drifting toward it, level. Gravity on.
+func _begin_descent() -> void:
+	phase = "descent"
+	var cfg := model.land_cfg
+	_ensure_moon()
+	var dk := String(job.get("dest_kind", "moon"))
+	_aim_descent_at(dk if dk in LocalSpace.SURFACE else "pad")
+	model.braking = false
+	model.autoland = false
+	model.throttle = 0.0
+	model.ang = Vector3.ZERO
+	model.landed = false
+	var a := float(absi(hash(String(job.get("dest_id", "")))) % 360) * PI / 180.0
+	var dir := Vector3(cos(a), 0, sin(a))
+	model.pos = model.pad + dir * float(cfg.get("start_offset_m", 900.0)) + Vector3(0, float(cfg.get("start_altitude_m", 1200.0)), 0)
+	model.vel = -dir * float(cfg.get("start_speed_m_s", 25.0))
+	model.basis = Basis.looking_at(-dir, Vector3.UP)
+	_apply_pose()
+
+
+## Lifted clear of the moon: on to the base's station (a run to orbit) or out into space for the cruise.
+func _reach_orbit() -> void:
+	auto_ascent = false
+	hover_hold = false
+	model.terrain = null
+	model.gravity = 0.0
+	model.landed = false
+	model.lift = 0.0
+	if moon != null:
+		moon.visible = false
+	for m in sparks:
+		m.visible = true
+	sun.rotation_degrees = Vector3(-30, 40, 0)
+	sun.light_color = Color(1.0, 0.94, 0.85)
+	sun.light_energy = 1.4
+	world_env.ambient_light_energy = 0.55
+	help.text = FLY_HELP
+	if String(job.get("dest_kind", "")) == "moon":
+		station_label.text = String(job.get("destination", "")).to_upper()
+		_begin_approach(3000.0)
+		return
+	phase = "cruise"
+	var start := Vector3(0.35, 0.15, 1.0).normalized() * (CLEAR_M + 50.0)
+	model.pos = start
+	model.vel = Vector3.ZERO
+	model.ang = Vector3.ZERO
+	model.station_solid = false
+	model.basis = Basis.looking_at((xfer.target - start).normalized(), Vector3.UP)
+	_apply_pose()
+
+
+## Free flight from a surface site (the helm taken at a pad or the camp): sitting on its pad.
+func _begin_surface_free() -> void:
+	var kind := String(LocalSpace.node(String(Session.profile.get("port_id", ""))).get("kind", "pad"))
+	_begin_surface(kind)
+	phase = "descent"
+	_beacon = kind != "camp"
 
 
 func _build_moon(body: Dictionary) -> void:
 	moon = Node3D.new()
 	add_child(moon)
 	var ground := _ground_mesh if _ground_mesh != null else _ground_for(model.terrain)
+	ground.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF   # receives shadows; casting onto itself only made acne
 	moon.add_child(ground)
+	_build_base_pad()
+	_build_camp()
+	_build_wreck()
+	_build_finds()
+
+
+func _build_base_pad() -> void:
 	var pad_r := float(model.land_cfg.get("pad_radius_m", 25.0))
 	var pad := MeshInstance3D.new()
 	var disc := CylinderMesh.new()
@@ -945,10 +1095,12 @@ func _build_moon(body: Dictionary) -> void:
 		var ang := k * TAU / 12.0
 		lamp.position = Vector3(cos(ang), 0, sin(ang)) * (pad_r + 1.5) + Vector3(0, 0.4, 0)
 		moon.add_child(lamp)
+	var sys_name := String(Worlds.system(_system_id()).get("name", _system_id().capitalize()))
 	var label := Label3D.new()
-	label.text = String(job.get("destination", "MOON BASE")).to_upper() + "  PAD 1"
-	label.font_size = 96
-	label.pixel_size = 0.04
+	label.text = "%s MOON BASE  PAD 1" % sys_name.to_upper()
+	label.font_size = 40
+	label.fixed_size = true
+	label.pixel_size = 0.0012
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.modulate = Color(1.0, 0.8, 0.4)
 	label.position = Vector3(0, 14, 0)
@@ -957,7 +1109,7 @@ func _build_moon(body: Dictionary) -> void:
 	# The base itself: a few domes and boxes off to the side of the pad.
 	var hab := Interiors.flat(Color(0.78, 0.77, 0.72), 0.7)
 	var rng := RandomNumberGenerator.new()
-	rng.seed = hash(String(job.get("dest_id", "")))
+	rng.seed = hash(_system_id())
 	for i in 6:
 		var at := Vector3(rng.randf_range(45, 80), 0, rng.randf_range(-40, 40)).rotated(Vector3.UP, rng.randf() * TAU)
 		var mi := MeshInstance3D.new()
@@ -985,10 +1137,171 @@ func _build_moon(body: Dictionary) -> void:
 		moon.add_child(light)
 
 
-## Space fires the lift jets; with hover hold on they cancel the fall instead.
+## The mining camp: a rough pad marked with four flares, a drill rig, ore skips and a pressurised hut.
+func _build_camp() -> void:
+	var c := _pad_pos("camp")
+	var root := Node3D.new()
+	root.position = c
+	moon.add_child(root)
+	var rough := MeshInstance3D.new()
+	var disc := CylinderMesh.new()
+	disc.top_radius = 16.0
+	disc.bottom_radius = 17.0
+	disc.height = 0.2
+	disc.material = Interiors.flat(Color(0.3, 0.27, 0.22), 1.0)
+	rough.mesh = disc
+	root.add_child(rough)
+	for k in 4:
+		var flare := MeshInstance3D.new()
+		var b := BoxMesh.new()
+		b.size = Vector3(0.4, 0.8, 0.4)
+		b.material = Interiors.glow(Color(1.0, 0.35, 0.2), 2.2)
+		flare.mesh = b
+		var ang := k * TAU / 4.0 + PI * 0.25
+		flare.position = Vector3(cos(ang), 0, sin(ang)) * 17.5 + Vector3(0, 0.4, 0)
+		root.add_child(flare)
+	var steel := Interiors.flat(Color(0.5, 0.45, 0.32), 0.6, 0.3)
+	var rig := MeshInstance3D.new()   # drill derrick
+	var tower := BoxMesh.new()
+	tower.size = Vector3(3, 18, 3)
+	tower.material = steel
+	rig.mesh = tower
+	rig.position = Vector3(40, 9, 12)
+	root.add_child(rig)
+	var hut := MeshInstance3D.new()
+	var hb := BoxMesh.new()
+	hb.size = Vector3(10, 4, 6)
+	hb.material = Interiors.flat(Color(0.7, 0.62, 0.42), 0.8)
+	hut.mesh = hb
+	hut.position = Vector3(-35, 2, -18)
+	root.add_child(hut)
+	for i in 5:   # ore skips
+		var skip := MeshInstance3D.new()
+		var sb := BoxMesh.new()
+		sb.size = Vector3(3, 2, 5)
+		sb.material = Interiors.flat(Color(0.45, 0.3, 0.2), 0.9)
+		skip.mesh = sb
+		skip.position = Vector3(30 + i * 4.0, 1, -25)
+		root.add_child(skip)
+	var label := Label3D.new()
+	label.text = "MINING CAMP  (no beacon: land by hand)"
+	label.font_size = 36
+	label.fixed_size = true
+	label.pixel_size = 0.0012
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.modulate = Color(1.0, 0.55, 0.35)
+	label.position = Vector3(0, 12, 0)
+	root.add_child(label)
+
+
+## A lander that came down hard near the camp: a broken hull on its side and scattered parts.
+func _build_wreck() -> void:
+	var w := SurfaceFinds.wreck_xz()
+	var root := Node3D.new()
+	root.position = Vector3(w.x, model.terrain.height(w.x, w.y), w.y)
+	moon.add_child(root)
+	var hull := Interiors.flat(Color(0.35, 0.38, 0.42), 0.7, 0.4)
+	var burnt := Interiors.flat(Color(0.12, 0.11, 0.1), 0.9)
+	var body := MeshInstance3D.new()
+	var bb := BoxMesh.new()
+	bb.size = Vector3(6, 3, 9)
+	bb.material = hull
+	body.mesh = bb
+	body.position = Vector3(0, 1.0, 0)
+	body.rotation_degrees = Vector3(8, 25, 62)
+	root.add_child(body)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(_system_id() + "wreck")
+	for i in 9:
+		var part := MeshInstance3D.new()
+		var pb := BoxMesh.new()
+		pb.size = Vector3(rng.randf_range(0.6, 2.4), rng.randf_range(0.3, 1.2), rng.randf_range(0.6, 3.0))
+		pb.material = hull if i % 3 else burnt
+		part.mesh = pb
+		part.position = Vector3(rng.randf_range(-14, 14), 0.3, rng.randf_range(-14, 14))
+		part.rotation_degrees = Vector3(rng.randf_range(-30, 30), rng.randf() * 360.0, rng.randf_range(-30, 30))
+		root.add_child(part)
+	var label := Label3D.new()
+	label.text = "WRECK"
+	label.font_size = 32
+	label.fixed_size = true
+	label.pixel_size = 0.0012
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.modulate = Color(0.85, 0.85, 0.9)
+	label.position = Vector3(0, 7, 0)
+	root.add_child(label)
+
+
+var find_nodes := {}   ## find id -> its node on the ground
+
+
+## Rock samples: glowing crystals with a small tag, skipped once taken.
+func _build_finds() -> void:
+	find_nodes.clear()
+	for f in (Session.finds_here() if Session.slot >= 0 else SurfaceFinds.list(_system_id(), 0)):
+		if String(f.kind) != "sample" or bool(f.get("taken", false)):
+			continue
+		var x := float(f.x)
+		var z := float(f.z)
+		var node := Node3D.new()
+		node.position = Vector3(x, model.terrain.height(x, z), z)
+		var crystal := MeshInstance3D.new()
+		var prism := PrismMesh.new()
+		prism.size = Vector3(0.5, 0.9, 0.5)
+		prism.material = Interiors.glow(Color(0.35, 0.95, 0.85), 1.6)
+		crystal.mesh = prism
+		crystal.position = Vector3(0, 0.45, 0)
+		node.add_child(crystal)
+		var tag := Label3D.new()
+		tag.text = "SAMPLE"
+		tag.font_size = 28
+		tag.fixed_size = true
+		tag.pixel_size = 0.0012
+		tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		tag.modulate = Color(0.5, 1.0, 0.9)
+		tag.position = Vector3(0, 1.6, 0)
+		node.add_child(tag)
+		moon.add_child(node)
+		find_nodes[String(f.id)] = node
+
+
+## The find within reach of the suit, or {}.
+func find_in_reach() -> Dictionary:
+	if suit == null or Session.slot < 0:
+		return {}
+	var reach := float(SurfaceFinds.config().get("reach_m", 2.5))
+	for f in Session.finds_here():
+		if bool(f.taken):
+			continue
+		var d := suit.distance_to(Vector3(float(f.x), 0, float(f.z)))
+		if d <= (reach if String(f.kind) == "sample" else 9.0):
+			return f
+	return {}
+
+
+## E on foot next to a find: bag the sample or strip the wreck.
+func take_find() -> String:
+	var f := find_in_reach()
+	if f.is_empty():
+		return ""
+	var r := Session.take_find(String(f.id))
+	if bool(r.ok) and find_nodes.has(String(f.id)):
+		(find_nodes[String(f.id)] as Node3D).visible = false
+	_find_message = String(r.message)
+	_find_message_t = model.elapsed_s
+	return String(r.message)
+
+
+var _find_message := ""
+var _find_message_t := -100.0
+
+
+## Space fires the lift jets; with hover hold on they cancel the fall instead; lifting off on auto, full lift.
 func _lift_command() -> float:
-	if phase != "descent" or model.autoland:
+	if not _on_surface() or model.autoland:
 		return 0.0
+	if auto_ascent:
+		return 1.0
 	if not walking and not outside and Input.is_key_pressed(KEY_SPACE):
 		return 1.0
 	if hover_hold and model.lift_accel() > 0.0:
@@ -998,12 +1311,21 @@ func _lift_command() -> float:
 
 
 func _update_descent_hud() -> void:
-	var to_pad := Vector2(model.pos.x, model.pos.z).length()
+	var to_pad := Vector2(model.pos.x - model.pad.x, model.pos.z - model.pad.z).length()
 	var alt := model.altitude()
-	var lines := PackedStringArray([
-		"DESCENT  %s    %s" % [String(job.destination).to_upper(), "AUTOLAND ON (Esc)" if model.autoland else ("HOVER HOLD (H)" if hover_hold else "Esc: autoland")],
+	var body := _body()
+	var target := "MINING CAMP" if _target_kind == "camp" else "BASE PAD"
+	var head := ""
+	if phase == "ascent":
+		head = "LIFT-OFF  %s    %s" % [String(body.get("name", "Moon")).to_upper(), "AUTO LIFT ON (Esc)" if auto_ascent else "Esc: lift off on auto"]
+	elif job.is_empty():
+		head = "%s  %s    %s" % [String(body.get("name", "Moon")).to_upper(), target, "HOVER HOLD (H)" if hover_hold else "F on the pad: shut down"]
+	else:
+		head = "DESCENT  %s  %s    %s" % [String(job.get("destination", "")).to_upper(), String(body.get("name", "")).to_upper(),
+				"AUTOLAND ON (Esc)" if model.autoland else ("no beacon: land by hand" if not _beacon else ("HOVER HOLD (H)" if hover_hold else "Esc: autoland"))]
+	var lines := PackedStringArray([head,
 		"ALTITUDE  %.0f m    V/S  %+.1f m/s    DRIFT  %.1f m/s" % [alt, model.vel.y, Vector2(model.vel.x, model.vel.z).length()],
-		"PAD  %.0f m    TILT  %.0f°" % [to_pad, model.tilt_deg()],
+		("CLIMB TO  %.0f m" % float(model.land_cfg.get("ascent_clear_m", 1500.0))) if phase == "ascent" else "%s  %.0f m    TILT  %.0f°" % [target, to_pad, model.tilt_deg()],
 		"LIFT  %d%%    %.2f m/s² available, gravity %.2f" % [roundi(model.lift * 100.0), model.lift_accel(), model.gravity],
 		"THROTTLE  %d%%    FUEL  %.2f t" % [roundi(model.throttle * 100.0), model.fuel_t],
 		"HEAT  %d%%    HULL  %d%%" % [roundi(model.heat_fraction() * 100.0), roundi((1.0 - model.damage) * 100.0)]])
@@ -1012,10 +1334,18 @@ func _update_descent_hud() -> void:
 	if pad_label != null:
 		pad_label.visible = alt > 80.0 and not outside   # a beacon from above, not a wall of text up close
 	var hint := ""
-	if model.landed and model.on_pad():
-		hint = "Landed on the pad. F: shut down and unload.   G: get up and walk outside."
+	if phase == "ascent":
+		if model.landed:
+			hint = "Space: lift off (or Esc for auto).  F: stay and shut down.  G: get up and walk outside."
+		elif not model.has_fuel():
+			hint = "OUT OF FUEL"
+		else:
+			hint = "Climb clear of the moon. W/S still runs the main engine."
+	elif model.landed and model.on_pad():
+		hint = ("Landed. F: shut down and unload.   G: get up and walk outside.") if not job.is_empty() else "On the pad. F: shut down.   G: get up and walk outside."
 	elif model.landed:
-		hint = "Down %.0f m from the pad. Lift off (Space) and set down within %d m%s." % [to_pad, int(model.land_cfg.get("landing_zone_m", 120.0)),
+		hint = "Down %.0f m from the %s. Lift off (Space) and set down within %d m%s." % [to_pad, "camp's pad" if _target_kind == "camp" else "pad",
+				int(model.zone_m if model.zone_m > 0.0 else float(model.land_cfg.get("landing_zone_m", 120.0))),
 				"" if model.has_fuel() else ". Out of fuel: F calls a crawler to tow you in"]
 	elif not model.has_fuel():
 		hint = "OUT OF FUEL"
@@ -1024,7 +1354,7 @@ func _update_descent_hud() -> void:
 	elif alt < 60.0 and model.vel.y < -float(model.land_cfg.get("touchdown_speed_m_s", 3.0)) * 1.5:
 		hint = "SINKING FAST: hold Space"
 	elif not model.autoland:
-		hint = "Space: lift jets.  H: hover.  Tilt to drift toward the pad.  Esc: let the autopilot land."
+		hint = "Space: lift jets.  H: hover.  Tilt to drift toward the pad.%s" % ("  Esc: let the autopilot land." if _beacon else "")
 	prompt.text = hint
 
 
@@ -1094,20 +1424,30 @@ func _suit_input(event: InputEvent) -> void:
 		return
 	match event.keycode:
 		KEY_E:
-			come_aboard()
+			if take_find() == "":
+				come_aboard()
 		KEY_ESCAPE:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _suit_prompt() -> void:
 	var d := suit.distance_to(suit_hatch)
-	var parts := PackedStringArray(["%s SURFACE" % String(job.get("destination", "MOON")).to_upper()])
-	parts.append("E: back aboard" if d <= 2.5 else "Airlock hatch %.0f m" % d)
+	var parts := PackedStringArray(["%s SURFACE" % String(_body().get("name", "MOON")).to_upper()])
+	var f := find_in_reach()
+	if not f.is_empty():
+		parts.append("E: take the sample (%s)" % String(f.name) if String(f.kind) == "sample" else "E: strip salvage from the wreck")
+	elif model.elapsed_s - _find_message_t < 4.0:
+		parts.append(_find_message)
+	else:
+		parts.append("E: back aboard" if d <= 2.5 else "Airlock hatch %.0f m" % d)
+	var held := Session.finds_aboard() if Session.slot >= 0 else {}
+	if int(held.get("samples", 0)) + int(held.get("salvage", 0)) > 0:
+		parts.append("Locker: %d samples, %d salvage" % [int(held.samples), int(held.salvage)])
 	prompt.text = "   ".join(parts)
 
 
 func _ground_for(t: SurfaceTerrain) -> MeshInstance3D:
-	var body: Dictionary = model.land_cfg.get("bodies", {}).get("moon", {})
+	var body := _body()
 	var g: Array = body.get("ground", [0.42, 0.41, 0.40])
 	var r: Array = body.get("rock", [0.30, 0.29, 0.28])
 	return t.build_mesh(float(model.land_cfg.get("terrain_size_m", 4000.0)), int(model.land_cfg.get("terrain_cells", 96)),
@@ -1116,7 +1456,7 @@ func _ground_for(t: SurfaceTerrain) -> MeshInstance3D:
 
 ## Runs on a worker thread while the ship cruises, so the descent opens without a pause.
 func _prebuild_ground() -> void:
-	var t := SurfaceTerrain.make(String(job.get("dest_id", "moon")))
+	var t := _make_terrain()
 	_ground_mesh = _ground_for(t)
 	_ground_terrain = t
 

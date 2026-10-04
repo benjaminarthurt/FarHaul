@@ -72,8 +72,77 @@ lights, the base's name and a few domes and huts.
   checks the ship is solid, jumps, comes back aboard, unloads, and checks the bonus is paid.
 - `tests/capture_land.gd`: renders the descent and the surface to `/tmp/land_frames` (xvfb-run).
 
+## Surface work
+
+Every system's moon has two places on its surface, both in `LocalSpace` (`SURFACE`):
+
+- the **base pad** (`<system>__pad`, under the base's orbital station);
+- a **mining camp** (`<system>__camp`, 3 km from the pad, `camp_offset_m`), with a rough pad, flares
+  and no landing beacon.
+
+**Hops** (`local_space.json`): to or from the surface costs 1.8 km/s more than to the base's station
+(`surface_dv_kms`). Station to pad or camp is 1.8 km/s and 2 h; pad to camp is 0.9 km/s and 1 h.
+
+**Surface jobs.** They show only to a ship whose lift jets can set a worthwhile load down on that moon
+(`LocalSpace.can_land` and `max_landing_cargo_t`), so the starter's board and the economy calibration
+are unchanged. They pay 1.5 times more per tonne-km/s (`surface_rate_mult`). The board shows them as
+SURFACE, and `Contracts.check` adds a Lander legs row. Fly empty lists surface sites only for a lander.
+
+**Flying them.** The surface part of the hop's delta-v is spent lifting off or landing; the rest is the
+cruise:
+
+- **To the surface:** depart, cruise, then descend onto the pad or camp. From the base's station it
+  goes straight to the descent.
+- **From the surface:** the run starts landed on the origin pad (the `ascent` phase). Lift off with
+  Space, or Esc for full lift on auto. At 1.5 km (`ascent_clear_m`) the moon drops away, and the run
+  either approaches the base's station or goes into the cruise.
+- **Pad to camp:** a hop across the same ground, a descent from a standing start.
+- **The camp has no beacon,** so no autopilot: you land it by hand, within 60 m (`camp_zone_m`).
+- An orbital moon-base run landed on the pad leaves the ship at the pad and still pays the 25% bonus.
+
+**At a surface site** the dock works as usual. Taking the helm puts you on the pad, landed: F shuts
+down, and you can walk out. The bank's tug lifts a bankrupt captain's ship up to the station, because
+the plain starter cannot lift off.
+
+## Things on foot (`scripts/surface_finds.gd`)
+
+- **Samples:** five glowing rock samples around the base pad and five around the camp, each tagged
+  SAMPLE. Walk up and press E to bag one. They are placed fresh every 10 days.
+- **Salvage:** a wrecked lander lies near the camp. E strips two salvage parts, and it can be
+  stripped again every 20 days.
+- **Selling:** finds go in the ship's locker (`profile.samples`, `profile.salvage`) and sell at any
+  dock with SELL FINDS: 350 cr a sample and 1,400 cr a salvage part (`landing.json` "finds").
+  `profile.finds_taken` remembers what has been taken.
+
+## Kinds of world
+
+Each system's moon is one of four bodies (`landing.json` "bodies"), picked from the system id through
+`body_order`:
+
+| Body | Gravity (m/s²) | Ground |
+|---|---|---|
+| Grey moon | 1.62 | grey |
+| Ice moon | 0.9 | pale blue |
+| Dust moon | 1.25 | tan |
+| Heavy moon | 2.6 | rust |
+
+Gravity sets the lift you need. The starter with two legs can land about 33 t on a grey moon but only
+about 4.5 t on a heavy one, so heavy moons call for more legs. The descent heading shows the body's name.
+
+## Tests for surface work
+
+`tests/smoke_surface.gd` covers:
+
+- the board shows surface work only to a lander, and it pays more;
+- port to camp by hand, with no autopilot at the camp;
+- lifting off the camp to the base's station;
+- taking the helm at the pad;
+- walking out to bag a sample (once only), stripping the wreck, and selling both;
+- the moons differing from system to system.
+
+`tests/capture_surface.gd` renders the camp, the wreck and a sample.
+
 ## Not yet
 
-- Taking off from a moon to start a run: you always leave from the base's orbital station.
-- Atmospheres, other bodies, landing anywhere but a base, rovers.
+- Atmospheres, landing anywhere but the pad and the camp, rovers.
 - Lift-jet torque: the jets push through the centre of mass wherever the legs are bolted.

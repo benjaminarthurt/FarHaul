@@ -193,6 +193,9 @@ func _build_ui() -> void:
 	fly_btn = _button(menu, "FLY EMPTY", _show_destinations)
 	wait_btn.tooltip_text = "Let a day pass. The rest of the economy keeps moving; your crew and ship still cost money."
 	fly_btn.tooltip_text = "Fly without cargo to another system, to reach freight or leave a port with none."
+	var finds := Session.finds_aboard() if Session.slot >= 0 else {}
+	if int(finds.get("value", 0)) > 0:
+		_button(menu, "SELL FINDS  %s cr" % ShipStats.commas(int(finds.value)), _sell_finds).tooltip_text = "%d rock samples and %d salvage parts from the moon, sold here." % [int(finds.samples), int(finds.salvage)]
 	_button(menu, "SAVE GAME", _save)
 	_button(menu, "NEW GAME" if Session.insolvent() else "MAIN MENU", _main_menu)
 	status = Label.new()
@@ -356,7 +359,7 @@ func _show_contracts() -> void:
 		if bool(c.get("local", false)) and not board_stats.is_empty():
 			var trip := Session.local_trip_cost(board_stats, float(c.offer), float(c.dv_kms))
 			var lands := String(LocalSpace.node(String(c.destination_port_id)).get("kind", "")) == "moon" and float(board_stats.get("lift", 0.0)) > 0.0
-			line.text = ("LOCAL  %s  →  %s\n%.1f t  ·  %.1f km/s  ·  %d h  ·  %s cr/t  ·  up to %s cr, fuel about %s cr" + ("  ·  +%d%% if you land it" % roundi(float(SurfaceTerrain.config().get("surface_bonus", 0.25)) * 100.0) if lands else "") + "\nACCEPT & LOAD") % [
+			line.text = (("SURFACE  %s" if bool(c.get("surface", false)) else "LOCAL  %s") + "  →  %s\n%.1f t  ·  %.1f km/s  ·  %d h  ·  %s cr/t  ·  up to %s cr, fuel about %s cr" + ("  ·  +%d%% if you land it" % roundi(float(SurfaceTerrain.config().get("surface_bonus", 0.25)) * 100.0) if lands else "") + "\nACCEPT & LOAD") % [
 				goods.name, _site_name(String(c.destination_port_id)), float(c.offer), float(c.dv_kms), int(c.hours),
 				ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate))), ShipStats.commas(roundi(float(trip.total)))]
 		else:
@@ -527,6 +530,14 @@ func _enter_yard() -> void:
 	Session.profile["location"] = "shipyard"
 	Session.save_profile()
 	_go(Session.YARD_SCENE)
+
+
+func _sell_finds() -> void:
+	var r := Session.sell_finds()
+	status.text = r.message
+	if bool(r.ok):
+		Session.flash = String(r.message)
+		get_tree().reload_current_scene()
 
 
 func _save() -> void:

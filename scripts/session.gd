@@ -233,6 +233,8 @@ static func restructure() -> Dictionary:
 	data.erase("active_contract")
 	profile["bankruptcies"] = int(profile.get("bankruptcies", 0)) + 1
 	profile["ftl_grandfathered"] = false   # the bank's hauler is the plain sublight starter
+	if LocalSpace.is_surface(String(profile.get("port_id", ""))):
+		profile["port_id"] = system_id() + LocalSpace.SEP + "moon"   # it cannot lift off: the bank's tug brings it up to the base's station
 	profile["credits"] = left
 	_sync_sim(fresh)
 	var grant := roundi(SimWorld.daily_cost(sim) * 10.0)
@@ -373,6 +375,8 @@ static func local_sites() -> Array[Dictionary]:
 	for n in LocalSpace.nodes(system_id()):
 		if String(n["id"]) == String(here["id"]):
 			continue
+		if (bool(n.get("surface", false)) or bool(here.get("surface", false))) and not LocalSpace.can_land(st, system_id()):
+			continue   # landing (or lifting off) needs lander legs with the lift for this moon
 		var h := LocalSpace.hop(String(here["kind"]), String(n["kind"]))
 		if LocalSpace.max_cargo_t(float(st["wet"]), float(st["fuel"]), float(h["dv_kms"])) < 0.0:
 			continue   # out of reach of the tank even empty
@@ -407,6 +411,67 @@ static func local_reposition(dest_id: String) -> Dictionary:
 	return {"ok": false, "message": "That site is out of reach."}
 
 
+## Finds on this system's moon that are still there today (samples and salvage), with whether taken.
+static func finds_here() -> Array[Dictionary]:
+	var taken: Array = profile.get("finds_taken", [])
+	var out: Array[Dictionary] = []
+	for f in SurfaceFinds.list(system_id(), day()):
+		var g := f.duplicate()
+		g["taken"] = String(f.id) in taken
+		out.append(g)
+	return out
+
+
+## Pick up a find on foot. It goes in the ship's locker until sold at a dock.
+static func take_find(id: String) -> Dictionary:
+	if slot < 0:
+		return {"ok": false, "message": ""}
+	for f in finds_here():
+		if String(f.id) != id:
+			continue
+		if bool(f.taken):
+			return {"ok": false, "message": "Already taken."}
+		var taken: Array = profile.get("finds_taken", [])
+		taken.append(id)
+		while taken.size() > 200:
+			taken.pop_front()
+		profile["finds_taken"] = taken
+		var key := "samples" if String(f.kind) == "sample" else "salvage"
+		var n := SurfaceFinds.units(String(f.kind))
+		profile[key] = int(profile.get(key, 0)) + n
+		save_profile()
+		return {"ok": true, "message": ("%s bagged." % String(f.name)) if key == "samples" else "Stripped %d salvage parts from the wreck." % n}
+	return {"ok": false, "message": "Nothing to take here."}
+
+
+## Samples and salvage in the locker, and what they would fetch.
+static func finds_aboard() -> Dictionary:
+	var s := int(profile.get("samples", 0))
+	var w := int(profile.get("salvage", 0))
+	return {"samples": s, "salvage": w, "value": s * SurfaceFinds.value("sample") + w * SurfaceFinds.value("salvage")}
+
+
+## Sell everything in the locker here (any dock buys: labs take samples, yards take salvage).
+static func sell_finds() -> Dictionary:
+	var f := finds_aboard()
+	if int(f.value) <= 0 or slot < 0 or sim == null:
+		return {"ok": false, "message": "Nothing to sell."}
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return {"ok": false, "message": "Could not load the current ship."}
+	_sync_sim(loaded.ship)
+	sim._pay("world", SimWorld.PLAYER, float(f.value))
+	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
+	pc["revenue"] = float(pc["revenue"]) + float(f.value)
+	profile["samples"] = 0
+	profile["salvage"] = 0
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Sold %d samples and %d salvage parts for %s cr." % [int(f.samples), int(f.salvage), ShipStats.commas(int(f.value))]}
+
+
 ## What fitting a first FTL drive and its radiator costs: the gap between the starter and the FTL starter.
 static func drive_price() -> int:
 	var lib := ModuleLibrary.new()
@@ -437,7 +502,9 @@ static func begin_local_flight() -> Dictionary:
 	var dest := LocalSpace.node(String(c.destination_port_id))
 	flight_job = {"kind": "run", "contract_id": String(c.id), "dv_kms": float(c.dv_kms), "hours": int(c.hours),
 			"destination": String(dest.get("name", "the destination")), "key": String(c.id),
-			"dest_kind": String(dest.get("kind", "port")), "dest_id": String(c.destination_port_id)}
+			"dest_kind": String(dest.get("kind", "port")), "dest_id": String(c.destination_port_id),
+			"origin_kind": String(LocalSpace.node(String(c.origin_port_id)).get("kind", "port")), "origin_id": String(c.origin_port_id),
+			"system_id": system_id()}
 	return {"ok": true, "message": "Take the helm."}
 
 
@@ -543,6 +610,8 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	var msg := ""
 	if arrived:
 		profile["port_id"] = String(c.destination_port_id)
+		if surface and String(LocalSpace.node(String(c.destination_port_id)).get("kind", "")) == "moon":
+			profile["port_id"] = system_id() + LocalSpace.SEP + "pad"   # landed on the base's pad, not docked in orbit
 		c["status"] = "arrived"
 		if surface:
 			c["surface"] = true
@@ -588,7 +657,10 @@ static func _depart_local(c: Dictionary) -> Dictionary:
 
 
 static func _deliver_local(c: Dictionary) -> Dictionary:
-	if String(c.destination_port_id) != String(profile.get("port_id", "")):
+	var here := String(profile.get("port_id", ""))
+	var landed_for_it := bool(c.get("surface", false)) and here == system_id() + LocalSpace.SEP + "pad" \
+			and String(LocalSpace.node(String(c.destination_port_id)).get("kind", "")) == "moon"   # landed on the base's pad
+	if String(c.destination_port_id) != here and not landed_for_it:
 		return {"ok": false, "message": "There is no contract to deliver here."}
 	var data := SaveSlots.read(slot)
 	var loaded_ship := _load_ship(data)

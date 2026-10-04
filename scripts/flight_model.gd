@@ -164,8 +164,12 @@ func tilt_deg() -> float:
 	return rad_to_deg(basis.y.angle_to(Vector3.UP))
 
 
+var zone_m := 0.0                 # how close to `pad` counts as on it (0: landing.json's landing_zone_m)
+
+
 func on_pad() -> bool:
-	return landed and Vector2(pos.x - pad.x, pos.z - pad.z).length() <= float(land_cfg.get("landing_zone_m", 120.0))
+	var zone := zone_m if zone_m > 0.0 else float(land_cfg.get("landing_zone_m", 120.0))
+	return landed and Vector2(pos.x - pad.x, pos.z - pad.z).length() <= zone
 
 
 func _turn_accel() -> float:
