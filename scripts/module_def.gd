@@ -103,6 +103,16 @@ func _build_hollow(root: Node3D) -> void:
 		_add_crates(root, cells)
 	for i in range(furnished, root.get_child_count()):  # furniture and freight: things a walker bumps into
 		root.get_child(i).set_meta("solid", true)
+	for c in cells:  # a ceiling light in every cell, so rooms are lit from inside, not by the sun
+		var lamp := OmniLight3D.new()
+		lamp.position = Vector3(c) * ShipGrid.CELL + Vector3(0, ShipGrid.CELL * 0.5 - 0.35, 0)
+		lamp.omni_range = 3.6
+		lamp.omni_attenuation = 1.2
+		lamp.light_energy = 0.9
+		lamp.light_color = Color(1.0, 0.9, 0.78)
+		lamp.shadow_enabled = false
+		lamp.set_meta("interior_light", true)
+		root.add_child(lamp)
 
 
 ## Small per-module set dressing so hulls don't read as blank boxes.
@@ -279,7 +289,7 @@ func _add_windowed_wall(root: Node3D, center: Vector3, axis: int, sgn: float, u_
 	off[axis] = along
 	off[u_axis] = hole.position.x + hole.size.x * 0.5
 	off[v_axis] = hole.position.y + hole.size.y * 0.5
-	_add_box(root, center + off, pane, Interiors.glass(Color(0.35, 0.6, 0.9), 0.35))
+	_add_box(root, center + off, pane, Interiors.glass(Color(0.25, 0.4, 0.55), 0.16))
 	# Frame: slightly proud of the outer face, in the module's trim colour.
 	var trim := _mat(color.lerp(Color(0.50, 0.54, 0.60), 0.8), 1.0)
 	var t := 0.07

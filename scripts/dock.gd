@@ -30,6 +30,7 @@ func _ready() -> void:
 		Session.save_profile()
 	_build_world()
 	_build_ui()
+	GameSettings.apply_scene(self, 90.0)
 
 
 func _process(delta: float) -> void:

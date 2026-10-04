@@ -7,8 +7,10 @@ playable ship-builder prototype: a grid-based spaceship builder. Pick a prefab s
 the ship. The ship is stored as plain data, so flight, interior walking and space walks can
 all be built on top of the same thing later. A live panel shows the ship's engineering numbers.
 
-Requires **Godot 4.3 or newer** (developed and tested on 4.4.1). The project uses the
-Compatibility renderer, which is the safest choice for integrated GPUs and ARM Surface devices.
+Requires **Godot 4.4** (developed and tested on 4.4.1). Far Haul is a Windows desktop game and uses
+the **Forward+** renderer (Vulkan, with Direct3D 12 available). On machines without Vulkan it falls back to
+OpenGL. Graphics quality (Low, Medium or High) and the other settings are on the title screen's Settings
+page; they are saved beside the saves.
 
 ## Run it
 
@@ -148,18 +150,12 @@ Make a scene for a module (a hollow room built in Blender, say), then set `scene
 module's `ModuleDef`. Keep it inside its cell footprint and line its doorways up with the
 sockets. Nothing else needs to change.
 
-## Play in the browser
+## Info site
 
-The game also exports to the web (Compatibility renderer, single-threaded, so it works on plain GitHub Pages).
-`export_presets.cfg` has the Web preset. To publish on every push:
-
-1. Copy `tools/web.yml` to `.github/workflows/web.yml`. It publishes the prebuilt `site/` folder, so GitHub does not need Godot.
-2. In the repo on GitHub: Settings > Pages > Build and deployment > Source: **GitHub Actions**.
-3. Push. The game appears at `https://benjaminarthurt.github.io/FarHaul/` after the workflow finishes.
-
-The site root (`site/index.html`) is a docs page with screenshots, help and a Launch game button. The web build lives in `site/play/` and is committed. After changing the game, re-export it before pushing: install the 4.4.1 export templates in Godot, then
-`godot --headless --export-release "Web" site/play/index.html` and serve `site/` with any static web server.
-Saves live in the browser's own storage, so they stay on that device.
+`site/index.html` is a docs page with screenshots, help and a Download for Windows button pointing at the
+latest GitHub Release. `.github/workflows/web.yml` publishes the `site/` folder to GitHub Pages on every
+push to main (Settings > Pages > Source: **GitHub Actions**). Far Haul is a Windows desktop game; the
+early browser build has been retired and `site/play/` is no longer tracked.
 
 ## Portable Windows build
 

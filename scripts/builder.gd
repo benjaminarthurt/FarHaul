@@ -87,6 +87,7 @@ func _ready() -> void:
 	add_child(ship_view)
 	_setup_ui()
 	_setup_sfx()
+	GameSettings.apply_scene(self, 90.0)
 
 	_select(0)
 	_set_level(0)
@@ -186,6 +187,7 @@ func _setup_sfx() -> void:
 	for i in 6:
 		var p := AudioStreamPlayer.new()
 		p.volume_db = -6.0
+		p.bus = GameSettings.bus("Effects")
 		add_child(p)
 		sfx_players.append(p)
 

@@ -38,7 +38,7 @@ func _player(file: String, looped: bool) -> AudioStreamPlayer:
 		s.loop_begin = 0
 		s.loop_end = int(s.data.size() / 2)    # 16-bit mono: two bytes a sample
 	p.stream = s
-	p.bus = "Master"
+	p.bus = GameSettings.bus("Effects")
 	p.volume_db = -80.0
 	add_child(p)
 	return p

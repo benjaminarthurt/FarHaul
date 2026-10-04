@@ -472,10 +472,9 @@ static func glass(col: Color, alpha: float) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = Color(col, alpha)
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.emission_enabled = true
-	m.emission = col
-	m.emission_energy_multiplier = 0.35
-	m.roughness = 0.1
+	m.roughness = 0.05
+	m.metallic_specular = 0.9
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED   # seen from inside and out
 	_cache[key] = m
 	return m
 

@@ -39,6 +39,7 @@ var music: AudioStreamPlayer
 
 func _ready() -> void:
 	DisplayServer.window_set_title(Brand.NAME)
+	GameSettings.apply()
 	_build_world()
 	_build_title()
 	_build_panels()
@@ -53,6 +54,7 @@ func _ready() -> void:
 	add_child(fl)
 	fl.add_child(fade)
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	GameSettings.apply_scene(self, 80.0)
 	if OS.has_environment("FARHAUL_SKIP_INTRO") or Session.skip_intro:
 		Session.skip_intro = false
 		_enter_title(false)
@@ -64,7 +66,7 @@ func _ready() -> void:
 
 func _build_music() -> void:
 	music = AudioStreamPlayer.new()
-	music.bus = "Master"
+	music.bus = GameSettings.bus("Music")
 	var stream := load(Brand.THEME_MUSIC) as AudioStreamMP3
 	if stream != null:
 		stream.loop = true

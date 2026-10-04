@@ -3,7 +3,7 @@
   "canon_status": "draft",
   "note": "Landing on a moon (scripts/flight_model.gd, scripts/surface_terrain.gd). Placeholders tuned so the starter fitted with two lander legs can land with a full hold. Gravity is in m/s^2; speeds in m/s; angles in degrees.",
   "bodies": {
-    "moon": {"name": "Moon", "gravity_m_s2": 1.62, "ground": [0.42, 0.41, 0.40], "rock": [0.30, 0.29, 0.28], "sky_sun_deg": [-28, 35]}
+    "moon": {"name": "Moon", "gravity_m_s2": 1.62, "ground": [0.26, 0.255, 0.25], "rock": [0.17, 0.165, 0.16], "sky_sun_deg": [-28, 35]}
   },
   "min_lift_margin": 1.15,
   "landing_reserve_t": 1.5,

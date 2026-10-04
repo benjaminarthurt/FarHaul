@@ -6,7 +6,7 @@ extends RefCounted
 
 const NAME := "FAR HAUL"
 const TAGLINE := "BUILD YOUR SHIP.  HAUL THE FREIGHT.  PUSH THE FRONTIER."
-const STAGE := "Ship builder prototype"  # shown on the title screen until the game grows up
+const STAGE := "Prototype"  # shown on the title screen
 
 const STEEL_DARK := Color8(13, 16, 21)
 const STEEL := Color8(28, 33, 41)

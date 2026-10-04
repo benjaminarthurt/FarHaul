@@ -50,7 +50,7 @@ var walk: ShipWalk
 var walking := false
 var help: Label
 var crosshair: Label
-const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement
+const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement, times the mouse sensitivity setting
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
 const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time   G get up   Esc back to the dock"
 const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time   Esc frees the mouse, click to look again"
@@ -63,12 +63,17 @@ var _surface := false          ## landed on the destination's pad: the run earns
 var outside := false           ## on foot on the moon, in a suit
 var suit: SurfaceWalker
 var suit_hatch := Vector3.ZERO
+var pad_label: Label3D
+var _ground_task := -1         ## the moon's ground mesh, built on a worker thread during the cruise
+var _ground_mesh: MeshInstance3D
+var _ground_terrain: SurfaceTerrain
 
 
 func _ready() -> void:
 	_build_world()
 	_build_ship()
 	_build_hud()
+	GameSettings.apply_scene(self, 150.0)
 	if not Session.flight_job.is_empty():
 		job = Session.flight_job
 		if String(job.get("kind", "run")) == "jump":
@@ -185,6 +190,8 @@ func _make_station() -> Node3D:
 ## sped up), then dock there.
 func _setup_transfer() -> void:
 	xfer = TransferFlight.plan(stats, float(job.dv_kms), String(job.key))
+	if String(job.get("dest_kind", "")) == "moon" and model.lift_kn > 0.0:
+		_ground_task = WorkerThreadPool.add_task(_prebuild_ground, false, "moon ground")
 	phase = "depart"
 	var dock_dir := Vector3(0.35, 0.15, 1.0).normalized()
 	# The destination lies about 35 degrees off the way the ship leaves the dock.
@@ -713,7 +720,7 @@ func sit_down() -> void:
 		return
 	walking = false
 	view.set_interior(false)
-	help.text = FLY_HELP
+	help.text = LAND_HELP if phase == "descent" else FLY_HELP
 	crosshair.visible = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_apply_pose()
@@ -746,7 +753,7 @@ func _walk_step(delta: float) -> void:
 
 func _walk_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		walk.look(-event.relative.x * MOUSE_TURN, -event.relative.y * MOUSE_TURN)
+		walk.look(-event.relative.x * MOUSE_TURN * GameSettings.mouse_sensitivity(), -event.relative.y * MOUSE_TURN * GameSettings.mouse_sensitivity())
 		return
 	if event is InputEventMouseButton and event.pressed:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -838,7 +845,10 @@ func _begin_descent() -> void:
 	var cfg := model.land_cfg
 	var body: Dictionary = cfg.get("bodies", {}).get("moon", {})
 	model.gravity = float(body.get("gravity_m_s2", 1.62))
-	model.terrain = SurfaceTerrain.make(String(job.get("dest_id", "moon")))
+	if _ground_task >= 0:
+		WorkerThreadPool.wait_for_task_completion(_ground_task)
+		_ground_task = -1
+	model.terrain = _ground_terrain if _ground_terrain != null else SurfaceTerrain.make(String(job.get("dest_id", "moon")))
 	model.pad = Vector3.ZERO
 	model.station_solid = false
 	model.braking = false
@@ -861,16 +871,14 @@ func _begin_descent() -> void:
 	sun.light_color = Color(1.0, 0.97, 0.92)
 	help.text = LAND_HELP
 	_build_moon(body)
+	GameSettings.apply_scene(self, 400.0)
 	_apply_pose()
 
 
 func _build_moon(body: Dictionary) -> void:
 	moon = Node3D.new()
 	add_child(moon)
-	var g: Array = body.get("ground", [0.42, 0.41, 0.40])
-	var r: Array = body.get("rock", [0.30, 0.29, 0.28])
-	var ground := model.terrain.build_mesh(float(model.land_cfg.get("terrain_size_m", 4000.0)), int(model.land_cfg.get("terrain_cells", 96)),
-			Color(float(g[0]), float(g[1]), float(g[2])), Color(float(r[0]), float(r[1]), float(r[2])))
+	var ground := _ground_mesh if _ground_mesh != null else _ground_for(model.terrain)
 	moon.add_child(ground)
 	var pad_r := float(model.land_cfg.get("pad_radius_m", 25.0))
 	var pad := MeshInstance3D.new()
@@ -908,6 +916,7 @@ func _build_moon(body: Dictionary) -> void:
 	label.modulate = Color(1.0, 0.8, 0.4)
 	label.position = Vector3(0, 14, 0)
 	moon.add_child(label)
+	pad_label = label
 	# The base itself: a few domes and boxes off to the side of the pad.
 	var hab := Interiors.flat(Color(0.78, 0.77, 0.72), 0.7)
 	var rng := RandomNumberGenerator.new()
@@ -963,6 +972,8 @@ func _update_descent_hud() -> void:
 		"HEAT  %d%%    HULL  %d%%" % [roundi(model.heat_fraction() * 100.0), roundi((1.0 - model.damage) * 100.0)]])
 	hud.text = "\n".join(lines)
 	bar.value = model.lift
+	if pad_label != null:
+		pad_label.visible = alt > 80.0 and not outside   # a beacon from above, not a wall of text up close
 	var hint := ""
 	if model.landed and model.on_pad():
 		hint = "Landed on the pad. F: shut down and unload.   G: get up and walk outside."
@@ -1037,7 +1048,7 @@ func _suit_step(delta: float) -> void:
 
 func _suit_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		suit.look(-event.relative.x * MOUSE_TURN, -event.relative.y * MOUSE_TURN)
+		suit.look(-event.relative.x * MOUSE_TURN * GameSettings.mouse_sensitivity(), -event.relative.y * MOUSE_TURN * GameSettings.mouse_sensitivity())
 		return
 	if event is InputEventMouseButton and event.pressed:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -1056,4 +1067,25 @@ func _suit_prompt() -> void:
 	var parts := PackedStringArray(["%s SURFACE" % String(job.get("destination", "MOON")).to_upper()])
 	parts.append("E: back aboard" if d <= 2.5 else "Airlock hatch %.0f m" % d)
 	prompt.text = "   ".join(parts)
+
+
+func _ground_for(t: SurfaceTerrain) -> MeshInstance3D:
+	var body: Dictionary = model.land_cfg.get("bodies", {}).get("moon", {})
+	var g: Array = body.get("ground", [0.42, 0.41, 0.40])
+	var r: Array = body.get("rock", [0.30, 0.29, 0.28])
+	return t.build_mesh(float(model.land_cfg.get("terrain_size_m", 4000.0)), int(model.land_cfg.get("terrain_cells", 96)),
+			Color(float(g[0]), float(g[1]), float(g[2])), Color(float(r[0]), float(r[1]), float(r[2])))
+
+
+## Runs on a worker thread while the ship cruises, so the descent opens without a pause.
+func _prebuild_ground() -> void:
+	var t := SurfaceTerrain.make(String(job.get("dest_id", "moon")))
+	_ground_mesh = _ground_for(t)
+	_ground_terrain = t
+
+
+func _exit_tree() -> void:
+	if _ground_task >= 0:
+		WorkerThreadPool.wait_for_task_completion(_ground_task)
+		_ground_task = -1
 

@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Far Haul: docs and launch</title>
-<meta name="description" content="Far Haul is a first-person freight, ship-building and exploration game. Play the prototype in your browser: build a ship, take freight, fly it and jump between stars. See screenshots and read what is built and what is still ahead.">
+<meta name="description" content="Far Haul is a first-person freight, ship-building and exploration game. Download the Windows prototype: build a ship, take freight, fly it, land on moons and jump between stars. See screenshots and read what is built and what is still ahead.">
 <meta property="og:title" content="Far Haul">
-<meta property="og:description" content="Build your ship. Haul the freight. Push the frontier. Play the prototype in your browser.">
+<meta property="og:description" content="Build your ship. Haul the freight. Push the frontier. Download the prototype for Windows.">
 <meta property="og:image" content="https://benjaminarthurt.github.io/FarHaul/img/builder-cargo.jpg">
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
       <a href="#help">Help</a>
       <a href="#about">About</a>
     </nav>
-    <a class="launch small" href="play/">Launch game</a>
+    <a class="launch small" href="https://github.com/benjaminarthurt/FarHaul/releases/latest">Download for Windows</a>
   </div>
 </header>
 
@@ -38,14 +38,14 @@
       <p class="tagline">Build your ship. Haul the freight. Push the frontier.</p>
       <p>Far Haul is a first-person freight, ship-building and exploration game. You own a small, secondhand ship, take contracts, and move goods between worlds. This page shows what you can play today and what is still to come.</p>
       <div class="actions">
-        <a class="launch" href="play/">Launch game</a>
+        <a class="launch" href="https://github.com/benjaminarthurt/FarHaul/releases/latest">Download for Windows</a>
         <a class="ghost-btn" href="#vision">What is built so far</a>
       </div>
-      <p class="note">Runs in your browser with no install. About 20 MB on the first load. Works best on a laptop or desktop with a mouse.</p>
+      <p class="note">One portable file for 64-bit Windows, about 42 MB zipped. Unzip it anywhere and run FarHaul.exe; nothing is installed. Needs a mouse and keyboard.</p>
       <dl class="slip">
         <div><dt>Version</dt><dd>0.1.0, prototype</dd></div>
-        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, get up from the helm and walk the ship</dd></div>
-        <div><dt>Not yet</dt><dd>Planets, space walks, crew</dd></div>
+        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, get up from the helm and walk the ship, land on moons</dd></div>
+        <div><dt>Not yet</dt><dd>Planets with air, space walks, crew</dd></div>
       </dl>
     </div>
     <figure>
@@ -71,7 +71,7 @@
       <li class="now">Ship builder<small>Playable now</small></li>
       <li class="now">Flight<small>Playable now, with star jumps</small></li>
       <li class="now">Walking inside<small>Playable now, rough</small></li>
-      <li>Landing and exploring<small>Flat procedural planets first</small></li>
+      <li class="now">Landing and exploring<small>Moons now, rough</small></li>
       <li>Tethered space walks<small>Repair the outside</small></li>
     </ol>
 
@@ -87,7 +87,7 @@
           <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>A contract board with live freight, deadlines and pay. You load, deliver and get paid. Sublight ships get in-system runs between the port, depot, moon and belt; interstellar freight needs an FTL drive. The hold is limited by what the tank can lift.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>Free flight from the dock, flown local runs (burn, flip, brake, time compression, docking at the far station) and star jumps with a spool-up, streaking stars, a flash and a slowdown. Fuel, heat, power and hull damage all count. Jump sounds are synthesised placeholders.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Walking the ship</th><td>Leave the seat and walk the corridors while underway. A longer ship means a longer walk to engineering.</td><td>Press G at the helm to get up and walk in first person, with deck gravity. Walls, doorways, furniture and loaded containers block you. Ladder shafts change deck, and the airlock lets you off at a berth. The ship flies on as you left it.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Landing and exploring</th><td>Land on rocky worlds and moons, then explore by ship, rover and on foot.</td><td>Nothing yet. Flat procedural terrain comes first.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Landing and exploring</th><td>Land on rocky worlds and moons, then explore by ship, rover and on foot.</td><td>Fit lander legs and a run to a moon base ends in a descent onto its pad: lift jets, gravity, an autopilot, hard landings that cost hull. Walk out of the airlock onto the surface in low gravity. Landing a load on the pad pays 25% more.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Space walks and repair</th><td>Go out through the airlock on a tether to fix radiators, engines and hull damage.</td><td>Airlocks exist and the builder checks for one. Nothing outside the hull yet.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Living economy</th><td>Freight demand that comes from what places produce and need. Frontier outposts that grow because you supplied them.</td><td>A simulation of production, stock, orders and shipping carriers across all eighteen systems runs alongside you. Easy, Normal and Hard change your costs and pay, not the world; Hard sits close to insolvency. Frontier growth is not built.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Manufacturers and wear</th><td>Parts from companies with recognisable engineering habits. Components wear and fail where you can see it.</td><td>One generic part for each job. Hull damage from collisions is charged as repairs.</td><td><span class="chip planned">Planned</span></td></tr>
@@ -192,7 +192,7 @@
       <div>
         <h3>Your first ship</h3>
         <ol class="steps">
-          <li>Press <strong>Launch game</strong>, then <strong>New game</strong>. Pick a name, race, difficulty, starting world and save slot, then <strong>Begin</strong>. Later, use <strong>Continue</strong> or <strong>Load game</strong> to return.</li>
+          <li>Download and unzip the game, run <strong>FarHaul.exe</strong>, then choose <strong>New game</strong>. Pick a name, race, difficulty, starting world and save slot, then <strong>Begin</strong>. Later, use <strong>Continue</strong> or <strong>Load game</strong> to return.</li>
           <li>You arrive at the dock. Press <strong>Enter shipyard</strong> to open the ship builder.</li>
           <li>Look at the ship. Click a part in the palette on the left, then click next to the ship to place it. Green means it fits. Red tells you why not.</li>
           <li>Watch the power, cooling and cargo meters and the warnings on the right. Each warning says what is missing.</li>
@@ -266,7 +266,7 @@
     <h3>Questions</h3>
     <details>
       <summary>Where is my game saved?</summary>
-      <p>In this browser, automatically, every time you change something. Clearing your browser's site data erases it. Another browser or device starts fresh, because saves are not shared between them yet.</p>
+      <p>In a <strong>Far Haul saves</strong> folder next to FarHaul.exe, automatically, every time you change something. Copy that folder with the exe to take your games to another computer. If the exe sits somewhere it cannot write (such as Program Files), saves go to your AppData folder instead; the Load game screen shows where.</p>
     </details>
     <details>
       <summary>I cannot place a part. Why?</summary>
@@ -278,15 +278,15 @@
     </details>
     <details>
       <summary>There is no sound.</summary>
-      <p>Browsers block audio until you click the page once, so the theme song may start only after your first click or key press. Click anywhere in the game. Press <kbd>M</kbd> to check that sound is not muted.</p>
+      <p>Check the volume sliders in <strong>Settings</strong> on the title screen, and press <kbd>M</kbd> in the shipyard to check sound is not muted there.</p>
     </details>
     <details>
       <summary>It runs slowly.</summary>
-      <p>The game uses the simplest rendering mode so that it works on integrated graphics, but a browser still adds overhead. Close other tabs, make the window smaller, or press <kbd>H</kbd> to hide decks you are not working on.</p>
+      <p>Open <strong>Settings</strong> from the title screen and set <strong>Graphics quality</strong> to Low: it turns off shadows and anti-aliasing. If the game will not start at all, your graphics drivers may be too old for Vulkan; the game then falls back to a simpler renderer.</p>
     </details>
     <details>
-      <summary>Does it work on a phone or tablet?</summary>
-      <p>Not properly yet. The builder expects a mouse and keyboard. Touch controls are not built.</p>
+      <summary>Does it run on Mac, Linux, a phone or in a browser?</summary>
+      <p>Not at the moment. Far Haul is built for Windows PCs with a mouse and keyboard. The early browser version has been retired.</p>
     </details>
     <details>
       <summary>How do I get to another star?</summary>
@@ -324,7 +324,7 @@
     <h3>The prototype</h3>
     <dl class="facts">
       <dt>Version</dt><dd>0.1.0, prototype</dd>
-      <dt>Built with</dt><dd>Godot 4.4, written in GDScript. Runs in the browser through the Compatibility renderer.</dd>
+      <dt>Built with</dt><dd>Godot 4.4, written in GDScript, using the Forward+ renderer (Vulkan) on Windows.</dd>
       <dt>Art and sound</dt><dd>The textures, sky, jump sounds and logo are generated in code. The theme song is a custom track. The intro video is a placeholder.</dd>
       <dt>Placeholders</dt><dd>Prices, part stats and the intro video will all change.</dd>
       <dt>Source</dt><dd><a href="https://github.com/benjaminarthurt/FarHaul">github.com/benjaminarthurt/FarHaul</a></dd>
@@ -339,7 +339,7 @@
   <div class="wrap">
     <span class="code">FHCU 000001-0</span>
     <span>Far Haul prototype 0.1.0</span>
-    <span><a href="play/">Launch game</a> &nbsp; <a href="https://github.com/benjaminarthurt/FarHaul">Source on GitHub</a></span>
+    <span><a href="https://github.com/benjaminarthurt/FarHaul/releases/latest">Download for Windows</a> &nbsp; <a href="https://github.com/benjaminarthurt/FarHaul">Source on GitHub</a></span>
   </div>
 </footer>
 

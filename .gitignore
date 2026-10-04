@@ -4,3 +4,6 @@ __pycache__/
 *.pyc
 .godot-path.txt
 build/
+
+# The retired browser build: kept on disk if present, no longer tracked
+site/play/

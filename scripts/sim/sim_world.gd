@@ -13,15 +13,18 @@ const RUNTIME_DIR := "res://data/runtime/"
 const SCENARIO := "sim_scenario_known_space.json"
 const PLAYER := "player"
 const WARMUP_DAYS := 14
+## The world after its warm-up is the same for every new game, so it is computed once and shipped
+## (tests/make_warm_start.gd). The file carries a fingerprint of the data it was made from and is ignored
+## if the world or runtime data has changed since; then the warm-up runs as before.
+const WARM_START := "res://data/runtime/warm_start.bin"
 
 
 ## A fresh world with the player docked at `profile.system_id`. Runs a short warm-up so orders and
 ## shipments are already in flight on day one.
 static func create(profile: Dictionary, ship: ShipData) -> EconomySim:
-	var sim := EconomySim.new()
-	if not sim.load_all(WORLD_DIR, RUNTIME_DIR, SCENARIO):
+	var sim := warmed()
+	if sim == null:
 		return null
-	sim.run_days(WARMUP_DAYS)
 	var c := SimShip.profile(ship, {}, bool(profile.get("ftl_grandfathered", false)))
 	c["id"] = PLAYER
 	c["company"] = "player"
@@ -36,7 +39,8 @@ static func create(profile: Dictionary, ship: ShipData) -> EconomySim:
 	# Make sure there is something to haul on the first day: let the world run (at the sim's expense,
 	# not the player's) until the home port has freight on the board.
 	var cash0 := float(c["cash"])
-	for i in 24 * 10:
+	# A sublight ship works the local board, which always has runs posted, so there is nothing to wait for.
+	for i in (24 * 10 if bool(c.get("ftl", true)) else 0):
 		if sim.offers_at(PLAYER).size() >= 2:
 			break
 		sim.step_hour()
@@ -44,6 +48,52 @@ static func create(profile: Dictionary, ship: ShipData) -> EconomySim:
 	sim.cash_initial += cash0 - pc["cash"]
 	pc["cash"] = cash0
 	return sim
+
+
+## A world that has run its warm-up: from the shipped file when it matches the data, else computed.
+static func warmed() -> EconomySim:
+	var sim := EconomySim.new()
+	if not sim.load_all(WORLD_DIR, RUNTIME_DIR, SCENARIO):
+		return null
+	var f := FileAccess.open_compressed(WARM_START, FileAccess.READ, FileAccess.COMPRESSION_ZSTD)
+	if f != null:
+		var stored: Variant = f.get_var()
+		f.close()
+		if typeof(stored) == TYPE_DICTIONARY and String(stored.get("fingerprint", "")) == data_fingerprint():
+			sim.load_state(stored["state"])
+			return sim
+	sim.run_days(WARMUP_DAYS)
+	return sim
+
+
+## Writes the warm-start file for the current data (run by tests/make_warm_start.gd).
+static func write_warm_start(path: String = WARM_START) -> bool:
+	var sim := EconomySim.new()
+	if not sim.load_all(WORLD_DIR, RUNTIME_DIR, SCENARIO):
+		return false
+	sim.run_days(WARMUP_DAYS)
+	var f := FileAccess.open_compressed(path, FileAccess.WRITE, FileAccess.COMPRESSION_ZSTD)
+	if f == null:
+		return false
+	f.store_var({"fingerprint": data_fingerprint(), "days": WARMUP_DAYS, "state": sim.to_state()})
+	f.close()
+	return true
+
+
+## A hash of every data file the economy reads, so a stale warm start is never used.
+static func data_fingerprint() -> String:
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_MD5)
+	for dir in [WORLD_DIR, RUNTIME_DIR]:
+		var names := Array(DirAccess.get_files_at(dir))
+		names.sort()
+		for n in names:
+			if not String(n).ends_with(".json"):
+				continue
+			ctx.update(String(n).to_utf8_buffer())
+			ctx.update(FileAccess.get_file_as_bytes(String(dir) + String(n)))
+	ctx.update(str(WARMUP_DAYS).to_utf8_buffer())
+	return ctx.finish().hex_encode()
 
 
 static func serialize(sim: EconomySim) -> String:

@@ -27,7 +27,7 @@ func _run() -> void:
 	await process_frame
 	check(f.xfer != null and f.phase == "depart" and f.station.visible, "the run starts undocking from the origin station")
 	check(f.xfer.distance_m > 20000.0, "the destination is %.0f km away" % (f.xfer.distance_m / 1000.0))
-	check(f.model.mass_t() > 40.0, "the ship flies loaded (%.1f t)" % f.model.mass_t())
+	check(f.model.cargo_t > 1.0, "the ship flies loaded (%.1f t of cargo, %.1f t in all)" % [f.model.cargo_t, f.model.mass_t()])
 	var pk := InputEventKey.new()
 	pk.keycode = KEY_PERIOD
 	pk.pressed = true
