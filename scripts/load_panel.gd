@@ -21,6 +21,11 @@ func _init() -> void:
 		b.pressed.connect(func() -> void: chosen.emit(i))
 		col.add_child(b)
 		rows.append(b)
+	if not OS.has_feature("web"):  # in a browser the saves live in its storage, which has no useful path
+		var where := Brand.note("Saves are kept in %s" % SaveSlots.location(), 12)
+		where.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+		where.custom_minimum_size = Vector2(520, 0)
+		col.add_child(where)
 	var back_btn := Button.new()
 	back_btn.text = "BACK"
 	Brand.style_button(back_btn, 18)

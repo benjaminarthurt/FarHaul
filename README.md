@@ -161,6 +161,25 @@ The site root (`site/index.html`) is a docs page with screenshots, help and a La
 `godot --headless --export-release "Web" site/play/index.html` and serve `site/` with any static web server.
 Saves live in the browser's own storage, so they stay on that device.
 
+## Portable Windows build
+
+`export_presets.cfg` also has a **Windows Desktop** preset: one `FarHaul.exe` (about 100 MB) with the game
+packed inside, built to `build/windows/` (which git ignores). It needs no install. Copy it anywhere, a USB
+stick included, and run it.
+
+- **Saves** go in a `Far Haul saves` folder beside the exe, so they travel with it. If that folder cannot
+  be written (the exe sits in Program Files, say), the game falls back to `%APPDATA%\Godot\app_userdata\Far Haul\saves`.
+  The Load game screen shows which folder is in use. The editor and the web build are unchanged.
+- **Build it from the editor** with Project > Export > Windows Desktop. To get the Far Haul icon and name
+  in the exe, set Editor Settings > Export > Windows > rcedit; without rcedit the export still works,
+  shows a warning and uses Godot's icon.
+- **Build it from a script** with `tools/build_windows.sh [godot]`. It patches the icon and version info
+  into a copy of the template with go-winres, then exports. This works on Linux with no Wine or rcedit.
+- **First run:** Windows SmartScreen says "Windows protected your PC" because the exe is not code-signed.
+  Choose More info, then Run anyway.
+- **Sharing:** the exe is too big for the repo. Attach it to a GitHub Release, or zip it and send it
+  (about 42 MB zipped).
+
 ## Branding
 
 Brand rules come from `docs/far-haul-concept.md` and `docs/design-reference/art-direction.md`:

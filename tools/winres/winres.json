@@ -1,0 +1,13 @@
+{
+  "RT_GROUP_ICON": { "GODOT_ICON": { "0409": "../../assets/brand/icon.ico" } },
+  "RT_VERSION": { "#1": { "0409": {
+    "fixed": { "file_version": "0.1.0.0", "product_version": "0.1.0.0" },
+    "info": { "0409": {
+      "CompanyName": "Benjamin Townsend",
+      "FileDescription": "Far Haul",
+      "FileVersion": "0.1.0",
+      "LegalCopyright": "Built with Godot Engine (MIT licence)",
+      "ProductName": "Far Haul",
+      "ProductVersion": "0.1.0"
+    } } } } }
+}

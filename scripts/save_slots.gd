@@ -7,7 +7,38 @@ extends RefCounted
 const COUNT := 5
 const LEGACY_AUTOSAVE := "user://autosave.json"
 
-static var dir := "user://saves"
+static var dir := _default_dir()
+
+const PORTABLE_DIR := "Far Haul saves"   ## beside the exe in a desktop build
+
+
+## A desktop build keeps its saves in a folder beside the exe, so the game can be carried on a USB stick
+## and run from anywhere. If that folder cannot be written (the exe sits in Program Files, say) it falls
+## back to the user folder, as the editor and the web build always do.
+static func _default_dir() -> String:
+	if OS.has_feature("template") and OS.has_feature("pc"):
+		var beside := OS.get_executable_path().get_base_dir().path_join(PORTABLE_DIR)
+		if _writable(beside):
+			return beside
+	return "user://saves"
+
+
+static func _writable(folder: String) -> bool:
+	if DirAccess.make_dir_recursive_absolute(folder) != OK:
+		return false
+	var probe := folder.path_join(".write_test")
+	var f := FileAccess.open(probe, FileAccess.WRITE)
+	if f == null:
+		return false
+	f.store_string("ok")
+	f.close()
+	DirAccess.remove_absolute(probe)   # the test file only, never a save
+	return true
+
+
+## Where saves go, as a folder on disk (for showing the player).
+static func location() -> String:
+	return ProjectSettings.globalize_path(dir)
 
 
 static func path(slot: int) -> String:
