@@ -141,3 +141,25 @@ func _stencil(container: Node3D, text: String, col: Color) -> void:
 		label.rotation_degrees.y = 90.0 * side
 		label.scale.y = 1.0 / maxf(container.scale.y, 0.05)  # stay readable on part-full boxes
 		container.add_child(label)
+
+
+## Walking inside: ceilings go solid (they are see-through so the builder can look in from above).
+func set_interior(on: bool) -> void:
+	_set_ceilings(self, on)
+
+
+func _set_ceilings(node: Node, on: bool) -> void:
+	if node is MeshInstance3D and node.has_meta("ceiling"):
+		var mi := node as MeshInstance3D
+		if on:
+			var src := (mi.mesh as PrimitiveMesh).material as StandardMaterial3D if mi.mesh is PrimitiveMesh else null
+			var m := StandardMaterial3D.new()
+			m.albedo_color = Color(src.albedo_color, 1.0) if src != null else Color(0.35, 0.37, 0.4)
+			m.roughness = 0.8
+			SurfaceTextures.apply_panel(m)
+			mi.material_override = m
+		else:
+			mi.material_override = null
+	for c in node.get_children():
+		_set_ceilings(c, on)
+

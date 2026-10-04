@@ -44,8 +44,8 @@
       <p class="note">Runs in your browser with no install. About 20 MB on the first load. Works best on a laptop or desktop with a mouse.</p>
       <dl class="slip">
         <div><dt>Version</dt><dd>0.1.0, prototype</dd></div>
-        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars</dd></div>
-        <div><dt>Not yet</dt><dd>Walking the ship, planets, space walks</dd></div>
+        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, get up from the helm and walk the ship</dd></div>
+        <div><dt>Not yet</dt><dd>Planets, space walks, crew</dd></div>
       </dl>
     </div>
     <figure>
@@ -64,13 +64,13 @@
     <h2 id="vision-h">The game, and where it is today</h2>
     <p class="lede">Far Haul is about owning a working spaceship. The ship is a place you walk through, and freight is how you pay for it.</p>
     <p>You start as an independent operator with a cheap ship and enough money to keep it flying. You take contracts, load containers, work out whether a job is worth the fuel, and run goods between established worlds. Over time you build bigger, buy range, and head out past the end of the charts, where there is no repair yard, no fuel depot and nobody to call. The farther you go, the less is there to help you.</p>
-    <p>What you can play today: design a ship from modules and check that it works, take freight from a simulated economy of eighteen systems, and fly it. You start with a sublight ship, so your first jobs are runs between the port, fuel depot, moon and belt of your own system, flown by hand or left to the autopilot. Save up for an FTL drive and the other systems open up, with a jump that takes you there without a cut. Walking the ship, landing and space walks are still on the drawing board.</p>
+    <p>What you can play today: design a ship from modules and check that it works, take freight from a simulated economy of eighteen systems, and fly it. You start with a sublight ship, so your first jobs are runs between the port, fuel depot, moon and belt of your own system, flown by hand or left to the autopilot. Save up for an FTL drive and the other systems open up, with a jump that takes you there without a cut. You can also get up from the helm and walk the ship while it flies. Landing and space walks are still on the drawing board.</p>
 
     <h3>Build order</h3>
     <ol class="chain">
       <li class="now">Ship builder<small>Playable now</small></li>
       <li class="now">Flight<small>Playable now, with star jumps</small></li>
-      <li>Walking inside<small>Cockpit to engineering on foot</small></li>
+      <li class="now">Walking inside<small>Playable now, rough</small></li>
       <li>Landing and exploring<small>Flat procedural planets first</small></li>
       <li>Tethered space walks<small>Repair the outside</small></li>
     </ol>
@@ -86,7 +86,7 @@
           <tr><th scope="row">Interiors</th><td>Cramped, practical, lived-in. Cabins, galleys, engine rooms and cockpits that look like they were built to do a job.</td><td>Each part has its own fitted interior: cockpit seats and controls, a reactor room, crew quarters with bunks and a galley, an airlock with suit lockers. You can see them from the builder camera.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>A contract board with live freight, deadlines and pay. You load, deliver and get paid. Sublight ships get in-system runs between the port, depot, moon and belt; interstellar freight needs an FTL drive. The hold is limited by what the tank can lift.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>Free flight from the dock, flown local runs (burn, flip, brake, time compression, docking at the far station) and star jumps with a spool-up, streaking stars, a flash and a slowdown. Fuel, heat, power and hull damage all count. Jump sounds are synthesised placeholders.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Walking the ship</th><td>Leave the seat and walk the corridors while underway. A longer ship means a longer walk to engineering.</td><td>The interiors are modelled and furnished, but there is no first-person view yet.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Walking the ship</th><td>Leave the seat and walk the corridors while underway. A longer ship means a longer walk to engineering.</td><td>Press G at the helm to get up and walk in first person, with deck gravity. Walls, doorways, furniture and loaded containers block you. Ladder shafts change deck, and the airlock lets you off at a berth. The ship flies on as you left it.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Landing and exploring</th><td>Land on rocky worlds and moons, then explore by ship, rover and on foot.</td><td>Nothing yet. Flat procedural terrain comes first.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Space walks and repair</th><td>Go out through the airlock on a tether to fix radiators, engines and hull damage.</td><td>Airlocks exist and the builder checks for one. Nothing outside the hull yet.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Living economy</th><td>Freight demand that comes from what places produce and need. Frontier outposts that grow because you supplied them.</td><td>A simulation of production, stock, orders and shipping carriers across all eighteen systems runs alongside you. Easy, Normal and Hard change your costs and pay, not the world; Hard sits close to insolvency. Frontier growth is not built.</td><td><span class="chip rough">Rough</span></td></tr>
@@ -108,6 +108,14 @@
       <figure>
         <button class="shot" data-full="img/jump.jpg" data-cap="Mid star jump." aria-label="Open the star jump full size"><img src="img/jump.jpg" width="1280" height="720" loading="lazy" alt="The ship in the middle of a star jump, with the stars stretched into long streaks around it."></button>
         <figcaption><strong>Star jump.</strong> Spool, streaks, a flash and a slowdown. No cut scene: you stay in the ship the whole way.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/walk-cockpit.jpg" data-cap="On foot in the cockpit." aria-label="Open the cockpit walk view full size"><img src="img/walk-cockpit.jpg" width="1280" height="720" loading="lazy" alt="Standing in the cockpit behind the seats, looking at the dash of screens and switches and the windscreen."></button>
+        <figcaption><strong>On foot.</strong> Get up from the helm and the cockpit is a room you stand in. E sits you back down.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/walk-hold.jpg" data-cap="Walking aft down the hold." aria-label="Open the hold walk view full size"><img src="img/walk-hold.jpg" width="1280" height="720" loading="lazy" alt="Looking aft down the empty cargo hold's aisle, with hazard stripes on the floor and the glowing reactor in engineering beyond the far door."></button>
+        <figcaption><strong>Down the hold.</strong> The aisle runs aft to engineering, where the reactor glows behind the far door.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/flight-run.jpg" data-cap="A local run." aria-label="Open the flight screenshot full size"><img src="img/flight-run.jpg" width="1280" height="720" loading="lazy" alt="The flight view on a local run, with the ship, a diamond marker for the destination and a panel of speed, fuel and delta-v readouts."></button>
@@ -240,6 +248,16 @@
             <tr><th scope="row">Time compression</th><td><kbd>,</kbd> / <kbd>.</kbd></td></tr>
             <tr><th scope="row">Dock</th><td><kbd>F</kbd>, or <kbd>Esc</kbd> to autopilot in</td></tr>
             <tr><th scope="row">Engage the FTL drive</th><td><kbd>J</kbd>, when clear of the station and cool</td></tr>
+            <tr><th scope="row">Get up from the helm</th><td><kbd>G</kbd></td></tr>
+          </tbody>
+        </table>
+        <h3>Controls: on foot</h3>
+        <table class="keys">
+          <tbody>
+            <tr><th scope="row">Walk</th><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, <kbd>Shift</kbd> to run</td></tr>
+            <tr><th scope="row">Look</th><td>Mouse, or arrow keys</td></tr>
+            <tr><th scope="row">Take the helm, climb a ladder, leave by the airlock</th><td><kbd>E</kbd></td></tr>
+            <tr><th scope="row">Free the mouse</th><td><kbd>Esc</kbd>, click to look again</td></tr>
           </tbody>
         </table>
       </div>
@@ -307,7 +325,7 @@
     <dl class="facts">
       <dt>Version</dt><dd>0.1.0, prototype</dd>
       <dt>Built with</dt><dd>Godot 4.4, written in GDScript. Runs in the browser through the Compatibility renderer.</dd>
-      <dt>Art and sound</dt><dd>The textures, sky, jump sounds and logo are generated in code. The theme song is by the author. The intro video is a placeholder.</dd>
+      <dt>Art and sound</dt><dd>The textures, sky, jump sounds and logo are generated in code. The theme song is a custom track. The intro video is a placeholder.</dd>
       <dt>Placeholders</dt><dd>Prices, part stats and the intro video will all change.</dd>
       <dt>Source</dt><dd><a href="https://github.com/benjaminarthurt/FarHaul">github.com/benjaminarthurt/FarHaul</a></dd>
     </dl>

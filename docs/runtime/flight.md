@@ -29,6 +29,7 @@ acceleration is thrust over current mass, and mass is dry plus fuel plus cargo.
 The player's saved ship (or the starter) is rebuilt around its centre of mass, with chase and
 cockpit cameras and a HUD for speed, closing rate, distance, throttle, fuel, delta-v and mass.
 Keys: W/S throttle, Z cut, arrows pitch and yaw, Q/E roll, X brake, R assist, C camera, F dock, Esc dock.
+G gets up from the seat to walk the ship (see walking.md).
 
 ## Flying a local run (`scripts/transfer_flight.gd`)
 
@@ -79,6 +80,5 @@ charged, the load stays aboard). `tests/smoke_jump.gd` runs the whole sequence h
 
 ## Not built yet
 
-Star jumps and their link to the economy (an interstellar trip is still resolved by the sim), atmosphere and landing,
-collision with anything but the station, and walking inside the ship.
+Atmosphere and landing, and collision with anything but the station. Walking inside the ship is in walking.md.
 All tuning numbers are placeholders.

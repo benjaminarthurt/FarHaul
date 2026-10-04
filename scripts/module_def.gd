@@ -88,13 +88,20 @@ func _build_hollow(root: Node3D) -> void:
 				mat = ceil_mat
 			elif d.y < 0:
 				mat = floor_mat
+			var before := root.get_child_count()
 			_add_face(root, Vector3(c) * ShipGrid.CELL, d, has_socket_at(c, d), mat)
+			if d.y > 0:  # tag the see-through ceiling so a walking view can make it solid
+				for i in range(before, root.get_child_count()):
+					root.get_child(i).set_meta("ceiling", true)
 	for c in cells:
 		_add_frame_struts(root, Vector3(c) * ShipGrid.CELL, 0.16, trim_mat, 0.03)
 	_add_details(root)
+	var furnished := root.get_child_count()
 	Interiors.dress(self, root)
 	if cargo_slots > 0:
 		_add_crates(root, cells)
+	for i in range(furnished, root.get_child_count()):  # furniture and freight: things a walker bumps into
+		root.get_child(i).set_meta("solid", true)
 
 
 ## Small per-module set dressing so hulls don't read as blank boxes.
@@ -126,10 +133,16 @@ func _add_hatch(root: Node3D) -> void:
 			break
 	var out := -inner
 	var h := ShipGrid.CELL * 0.5
-	var hatch := Node3D.new()
-	hatch.position = Vector3(out) * (h + 0.03) + Vector3(0, -0.15, 0)
-	hatch.rotation.y = atan2(float(out.x), float(out.z))  # local +Z faces outward
-	root.add_child(hatch)
+	# The same hatch twice: on the hull outside, and on the inside face of that wall for whoever walks in.
+	for side in [1.0, -1.0]:
+		var hatch := Node3D.new()
+		hatch.position = Vector3(out) * ((h + 0.03) if side > 0.0 else (h - WALL_T - 0.05)) + Vector3(0, -0.15, 0)
+		hatch.rotation.y = atan2(float(out.x) * side, float(out.z) * side)  # local +Z faces away from the wall
+		root.add_child(hatch)
+		_hatch_leaf(hatch)
+
+
+func _hatch_leaf(hatch: Node3D) -> void:
 	var leaf := _mat(color.darkened(0.45), 1.0)
 	var stripes := SurfaceTextures.hazard_material()
 	_add_box(hatch, Vector3.ZERO, Vector3(1.5, 2.0, 0.08), leaf)

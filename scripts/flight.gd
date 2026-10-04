@@ -5,6 +5,8 @@ extends Node3D
 ## Costs: fuel burned and hull repairs are charged and the clock advances when the flight ends.
 ## Controls: W/S throttle up/down, Z cut throttle, arrow keys pitch and yaw, Q/E roll, X braking
 ## autopilot, R toggle rotation assist, C camera, F dock when close and slow, Esc back to the dock.
+## G gets up from the helm to walk the ship (see ShipWalk): WASD walk, mouse or arrows look, Shift run,
+## E uses the helm, a ladder or the airlock. The ship carries on as it was while nobody is at the helm.
 
 const STATION_RADIUS := 26.0
 
@@ -44,6 +46,14 @@ const CLEAR_M := 3000.0
 const WARPS := [1, 2, 5, 10, 25, 60]
 var _impact_shown := -10.0
 var _impacts_seen := 0
+var walk: ShipWalk
+var walking := false
+var help: Label
+var crosshair: Label
+const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement
+const KEY_TURN := 1.8          ## radians per second with the arrow keys
+const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time   G get up   Esc back to the dock"
+const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time   Esc frees the mouse, click to look again"
 
 
 func _ready() -> void:
@@ -354,6 +364,7 @@ func _build_ship() -> void:
 	ship_root.add_child(view)
 	view.position = -com                       # turn about the centre of mass
 	view.rebuild(ship, manifest)
+	walk = ShipWalk.build(ship, view)
 	for m in ship.modules:
 		if ship.library.get_def(m.id).helm:
 			cockpit_pos = ShipGrid.cell_to_world(m.cell) - com + Vector3(0, 0.5, 0)
@@ -386,11 +397,20 @@ func _build_hud() -> void:
 	bar.show_percentage = false
 	bar.position = Vector2(28, 230)
 	layer.add_child(bar)
-	var help := Brand.note("W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time   Esc back to the dock", 13)
+	help = Brand.note(FLY_HELP, 13)
 	help.autowrap_mode = TextServer.AUTOWRAP_OFF
 	help.custom_minimum_size = Vector2(1000, 0)
 	help.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT, Control.PRESET_MODE_MINSIZE, 20)
 	layer.add_child(help)
+	crosshair = Label.new()
+	crosshair.text = "+"
+	crosshair.add_theme_font_size_override("font_size", 22)
+	crosshair.add_theme_color_override("font_color", Color(Brand.OFFWHITE, 0.7))
+	crosshair.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
+	crosshair.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	crosshair.grow_vertical = Control.GROW_DIRECTION_BOTH
+	crosshair.visible = false
+	layer.add_child(crosshair)
 
 
 func _process(delta: float) -> void:
@@ -405,17 +425,20 @@ func _process(delta: float) -> void:
 		_update_hud()
 		return
 	var turn := Vector3.ZERO
-	if Input.is_key_pressed(KEY_UP): turn.x += 1.0
-	if Input.is_key_pressed(KEY_DOWN): turn.x -= 1.0
-	if Input.is_key_pressed(KEY_LEFT): turn.y += 1.0
-	if Input.is_key_pressed(KEY_RIGHT): turn.y -= 1.0
-	if Input.is_key_pressed(KEY_Q): turn.z += 1.0
-	if Input.is_key_pressed(KEY_E): turn.z -= 1.0
 	var thr := 0.0
-	if Input.is_key_pressed(KEY_W): thr += 1.0
-	if Input.is_key_pressed(KEY_S): thr -= 1.0
-	if Input.is_key_pressed(KEY_Z):
-		model.throttle = 0.0
+	if walking:
+		_walk_step(delta)    # nobody at the helm: the ship carries on as it was
+	else:
+		if Input.is_key_pressed(KEY_UP): turn.x += 1.0
+		if Input.is_key_pressed(KEY_DOWN): turn.x -= 1.0
+		if Input.is_key_pressed(KEY_LEFT): turn.y += 1.0
+		if Input.is_key_pressed(KEY_RIGHT): turn.y -= 1.0
+		if Input.is_key_pressed(KEY_Q): turn.z += 1.0
+		if Input.is_key_pressed(KEY_E): turn.z -= 1.0
+		if Input.is_key_pressed(KEY_W): thr += 1.0
+		if Input.is_key_pressed(KEY_S): thr -= 1.0
+		if Input.is_key_pressed(KEY_Z):
+			model.throttle = 0.0
 	if turn != Vector3.ZERO or thr != 0.0:
 		model.braking = false          # any pilot input takes the controls back
 	if xfer == null:
@@ -467,7 +490,10 @@ func _apply_pose() -> void:
 	ship_root.position = model.pos
 	ship_root.basis = model.basis
 	# Everything else is placed relative to the ship so the numbers stay small near the origin.
-	if chase:
+	if walking:
+		camera.global_position = model.pos + model.basis * (view.position + walk.eye())
+		camera.global_basis = model.basis * walk.look_basis()
+	elif chase:
 		var back := model.basis * Vector3(0, 6.0, 26.0)
 		camera.global_position = model.pos + back
 		camera.look_at(model.pos + model.basis * Vector3(0, 1.5, -10.0), model.basis.y)
@@ -519,6 +545,8 @@ func _update_transfer_hud() -> void:
 func _update_hud() -> void:
 	if xfer != null and phase != "approach":
 		_update_transfer_hud()
+		if walking:
+			_walk_prompt()
 		return
 	var dist := model.pos.length()
 	var closing := -model.vel.dot(model.pos.normalized()) if dist > 0.01 else 0.0
@@ -561,14 +589,21 @@ func _update_hud() -> void:
 		prompt.text = "J: engage the FTL drive for %s (%.1f ly)" % [String(job.destination), float(job.ly)] if why == "" else "Jump to %s: %s" % [String(job.destination), why]
 	elif _jumping():
 		prompt.text = "FTL DRIVE SPOOLING" if phase == "spool" else ""
+	if walking:
+		_walk_prompt()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _jumping():
 		return
+	if walking and not leaving:
+		_walk_input(event)
+		return
 	if leaving or not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 	match event.keycode:
+		KEY_G:
+			get_up()
 		KEY_X:
 			model.braking = not model.braking
 		KEY_R:
@@ -606,3 +641,116 @@ func _return_to_dock() -> void:
 	else:
 		Session.finish_flight(model.fuel_burned_t, model.elapsed_s, model.damage)
 	get_tree().change_scene_to_file(Session.DOCK_SCENE)
+
+
+# --- Walking the ship -------------------------------------------------------------------------------
+
+## Leave the pilot's seat. Whatever the ship was doing it keeps doing: throttle, braking autopilot, assist.
+func get_up() -> bool:
+	if walking or _jumping() or walk == null or not walk.stand_at_helm():
+		return false
+	walking = true
+	view.set_interior(true)
+	help.text = WALK_HELP
+	crosshair.visible = true
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_apply_pose()
+	return true
+
+
+## Back in the seat, at the controls as they were left.
+func sit_down() -> void:
+	if not walking:
+		return
+	walking = false
+	view.set_interior(false)
+	help.text = FLY_HELP
+	crosshair.visible = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_apply_pose()
+
+
+## Docked, or still at the berth the flight started from: the airlock lets you off.
+func _berthed() -> bool:
+	if model.can_dock():
+		return true
+	return phase != "approach" and phase != "cruise" and model.pos.length() < 400.0 and model.speed() < 1.0
+
+
+func _walk_step(delta: float) -> void:
+	var dir := Vector2.ZERO
+	if Input.is_key_pressed(KEY_W): dir.y += 1.0
+	if Input.is_key_pressed(KEY_S): dir.y -= 1.0
+	if Input.is_key_pressed(KEY_D): dir.x += 1.0
+	if Input.is_key_pressed(KEY_A): dir.x -= 1.0
+	var yaw := 0.0
+	var pitch := 0.0
+	if Input.is_key_pressed(KEY_LEFT): yaw += 1.0
+	if Input.is_key_pressed(KEY_RIGHT): yaw -= 1.0
+	if Input.is_key_pressed(KEY_UP): pitch += 1.0
+	if Input.is_key_pressed(KEY_DOWN): pitch -= 1.0
+	walk.look(yaw * KEY_TURN * delta, pitch * KEY_TURN * delta)
+	walk.step(minf(delta, 0.05), dir, Input.is_key_pressed(KEY_SHIFT))
+
+
+func _walk_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		walk.look(-event.relative.x * MOUSE_TURN, -event.relative.y * MOUSE_TURN)
+		return
+	if event is InputEventMouseButton and event.pressed:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		return
+	if not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	match event.keycode:
+		KEY_E:
+			use()
+		KEY_ESCAPE:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		KEY_PERIOD:
+			if xfer != null:
+				warp_index = mini(warp_index + 1, WARPS.size() - 1)
+		KEY_COMMA:
+			warp_index = maxi(warp_index - 1, 0)
+
+
+## E: sit at the helm, climb a ladder, or leave by the airlock when the ship is at a berth.
+func use() -> String:
+	if walk.near_helm():
+		sit_down()
+		return "helm"
+	if walk.climb() != 0:
+		return "ladder"
+	if walk.near_airlock() and _berthed():
+		if phase == "approach":
+			_arrived = true
+		sit_down()
+		_return_to_dock()
+		return "airlock"
+	return ""
+
+
+func _walk_prompt() -> void:
+	var where := walk.room()
+	var hint := ""
+	if walk.near_helm():
+		hint = "E: take the helm"
+	elif not walk.hatch_here().is_empty():
+		var hx := walk.hatch_here()
+		hint = "E: climb %s (look up or down)" % ("up or down" if bool(hx.up) and bool(hx.down) else ("up" if bool(hx.up) else "down"))
+	elif walk.near_airlock():
+		hint = "E: leave the ship" if _berthed() else "The outer hatch stays shut away from a berth"
+	var warn := ""
+	if model.overheated:
+		warn = "ENGINES OVERHEATED"
+	elif not model.has_fuel() and model.speed() > 1.0:
+		warn = "OUT OF FUEL"
+	elif model.last_impact > float(model.tune.get("soft_impact_m_s", 1.5)) and model.elapsed_s - _impact_shown < 3.0:
+		warn = "HULL IMPACT"
+	elif xfer != null and phase == "cruise" and xfer.brake_now(model):
+		warn = "BRAKE NOW: get back to the helm"
+	var parts := PackedStringArray()
+	for t in [warn, where.to_upper() if where != "" else "", hint]:
+		if t != "":
+			parts.append(t)
+	prompt.text = "   ".join(parts)
