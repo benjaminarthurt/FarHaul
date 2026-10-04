@@ -64,6 +64,7 @@ var outside := false           ## on foot on the moon, in a suit
 var suit: SurfaceWalker
 var suit_hatch := Vector3.ZERO
 var pad_label: Label3D
+var reticle: FlightReticle
 var _ground_task := -1         ## the moon's ground mesh, built on a worker thread during the cruise
 var _ground_mesh: MeshInstance3D
 var _ground_terrain: SurfaceTerrain
@@ -429,6 +430,9 @@ func _build_hud() -> void:
 	crosshair.grow_vertical = Control.GROW_DIRECTION_BOTH
 	crosshair.visible = false
 	layer.add_child(crosshair)
+	reticle = FlightReticle.new()
+	layer.add_child(reticle)
+	layer.move_child(reticle, 0)
 
 
 func _process(delta: float) -> void:
@@ -528,6 +532,39 @@ func _apply_pose() -> void:
 	else:
 		camera.global_position = model.pos + model.basis * cockpit_pos
 		camera.global_basis = model.basis
+	_update_reticle()
+
+
+## Nose, prograde and retrograde markers, at the helm in either camera (not on foot or mid-jump).
+func _update_reticle() -> void:
+	if reticle == null:
+		return
+	reticle.nose = Vector2.INF
+	reticle.prograde = Vector2.INF
+	reticle.retrograde = Vector2.INF
+	if walking or outside or _jumping():
+		reticle.queue_redraw()
+		return
+	reticle.nose = _screen_dir(model.forward())
+	var v := model.vel
+	if model.landed or v.length() < 0.3:
+		pass
+	else:
+		reticle.prograde = _screen_dir(v.normalized())
+		reticle.retrograde = _screen_dir(-v.normalized())
+	reticle.queue_redraw()
+
+
+## Where a direction from the ship lands on screen, or INF if it is behind the camera.
+func _screen_dir(dir: Vector3) -> Vector2:
+	var far := model.pos + dir * 2000.0
+	if camera.is_position_behind(far):
+		return Vector2.INF
+	var p := camera.unproject_position(far)
+	var size := get_viewport().get_visible_rect().size
+	if p.x < 0.0 or p.y < 0.0 or p.x > size.x or p.y > size.y:
+		return Vector2.INF
+	return p
 
 
 func _update_transfer_hud() -> void:
