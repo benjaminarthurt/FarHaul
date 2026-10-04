@@ -115,6 +115,10 @@ static func check(stats: Dictionary, manifest: CargoManifest, c: Dictionary) -> 
 		var can := LocalSpace.can_land(stats, sys, float(c.get("offer", 0.0)))
 		var g := float(LocalSpace.body(sys).get("gravity_m_s2", 1.62))
 		rows.append(_row("Lander legs", can, "" if can else ("needed to land and lift off (%.2f m/s² here)" % g if float(stats.get("lift", 0.0)) <= 0.0 else "not enough lift for this load in %.2f m/s²" % g)))
+	if String(c.get("person_kind", "")) == "passenger":
+		var spare := People.seats(stats)
+		rows.append(_row("Passenger berths", spare >= int(c.get("seats", 1)), "%d spare for %d" % [spare, int(c.get("seats", 1))]))
+		return rows
 	var aboard := manifest.total_of(c.commodity)
 	rows.append(_row("Cargo aboard", aboard > 0.0, "%.1f of %.0f t offered" % [aboard, c.offer]))
 	return rows

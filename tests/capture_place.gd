@@ -33,6 +33,10 @@ func _run() -> void:
 			p.walker.pos = Vector3(-14, 0, 5)
 			p.use_desk("freight")
 			await _shot(out, "07_freight_desk")
+			p.close_desk()
+			p.use_desk("bar")
+			await _shot(out, "08_bar_people")
+			p.close_desk()
 		p.queue_free()
 		await process_frame
 	quit(0)

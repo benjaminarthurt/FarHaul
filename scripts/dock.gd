@@ -413,6 +413,7 @@ func _refresh_actions() -> void:
 		run_btn.text = "FLY THE RUN" if local else "FLY THE JUMP"
 		var at_start := String(c.get("origin_port_id", "")) == site if local else String(c.get("origin_system_id", "")) == Session.system_id()
 		run_btn.disabled = c.is_empty() or not at_start or String(c.get("status", "")) == "arrived"
+	depart_btn.text = "DEPART ON A HARD BURN" if c.has("due_hour") else "DEPART"
 	if bool(c.get("local", false)):
 		depart_btn.disabled = String(c.get("origin_port_id", "")) != site or String(c.get("status", "")) == "arrived"
 		deliver_btn.disabled = String(c.get("destination_port_id", "")) != site or String(c.get("status", "")) != "arrived"
@@ -510,7 +511,7 @@ func _fly_run() -> void:
 
 
 func _depart() -> void:
-	var result := Session.depart_active_contract()
+	var result := Session.depart_active_contract(Session.active_contract().has("due_hour"))   # a rush goes on a hard burn
 	status.text = result.message
 	if bool(result.ok):
 		get_tree().reload_current_scene()

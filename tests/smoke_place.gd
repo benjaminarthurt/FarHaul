@@ -58,6 +58,16 @@ func _run() -> void:
 	for i in 200:
 		p.walker.step(0.05, Vector2(0, 1), true)
 	check(p.walker.pos.x > -22.0 and p.walker.pos.x < start.x, "the end wall stops you (x %.2f)" % p.walker.pos.x)
+	# People at the bar.
+	p.use_desk("bar")
+	await process_frame
+	var asks := 0
+	for b in _buttons(p):
+		for k in ["RUSH", "PASSENGER", "SEALED"]:
+			if String(b.text).begins_with(k):
+				asks += 1
+	check(asks == Session.people_here().size() and asks > 0, "%d people ask for work at the bar" % asks)
+	p.close_desk()
 	# Desks in reach.
 	_stand_at(p, "freight")
 	check(String(p.desk_in_reach().get("id", "")) == "freight", "standing at the freight office brings it in reach")

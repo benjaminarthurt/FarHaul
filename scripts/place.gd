@@ -237,6 +237,10 @@ func _build_concourse() -> void:
 	_desk("bar", "Bar and bunks", Vector3(14, 0, 5.2), face_n, Color(0.85, 0.35, 0.3))
 	for x in [11.0, 13.0, 15.0, 17.0]:   # bar stools
 		_box(Vector3(x, 0.4, 3.7), Vector3(0.45, 0.8, 0.45), Color(0.6, 0.25, 0.2))
+	var asking := Session.people_here() if Session.slot >= 0 else []
+	var jackets := [Color(0.3, 0.5, 0.75), Color(0.55, 0.7, 0.35), Color(0.7, 0.45, 0.65)]
+	for i in mini(asking.size(), 3):   # the people with work, waiting at the bar
+		_person(Vector3([10.2, 17.8, 19.6][i], 0, 2.9), Vector3(0, 0, -1), jackets[i])
 	# The terminal kiosk in the middle, and benches.
 	_box(Vector3(0, 0.75, -1.5), Vector3(0.8, 1.5, 0.5), Color(0.16, 0.17, 0.2))
 	_box(Vector3(0, 1.3, -1.24), Vector3(0.6, 0.4, 0.04), Color(0.3, 0.85, 1.0), false, true)
@@ -426,9 +430,14 @@ func _refresh_info() -> void:
 		"%s  ·  %s" % [String(Worlds.system(Session.system_id()).get("name", Session.system_id().capitalize())), {"concourse": "Station concourse", "hab": "Moon base hab", "hut": "Mining camp"}[kind]]])
 	if Session.slot >= 0:
 		lines.append("Credits %s cr    Day %d    Hull %d%%" % [ShipStats.commas(int(Session.profile.credits)), Session.day(), roundi((1.0 - float(Session.profile.get("hull_damage", 0.0))) * 100.0)])
+		lines.append("Standing: %s" % People.standing(int(Session.profile.get("rep", 0))))
 		var c := Session.active_contract()
 		if not c.is_empty():
-			lines.append("Active: %s%s" % [String(c.get("title", "")), "  (arrived: deliver it)" if String(c.get("status", "")) == "arrived" else ""])
+			var due := ""
+			if c.has("due_hour") and Session.sim != null and String(c.get("status", "")) != "arrived":
+				var left := int(c.due_hour) - int(Session.sim.hour)
+				due = "  (due in %d h)" % left if left >= 0 else "  (late)"
+			lines.append("Active: %s%s%s" % [String(c.get("title", "")), "  (arrived: deliver it)" if String(c.get("status", "")) == "arrived" else "", due])
 		var f := Session.finds_aboard()
 		if int(f.samples) + int(f.salvage) > 0:
 			lines.append("Locker: %d samples, %d salvage" % [int(f.samples), int(f.salvage)])
@@ -537,7 +546,8 @@ func _desk_freight(id: String) -> void:
 	if not c.is_empty():
 		var local := bool(c.get("local", false))
 		var arrived := String(c.get("status", "")) == "arrived"
-		panel_list.add_child(Brand.note("ACTIVE: %s, %.1f t aboard." % [String(c.title), float(c.get("accepted_tonnes", c.get("offer", 0.0)))], 15))
+		var load_text := "%d passengers aboard" % int(c.seats) if String(c.get("person_kind", "")) == "passenger" else "%.1f t aboard" % float(c.get("accepted_tonnes", c.get("offer", 0.0)))
+		panel_list.add_child(Brand.note("ACTIVE: %s, %s." % [String(c.title), load_text], 15))
 		var at_start := String(c.get("origin_port_id", "")) == here if local else String(c.get("origin_system_id", "")) == Session.system_id()
 		var at_end := (String(c.get("destination_port_id", "")) == here or (bool(c.get("surface", false)) and LocalSpace.is_surface(here))) if local else String(c.get("destination_system_id", "")) == Session.system_id()
 		if arrived and at_end:
@@ -556,7 +566,16 @@ func _desk_freight(id: String) -> void:
 				var r := Session.depart_active_contract()
 				_say(String(r.message))
 				_refill())
+			if c.has("due_hour"):
+				var hb := People.hard_burn()
+				_action("HARD BURN ON AUTOPILOT  (%d%% of the time, %d%% of the fuel)" % [roundi(float(hb.time) * 100.0), roundi(float(hb.fuel) * 100.0)], func() -> void:
+					var r := Session.depart_active_contract(true)
+					_say(String(r.message))
+					_refill())
 		return
+	if id != "freight":
+		_people_section()
+		panel_list.add_child(Brand.heading("POSTED WORK", 15))
 	var offers := Contracts.offers_from(Session.system_id())
 	if offers.is_empty():
 		panel_list.add_child(Brand.note("Nothing posted here right now. Wait a day at the bunks, or fly empty somewhere busier.", 15))
@@ -608,6 +627,30 @@ func _offer_text(c: Dictionary, stats: Dictionary) -> String:
 			ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate)))]
 
 
+## People asking in person (People): rush jobs, passengers and sealed crates.
+func _people_section() -> void:
+	var rep := int(Session.profile.get("rep", 0))
+	var nxt := People.next_standing(rep)
+	panel_list.add_child(Brand.heading("PEOPLE WITH WORK", 15))
+	panel_list.add_child(Brand.note("Your standing: %s (%d%s). Standing raises what people offer, up to +15%%." % [People.standing(rep), rep,
+			", %s at %d" % [People.standing(nxt), nxt] if nxt > 0 else ""], 13))
+	var busy := not Session.active_contract().is_empty()
+	var people := Session.people_here()
+	if people.is_empty():
+		panel_list.add_child(Brand.note("No one is asking today.", 14))
+	for j in people:
+		var job: Dictionary = j
+		var tag := String(job.person_kind).to_upper()
+		var pay := int(job.fare) if job.person_kind == "passenger" else roundi(float(job.offer) * float(job.rate))
+		var size := "%d seat%s" % [int(job.seats), "" if int(job.seats) == 1 else "s"] if job.person_kind == "passenger" else "%.1f t" % float(job.offer)
+		var txt := "%s  %s: \"%s\"\n%s  ·  %s  ·  %d h  ·  pays %s cr  ·  %s" % [tag, String(job.person), String(job.line), String(job.title), size, int(job.hours),
+				ShipStats.commas(pay), String(job.get("locked", job.blurb))]
+		_action(txt, func() -> void:
+			var r := Session.accept_contract(job)
+			_say(String(r.message))
+			_refill(), not busy and not job.has("locked"))
+
+
 func _desk_fuel() -> void:
 	var mult := Session.site_fuel_mult()
 	_clear_panel("Fuel and repairs", "Fuel here costs %d%% of the system price (%s). You are charged for what you burn when you leave or land." % [roundi(mult * 100.0),
@@ -628,7 +671,9 @@ func _desk_fuel() -> void:
 
 
 func _desk_bar() -> void:
-	_clear_panel("Bar and bunks", "Captains and crews pass through here between jobs.")
+	_clear_panel("Bar and bunks", "Captains and crews pass through here between jobs, and some of them have work that never reaches the board.")
+	_people_section()
+	panel_list.add_child(Brand.heading("BUNKS", 15))
 	var idle := Session.active_contract().is_empty() and Session.sim != null and not Session.insolvent()
 	_action("RENT A BUNK AND WAIT A DAY", func() -> void:
 		var r := Session.wait_days(1)

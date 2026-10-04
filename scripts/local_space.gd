@@ -112,15 +112,16 @@ static func max_cargo_t(wet_t: float, tank_t: float, dv_kms: float) -> float:
 ## Jobs posted at `node_id` for the two-day window containing `day`. Deterministic, so the board is
 ## the same every time it is opened. `ship` carries wet, fuel (tank tonnes) and cargo_capacity.
 ## `taken` lists job ids already done in this window.
-static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary, taken: Array = []) -> Array[Dictionary]:
+## `tag` and `window_days` give a separate, independently seeded set of runs (People uses "people", daily).
+static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary, taken: Array = [], tag := "local", window_days := 0, count := -1) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var here := node(node_id)
 	if here.is_empty():
 		return out
 	var b: Dictionary = config()["board"]
-	var window := day / int(b["refresh_days"])
+	var window := day / (window_days if window_days > 0 else int(b["refresh_days"]))
 	var rng := RandomNumberGenerator.new()
-	rng.seed = hash("%s|%d" % [node_id, window])
+	rng.seed = hash("%s|%d" % [node_id, window]) if tag == "local" else hash("%s|%s|%d" % [tag, node_id, window])
 	var goods := _goods()
 	var others: Array[Dictionary] = []
 	var sys := String(here["system_id"])
@@ -137,12 +138,12 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 	if others.is_empty():
 		return out
 	var mult := float(level.get("local_pay_mult", 1.0)) if pay_override < 0.0 else pay_override
-	for i in int(b["jobs_per_site"]):
+	for i in (int(b["jobs_per_site"]) if count < 0 else count):
 		var dest: Dictionary = others[rng.randi() % others.size()]
 		var good: String = goods[rng.randi() % goods.size()]
 		var tonnes := snappedf(rng.randf_range(float(b["min_tonnes"]), float(b["max_tonnes"])), 0.5)
 		var spread := 1.0 + rng.randf_range(-1.0, 1.0) * float(b["variance"])
-		var id := "local_%s_%d_%d" % [node_id, window, i]
+		var id := "%s_%s_%d_%d" % [tag, node_id, window, i]
 		if id in taken:
 			continue
 		var h := hop(String(here["kind"]), String(dest["kind"]))

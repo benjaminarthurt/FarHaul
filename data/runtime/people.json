@@ -1,0 +1,65 @@
+{
+  "description": "People with work: rush deliveries, passengers and sealed cargo offered in person at the bar, the hab's dispatch desk and the camp foreman, and the standing (reputation) they build. See docs/runtime/people.md.",
+  "per_site": 3,
+  "refresh_days": 1,
+  "rep_freight": 1,
+  "rep_pay_bonus_per_point": 0.003,
+  "rep_pay_bonus_max": 0.15,
+  "standings": [
+    [
+      0,
+      "Unknown"
+    ],
+    [
+      10,
+      "Known"
+    ],
+    [
+      25,
+      "Trusted"
+    ],
+    [
+      50,
+      "Respected"
+    ]
+  ],
+  "rush": {
+    "tonnes_frac": [
+      0.25,
+      0.5
+    ],
+    "rate_mult": 1.8,
+    "due_frac": 0.75,
+    "hard_burn_time": 0.65,
+    "hard_burn_fuel": 1.3,
+    "late_pay": 0.5,
+    "rep_on_time": 3,
+    "rep_late": -4,
+    "pays_trip_cost_x": 1.9
+  },
+  "passenger": {
+    "seats": [
+      1,
+      3
+    ],
+    "rough_pay": 0.5,
+    "rep_ok": 2,
+    "rep_rough": -3,
+    "pays_trip_cost_x": [
+      0.8,
+      0.4
+    ]
+  },
+  "sealed": {
+    "min_rep": 10,
+    "tonnes_frac": [
+      0.3,
+      0.6
+    ],
+    "rate_mult": 2.2,
+    "broken_pay": 0.4,
+    "rep_ok": 4,
+    "rep_broken": -6,
+    "pays_trip_cost_x": 1.7
+  }
+}

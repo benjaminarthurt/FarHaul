@@ -329,7 +329,7 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 		var stats := ship_stats(loaded_ship.ship)
 		var cap := LocalSpace.max_cargo_t(float(stats["wet"]), float(stats["fuel"]), float(contract["dv_kms"]))
 		tonnes = minf(tonnes, maxf(cap, 0.0))
-		if tonnes <= 0.0:
+		if tonnes <= 0.0 and String(contract.get("person_kind", "")) != "passenger":
 			return {"ok": false, "message": "The tanks cannot lift a load that far."}
 	if live:
 		_sync_sim(loaded_ship.ship)
@@ -342,11 +342,25 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 		accepted["offer"] = tonnes
 		accepted["pay_total"] = roundi(sim.pay_for(SimWorld.PLAYER, k))
 		accepted["rate"] = float(accepted.pay_total) / maxf(tonnes, 0.001)
-	var loaded := manifest.load(StringName(contract.commodity), tonnes)
-	if loaded <= CargoManifest.EPS:
-		return {"ok": false, "message": "No compatible cargo capacity is available."}
+	var person := String(contract.get("person_kind", ""))
+	if contract.has("locked"):
+		return {"ok": false, "message": "%s won't deal with you yet. %s." % [String(contract.get("person", "They")), String(contract.locked)]}
+	var loaded := 0.0
+	if person == "passenger":
+		var have := People.seats(ship_stats(loaded_ship.ship))
+		if have < int(contract.seats):
+			return {"ok": false, "message": "%s needs %d spare berth%s and you have %d. Fit crew bunks or quarters at a shipyard." % [
+					String(contract.person) if int(contract.seats) == 1 else String(contract.person) + "'s party", int(contract.seats), "" if int(contract.seats) == 1 else "s", have]}
+	else:
+		loaded = manifest.load(StringName(contract.commodity), tonnes)
+		if loaded <= CargoManifest.EPS:
+			return {"ok": false, "message": "No compatible cargo capacity is available."}
+	if person != "":
+		accepted["hull_at_accept"] = float(profile.get("hull_damage", 0.0))
+		if contract.has("due_in_hours") and sim != null:
+			accepted["due_hour"] = sim.hour + int(contract.due_in_hours)
 	if is_local:
-		accepted["pay_total"] = roundi(loaded * float(contract.rate))
+		accepted["pay_total"] = int(contract.fare) if person == "passenger" else roundi(loaded * float(contract.rate))
 		var done: Array = profile.get("local_taken", [])
 		done.append(String(contract.id))
 		profile["local_taken"] = done.slice(maxi(0, done.size() - 40))
@@ -359,6 +373,8 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 		_commit_sim(data, loaded_ship.ship)
 	if not SaveSlots.write(slot, data):
 		return {"ok": false, "message": "Could not save the accepted contract."}
+	if person == "passenger":
+		return {"ok": true, "message": ("%s is aboard." if int(contract.seats) == 1 else "%s's party is aboard.") % String(contract.person)}
 	return {"ok": true, "message": "Loaded %.1f t of %s." % [loaded, Worlds.commodity(String(contract.commodity)).name]}
 
 
@@ -655,6 +671,8 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
 	var cfg: Dictionary = LocalSpace.config()["board"]
 	var clock := float(int(job.hours)) * 3600.0 if arrived else seconds
+	if arrived and String(c.get("person_kind", "")) == "rush":
+		clock = ceilf(float(int(job.hours)) * float(People.hard_burn().time)) * 3600.0   # flown by hand, flat out
 	var r := SimWorld.settle_flight(sim, fuel_burned_t, clock, 0.0, float(ship_cost(loaded.ship, loaded.ship.library)), site_fuel_mult())
 	profile["hull_damage"] = clampf(damage, 0.0, 1.0)   # carried until repaired at a fuel and repair desk
 	var extra := 0.0
@@ -685,7 +703,8 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	return msg
 
 
-static func _depart_local(c: Dictionary) -> Dictionary:
+## `hard`: a hard burn for a rush job, sooner and dearer (People.hard_burn).
+static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 	if String(c.origin_port_id) != String(profile.get("port_id", "")):
 		return {"ok": false, "message": "This run does not start from here."}
 	var data := SaveSlots.read(slot)
@@ -698,18 +717,24 @@ static func _depart_local(c: Dictionary) -> Dictionary:
 		return {"ok": false, "message": "The ship is not ready to depart with this load."}
 	var cargo := float(c.get("accepted_tonnes", c.offer))
 	var cost := local_trip_cost(stats, cargo, float(c.dv_kms))
+	var hours := int(c.hours)
+	if hard:
+		var hb := People.hard_burn()
+		cost["burn_t"] = float(cost.burn_t) * float(hb.fuel)
+		cost["total"] = float(cost.fuel_cost) * float(hb.fuel) + float(cost.fee)
+		hours = maxi(1, ceili(float(c.hours) * float(hb.time)))
 	if float(cost.burn_t) > float(stats["fuel"]):
 		return {"ok": false, "message": "The tanks cannot cover that burn."}
 	_sync_sim(loaded_ship.ship)
 	sim._pay(SimWorld.PLAYER, "world", float(cost.total))
-	sim.run_hours(int(c.hours))
+	sim.run_hours(hours)
 	profile["port_id"] = String(c.destination_port_id)
 	c["status"] = "arrived"
 	data["active_contract"] = c
 	data["profile"] = profile
 	_commit_sim(data, loaded_ship.ship)
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), int(c.hours)]}
+	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours%s." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), hours, " on a hard burn" if hard else ""]}
 
 
 static func _deliver_local(c: Dictionary) -> Dictionary:
@@ -723,13 +748,17 @@ static func _deliver_local(c: Dictionary) -> Dictionary:
 	if loaded_ship.is_empty():
 		return {"ok": false, "message": "Could not load the current ship."}
 	var manifest: CargoManifest = loaded_ship.manifest
-	var delivered := manifest.unload(StringName(c.commodity), float(c.get("accepted_tonnes", c.offer)))
+	var passengers := String(c.get("person_kind", "")) == "passenger"
+	var delivered := 0.0 if passengers else manifest.unload(StringName(c.commodity), float(c.get("accepted_tonnes", c.offer)))
 	var payment := int(c.get("pay_total", roundi(delivered * float(c.rate))))
+	_sync_sim(loaded_ship.ship)
+	var deal := People.settle(c, payment, sim.hour, float(profile.get("hull_damage", 0.0)))
+	payment = int(deal.payment)
 	var bonus := 0
 	if bool(c.get("surface", false)):   # landed straight on the moon base's pad: no lighter up from orbit
 		bonus = roundi(float(payment) * float(SurfaceTerrain.config().get("surface_bonus", 0.25)))
 		payment += bonus
-	_sync_sim(loaded_ship.ship)
+	var rep_note := _add_rep(int(deal.rep))
 	sim.run_hours(int(LocalSpace.config()["board"]["unload_hours"]))
 	sim._pay("world", SimWorld.PLAYER, float(payment))
 	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
@@ -741,15 +770,47 @@ static func _deliver_local(c: Dictionary) -> Dictionary:
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
 	var note := " (includes %s cr for landing it on the surface)" % ShipStats.commas(bonus) if bonus > 0 else ""
-	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr%s." % [delivered, ShipStats.commas(payment), note], "payment": payment}
+	var dn := String(deal.note)
+	var deal_note := (" " + dn.substr(0, 1).to_upper() + dn.substr(1) + ".") if dn != "" else ""
+	if passengers:
+		return {"ok": true, "message": "Passengers set down. Fare paid: %s cr%s.%s%s" % [ShipStats.commas(payment), note, deal_note, rep_note], "payment": payment}
+	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr%s.%s%s" % [delivered, ShipStats.commas(payment), note, deal_note, rep_note], "payment": payment}
 
 
-static func depart_active_contract() -> Dictionary:
+## Standing: what people think of you (People). Returns a note for the delivery message.
+static func _add_rep(delta: int) -> String:
+	if delta == 0:
+		return ""
+	var before := int(profile.get("rep", 0))
+	var after := maxi(0, before + delta)
+	profile["rep"] = after
+	var note := " Standing %+d." % delta
+	if People.standing(after) != People.standing(before):
+		note += " You are now %s." % People.standing(after)
+	return note
+
+
+## People asking for work in person here today (People.posted).
+static func people_here() -> Array[Dictionary]:
+	if slot < 0 or sim == null:
+		return []
+	var loaded := _load_ship(SaveSlots.read(slot))
+	if loaded.is_empty():
+		return []
+	var id := String(profile.get("port_id", ""))
+	if LocalSpace.node(id).is_empty():
+		return []
+	var st := ship_stats(loaded.ship)
+	return People.posted(id, day(), st, SimShip.level(String(profile.get("difficulty", "normal"))), profile.get("local_taken", []), int(profile.get("rep", 0)),
+			func(cargo_t: float, dv: float) -> float: return float(local_trip_cost(st, cargo_t, dv).total))
+
+
+static func depart_active_contract(hard := false) -> Dictionary:
 	var c := active_contract()
 	if c.is_empty():
 		return {"ok": false, "message": "Accept a freight contract first."}
 	if bool(c.get("local", false)):
-		return _depart_local(c)
+		return _depart_local(c, hard)
 	if String(c.origin_system_id) != system_id():
 		return {"ok": false, "message": "This contract does not depart from the current system."}
 	var data := SaveSlots.read(slot)
@@ -803,7 +864,10 @@ static func deliver_active_contract() -> Dictionary:
 	data.erase("active_contract")
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr." % [delivered, ShipStats.commas(payment)], "payment": payment}
+	var rep_note := _add_rep(int(People.config().get("rep_freight", 1)))
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr.%s" % [delivered, ShipStats.commas(payment), rep_note], "payment": payment}
 
 
 static func scene_path() -> String:
