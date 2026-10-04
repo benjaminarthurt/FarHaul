@@ -18,7 +18,10 @@ var fly_btn: Button
 var run_btn: Button
 var fly_panel: PanelContainer
 var fly_list: VBoxContainer
+var side: PanelContainer      ## right-hand panel that shows the freight board or the fly-empty list
+var card: PanelContainer      ## the "about this system" card, hidden while the side panel is open
 var leaving := false
+const SIDE_LEFT := 470.0      ## where the side panel starts, clear of the menu buttons
 
 
 func _ready() -> void:
@@ -96,17 +99,23 @@ func _build_ui() -> void:
 	shade.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(shade)
-	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 72)
 	margin.add_theme_constant_override("margin_top", 56)
 	margin.add_theme_constant_override("margin_bottom", 40)
 	layer.add_child(margin)
-	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var left_scroll := ScrollContainer.new()   # a short window scrolls the column instead of cutting it off
+	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	left_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER   # the wheel scrolls it; no bar across the ship
+	left_scroll.follow_focus = true   # keyboard focus on a button below the fold scrolls it into view
+	margin.add_child(left_scroll)
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 8)
-	margin.add_child(col)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_scroll.add_child(col)
 
 	var w := Worlds.world(Session.system_id())
 	var current_port := Session.port()
@@ -190,19 +199,36 @@ func _build_ui() -> void:
 	status.add_theme_font_size_override("font_size", 13)
 	col.add_child(status)
 	yard_btn.tooltip_text = "The shipyard is where you build and fit your ship. It is only open at a yard like this one."
+	# The freight board and the fly-empty list open in a scrolling panel on the right, so they are on
+	# screen however long the menu is.
+	side = PanelContainer.new()
+	side.visible = false
+	var solid := Brand.panel_box().duplicate() as StyleBoxFlat
+	solid.bg_color.a = 1.0      # solid, so the dock text behind does not show through
+	side.add_theme_stylebox_override("panel", solid)
+	layer.add_child(side)
+	side.set_anchors_preset(Control.PRESET_FULL_RECT)
+	side.offset_left = SIDE_LEFT
+	side.offset_top = 40
+	side.offset_right = -40
+	side.offset_bottom = -40
+	var side_scroll := ScrollContainer.new()
+	side_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	side.add_child(side_scroll)
+	var side_col := VBoxContainer.new()
+	side_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	side_scroll.add_child(side_col)
 	contract_panel = PanelContainer.new()
 	contract_panel.visible = false
-	contract_panel.add_theme_stylebox_override("panel", Brand.panel_box())
-	contract_panel.custom_minimum_size = Vector2(520, 0)
-	col.add_child(contract_panel)
+	contract_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	side_col.add_child(contract_panel)
 	contract_list = VBoxContainer.new()
 	contract_list.add_theme_constant_override("separation", 4)
 	contract_panel.add_child(contract_list)
 	fly_panel = PanelContainer.new()
 	fly_panel.visible = false
-	fly_panel.add_theme_stylebox_override("panel", Brand.panel_box())
-	fly_panel.custom_minimum_size = Vector2(520, 0)
-	col.add_child(fly_panel)
+	fly_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	side_col.add_child(fly_panel)
 	fly_list = VBoxContainer.new()
 	fly_list.add_theme_constant_override("separation", 4)
 	fly_panel.add_child(fly_list)
@@ -210,9 +236,10 @@ func _build_ui() -> void:
 	note.custom_minimum_size = Vector2(380, 0)
 	col.add_child(note)
 
-	var card := PanelContainer.new()
+	card = PanelContainer.new()
 	card.add_theme_stylebox_override("panel", Brand.panel_box())
 	layer.add_child(card)
+	layer.move_child(card, side.get_index())   # under the side panel
 	card.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 40)
 	card.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	card.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -300,6 +327,8 @@ func _show_contracts() -> void:
 		status.text = "No one will give a bankrupt captain freight."
 		return
 	contract_panel.visible = not contract_panel.visible
+	fly_panel.visible = false
+	_sync_side()
 	for child in contract_list.get_children():
 		child.queue_free()
 	if not contract_panel.visible:
@@ -335,8 +364,15 @@ func _show_contracts() -> void:
 				ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate))),
 				"  ·  due in %.0f days" % float(c.deadline_days) if c.has("sim_contract") else ""]
 		Brand.style_button(line, 14)
+		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		line.pressed.connect(func() -> void: _accept(c))
 		contract_list.add_child(line)
+
+
+## One panel at a time on the right; the system card shows when neither is open.
+func _sync_side() -> void:
+	side.visible = contract_panel.visible or fly_panel.visible
+	card.visible = not side.visible
 
 
 func _accept(c: Dictionary) -> void:
@@ -400,6 +436,8 @@ func _wait_day() -> void:
 
 func _show_destinations() -> void:
 	fly_panel.visible = not fly_panel.visible
+	contract_panel.visible = false
+	_sync_side()
 	for child in fly_list.get_children():
 		child.queue_free()
 	if not fly_panel.visible or Session.sim == null:
@@ -419,6 +457,7 @@ func _show_destinations() -> void:
 		line.text = "%s\n%.2f ly  ·  %.1f days  ·  about %s cr  ·  %s" % [Worlds.system(sid).get("name", sid), float(o.ly), float(o.days),
 				ShipStats.commas(roundi(float(o.cost))), "%d freight posted" % int(o.freight) if int(o.freight) > 0 else "no freight posted"]
 		Brand.style_button(line, 14)
+		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		line.pressed.connect(func() -> void: _fly(sid))
 		fly_list.add_child(line)
 
@@ -436,6 +475,7 @@ func _show_sites() -> void:
 		line.text = "%s\n%.1f km/s  ·  %d h  ·  about %s cr  ·  %s" % [o.name, float(o.dv_kms), int(o.hours), ShipStats.commas(roundi(float(o.cost))),
 				"%d jobs posted" % int(o.jobs) if int(o.jobs) > 0 else "no jobs posted"]
 		Brand.style_button(line, 14)
+		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		line.pressed.connect(func() -> void: _hop(sid))
 		fly_list.add_child(line)
 
