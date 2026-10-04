@@ -32,7 +32,7 @@ func _run() -> void:
 	check(SaveSlots.latest() == 2 and SaveSlots.first_empty() == 0, "latest and first empty")
 	var p := SaveSlots.profile(2)
 	check(p.name == "Mara Voss" and (p.species == "kesh" or p.race == "kesh") and p.world == "new_houston" and p.difficulty == "hard", "profile saved")
-	check(p.location == "dock" and Session.scene_path() == Session.DOCK_SCENE, "new games begin at the dock")
+	check(p.location == "dock" and Session.scene_path() == Session.PLACE_SCENE, "new games begin walking the port")
 	check(Session.start_funds() == 110000, "hard starts with 110,000 credits")
 	check(int(p.credits) < 110000 and int(p.credits) > 0, "credits are funds minus the starter ship")
 	check(Worlds.world(p.world).yard_name in ["Roosevelt Orbital Yards", "Roosevelt Independent Yards"], "starting world decides the yard")

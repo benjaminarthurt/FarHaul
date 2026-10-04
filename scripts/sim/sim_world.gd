@@ -259,12 +259,13 @@ static func destinations(sim: EconomySim) -> Array[Dictionary]:
 
 ## What a flight costs once the ship is back: the fuel burned at the port's price, hull repairs, and
 ## the clock moving on by the hours it took. Charges go through the sim so money stays conserved.
-static func settle_flight(sim: EconomySim, fuel_burned_t: float, seconds: float, damage: float, ship_cost: float) -> Dictionary:
+## `price_mult` is the site's fuel price against the system's (LocalSpace site_fuel_price).
+static func settle_flight(sim: EconomySim, fuel_burned_t: float, seconds: float, damage: float, ship_cost: float, price_mult: float = 1.0) -> Dictionary:
 	var c := player(sim)
 	if c.is_empty():
 		return {"fuel_cost": 0, "repair_cost": 0, "hours": 0}
 	var units := fuel_burned_t * float(SimShip.config()["fuel"]["units_per_tonne"])
-	var fuel_cost: float = units * float(sim.p["fuel_cr_per_unit"]) * float(sim.fuel_factor.get(c["sys"], 1.0)) * sim._lv(c, "fuel_price_mult")
+	var fuel_cost: float = units * float(sim.p["fuel_cr_per_unit"]) * float(sim.fuel_factor.get(c["sys"], 1.0)) * sim._lv(c, "fuel_price_mult") * price_mult
 	var tune := FlightModel.load_tuning()
 	var repair_cost := clampf(damage, 0.0, 1.0) * ship_cost * float(tune.get("repair_cost_fraction_of_ship", 0.15)) * sim._lv(c, "maintenance_mult")
 	sim._pay(PLAYER, "world", fuel_cost + repair_cost)

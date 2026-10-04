@@ -42,10 +42,10 @@ func _run(boot: Node) -> void:
 	boot._show_menu()
 	check(not boot.settings_panel.visible and boot.menu_box.visible, "back returns to the menu")
 	check(Session.begin_new(4, "Test Pilot", "belter", "hard", "marrow"), "new game writes slot 5")
-	check(Session.scene_path() == Session.DOCK_SCENE, "a new game starts at the dock")
+	check(Session.scene_path() == Session.PLACE_SCENE, "a new game starts in the port")
 	boot._enter_game()
 	await create_timer(0.9).timeout
-	check(current_scene != null and current_scene.name == "Dock", "starting a game opens the dock")
+	check(current_scene != null and current_scene.name == "Place", "starting a game opens the concourse")
 	print("OK" if ok else "FAILED")
 	quit(0 if ok else 1)
 

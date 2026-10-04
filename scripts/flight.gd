@@ -88,6 +88,10 @@ func _ready() -> void:
 			_setup_transfer()
 	elif LocalSpace.is_surface(String(Session.profile.get("port_id", ""))):
 		_begin_surface_free()   # the helm taken on the moon: sitting on the pad
+	if Session.walk_aboard:
+		Session.walk_aboard = false
+		get_up.call_deferred()
+		walk_from_airlock.call_deferred()
 
 
 func _build_world() -> void:
@@ -396,6 +400,8 @@ func _build_ship() -> void:
 	ship_data = ship
 	model = FlightModel.from_stats(stats)
 	model.land_cfg = SurfaceTerrain.config()
+	if Session.slot >= 0:
+		model.damage = clampf(float(Session.profile.get("hull_damage", 0.0)), 0.0, 1.0)   # dents stay until repaired
 	model.place_at_dock(Vector3(0.35, 0.15, 1.0))
 	com = stats.com
 	ship_root = Node3D.new()
@@ -770,7 +776,7 @@ func _return_to_dock() -> void:
 		Session.finish_local_flight(model.fuel_burned_t, model.elapsed_s, model.damage, _arrived, _stranded(), _surface)
 	else:
 		Session.finish_flight(model.fuel_burned_t, model.elapsed_s, model.damage)
-	get_tree().change_scene_to_file(Session.DOCK_SCENE)
+	get_tree().change_scene_to_file(Session.PLACE_SCENE)
 
 
 # --- Walking the ship -------------------------------------------------------------------------------
@@ -1465,4 +1471,10 @@ func _exit_tree() -> void:
 	if _ground_task >= 0:
 		WorkerThreadPool.wait_for_task_completion(_ground_task)
 		_ground_task = -1
+
+
+## Coming aboard from the berth: standing in the airlock instead of behind the seats.
+func walk_from_airlock() -> void:
+	if walking and walk.stand_in_airlock():
+		_apply_pose()
 

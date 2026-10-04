@@ -4,7 +4,8 @@ extends RefCounted
 ## Scenes read this instead of passing arguments, so any scene can be opened on its own.
 
 const BOOT_SCENE := "res://scenes/boot.tscn"
-const DOCK_SCENE := "res://scenes/dock.tscn"
+const DOCK_SCENE := "res://scenes/dock.tscn"   ## the station terminal: every action as a menu
+const PLACE_SCENE := "res://scenes/place.tscn"  ## walking the port, hab or camp: where a flight comes home to
 const YARD_SCENE := "res://scenes/main.tscn"
 const FLIGHT_SCENE := "res://scenes/flight.tscn"
 
@@ -142,7 +143,7 @@ static func local_trip_cost(stats: Dictionary, cargo_t: float, dv_kms: float) ->
 	var burn := LocalSpace.burn_t(float(stats["wet"]) + cargo_t, dv_kms)
 	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
 	var units := burn * float(SimShip.config()["fuel"]["units_per_tonne"])
-	var fuel_cost: float = units * float(sim.p["fuel_cr_per_unit"]) * float(sim.fuel_factor.get(system_id(), 1.0)) * float(lv.get("fuel_price_mult", 1.0))
+	var fuel_cost: float = units * float(sim.p["fuel_cr_per_unit"]) * float(sim.fuel_factor.get(system_id(), 1.0)) * float(lv.get("fuel_price_mult", 1.0)) * site_fuel_mult()
 	var fee: float = float(LocalSpace.config()["board"]["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
 	return {"burn_t": burn, "fuel_cost": fuel_cost, "fee": fee, "total": fuel_cost + fee}
 
@@ -204,7 +205,8 @@ static func finish_flight(fuel_burned_t: float, seconds: float, damage: float) -
 	if loaded.is_empty():
 		return ""
 	_sync_sim(loaded.ship)
-	var r := SimWorld.settle_flight(sim, fuel_burned_t, seconds, damage, float(ship_cost(loaded.ship, loaded.ship.library)))
+	var r := SimWorld.settle_flight(sim, fuel_burned_t, seconds, 0.0, float(ship_cost(loaded.ship, loaded.ship.library)), site_fuel_mult())
+	profile["hull_damage"] = clampf(damage, 0.0, 1.0)   # carried until repaired at a fuel and repair desk
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
@@ -233,6 +235,7 @@ static func restructure() -> Dictionary:
 	data.erase("active_contract")
 	profile["bankruptcies"] = int(profile.get("bankruptcies", 0)) + 1
 	profile["ftl_grandfathered"] = false   # the bank's hauler is the plain sublight starter
+	profile["hull_damage"] = 0.0
 	if LocalSpace.is_surface(String(profile.get("port_id", ""))):
 		profile["port_id"] = system_id() + LocalSpace.SEP + "moon"   # it cannot lift off: the bank's tug brings it up to the base's station
 	profile["credits"] = left
@@ -451,11 +454,16 @@ static func finds_aboard() -> Dictionary:
 	return {"samples": s, "salvage": w, "value": s * SurfaceFinds.value("sample") + w * SurfaceFinds.value("salvage")}
 
 
-## Sell everything in the locker here (any dock buys: labs take samples, yards take salvage).
-static func sell_finds() -> Dictionary:
-	var f := finds_aboard()
+## Sell from the locker here. `sample_rate` and `salvage_rate` scale the standard prices (a lab pays more
+## for samples and takes no salvage, a camp's exchange pays less); a rate of 0 keeps those aboard.
+static func sell_finds(sample_rate: float = 1.0, salvage_rate: float = 1.0) -> Dictionary:
+	var held := finds_aboard()
+	var ns := int(held.samples) if sample_rate > 0.0 else 0
+	var nw := int(held.salvage) if salvage_rate > 0.0 else 0
+	var f := {"samples": ns, "salvage": nw,
+			"value": roundi(ns * SurfaceFinds.value("sample") * sample_rate + nw * SurfaceFinds.value("salvage") * salvage_rate)}
 	if int(f.value) <= 0 or slot < 0 or sim == null:
-		return {"ok": false, "message": "Nothing to sell."}
+		return {"ok": false, "message": "Nothing to sell here."}
 	var data := SaveSlots.read(slot)
 	var loaded := _load_ship(data)
 	if loaded.is_empty():
@@ -464,12 +472,57 @@ static func sell_finds() -> Dictionary:
 	sim._pay("world", SimWorld.PLAYER, float(f.value))
 	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
 	pc["revenue"] = float(pc["revenue"]) + float(f.value)
-	profile["samples"] = 0
-	profile["salvage"] = 0
+	profile["samples"] = int(held.samples) - ns
+	profile["salvage"] = int(held.salvage) - nw
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
 	return {"ok": true, "message": "Sold %d samples and %d salvage parts for %s cr." % [int(f.samples), int(f.salvage), ShipStats.commas(int(f.value))]}
+
+
+## Fuel here against the system's price: depots are cheap, the surface dear (local_space.json).
+static func site_fuel_mult(site_id: String = "") -> float:
+	var id := site_id if site_id != "" else String(profile.get("port_id", ""))
+	var kind := String(LocalSpace.node(id).get("kind", "port"))
+	return float(LocalSpace.config().get("site_fuel_price", {}).get(kind, 1.0))
+
+
+static func site_repair_mult() -> float:
+	var kind := String(LocalSpace.node(String(profile.get("port_id", ""))).get("kind", "port"))
+	return float(LocalSpace.config().get("site_repair_rate", {}).get(kind, 1.0))
+
+
+## What fixing the hull costs here.
+static func repair_cost() -> int:
+	var dmg := float(profile.get("hull_damage", 0.0))
+	if dmg <= 0.0 or slot < 0:
+		return 0
+	var loaded := _load_ship(SaveSlots.read(slot))
+	if loaded.is_empty():
+		return 0
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	var frac := float(FlightModel.load_tuning().get("repair_cost_fraction_of_ship", 0.15))
+	return roundi(dmg * float(ship_cost(loaded.ship, loaded.ship.library)) * frac * float(lv.get("maintenance_mult", 1.0)) * site_repair_mult())
+
+
+## Pay the yard here to make the hull good again (it also restores the thrust damage takes away).
+static func repair_hull() -> Dictionary:
+	var cost := repair_cost()
+	if cost <= 0:
+		return {"ok": false, "message": "The hull needs no work."}
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty() or sim == null:
+		return {"ok": false, "message": "Could not load the current ship."}
+	if int(profile.get("credits", 0)) < cost:
+		return {"ok": false, "message": "Repairs here cost %s cr; you have %s cr." % [ShipStats.commas(cost), ShipStats.commas(int(profile.credits))]}
+	_sync_sim(loaded.ship)
+	sim._pay(SimWorld.PLAYER, "world", float(cost))
+	profile["hull_damage"] = 0.0
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Hull repaired for %s cr." % ShipStats.commas(cost)}
 
 
 ## What fitting a first FTL drive and its radiator costs: the gap between the starter and the FTL starter.
@@ -484,6 +537,7 @@ static func drive_price() -> int:
 
 ## The run being flown in the flight scene ({} when the helm is just practice).
 static var flight_job: Dictionary = {}
+static var walk_aboard := false   ## set by the berth gate: the flight scene opens with you on your feet aboard
 
 
 ## Check the ship is ready and hand the active local contract to the flight scene.
@@ -564,7 +618,8 @@ static func finish_jump_flight(fuel_burned_t: float, seconds: float, damage: flo
 		return ""
 	_sync_sim(loaded.ship)
 	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
-	var r := SimWorld.settle_flight(sim, fuel_burned_t, seconds, damage, float(ship_cost(loaded.ship, loaded.ship.library)))
+	var r := SimWorld.settle_flight(sim, fuel_burned_t, seconds, 0.0, float(ship_cost(loaded.ship, loaded.ship.library)), site_fuel_mult())
+	profile["hull_damage"] = clampf(damage, 0.0, 1.0)   # carried until repaired at a fuel and repair desk
 	var tow := 0.0
 	if stranded:
 		tow = float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
@@ -600,7 +655,8 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
 	var cfg: Dictionary = LocalSpace.config()["board"]
 	var clock := float(int(job.hours)) * 3600.0 if arrived else seconds
-	var r := SimWorld.settle_flight(sim, fuel_burned_t, clock, damage, float(ship_cost(loaded.ship, loaded.ship.library)))
+	var r := SimWorld.settle_flight(sim, fuel_burned_t, clock, 0.0, float(ship_cost(loaded.ship, loaded.ship.library)), site_fuel_mult())
+	profile["hull_damage"] = clampf(damage, 0.0, 1.0)   # carried until repaired at a fuel and repair desk
 	var extra := 0.0
 	if arrived:
 		extra = float(cfg["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
@@ -751,7 +807,7 @@ static func deliver_active_contract() -> Dictionary:
 
 
 static func scene_path() -> String:
-	return YARD_SCENE if profile.location == "shipyard" else DOCK_SCENE
+	return YARD_SCENE if profile.location == "shipyard" else PLACE_SCENE
 
 
 ## Writes the profile into the current slot without touching the ship. Returns false if not in a saved game.

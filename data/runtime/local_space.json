@@ -112,5 +112,21 @@
   "fuel_tank",
   "shock_isolated"
  ],
- "surface_dv_kms": 1.8
+ "surface_dv_kms": 1.8,
+ "site_fuel_price": {
+  "port": 1.0,
+  "depot": 0.85,
+  "moon": 1.0,
+  "belt": 1.15,
+  "pad": 1.3,
+  "camp": 1.6
+ },
+ "site_repair_rate": {
+  "port": 1.0,
+  "depot": 1.15,
+  "moon": 1.1,
+  "belt": 0.9,
+  "pad": 1.3,
+  "camp": 1.5
+ }
 }

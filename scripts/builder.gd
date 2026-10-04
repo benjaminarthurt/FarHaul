@@ -1034,7 +1034,7 @@ func _leave() -> void:
 	Session.profile["location"] = "dock"
 	_write_save(_save_path())
 	busy = true
-	get_tree().change_scene_to_file(Session.DOCK_SCENE)
+	get_tree().change_scene_to_file(Session.PLACE_SCENE)
 
 
 func _clear() -> void:

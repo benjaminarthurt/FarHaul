@@ -181,6 +181,7 @@ func _build_ui() -> void:
 	menu.custom_minimum_size = Vector2(340, 0)
 	menu.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	col.add_child(menu)
+	_button(menu, "STEP AWAY FROM THE TERMINAL", func() -> void: _go(Session.PLACE_SCENE)).tooltip_text = "Back to walking the station, base or camp."
 	if Session.insolvent():
 		_button(menu, "LET THE BANK STEP IN", _restructure)
 	var yard_btn := _button(menu, "ENTER SHIPYARD", _enter_yard)
