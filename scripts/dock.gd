@@ -196,7 +196,7 @@ func _build_ui() -> void:
 	fly_btn.tooltip_text = "Fly without cargo to another system, to reach freight or leave a port with none."
 	var finds := Session.finds_aboard() if Session.slot >= 0 else {}
 	if int(finds.get("value", 0)) > 0:
-		_button(menu, "SELL FINDS  %s cr" % ShipStats.commas(int(finds.value)), _sell_finds).tooltip_text = "%d rock samples and %d salvage parts from the moon, sold here." % [int(finds.samples), int(finds.salvage)]
+		_button(menu, "SELL FINDS  %s cr" % ShipStats.commas(int(finds.value)), _sell_finds).tooltip_text = "%s from the moon, sold here." % SurfaceFinds.describe(finds).capitalize()
 	_button(menu, "SAVE GAME", _save)
 	_button(menu, "NEW GAME" if Session.insolvent() else "MAIN MENU", _main_menu)
 	status = Label.new()

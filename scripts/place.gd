@@ -442,8 +442,8 @@ func _refresh_info() -> void:
 		if not held.is_empty():
 			lines.append("Mission: %s (%s on the clock)" % [String(held.title), SurfaceWork.clock(float(held.limit_s) - float(held.get("elapsed_s", 0.0)))])
 		var f := Session.finds_aboard()
-		if int(f.samples) + int(f.salvage) > 0:
-			lines.append("Locker: %d samples, %d salvage" % [int(f.samples), int(f.salvage)])
+		if int(f.value) > 0:
+			lines.append("Locker: %s" % SurfaceFinds.describe(f))
 	info.text = "\n".join(lines)
 
 
@@ -516,9 +516,9 @@ func _fill(id: String) -> void:
 		"bar":
 			_desk_bar()
 		"lab":
-			_desk_sell("Survey lab", "The lab pays well for rock samples from this moon and the ones around it. It has no use for salvage.", 1.4, 0.0)
+			_desk_sell("Survey lab", "The lab pays well for rock samples and glass crystals. It has no use for salvage or ice.", {"sample": 1.4, "rare": 1.4, "salvage": 0.0, "ice": 0.0})
 		"exchange":
-			_desk_sell("Ore and parts exchange", "The camp buys anything, cheaply.", 0.8, 0.9)
+			_desk_sell("Ore and parts exchange", "The camp buys anything, cheaply, except ice: the drills need water, and it pays well for that.", {"sample": 0.8, "salvage": 0.9, "ice": 1.3, "rare": 0.8})
 		"store":
 			_desk_store()
 		"gate":
@@ -684,7 +684,7 @@ func _desk_fuel() -> void:
 		_refill(), cost > 0)
 	var f := Session.finds_aboard()
 	if int(f.value) > 0:
-		_action("SELL SAMPLES AND SALVAGE  %s cr" % ShipStats.commas(int(f.value)), func() -> void:
+		_action("SELL YOUR FINDS  %s cr  (%s)" % [ShipStats.commas(int(f.value)), SurfaceFinds.describe(f)], func() -> void:
 			var r := Session.sell_finds()
 			_say(String(r.message))
 			_refill())
@@ -704,13 +704,13 @@ func _desk_bar() -> void:
 			_say(String(r.message)), idle)
 
 
-func _desk_sell(title: String, note: String, sample_rate: float, salvage_rate: float) -> void:
+func _desk_sell(title: String, note: String, rates: Dictionary) -> void:
 	_clear_panel(title, note)
 	var f := Session.finds_aboard()
-	var value := roundi(int(f.samples) * SurfaceFinds.value("sample") * sample_rate + (int(f.salvage) * SurfaceFinds.value("salvage") * salvage_rate))
-	panel_list.add_child(Brand.note("In your locker: %d samples, %d salvage parts." % [int(f.samples), int(f.salvage)], 15))
+	var value := Session.finds_value(rates)
+	panel_list.add_child(Brand.note("In your locker: %s." % SurfaceFinds.describe(f), 15))
 	_action("SELL  %s cr" % ShipStats.commas(value) if value > 0 else "NOTHING THEY WANT", func() -> void:
-		var r := Session.sell_finds(sample_rate, salvage_rate)
+		var r := Session.sell_finds(rates)
 		_say(String(r.message))
 		_refill(), value > 0)
 

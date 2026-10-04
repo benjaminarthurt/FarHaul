@@ -18,7 +18,8 @@ static func config() -> Dictionary:
 
 ## `key` picks the moon (same key, same ground). The base pad is always at the origin; `extra_pads` adds
 ## other flattened sites as Vector2(x, z) (the mining camp).
-static func make(key: String, extra_pads: Array = []) -> SurfaceTerrain:
+## `extra_craters` adds fixed craters ({x, z, r, depth}) such as SurfaceSites' glass crater.
+static func make(key: String, extra_pads: Array = [], extra_craters: Array = []) -> SurfaceTerrain:
 	var cfg := config()
 	var t := SurfaceTerrain.new()
 	t.seed_value = hash(key)
@@ -41,6 +42,7 @@ static func make(key: String, extra_pads: Array = []) -> SurfaceTerrain:
 		if not clear:
 			continue
 		t.craters.append({"x": cos(a) * d, "z": sin(a) * d, "r": rng.randf_range(40.0, 160.0), "depth": rng.randf_range(4.0, 14.0)})
+	t.craters.append_array(extra_craters)
 	return t
 
 
@@ -67,32 +69,49 @@ func height(x: float, z: float) -> float:
 
 ## The ground as a mesh: a grid `size` metres across with `cells` squares a side, centred on the pad.
 func build_mesh(size: float, cells: int, ground: Color, rock: Color) -> MeshInstance3D:
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var step := size / float(cells)
 	var half := size * 0.5
+	var n1 := cells + 1
+	var hs := PackedFloat32Array()   # each grid height once (it was four times per square)
+	hs.resize(n1 * n1)
+	for i in n1:
+		for j in n1:
+			hs[i * n1 + j] = height(-half + i * step, -half + j * step)
+	var verts := PackedVector3Array()
+	var norms := PackedVector3Array()
+	var cols := PackedColorArray()
+	verts.resize(cells * cells * 6)
+	norms.resize(cells * cells * 6)
+	cols.resize(cells * cells * 6)
+	var w := 0
 	for i in cells:
 		for j in cells:
 			var x0 := -half + i * step
 			var z0 := -half + j * step
-			var quad := [Vector3(x0, 0, z0), Vector3(x0 + step, 0, z0), Vector3(x0 + step, 0, z0 + step), Vector3(x0, 0, z0 + step)]
-			for k in 4:
-				quad[k].y = height(quad[k].x, quad[k].z)
+			var q := [Vector3(x0, hs[i * n1 + j], z0), Vector3(x0 + step, hs[(i + 1) * n1 + j], z0),
+					Vector3(x0 + step, hs[(i + 1) * n1 + j + 1], z0 + step), Vector3(x0, hs[i * n1 + j + 1], z0 + step)]
 			for tri in [[0, 1, 2], [0, 2, 3]]:
-				var a: Vector3 = quad[tri[0]]
-				var b: Vector3 = quad[tri[1]]
-				var c: Vector3 = quad[tri[2]]
+				var a: Vector3 = q[tri[0]]
+				var b: Vector3 = q[tri[1]]
+				var c: Vector3 = q[tri[2]]
 				var n := (c - a).cross(b - a).normalized()
-				var steep := clampf(1.0 - n.y, 0.0, 1.0) * 6.0
-				var col := ground.lerp(rock, clampf(steep, 0.0, 1.0))
+				var col := ground.lerp(rock, clampf((1.0 - n.y) * 6.0, 0.0, 1.0))
 				for v in [a, b, c]:
-					st.set_color(col)
-					st.set_normal(n)
-					st.add_vertex(v)
+					verts[w] = v
+					norms[w] = n
+					cols[w] = col
+					w += 1
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	arrays[Mesh.ARRAY_NORMAL] = norms
+	arrays[Mesh.ARRAY_COLOR] = cols
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
 	mat.roughness = 1.0
-	st.set_material(mat)
+	mesh.surface_set_material(0, mat)
 	var mi := MeshInstance3D.new()
-	mi.mesh = st.commit()
+	mi.mesh = mesh
 	return mi

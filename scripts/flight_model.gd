@@ -50,6 +50,9 @@ var autoland := false             # autopilot: level out, null the drift, settle
 var pad := Vector3.ZERO
 var land_cfg: Dictionary = {}
 var last_touchdown := 0.0         # vertical speed of the latest touchdown, m/s
+var rocks: Array[Vector3] = []     # boulders on the ground (x, z, radius): setting down on one damages the ship
+var hazard := ""                   # what went wrong at the latest touchdown on rough ground, or ""
+var hazards_seen := 0
 
 
 static func load_tuning() -> Dictionary:
@@ -274,6 +277,7 @@ func _ground() -> void:
 		if heading.length() < 0.01:
 			heading = Vector3(0, 0, 1)
 		basis = Basis.looking_at(-heading.normalized(), Vector3.UP)   # settle level on the legs
+		_rough_ground()
 		return
 	impacts += 1
 	last_impact = down
@@ -283,6 +287,26 @@ func _ground() -> void:
 	vel.y = maxf(down, 0.0) * 0.2
 	vel.x *= 0.5
 	vel.z *= 0.5
+
+
+## A clean touchdown can still go wrong off the pads: on a boulder, or on a slope the legs cannot hold.
+func _rough_ground() -> void:
+	var sc: Dictionary = land_cfg.get("sites", {})
+	var foot := float(sc.get("ship_footprint_m", 3.0))
+	for r in rocks:
+		if Vector2(pos.x - r.x, pos.z - r.y).length() < r.z + foot:
+			damage = minf(1.0, damage + float(sc.get("boulder_damage", 0.12)))
+			hazard = "Set down on a boulder: the legs took it badly"
+			hazards_seen += 1
+			impacts += 1
+			return
+	var slope := SurfaceSites.slope_deg(terrain, pos.x, pos.z)
+	var lim := float(sc.get("land_slope_deg", 10.0))
+	if slope > lim:
+		damage = minf(1.0, damage + (slope - lim) * float(sc.get("slope_damage_per_deg", 0.012)))
+		hazard = "Landed on a %d° slope: the ship slid and scraped" % roundi(slope)
+		hazards_seen += 1
+		impacts += 1
 
 
 ## Autopilot landing: hold altitude while flying over the pad, then come straight down, slowing as the

@@ -39,12 +39,28 @@ static func list(system_id: String, day: int) -> Array[Dictionary]:
 	var ww := day / int(cfg.get("salvage_refresh_days", 20))
 	var w := wreck_xz()
 	out.append({"id": "%s|w|%d" % [system_id, ww], "kind": "salvage", "x": w.x, "z": w.y, "name": "Wrecked lander"})
+	out.append_array(SurfaceSites.finds(system_id, day))
 	return out
 
 
+## Each kind of find and the locker counter it goes in.
+const KINDS := {"sample": "samples", "salvage": "salvage", "ice": "ice", "rare": "rare"}
+const NAMES := {"sample": ["sample", "samples"], "salvage": ["salvage part", "salvage parts"], "ice": ["ice core", "ice cores"], "rare": ["glass crystal", "glass crystals"]}
+
+
 static func value(kind: String) -> int:
-	return int(config().get("sample_cr" if kind == "sample" else "salvage_cr", 350))
+	return int(config().get({"sample": "sample_cr", "salvage": "salvage_cr", "ice": "ice_cr", "rare": "rare_cr"}.get(kind, "sample_cr"), 350))
 
 
 static func units(kind: String) -> int:
-	return 1 if kind == "sample" else int(config().get("salvage_units", 2))
+	return int(config().get("salvage_units", 2)) if kind == "salvage" else 1
+
+
+## "3 samples, 2 salvage parts" for what is in `held` (counts by locker key); "nothing" when empty.
+static func describe(held: Dictionary) -> String:
+	var parts := PackedStringArray()
+	for k in KINDS:
+		var n := int(held.get(KINDS[k], 0))
+		if n > 0:
+			parts.append("%d %s" % [n, NAMES[k][0] if n == 1 else NAMES[k][1]])
+	return ", ".join(parts) if not parts.is_empty() else "nothing"

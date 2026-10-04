@@ -73,6 +73,8 @@ var _dv_space := 0.0           ## the part of a run's delta-v spent in space (th
 var _ground_task := -1         ## the moon's ground mesh, built on a worker thread during the cruise
 var _ground_mesh: MeshInstance3D
 var _ground_terrain: SurfaceTerrain
+var _hazards_shown := 0
+var _hazard_t := -100.0
 var ops: SurfaceOps            ## the suit's air, jets and scanner, mission points and crates (on the moon)
 
 
@@ -922,7 +924,8 @@ func _body() -> Dictionary:
 
 
 func _make_terrain() -> SurfaceTerrain:
-	return SurfaceTerrain.make(_system_id() + LocalSpace.SEP + "moon", [SurfaceFinds.camp_xz()])
+	var sys := _system_id()
+	return SurfaceTerrain.make(sys + LocalSpace.SEP + "moon", [SurfaceFinds.camp_xz()] + SurfaceSites.pads(sys), SurfaceSites.craters(sys))
 
 
 ## Where a surface site's pad is on the ground (y is the ground there).
@@ -960,6 +963,7 @@ func _ensure_moon() -> void:
 		_ground_task = -1
 	if model.terrain == null:
 		model.terrain = _ground_terrain if _ground_terrain != null else _make_terrain()
+	model.rocks = SurfaceSites.boulders(_system_id())
 	model.station_solid = false
 	station.visible = false
 	for m in sparks:
@@ -1073,6 +1077,7 @@ func _build_moon(body: Dictionary) -> void:
 	_build_base_pad()
 	_build_camp()
 	_build_wreck()
+	_build_sites()
 	_build_finds()
 
 
@@ -1242,6 +1247,93 @@ func _build_wreck() -> void:
 	root.add_child(label)
 
 
+## The outpost, the ice mine and the glass crater (SurfaceSites), each with a name you can see from the
+## air, and the boulders strewn round them.
+func _build_sites() -> void:
+	var sys := _system_id()
+	var hull := Interiors.flat(Color(0.55, 0.55, 0.52), 0.8)
+	var dark := Interiors.flat(Color(0.18, 0.17, 0.16), 0.9)
+	for st in SurfaceSites.sites(sys):
+		var root := Node3D.new()
+		root.position = Vector3(float(st.x), model.terrain.height(float(st.x), float(st.z)), float(st.z))
+		moon.add_child(root)
+		match String(st.id):
+			"outpost":
+				var pad := MeshInstance3D.new()
+				var disc := CylinderMesh.new()
+				disc.top_radius = 14.0
+				disc.bottom_radius = 14.5
+				disc.height = 0.2
+				disc.material = dark
+				pad.mesh = disc
+				root.add_child(pad)
+				for k in 3:   # domes, one caved in
+					var dome := MeshInstance3D.new()
+					var sph := SphereMesh.new()
+					sph.radius = 6.0 - k
+					sph.height = (6.0 - k) * (0.6 if k == 1 else 1.0)
+					sph.is_hemisphere = true
+					sph.material = hull
+					dome.mesh = sph
+					dome.position = Vector3(18.0 + k * 9.0, 0, -12.0 + k * 7.0)
+					root.add_child(dome)
+				var mast := MeshInstance3D.new()
+				var mb := BoxMesh.new()
+				mb.size = Vector3(0.5, 12, 0.5)
+				mb.material = hull
+				mast.mesh = mb
+				mast.position = Vector3(-16, 6, 10)
+				mast.rotation_degrees = Vector3(0, 0, 14)
+				root.add_child(mast)
+			"ice_mine":
+				var frost := MeshInstance3D.new()
+				var fd := CylinderMesh.new()
+				fd.top_radius = 34.0
+				fd.bottom_radius = 34.0
+				fd.height = 0.15
+				fd.material = Interiors.flat(Color(0.78, 0.86, 0.92), 0.4)
+				frost.mesh = fd
+				frost.position = Vector3(0, 0.3, 0)
+				root.add_child(frost)
+				var rig := MeshInstance3D.new()
+				var rb := BoxMesh.new()
+				rb.size = Vector3(2, 10, 2)
+				rb.material = Interiors.flat(Color(0.5, 0.42, 0.3), 0.7)
+				rig.mesh = rb
+				rig.position = Vector3(48, model.terrain.height(float(st.x) + 48.0, float(st.z)) - root.position.y + 5.0, 0)
+				root.add_child(rig)
+		var label := Label3D.new()
+		label.text = String(st.name).to_upper()
+		label.font_size = 34
+		label.fixed_size = true
+		label.pixel_size = 0.0012
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		label.modulate = Color(0.85, 0.8, 0.65)
+		label.position = Vector3(0, 30 if String(st.id) == "crater" else 14, 0)
+		root.add_child(label)
+	# Boulders, all in one multimesh.
+	var rocks := model.rocks
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	var rock := SphereMesh.new()
+	rock.radius = 1.0
+	rock.height = 1.4
+	rock.radial_segments = 7
+	rock.rings = 4
+	var body := _body()
+	var gc: Array = body.get("ground", [0.42, 0.41, 0.40])
+	rock.material = Interiors.flat(Color(float(gc[0]), float(gc[1]), float(gc[2])).darkened(0.3), 1.0)
+	mm.mesh = rock
+	mm.instance_count = rocks.size()
+	for i in rocks.size():
+		var r: Vector3 = rocks[i]
+		var b := Basis(Vector3.UP, float(i) * 1.7).scaled(Vector3(r.z, r.z * 0.8, r.z * 1.1))
+		mm.set_instance_transform(i, Transform3D(b, Vector3(r.x, model.terrain.height(r.x, r.y) + r.z * 0.25, r.y)))
+	var mmi := MultiMeshInstance3D.new()
+	mmi.multimesh = mm
+	moon.add_child(mmi)
+
+
 var find_nodes := {}   ## find id -> its node on the ground
 
 
@@ -1249,26 +1341,28 @@ var find_nodes := {}   ## find id -> its node on the ground
 func _build_finds() -> void:
 	find_nodes.clear()
 	for f in (Session.finds_here() if Session.slot >= 0 else SurfaceFinds.list(_system_id(), 0)):
-		if String(f.kind) != "sample" or bool(f.get("taken", false)):
+		if String(f.kind) == "salvage" or bool(f.get("taken", false)):
 			continue
+		var look: Array = {"sample": [Color(0.35, 0.95, 0.85), "SAMPLE", Vector3(0.5, 0.9, 0.5)], "ice": [Color(0.75, 0.9, 1.0), "ICE CORE", Vector3(0.6, 0.6, 0.6)],
+				"rare": [Color(1.0, 0.45, 0.95), "GLASS CRYSTAL", Vector3(0.7, 1.4, 0.7)]}.get(String(f.kind), [Color.WHITE, "FIND", Vector3.ONE * 0.5])
 		var x := float(f.x)
 		var z := float(f.z)
 		var node := Node3D.new()
 		node.position = Vector3(x, model.terrain.height(x, z), z)
 		var crystal := MeshInstance3D.new()
 		var prism := PrismMesh.new()
-		prism.size = Vector3(0.5, 0.9, 0.5)
-		prism.material = Interiors.glow(Color(0.35, 0.95, 0.85), 1.6)
+		prism.size = look[2]
+		prism.material = Interiors.glow(look[0], 1.6)
 		crystal.mesh = prism
-		crystal.position = Vector3(0, 0.45, 0)
+		crystal.position = Vector3(0, float(look[2].y) * 0.5, 0)
 		node.add_child(crystal)
 		var tag := Label3D.new()
-		tag.text = "SAMPLE"
+		tag.text = look[1]
 		tag.font_size = 28
 		tag.fixed_size = true
 		tag.pixel_size = 0.0012
 		tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		tag.modulate = Color(0.5, 1.0, 0.9)
+		tag.modulate = look[0].lightened(0.2)
 		tag.position = Vector3(0, 1.6, 0)
 		node.add_child(tag)
 		moon.add_child(node)
@@ -1284,7 +1378,7 @@ func find_in_reach() -> Dictionary:
 		if bool(f.taken):
 			continue
 		var d := suit.distance_to(Vector3(float(f.x), 0, float(f.z)))
-		if d <= (reach if String(f.kind) == "sample" else 9.0):
+		if d <= (9.0 if String(f.kind) == "salvage" else reach):
 			return f
 	return {}
 
@@ -1343,7 +1437,20 @@ func _update_descent_hud() -> void:
 	bar.value = model.lift
 	if pad_label != null:
 		pad_label.visible = alt > 80.0 and not outside   # a beacon from above, not a wall of text up close
+	if job.is_empty() and phase == "descent":
+		var near := PackedStringArray()
+		for st in SurfaceSites.sites(_system_id()):
+			near.append("%s %.1f km" % [String(st.name), Vector2(model.pos.x - float(st.x), model.pos.z - float(st.z)).length() / 1000.0])
+		var c := SurfaceFinds.camp_xz()
+		near.append("Camp %.1f km" % (Vector2(model.pos.x - c.x, model.pos.z - c.y).length() / 1000.0))
+		hud.text += "\nSITES  " + "   ".join(near)
+	if model.hazards_seen != _hazards_shown:
+		_hazards_shown = model.hazards_seen
+		_hazard_t = model.elapsed_s
 	var hint := ""
+	if model.elapsed_s - _hazard_t < 5.0 and model.hazard != "":
+		prompt.text = model.hazard.to_upper()
+		return
 	if phase == "ascent":
 		if model.landed:
 			hint = "Space: lift off (or Esc for auto).  F: stay and shut down.  G: get up and walk outside."
@@ -1383,6 +1490,8 @@ func go_outside() -> bool:
 	var hatch_local := Vector3(walk.airlock.x, 0, walk.airlock.z) + out_dir * 2.6
 	suit_hatch = origin + model.basis * hatch_local
 	suit = SurfaceWalker.make(model.terrain, model.gravity, cells, origin, model.basis)
+	suit.rocks = model.rocks
+	suit.max_slope_deg = float(SurfaceSites.config().get("walk_slope_deg", 30.0))
 	suit.place(suit_hatch)
 	suit.face(model.basis * out_dir)
 	if ops == null:
@@ -1471,8 +1580,8 @@ func _suit_prompt() -> void:
 	else:
 		parts.append("E: back aboard" if d <= 2.5 else "Airlock hatch %.0f m" % d)
 	var held := Session.finds_aboard() if Session.slot >= 0 else {}
-	if int(held.get("samples", 0)) + int(held.get("salvage", 0)) > 0:
-		parts.append("Locker: %d samples, %d salvage" % [int(held.samples), int(held.salvage)])
+	if int(held.get("value", 0)) > 0:
+		parts.append("Locker: %s" % SurfaceFinds.describe(held))
 	prompt.text = "   ".join(parts)
 
 

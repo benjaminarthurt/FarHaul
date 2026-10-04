@@ -455,45 +455,64 @@ static func take_find(id: String) -> Dictionary:
 		while taken.size() > 200:
 			taken.pop_front()
 		profile["finds_taken"] = taken
-		var key := "samples" if String(f.kind) == "sample" else "salvage"
-		var n := SurfaceFinds.units(String(f.kind))
+		var kind := String(f.kind)
+		var key: String = SurfaceFinds.KINDS.get(kind, "samples")
+		var n := int(f.get("units", SurfaceFinds.units(kind)))
 		profile[key] = int(profile.get(key, 0)) + n
 		save_profile()
-		return {"ok": true, "message": ("%s bagged." % String(f.name)) if key == "samples" else "Stripped %d salvage parts from the wreck." % n}
+		if kind == "salvage":
+			return {"ok": true, "message": "Stripped %d salvage parts from the %s." % [n, "wreck" if String(f.name).begins_with("Wreck") else String(f.name).to_lower()]}
+		return {"ok": true, "message": "%s %s." % [String(f.name), "cut" if kind == "ice" else "bagged"]}
 	return {"ok": false, "message": "Nothing to take here."}
 
 
-## Samples and salvage in the locker, and what they would fetch.
+## What is in the locker, by counter (samples, salvage, ice, rare), and what it would fetch.
 static func finds_aboard() -> Dictionary:
-	var s := int(profile.get("samples", 0))
-	var w := int(profile.get("salvage", 0))
-	return {"samples": s, "salvage": w, "value": s * SurfaceFinds.value("sample") + w * SurfaceFinds.value("salvage")}
+	var out := {"value": 0}
+	for k in SurfaceFinds.KINDS:
+		var key: String = SurfaceFinds.KINDS[k]
+		out[key] = int(profile.get(key, 0))
+		out["value"] = int(out.value) + int(out[key]) * SurfaceFinds.value(k)
+	return out
 
 
-## Sell from the locker here. `sample_rate` and `salvage_rate` scale the standard prices (a lab pays more
-## for samples and takes no salvage, a camp's exchange pays less); a rate of 0 keeps those aboard.
-static func sell_finds(sample_rate: float = 1.0, salvage_rate: float = 1.0) -> Dictionary:
+## Sell from the locker here. `rates` scales the standard price of each kind of find (a lab pays more for
+## samples and crystals and takes no salvage or ice; the camp's exchange pays well for ice); a rate of 0
+## keeps those aboard. Kinds not named sell at the standard price.
+static func sell_finds(rates: Dictionary = {}) -> Dictionary:
 	var held := finds_aboard()
-	var ns := int(held.samples) if sample_rate > 0.0 else 0
-	var nw := int(held.salvage) if salvage_rate > 0.0 else 0
-	var f := {"samples": ns, "salvage": nw,
-			"value": roundi(ns * SurfaceFinds.value("sample") * sample_rate + nw * SurfaceFinds.value("salvage") * salvage_rate)}
-	if int(f.value) <= 0 or slot < 0 or sim == null:
+	var sold := {}
+	var value := 0.0
+	for k in SurfaceFinds.KINDS:
+		var key: String = SurfaceFinds.KINDS[k]
+		var rate := float(rates.get(k, 1.0))
+		sold[key] = int(held[key]) if rate > 0.0 else 0
+		value += int(sold[key]) * SurfaceFinds.value(k) * rate
+	if roundi(value) <= 0 or slot < 0 or sim == null:
 		return {"ok": false, "message": "Nothing to sell here."}
 	var data := SaveSlots.read(slot)
 	var loaded := _load_ship(data)
 	if loaded.is_empty():
 		return {"ok": false, "message": "Could not load the current ship."}
 	_sync_sim(loaded.ship)
-	sim._pay("world", SimWorld.PLAYER, float(f.value))
+	sim._pay("world", SimWorld.PLAYER, float(roundi(value)))
 	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
-	pc["revenue"] = float(pc["revenue"]) + float(f.value)
-	profile["samples"] = int(held.samples) - ns
-	profile["salvage"] = int(held.salvage) - nw
+	pc["revenue"] = float(pc["revenue"]) + float(roundi(value))
+	for key in sold:
+		profile[key] = int(held[key]) - int(sold[key])
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Sold %d samples and %d salvage parts for %s cr." % [int(f.samples), int(f.salvage), ShipStats.commas(int(f.value))]}
+	return {"ok": true, "message": "Sold %s for %s cr." % [SurfaceFinds.describe(sold), ShipStats.commas(roundi(value))], "value": roundi(value)}
+
+
+## What the locker would fetch at these `rates` (as sell_finds).
+static func finds_value(rates: Dictionary = {}) -> int:
+	var held := finds_aboard()
+	var value := 0.0
+	for k in SurfaceFinds.KINDS:
+		value += int(held[SurfaceFinds.KINDS[k]]) * SurfaceFinds.value(k) * float(rates.get(k, 1.0))
+	return roundi(value)
 
 
 ## Money between the player and the world outside a run (gear, missions, fees). `amount` > 0 is paid

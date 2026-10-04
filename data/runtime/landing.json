@@ -92,7 +92,7 @@
   "autoland_cruise_m_s": 15.0,
   "surface_bonus": 0.25,
   "terrain_size_m": 9000.0,
-  "terrain_cells": 140,
+  "terrain_cells": 220,
   "terrain_relief_m": 18.0,
   "pad_flat_radius_m": 90.0,
   "suit_walk_m_s": 1.6,
@@ -124,7 +124,53 @@
       "Ice-bearing breccia",
       "Iron-rich nodule",
       "Crater ejecta"
-    ]
+    ],
+    "ice_cr": 600,
+    "rare_cr": 2500
   },
-  "ascent_clear_m": 1500.0
+  "ascent_clear_m": 1500.0,
+  "sites": {
+    "list": [
+      {
+        "id": "outpost",
+        "name": "Abandoned outpost",
+        "dist_m": [
+          1500,
+          1900
+        ]
+      },
+      {
+        "id": "ice_mine",
+        "name": "Ice mine",
+        "dist_m": [
+          2000,
+          2400
+        ]
+      },
+      {
+        "id": "crater",
+        "name": "Glass crater",
+        "dist_m": [
+          2900,
+          3300
+        ]
+      }
+    ],
+    "crater_r_m": 300.0,
+    "crater_depth_m": 100.0,
+    "pit_r_m": 60.0,
+    "pit_depth_m": 9.0,
+    "boulders_per_site": 40,
+    "boulder_field_m": 260.0,
+    "boulder_max_r_m": 2.6,
+    "walk_slope_deg": 30.0,
+    "land_slope_deg": 10.0,
+    "slope_damage_per_deg": 0.012,
+    "boulder_damage": 0.12,
+    "outpost_salvage_units": 3,
+    "ice_refresh_days": 10,
+    "ice_per_visit": 4,
+    "rare_refresh_days": 30,
+    "rare_per_visit": 2
+  }
 }

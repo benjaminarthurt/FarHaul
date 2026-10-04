@@ -25,6 +25,8 @@ var can_jump := true
 var jet_accel := 0.0             ## suit jets: upward m/s² while Space is held in the air (0 without them)
 var jet_fuel := 0.0              ## seconds of jets left
 var jetting := false             ## the jets fired this step (for the flame and sound)
+var rocks: Array[Vector3] = []   ## boulders (x, z, radius) to walk round
+var max_slope_deg := 90.0        ## steeper ground than this cannot be walked up
 
 
 ## `cells`: every occupied cell of the ship (hull and external parts) in layout coordinates.
@@ -84,9 +86,17 @@ func step(dt: float, input: Vector2, run := false, jump := false, jet := false) 
 		jet_fuel = maxf(0.0, jet_fuel - dt)
 	vel_y -= gravity * dt
 	var n := maxi(1, ceili(move.length() / 0.1))
+	var climb := tan(deg_to_rad(max_slope_deg))
 	for i in n:
+		var before := pos
 		pos += move / float(n)
+		if on_ground and not jetting and max_slope_deg < 89.0:
+			var rise := terrain.height(pos.x, pos.z) - terrain.height(before.x, before.z)
+			if rise > climb * (move.length() / float(n)):
+				pos = before   # too steep to walk up
+				break
 		_resolve()
+		_avoid_rocks()
 	pos.y += vel_y * dt
 	var g := terrain.height(pos.x, pos.z)
 	if pos.y <= g:
@@ -135,6 +145,19 @@ func _resolve() -> void:
 		var back := ship_origin + ship_basis * local
 		pos.x = back.x
 		pos.z = back.z
+
+
+## Keep out of the boulders: push the walker's circle out of any it overlaps (unless jumping over it).
+func _avoid_rocks() -> void:
+	for r in rocks:
+		var off := Vector2(pos.x - r.x, pos.z - r.y)
+		var d := off.length()
+		var min_d := r.z + RADIUS
+		if d >= min_d or pos.y > terrain.height(r.x, r.y) + r.z * 1.4:
+			continue
+		var dir := off / d if d > 0.001 else Vector2(1, 0)
+		pos.x = r.x + dir.x * min_d
+		pos.z = r.y + dir.y * min_d
 
 
 func distance_to(p: Vector3) -> float:
