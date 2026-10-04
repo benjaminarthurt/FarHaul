@@ -18,7 +18,7 @@ const MUTED := Color8(140, 146, 156)
 const LOGO := "res://assets/brand/logo.png"
 const WORDMARK := "res://assets/brand/wordmark.png"
 const SPLASH := "res://assets/brand/boot_splash.png"
-const INTRO_VIDEO := "res://assets/video/intro.ogv"
+const INTRO_VIDEO := "res://assets/video/far haul into.ogv"
 const THEME_MUSIC := "res://assets/audio/music/far_haul_theme.mp3"
 
 
