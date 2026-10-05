@@ -54,6 +54,7 @@ func _run() -> void:
 			await _shot(out, "%s_d_%s" % [sys, k[0]])
 			q.queue_free()
 			await process_frame
+	quit(0)
 func _shot(out: String, name: String) -> void:
 	for i in 3:
 		await RenderingServer.frame_post_draw

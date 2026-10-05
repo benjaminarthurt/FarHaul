@@ -144,6 +144,8 @@ static func for_site(port_id: String) -> Dictionary:
 		st.merge(TIER[t], true)
 		st["tier"] = t
 		st["bar_name"] = "Bar and bunks"
+		st["landmark"] = {}   # the system's landmark is at its main port, not out here
+		st["port_type"] = {"depot": "fuel_depot", "belt": "belt_works", "moon": "moon_station"}[kind]
 	return st
 
 

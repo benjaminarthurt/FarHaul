@@ -29,6 +29,7 @@ static func dress(b: PlaceBuilder, sc: Node, st: Dictionary, w: float, d: float,
 	if bool(st.get("banners", false)):
 		_banners(b, st, hw, hd, h)
 	_role_props(b, st, hw, hd)
+	_site(b, st, hw, hd, h)
 	if float(st.wear) >= 0.45:
 		_wear(b, st, hw, hd, h, float(st.wear))
 
@@ -187,6 +188,43 @@ static func _role_props(b: PlaceBuilder, st: Dictionary, hw: float, hd: float) -
 			b._box(Vector3(x - 1.0, 0.8, -hd + 1.0), Vector3(2.8, 0.25, 0.8), (st.accent as Color).lerp(Color(0.25, 0.5, 0.3), 0.6), false)
 
 
+## The system's working sites are dressed for their work, overhead or in the south-west corner by the
+## gate where nothing else stands: a depot's fuel lines and gauges, a belt works' ore, a moon station's
+## map of the base below and suit lockers.
+static func _site(b: PlaceBuilder, st: Dictionary, hw: float, hd: float, h: float) -> void:
+	var corner := Vector3(-hw + 1.3, 0, hd - 1.2)
+	match String(st.get("site_kind", "port")):
+		"depot":
+			for k in 2:
+				_pipe(b, Vector3(0, h - 0.45 - k * 0.32, hd * 0.35 + k * 0.4), hw * 2.0 - 0.6, 0.16, [Color(0.85, 0.7, 0.15), Color(0.3, 0.6, 0.35)][k])
+			for i in 3:   # propellant gauges by the gate
+				var x := corner.x + i * 0.8
+				b._box(Vector3(x, 1.5, hd - 0.2), Vector3(0.6, 2.2, 0.06), Color(0.12, 0.13, 0.15), false)
+				var level := 0.4 + 0.25 * i
+				b._box(Vector3(x, 0.5 + 1.0 * level, hd - 0.25), Vector3(0.4, 2.0 * level, 0.04), Color(0.3, 1.0, 0.45), false, true)
+		"belt":
+			b._box(corner + Vector3(0, 0.3, 0), Vector3(1.6, 0.6, 1.4), Color(0.3, 0.3, 0.32))   # an ore chunk on its plinth
+			var rock := MeshInstance3D.new()
+			var sp := SphereMesh.new()
+			sp.radius = 0.6
+			sp.height = 1.0
+			sp.radial_segments = 7
+			sp.rings = 4
+			sp.material = SurfaceTextures.rock_material(Color(0.5, 0.42, 0.36))
+			rock.mesh = sp
+			rock.position = corner + Vector3(0, 1.05, 0)
+			rock.rotation = Vector3(0.4, 0.9, 0.1)
+			b.sc.add_child(rock)
+			_pipe(b, Vector3(0, h - 0.5, -hd * 0.1), hw * 2.0 - 0.6, 0.05, Color(0.3, 0.3, 0.3))   # the overhead conveyor's rail
+			for x in range(int(-hw) + 3, int(hw) - 2, 3):
+				b._box(Vector3(x, h - 0.85, -hd * 0.1), Vector3(0.8, 0.5, 0.6), Color(0.4, 0.33, 0.25), false)   # ore buckets
+		"moon":
+			b._box(Vector3(hw - 0.2, 1.9, -hd + 2.1), Vector3(0.06, 1.5, 2.4), Color(0.05, 0.06, 0.08), false)   # the base map, below the station's name
+			b._box(Vector3(hw - 0.24, 1.9, -hd + 2.1), Vector3(0.04, 1.25, 2.1), Color(0.25, 0.55, 0.45), false, true)
+			for i in 3:   # suit lockers by the gate
+				b._box(corner + Vector3(i * 0.7, 1.0, 0.4), Vector3(0.6, 2.0, 0.4), Color(0.35, 0.4, 0.38))
+
+
 ## Hard use: stacked crates, stains on the floor, conduit run along the ceiling where panels came off,
 ## patched plates on the walls and a failing lamp or two.
 static func _wear(b: PlaceBuilder, st: Dictionary, hw: float, hd: float, h: float, wear: float) -> void:
@@ -333,6 +371,78 @@ static func _colonial(b: PlaceBuilder, st: Dictionary, hw: float, hd: float, h: 
 			l2.position = Vector3(bx, h - 1.2, 0.57)
 			l2.rotation.y = 0
 			b.sc.add_child(l2)
+
+
+## A small room (the hab, the hut) in the system's style: a skirting light in its accent colour round
+## the walls and one touch of the architecture, kept to the two free `corners`, the airlock at `gate`
+## and the wall without a window (`back`: -1 north, +1 south).
+static func dress_room(b: PlaceBuilder, st: Dictionary, w: float, d: float, h: float, corners: Array, gate: Vector3, back: float) -> void:
+	_rng.seed = hash(String(st.get("system_id", "")) + "|room")
+	var hw := w * 0.5
+	var hd := d * 0.5
+	var accent: Color = st.get("accent", Color(0.95, 0.65, 0.2))
+	for z in [-hd + 0.17, hd - 0.17]:
+		b._box(Vector3(0, 0.12, z), Vector3(w - 0.6, 0.06, 0.03), accent, false, true)
+	for x in [-hw + 0.17, hw - 0.17]:
+		b._box(Vector3(x, 0.12, 0), Vector3(0.03, 0.06, d - 0.6), accent, false, true)
+	match String(st.get("architecture", "colonial")):
+		"kesh":   # heavy corner columns, a hazard strip before the airlock
+			for c in corners:
+				b._box((c as Vector3) + Vector3(0, h * 0.5, 0), Vector3(0.8, h, 0.8), (st.wall as Color).darkened(0.25))
+				b._box((c as Vector3) + Vector3(0, 1.2, 0), Vector3(0.85, 0.18, 0.85), accent, false)
+			var strip := MeshInstance3D.new()
+			var bm := BoxMesh.new()
+			bm.size = Vector3(0.5, 0.02, 2.4)
+			bm.material = SurfaceTextures.hazard_material()
+			strip.mesh = bm
+			strip.position = gate + Vector3(1.0, 0.012, 0)
+			b.sc.add_child(strip)
+		"ilyan":   # ribbons of teal light overhead
+			for z in [-d * 0.2, d * 0.2]:
+				b._box(Vector3(0, h - 0.25, z), Vector3(w - 3.0, 0.05, 0.12), accent, false, true)
+		"vey":   # hanging plants in the corners and a humid haze
+			var leaf := b._mat(Color(0.2, 0.55, 0.4))
+			for c in corners:
+				var mi := MeshInstance3D.new()
+				var sp := SphereMesh.new()
+				sp.radius = 0.45
+				sp.height = 1.2
+				sp.material = leaf
+				mi.mesh = sp
+				mi.position = (c as Vector3) + Vector3(0, h - 0.9, 0)
+				b.sc.add_child(mi)
+			var env := _env(b.sc)
+			if env != null:
+				env.fog_enabled = true
+				env.fog_light_color = Color(0.45, 0.65, 0.65)
+				env.fog_density = 0.015
+		"orun":   # stone ribs up the walls
+			var stone := (st.wall as Color).darkened(0.15)
+			for x in [-hw * 0.5, 0.0, hw * 0.5]:
+				for z in [-hd + 0.3, hd - 0.3]:
+					b._box(Vector3(x, h * 0.5, z), Vector3(0.5, h, 0.3), stone, false)
+		"patchwork":   # hand-made signs
+			var signs := ["TEA", "SUITS MENDED", "NO SPITTING"]
+			for i in signs.size():
+				var l := Label3D.new()
+				l.text = signs[i]
+				l.font_size = 40
+				l.pixel_size = 0.0035
+				l.modulate = [Color(1.0, 0.6, 0.5), Color(0.6, 0.85, 1.0), Color(1.0, 0.9, 0.5)][i]
+				l.position = Vector3([-hw * 0.6, -hw * 0.3, hw * 0.6][i], h - 0.7, back * (hd - 0.2))
+				l.rotation.y = PI if back > 0.0 else 0.0
+				b.sc.add_child(l)
+		"human":   # a clean screen of the base's notices
+			b._box(Vector3(-hw * 0.5, h - 1.2, back * (hd - 0.19)), Vector3(2.4, 0.9, 0.06), Color(0.05, 0.06, 0.08), false)
+			b._box(Vector3(-hw * 0.5, h - 1.2, back * (hd - 0.23)), Vector3(2.2, 0.75, 0.04), (st.trim as Color).darkened(0.7), false)
+			var note := Label3D.new()
+			note.text = "BASE NOTICES\nAIRLOCK DRILL 0600\nDUST WARNING: AMBER"
+			note.font_size = 32
+			note.pixel_size = 0.0035
+			note.modulate = (st.trim as Color).lightened(0.4)
+			note.position = Vector3(-hw * 0.5, h - 1.2, back * (hd - 0.26))
+			note.rotation.y = PI if back > 0.0 else 0.0
+			b.sc.add_child(note)
 
 
 static func _env(sc: Node) -> Environment:

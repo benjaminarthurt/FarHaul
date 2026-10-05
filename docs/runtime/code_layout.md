@@ -24,7 +24,7 @@ normal frame-to-frame noise.
 | `scripts/place/place_builder.gd` | `PlaceBuilder` | The concourse, hab and hut: rooms, lights, furniture, desks, people, signs, the freight board, the window view |
 | `scripts/place/place_desks.gd` | `PlaceDesks` | What each desk shows: freight, people, missions, fuel and repairs, bar, lab, exchange, suit store, gate |
 | `scripts/place/strollers.gd` | `Strollers` | People walking loops of waypoints. Plain logic, so it can be tested on its own |
-| `scripts/place/style_dressing.gd` | `StyleDressing` | Dresses a concourse in its system's style: architecture fittings, colony signature, role props, wear |
+| `scripts/place/style_dressing.gd` | `StyleDressing` | Dresses a place in its system's style: architecture fittings, colony signature, role and site props, wear; the hab and hut (`dress_room`) |
 | `scripts/place/hints.gd` | `Hints` | First-time hints in places, remembered in the profile |
 | `scripts/identity/system_style.gd` | `SystemStyle` | Each system's look, worked out from the world data (docs/runtime/identity.md) |
 

@@ -15,8 +15,21 @@ style without any extra work.
 | Landmark | `local_color.json` | The bar's name where it is a bar, otherwise a sign pointing to the landmark |
 
 A system's fuel depot, belt works and moon station use the system's style one tier down: they are
-working sites rather than the front door. The moon base's hab and the mining camp's hut take the
-system's colours partly (`PlaceBuilder._tint`) and its crowd.
+working sites rather than the front door. Each is its own kind of site, not a copy of the main port:
+
+| Site | In space | On foot |
+|---|---|---|
+| Fuel depot | Banded propellant spheres round the spine, a fuelling boom | Fuel lines overhead, propellant gauges by the gate |
+| Belt works | A captured asteroid, a smelter, a conveyor to the rock, rubble | Ore buckets on an overhead line, an ore chunk on a plinth |
+| Moon station | Dishes listening to the base below, landers on cradles | A map of the base, suit lockers |
+
+They have no shipyard, no landmark sign and no named bar. In space they keep the system's colours,
+but the heavier architecture extras stay at the main port.
+
+The moon base's hab and the mining camp's hut take the system's colours (`PlaceBuilder._tint`), a
+skirting light in its accent colour, its crowd, and one touch of its architecture
+(`StyleDressing.dress_room`): Kesh corner columns and a hazard strip at the airlock, Ilyan light
+ribbons, Vey plants and haze, Orun stone ribs, patchwork signs, or a human notice screen.
 
 ## Architectures
 
@@ -63,10 +76,13 @@ collar along +Z stays clear. It is solid to the flight model.
 
 ## Tests and renders
 
-- `tests/test_identity.gd`, for every system:
+- `tests/test_identity.gd` checks every system and every one of its six sites (108 places, 72
+  stations):
   - its style is complete, home systems use their species' style, and no two systems look the same;
-  - every desk can be stood at and walked to from the gate, and walkers' routes keep to open floor;
-  - the station leaves the approach clear.
+  - every desk can be stood at and walked to from the way in, and walkers' routes keep to open floor;
+  - every station leaves the approach clear.
 - `tests/capture_identity.gd` renders each system's concourse three ways, then its hab and hut.
 - `tests/capture_stations.gd` renders each system's station.
+- `tests/capture_sweep.gd` renders every site of every system on foot, at undocking, and from
+  outside. Batches can run side by side, since each process keeps its own saves.
 - `tests/print_styles.gd` prints the style each system gets.

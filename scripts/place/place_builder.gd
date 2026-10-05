@@ -136,7 +136,8 @@ func _desk(id: String, label: String, pos: Vector3, face: Vector3, col: Color, s
 	var text := Label3D.new()
 	text.text = label.to_upper()
 	text.font_size = 56
-	text.pixel_size = 0.006
+	var run := ThemeDB.fallback_font.get_string_size(text.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 56).x
+	text.pixel_size = minf(0.006, 2.8 / maxf(run, 1.0))   # long names shrink to fit the board
 	text.outline_size = 0
 	text.modulate = Color(0.08, 0.08, 0.1)
 	text.position = sign_pos + face * 0.08
@@ -413,8 +414,9 @@ func _tint(base: Color, key: String, k: float) -> Color:
 
 
 func _build_hab() -> void:
-	var hab_wall := _tint(Color(0.7, 0.69, 0.64), "wall", 0.45)
-	_room(20.0, 20.0, 4.5, hab_wall, _tint(Color(0.32, 0.31, 0.3), "floor", 0.5), -1.0, false)
+	var hab_wall := _tint(Color(0.7, 0.69, 0.64), "wall", 0.7)
+	_room(20.0, 20.0, 4.5, hab_wall, _tint(Color(0.32, 0.31, 0.3), "floor", 0.65), -1.0, false)
+	StyleDressing.dress_room(self, sc.style, 20.0, 20.0, 4.5, [Vector3(8.7, 0, 8.7), Vector3(8.7, 0, -8.7)], Vector3(-9.8, 0, 0), 1.0)
 	_moon_outside(Vector3(0, 0, -10.0), Vector3(0, 0, -1))
 	var dome := MeshInstance3D.new()   # the dome over the room
 	var sph := SphereMesh.new()
@@ -447,7 +449,8 @@ func _build_hab() -> void:
 
 
 func _build_hut() -> void:
-	_room(14.0, 9.0, 3.4, _tint(Color(0.62, 0.55, 0.4), "wall", 0.35), _tint(Color(0.25, 0.22, 0.18), "floor", 0.35), 1.0)
+	_room(14.0, 9.0, 3.4, _tint(Color(0.62, 0.55, 0.4), "wall", 0.6), _tint(Color(0.25, 0.22, 0.18), "floor", 0.55), 1.0)
+	StyleDressing.dress_room(self, sc.style, 14.0, 9.0, 3.4, [Vector3(-6.4, 0, -3.9), Vector3(6.4, 0, -3.9)], Vector3(-6.8, 0, 0), -1.0)
 	_moon_outside(Vector3(0, 0, 4.5), Vector3(0, 0, 1))
 	_desk("foreman", "Foreman", Vector3(0, 0, -2.9), Vector3(0, 0, 1), Color(1.0, 0.55, 0.3))
 	_desk("exchange", "Ore and parts exchange", Vector3(5.4, 0, 1.5), Vector3(-1, 0, 0), Color(0.8, 0.7, 0.4))

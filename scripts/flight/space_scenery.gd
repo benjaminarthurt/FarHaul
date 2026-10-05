@@ -141,9 +141,12 @@ func _count(by_tier: Array) -> int:
 ## The species' hand: heavy bands, slender masts, bulbs, stacked discs, or bolted-on oddments.
 func _build_architecture(root: Node3D, steel: Material, dark: Material) -> void:
 	var accent: Color = style.get("accent", Color(1.0, 0.6, 0.2))
+	var site := String(style.get("site_kind", "port"))
+	var at_port := not site in ["depot", "belt", "moon"]   # out-sites keep the space aft for their own works
 	match String(style.get("architecture", "colonial")):
 		"kesh":   # massive: a second, heavier rear block and orange warning bands round the spine
-			_solid(root, Vector3(0, 0, -58), Vector3(22, 22, 10), dark)
+			if at_port:
+				_solid(root, Vector3(0, 0, -58), Vector3(22, 22, 10), dark)
 			for z in [-24.0, -12.0, 12.0, 24.0]:
 				var t := MeshInstance3D.new()
 				var tm := TorusMesh.new()
@@ -164,6 +167,8 @@ func _build_architecture(root: Node3D, steel: Material, dark: Material) -> void:
 			r2.rotation_degrees.x = 90.0
 			r2.position = Vector3(0, 0, -16)
 			root.add_child(r2)
+			if site == "belt":
+				return
 			var mast := MeshInstance3D.new()
 			var mc := CylinderMesh.new()
 			mc.top_radius = 0.2
@@ -211,7 +216,7 @@ func _build_architecture(root: Node3D, steel: Material, dark: Material) -> void:
 			var rng := RandomNumberGenerator.new()
 			rng.seed = hash(String(style.get("system_id", "")) + "|patch")
 			var tints := [Color(0.55, 0.35, 0.3), Color(0.3, 0.45, 0.55), Color(0.5, 0.5, 0.3), Color(0.35, 0.5, 0.4), Color(0.5, 0.4, 0.55)]
-			for k in 7:
+			for k in (7 if at_port else 3):
 				var a := rng.randf() * TAU
 				var size := Vector3(rng.randf_range(3, 7), rng.randf_range(3, 7), rng.randf_range(4, 10))
 				_solid(root, Vector3(cos(a) * rng.randf_range(10, 15), sin(a) * rng.randf_range(10, 15), rng.randf_range(-50, -24)), size,
@@ -219,7 +224,9 @@ func _build_architecture(root: Node3D, steel: Material, dark: Material) -> void:
 
 
 ## What the port is for, in its shape: container yards, smelters, docking arms, a busy berth ring,
-## the scaffold of a frontier dock, or the tether of a transfer platform down to the surface.
+## the scaffold of a frontier dock, or the tether of a transfer platform down to the surface. A
+## system's other sites are their own kind: a fuel depot's tanks, a belt works' captured asteroid,
+## a moon station's dishes and landers.
 func _build_port_type(root: Node3D, steel: Material, dark: Material) -> void:
 	var t := String(style.get("port_type", "orbital_port"))
 	if t.contains("freight"):   # a long container yard aft
@@ -265,6 +272,81 @@ func _build_port_type(root: Node3D, steel: Material, dark: Material) -> void:
 			c.position = dir * 23.0 + Vector3(0, 0, -36)
 			c.rotation.z = a
 			root.add_child(c)
+	if t == "fuel_depot":   # banded propellant spheres round the spine, and a fuelling boom
+		var accent: Color = style.get("accent", Color(0.9, 0.6, 0.2))
+		var tank := Interiors.flat((style.get("station", Color(0.6, 0.6, 0.62)) as Color).lightened(0.15), 0.5, 0.3)
+		for k in 6:
+			var a := k * TAU / 6.0 + (0.5 if k % 2 == 1 else 0.0)
+			var at := Vector3(cos(a) * 12.0, sin(a) * 12.0, -44.0 if k % 2 == 0 else -56.0)
+			var mi := MeshInstance3D.new()
+			var sp := SphereMesh.new()
+			sp.radius = 5.0
+			sp.height = 10.0
+			sp.material = tank
+			mi.mesh = sp
+			mi.position = at
+			root.add_child(mi)
+			boxes.append(AABB(at - Vector3.ONE * 4.6, Vector3.ONE * 9.2))
+			var band := MeshInstance3D.new()
+			var tm := TorusMesh.new()
+			tm.inner_radius = 4.9
+			tm.outer_radius = 5.3
+			tm.material = Interiors.flat(accent, 0.6)
+			band.mesh = tm
+			band.position = at
+			root.add_child(band)
+		_solid(root, Vector3(20, 0, -30), Vector3(26, 1.4, 1.4), steel)   # the fuelling boom
+		_lamp(root, Vector3(33.5, 0, -30), Color(0.3, 1.0, 0.4), 1.2)
+	if t == "belt_works":   # a captured asteroid, a smelter and a conveyor between them, rubble about
+		var rock_col := Color(0.42, 0.38, 0.34)
+		var rock := MeshInstance3D.new()
+		var sp := SphereMesh.new()
+		sp.radius = 15.0
+		sp.height = 30.0
+		sp.radial_segments = 14
+		sp.rings = 8
+		sp.material = SurfaceTextures.rock_material(rock_col)
+		rock.mesh = sp
+		rock.scale = Vector3(1.25, 0.85, 1.0)
+		rock.rotation = Vector3(0.3, 0.7, 0.2)
+		rock.position = Vector3(0, -4, -88)
+		root.add_child(rock)
+		boxes.append(AABB(Vector3(-17, -17, -103), Vector3(34, 26, 30)))
+		_solid(root, Vector3(0, -2, -58), Vector3(12, 10, 12), dark)   # the smelter
+		_lamp(root, Vector3(0, 4, -58), Color(1.0, 0.45, 0.1), 2.6)
+		_solid(root, Vector3(0, -9, -66), Vector3(2.4, 1.2, 26), steel)   # conveyor to the rock
+		var rng := RandomNumberGenerator.new()
+		rng.seed = hash(String(style.get("system_id", "")) + "|rubble")
+		for k in 18:
+			var r := MeshInstance3D.new()
+			var rs := SphereMesh.new()
+			rs.radius = rng.randf_range(0.8, 3.0)
+			rs.height = rs.radius * 2.0
+			rs.radial_segments = 6
+			rs.rings = 3
+			rs.material = sp.material
+			r.mesh = rs
+			var a := rng.randf() * TAU
+			r.position = Vector3(cos(a) * rng.randf_range(22, 45), sin(a) * rng.randf_range(22, 45), rng.randf_range(-110, -50))
+			root.add_child(r)
+	if t == "moon_station":   # dishes listening to the base below, and landers on their cradles
+		for side in [-1.0, 1.0]:
+			_solid(root, Vector3(side * 6.0, 14.0, -40), Vector3(0.8, 12.0, 0.8), steel)
+			var dish := MeshInstance3D.new()
+			var cm := CylinderMesh.new()
+			cm.top_radius = 5.0
+			cm.bottom_radius = 1.0
+			cm.height = 2.0
+			cm.material = Interiors.flat(Color(0.85, 0.86, 0.88), 0.5)
+			dish.mesh = cm
+			dish.position = Vector3(side * 6.0, 21.0, -40)
+			dish.rotation = Vector3(0.6, 0, side * 0.4)
+			root.add_child(dish)
+			var lander := Interiors.flat((style.get("accent", Color(0.9, 0.6, 0.2)) as Color).darkened(0.2), 0.7)
+			_solid(root, Vector3(side * 14.0, -6.0, -36), Vector3(5.0, 4.0, 5.0), lander)
+			for lx in [-1.8, 1.8]:
+				_solid(root, Vector3(side * 14.0 + lx, -9.0, -36), Vector3(0.3, 2.4, 0.3), steel)
+			_lamp(root, Vector3(side * 14.0, -3.6, -36), Color(1.0, 0.8, 0.4), 0.7)
 	if t.contains("frontier"):   # bare scaffold round the rear module, still being built out
 		var sm := Interiors.flat(Color(0.55, 0.5, 0.4), 0.8, 0.4)
 		for x in [-11.0, 11.0]:
@@ -315,7 +397,8 @@ func _build_modules(root: Node3D, steel: Material, dark: Material) -> void:
 	_solid(root, Vector3(0, 0, -36), Vector3(16, 16, 12), hull)                     # rear module
 	_solid(root, Vector3(0, 0, -46), Vector3(8, 8, 8), dark)
 	var crate_cols := [Color(0.7, 0.35, 0.2), Color(0.25, 0.4, 0.6), Color(0.6, 0.55, 0.25), Color(0.35, 0.5, 0.35)]
-	for k in 4:   # cargo stacks on the rear module's sides
+	var at_port := not String(style.get("site_kind", "port")) in ["depot", "belt", "moon"]
+	for k in (4 if at_port else 0):   # cargo stacks on the rear module's sides (ports only)
 		var a := k * PI * 0.5
 		var out := Vector3(cos(a), sin(a), 0)
 		for j in _count([3, 3, 2, 2, 1]):
@@ -327,7 +410,7 @@ func _build_modules(root: Node3D, steel: Material, dark: Material) -> void:
 		for p in 3:
 			_solid(root, Vector3(side * (18.0 + p * 10.0), 0, -40), Vector3(9.0, 0.3, 16.0), panel_mat)
 		_lamp(root, Vector3(side * 41.0, 0, -40), Color(1.0, 0.25, 0.2) if side < 0.0 else Color(0.3, 1.0, 0.4), 1.4)
-	for k in _count([4, 3, 2, 1, 1]):   # small ships berthed on the ring's outer face
+	for k in (_count([4, 3, 2, 1, 1]) if at_port else 1):   # small ships berthed on the ring's outer face
 		var a := PI * 0.25 + k * PI * 0.5
 		var at := Vector3(cos(a), sin(a), 0) * (sc.STATION_RADIUS + 4.5) + Vector3(0, 0, -2.0)
 		_solid(root, at, Vector3(4.0, 4.0, 9.0), Interiors.flat(crate_cols[k], 0.7))
