@@ -34,6 +34,27 @@ Settings apply at once and are saved in `settings.cfg` beside the saves, so a po
 Each scene calls `GameSettings.apply_scene(self, shadow_distance)` at the end of `_ready`. Music
 plays on a `Music` bus; jump sounds and builder clicks play on an `Effects` bus.
 
+## In-game menu, hints and the frame-rate readout
+
+- **Menu** (`scripts/game_menu.gd`): F10 in any scene but the title, or Esc in a port, pauses the game.
+  It offers Resume, Save game, Settings, Main menu and Quit to desktop. In flight it says that saving
+  keeps the game as it was when you left port, because a flight in progress is not saved.
+  `GameSettings.apply_scene` adds the menu to every scene.
+- **Frame-rate readout:** F3 toggles it at the top right. It shows frames per second, frame time, draw
+  calls, objects and video memory, and stays on across scenes until you turn it off.
+- **Hints** (`scripts/place/hints.gd`): one-time pointers for a new captain, shown on arriving in a
+  place when they fit:
+  - where to find work;
+  - how to fly a job you hold;
+  - where to deliver;
+  - what the shipyard can fit once you have money;
+  - what the hab offers;
+  - what the camp offers.
+
+  Each shows once per game (`profile.hints_seen`) and fades after about 16 seconds.
+- **Old saves:** `tests/test_old_save.gd` loads a game with none of the newer fields (standing, kit,
+  missions, finds, hull damage, hints), and opens every desk, the hab and the suit from it.
+
 ## Speed
 
 Measured with `tests/probe_speed.gd` (headless, development machine):

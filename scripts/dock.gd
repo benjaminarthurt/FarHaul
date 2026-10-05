@@ -154,7 +154,7 @@ func _build_ui() -> void:
 			pay.append("%s %s" % [String(r.role).get_slice(" (", 0), ShipStats.commas(roundi(r.pay))])
 		if _sublight():
 			var price := Session.drive_price()
-			_row(grid, "FTL drive", "not fitted  ·  drive and radiator cost about %s cr  ·  %s" % [ShipStats.commas(price),
+			_row(grid, "FTL drive", "not fitted, about %s cr with its radiator\n%s" % [ShipStats.commas(price),
 					"you can afford it" if int(p.credits) >= price else "%s cr to save" % ShipStats.commas(price - int(p.credits))])
 		_row(grid, "Crew pay", "%s cr/day  ·  %s rates" % [", ".join(pay), String(Session.sim.carriers[SimWorld.PLAYER]["home"]).replace("_", " ").capitalize()])
 	if Session.insolvent():

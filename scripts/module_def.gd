@@ -166,6 +166,38 @@ func _hatch_leaf(hatch: Node3D) -> void:
 	_add_box(hatch, Vector3(0, -0.3, 0.06), Vector3(0.5, 0.1, 0.03), _mat(color.darkened(0.7), 1.0))  # wheel plate
 
 
+static var _plumes := {}
+
+
+## Exhaust: additive, unshaded, bright at the nozzle and fading to nothing along its length (the
+## cylinder's v runs from its narrow far end, 0, to the nozzle, 1).
+static func _plume(col: Color, core := false) -> StandardMaterial3D:
+	var key := "%s|%s" % [col.to_html(), core]
+	if _plumes.has(key):
+		return _plumes[key]
+	var g := Gradient.new()
+	g.set_color(0, Color(0, 0, 0))
+	g.set_color(1, col.lerp(Color(1, 1, 1), 0.6) if core else col)
+	g.add_point(0.55, (col * (0.9 if core else 0.45)))
+	var tex := GradientTexture2D.new()
+	tex.gradient = g
+	tex.fill_from = Vector2(0, 0)
+	tex.fill_to = Vector2(0, 1)
+	tex.width = 4
+	tex.height = 64
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	m.no_depth_test = false
+	m.albedo_texture = tex
+	m.texture_repeat = false   # no bleed of the bright nozzle end onto the far tip
+	m.albedo_color = Color(1, 1, 1, 1)
+	_plumes[key] = m
+	return m
+
+
 static func _glow(col: Color) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = col
@@ -408,7 +440,9 @@ func _build_external(root: Node3D) -> void:
 			plume.top_radius = 0.3
 			plume.bottom_radius = 0.04
 			plume.height = 2.2
-			plume.material = _glow(Color(0.6, 0.8, 1.0))
+			plume.material = _plume(Color(0.55, 0.75, 1.0))
+			plume.cap_top = false
+			plume.cap_bottom = false
 			var pi_ := MeshInstance3D.new()
 			pi_.mesh = plume
 			pi_.position = nz + Vector3(0, -1.35, 0)
@@ -456,18 +490,23 @@ func _build_external(root: Node3D) -> void:
 		di.rotation_degrees.x = 90.0
 		di.position = Vector3(0, 0, 1.2)
 		root.add_child(di)
-		var flame := CylinderMesh.new()  # exhaust plume, only shown while burning
-		flame.top_radius = 0.05
-		flame.bottom_radius = 0.95
-		flame.height = 5.0
-		flame.material = _glow(Color(1.0, 0.7, 0.3))
-		var fi := MeshInstance3D.new()
-		fi.mesh = flame
-		fi.rotation_degrees.x = 90.0
-		fi.position = Vector3(0, 0, 1.4 + 2.5)
-		fi.visible = false
-		fi.set_meta("flame", true)
-		root.add_child(fi)
+		for k in 2:   # exhaust plume, only shown while burning: a wide glow and a hot core
+			var flame := CylinderMesh.new()
+			flame.top_radius = 0.15 if k == 0 else 0.05
+			flame.bottom_radius = 0.95 if k == 0 else 0.45
+			flame.height = 5.5 if k == 0 else 3.0
+			flame.radial_segments = 16
+			flame.cap_top = false
+			flame.cap_bottom = false
+			flame.material = _plume(Color(1.0, 0.55, 0.2) if k == 0 else Color(0.75, 0.85, 1.0), k == 1)
+			var fi := MeshInstance3D.new()
+			fi.mesh = flame
+			fi.rotation_degrees.x = 90.0
+			fi.position = Vector3(0, 0, 1.3 + flame.height * 0.5)
+			fi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			fi.visible = false
+			fi.set_meta("flame", true)
+			root.add_child(fi)
 	else:
 		var inset := Vector3.ONE * 0.4
 		_add_box(root, Vector3(size - Vector3i.ONE) * ShipGrid.CELL * 0.5, Vector3(size) * ShipGrid.CELL - inset, mat)

@@ -139,6 +139,7 @@ static func apply_scene(scene: Node, shadow_m: float = 120.0) -> void:
 	var size: int = {"low": 1024, "medium": 2048, "high": 4096}[q]
 	RenderingServer.directional_shadow_atlas_set_size(size, true)
 	_walk(scene, q, shadow_m)
+	GameMenu.attach(scene)   # F10 menu and the F3 readout, in every scene but the title
 
 
 static func _walk(node: Node, q: String, shadow_m: float) -> void:

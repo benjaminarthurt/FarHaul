@@ -246,13 +246,15 @@ func _setup_ui() -> void:
 	_build_right_column(ui)
 
 	help_label = Label.new()
-	help_label.text = "Click place  ·  Shift+click remove\nR rotate  ·  Q/E deck  ·  Ctrl+Z undo  ·  F frame\nRight-drag orbit  ·  wheel zoom  ·  middle-drag pan\nH hide upper decks  ·  M mute  ·  F1 help"
+	help_label.text = "Click place  ·  Shift+click remove\nR rotate  ·  Q/E deck  ·  Ctrl+Z undo  ·  F frame\nRight-drag orbit  ·  wheel zoom  ·  middle-drag pan\nH hide upper decks  ·  M mute  ·  F1 help  ·  F10 menu"
 	help_label.modulate = Color(0.75, 0.8, 0.9, 0.7)
 	help_label.add_theme_font_size_override("font_size", 12)
 	help_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.add_child(help_label)
-	help_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT, Control.PRESET_MODE_MINSIZE, 12)
+	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	help_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 12)   # under the ship, clear of the side panels
 	help_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	help_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
 
 	# Cursor tooltip.
 	tip_panel = PanelContainer.new()
@@ -268,10 +270,18 @@ func _setup_ui() -> void:
 
 func _build_palette(ui: Control) -> void:
 	var panel := PanelContainer.new()
-	panel.position = Vector2(12, 12)
 	ui.add_child(panel)
+	panel.set_anchors_preset(Control.PRESET_LEFT_WIDE)   # full height, scrolling when the window is short
+	panel.offset_left = 12
+	panel.offset_top = 12
+	panel.offset_bottom = -12
+	panel.offset_right = 12 + 318
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	panel.add_child(scroll)
 	var box := VBoxContainer.new()
-	panel.add_child(box)
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(box)
 
 	var group_titles := {
 		&"hull": "HULL (walkable)",
@@ -327,7 +337,7 @@ func _build_top_bar(ui: Control) -> void:
 	yard_label.modulate = Color(0.7, 0.8, 1.0)
 	yard_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var w := Session.world()
-	yard_label.text = "%s  ·  %s  ·  %s" % [w.name, Worlds.yard_tier(String(w.tier)).name, String(w.system_id).replace("_", " ").capitalize()]
+	yard_label.text = "%s\n%s  ·  %s" % [w.name, Worlds.yard_tier(String(w.tier)).name, String(w.system_id).replace("_", " ").capitalize()]
 	tbox.add_child(yard_label)
 	top_label = Label.new()
 	top_label.add_theme_font_size_override("font_size", 16)

@@ -406,7 +406,11 @@ func _heat(dt: float) -> void:
 		overheated = false
 
 
-## Station shapes in the station's own frame: a spine along Z and a ring in the XY plane.
+## Extra solid parts of the station (axis-aligned boxes in its frame), set by the flight scene.
+var station_boxes: Array[AABB] = []
+
+
+## Station shapes in the station's own frame: a spine along Z, a ring in the XY plane, and boxes.
 func station_clearance(p: Vector3) -> Dictionary:
 	var half := float(tune.get("station_half_length_m", 30.0))
 	var spine_r := float(tune.get("station_spine_radius_m", 5.0))
@@ -419,9 +423,26 @@ func station_clearance(p: Vector3) -> Dictionary:
 	var nearest := in_plane.normalized() * ring_r if in_plane.length() > 0.001 else Vector3(ring_r, 0, 0)
 	var to_ring := p - nearest
 	var d_ring := to_ring.length() - ring_tube
-	if d_spine < d_ring:
-		return {"gap": d_spine, "normal": to_spine.normalized() if to_spine.length() > 0.001 else Vector3(0, 0, 1)}
-	return {"gap": d_ring, "normal": to_ring.normalized() if to_ring.length() > 0.001 else Vector3(1, 0, 0)}
+	var best := {"gap": d_spine, "normal": to_spine.normalized() if to_spine.length() > 0.001 else Vector3(0, 0, 1)}
+	if d_ring < d_spine:
+		best = {"gap": d_ring, "normal": to_ring.normalized() if to_ring.length() > 0.001 else Vector3(1, 0, 0)}
+	for box in station_boxes:   # the station's other modules: cargo stacks, solar wings, berthed ships
+		var q := p.clamp(box.position, box.end)
+		var off := p - q
+		var gap := off.length()
+		if gap == 0.0:   # inside: out through the nearest face
+			var to_min := p - box.position
+			var to_max := box.end - p
+			var faces := [to_min.x, to_max.x, to_min.y, to_max.y, to_min.z, to_max.z]
+			var k := 0
+			for i in 6:
+				if faces[i] < faces[k]:
+					k = i
+			gap = -float(faces[k])
+			off = [Vector3.LEFT, Vector3.RIGHT, Vector3.DOWN, Vector3.UP, Vector3.FORWARD, Vector3.BACK][k]
+		if gap < float(best.gap):
+			best = {"gap": gap, "normal": off.normalized()}
+	return best
 
 
 ## Hitting the station: bounce off, lose some hull in proportion to the impact.

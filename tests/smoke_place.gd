@@ -44,6 +44,9 @@ func _stand_at(p: Node, id: String) -> void:
 	for d in p.desks:
 		if String(d.id) == id:
 			p.walker.pos = Vector3(d.pos.x, 0, d.pos.z)
+## Standing people are solid too (a rect 0.6 m square around them); strollers may brush past those.
+func _is_person_rect(p: Node, r: Rect2) -> bool:
+	return is_equal_approx(r.size.x, 0.6) and is_equal_approx(r.size.y, 0.6)
 func _run() -> void:
 	Session.begin_new(2, "Pilot", "human", "normal", "roosevelt_independent_yards")
 	check(Session.scene_path() == Session.PLACE_SCENE, "the dock is now the walkable place")
@@ -58,6 +61,21 @@ func _run() -> void:
 	for i in 200:
 		p.walker.step(0.05, Vector2(0, 1), true)
 	check(p.walker.pos.x > -22.0 and p.walker.pos.x < start.x, "the end wall stops you (x %.2f)" % p.walker.pos.x)
+	# Travellers walk about, and their paths stay clear of the furniture.
+	check(p.strollers.size() == 3, "three travellers walk the concourse")
+	var f0: Figure = p.strollers[0].fig
+	var p0: Vector3 = f0.position
+	var blocked := false
+	p.walker.pos = Vector3(-20.5, 0, 6.0)   # out of their way
+	for i in 600:
+		p._move_strollers(0.05)
+		for st in p.strollers:
+			var q: Vector3 = st.fig.position
+			for r in p.walker.furniture[0]:
+				if (r as Rect2).grow(-0.05).has_point(Vector2(q.x, q.z)) and not _is_person_rect(p, r):
+					blocked = true
+	check(f0.position.distance_to(p0) > 1.0, "they move (%.1f m in 30 s)" % f0.position.distance_to(p0))
+	check(not blocked, "no one walks through a desk, bench or planter")
 	# People at the bar.
 	p.use_desk("bar")
 	await process_frame

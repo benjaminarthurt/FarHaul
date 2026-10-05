@@ -6,12 +6,31 @@ terminal all come back to it (`Session.PLACE_SCENE`).
 
 | Where | Room | Desks |
 |---|---|---|
-| Port, fuel depot, belt works, moon base station | Concourse, 44 × 14 m, with a long window | Freight office, fuel and repairs, shipyard (ports only), bar and bunks |
+| Port, fuel depot, belt works, moon base station | Concourse, 26 × 10 m to 56 × 16 m by the system's tier, with a long window | Freight office, fuel and repairs, shipyard (ports only), bar and bunks |
 | Moon base pad | Hab, 20 × 20 m, under a dome | Dispatch, survey lab, suit store, pad fuel and repairs |
 | Mining camp | Foreman's hut, 14 × 9 m | Foreman, ore and parts exchange |
 
+Each system's places are built in its own style (architecture, tier and role): see
+[identity.md](identity.md).
+
 Every place also has a **terminal** (the old station menu, also on T) and a **gate** or airlock back to
 your ship.
+
+## Life in the place
+
+- **People** are low-poly figures (`scripts/figure.gd`). They breathe, glance about, and turn to look
+  at you when you come near.
+- **Travellers** walk loops round the concourse, and a technician walks round the hab, pausing as they
+  go. Their routes keep clear of the furniture. They stop rather than walk into you, and you bump into
+  them rather than through them.
+- **Through the concourse window** you can see:
+  - your own ship, as built, berthed at the end of a boarding arm that meets its airlock;
+  - the station's spine, with its trusses and red marker lights;
+  - the system's world, far off.
+- **The freight board** hangs over the terminal kiosk and lists what is posted here.
+- **Through the hab's and the hut's windows** you can see the moon's ground in its own colours,
+  boulders, the base's other domes, and your ship on its pad. The view is lit by a hard sun of its own
+  (visual layer 2), so the room stays lit from inside.
 
 ## Controls
 
@@ -48,3 +67,4 @@ button brings you back.
   taken at the freight office; the hull is repaired and paid for; going aboard puts you on your feet;
   the lab and exchange pay their rates.
 - `tests/capture_place.gd`: renders the three places to `/tmp/place_frames` (xvfb-run).
+- `tests/test_identity.gd`: every system's concourse, in its own style, still works (identity.md).

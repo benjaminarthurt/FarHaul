@@ -14,9 +14,9 @@ func _run() -> void:
 	var sys := Session.system_id()
 	var home := String(Session.profile.port_id)
 	var views := {
-		"port": [["01_concourse_gate", Vector3(-19.5, 0, 0), Vector3(1, 0.0, 0.0)], ["02_concourse_desks", Vector3(-8, 0, -4), Vector3(0.2, 0, 1)], ["03_concourse_bar", Vector3(10, 0, 1), Vector3(0.6, 0, 1)]],
-		"pad": [["04_hab", Vector3(-7.5, 0, 0), Vector3(1, 0, 0.2)], ["05_hab_lab", Vector3(2, 0, 0), Vector3(1, 0, -0.3)]],
-		"camp": [["06_hut", Vector3(-4.8, 0, -1), Vector3(1, 0, 0.1)]],
+		"port": [["01_concourse_gate", Vector3(-19.5, 0, 0), Vector3(1, 0.0, 0.0)], ["09_window", Vector3(2, 0, -3.0), Vector3(-0.25, 0, -1)], ["02_concourse_desks", Vector3(-8, 0, -4), Vector3(0.2, 0, 1)], ["03_concourse_bar", Vector3(10, 0, 1), Vector3(0.6, 0, 1)]],
+		"pad": [["04_hab", Vector3(-7.5, 0, 0), Vector3(1, 0, 0.2)], ["05_hab_lab", Vector3(2, 0, 0), Vector3(1, 0, -0.3)], ["10_hab_window", Vector3(-4, 0, -6.5), Vector3(0.35, 0, -1)]],
+		"camp": [["06_hut", Vector3(-4.8, 0, -1), Vector3(1, 0, 0.1)], ["11_hut_window", Vector3(-1.5, 0, 1.0), Vector3(0.3, 0, 1)]],
 	}
 	for k in views:
 		Session.profile["port_id"] = home if k == "port" else sys + LocalSpace.SEP + k

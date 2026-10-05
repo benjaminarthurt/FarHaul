@@ -95,7 +95,7 @@ static func _cockpit(root: Node3D) -> void:
 	var screen_x := [-1.05, -0.38, 0.38, 1.05]
 	for i in 4:
 		_b(top, Vector3(screen_x[i], 0.06, -0.14), Vector3(0.55, 0.02, 0.34), dark)
-		_b(top, Vector3(screen_x[i], 0.075, -0.14), Vector3(0.48, 0.01, 0.27), glow(screen_cols[i], 1.1))
+		_b(top, Vector3(screen_x[i], 0.075, -0.14), Vector3(0.48, 0.01, 0.27), glow((screen_cols[i] as Color).darkened(0.35), 0.6))
 	_buttons(top, Vector3(-1.2, 0.05, 0.16), 13, 2, 0.2, 0.12, 3, 1.0)
 
 	# Overhead panel: rows of toggles and breakers above the pilots.
