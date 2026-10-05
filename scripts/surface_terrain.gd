@@ -95,7 +95,10 @@ func build_mesh(size: float, cells: int, ground: Color, rock: Color) -> MeshInst
 				var b: Vector3 = q[tri[1]]
 				var c: Vector3 = q[tri[2]]
 				var n := (c - a).cross(b - a).normalized()
-				var col := ground.lerp(rock, clampf((1.0 - n.y) * 6.0, 0.0, 1.0))
+				var mid := (a + b + c) / 3.0
+				var patch := 0.5 + 0.25 * sin(mid.x * 0.0071 + mid.z * 0.0043) + 0.25 * sin(mid.x * 0.019 - mid.z * 0.023 + 1.7)
+				var col := ground.lerp(rock, clampf((1.0 - n.y) * 6.0, 0.0, 1.0)) * (0.86 + 0.28 * patch)   # broad lighter and darker patches
+				col.a = 1.0
 				for v in [a, b, c]:
 					verts[w] = v
 					norms[w] = n

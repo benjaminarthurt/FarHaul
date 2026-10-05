@@ -90,3 +90,95 @@ static func hazard_material() -> StandardMaterial3D:
 	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	m.roughness = 0.8
 	return m
+
+
+# --- Moon ground -------------------------------------------------------------------------------------
+
+const REGOLITH_TILE_M := 7.0   ## one regolith texture covers this many metres of ground
+
+static var _regolith: ImageTexture
+static var _regolith_n: ImageTexture
+static var _ground_mat: StandardMaterial3D
+static var _rock_mats := {}
+
+
+## Dusty ground with grit, small stones and the odd footprint-sized dimple, tiling seamlessly.
+static func regolith() -> ImageTexture:
+	if _regolith != null:
+		return _regolith
+	var n := 256
+	var fine := FastNoiseLite.new()
+	fine.seed = 11
+	fine.frequency = 0.06
+	fine.fractal_octaves = 4
+	var grit: Image = fine.get_seamless_image(n, n)
+	var img := Image.create(n, n, false, Image.FORMAT_RGB8)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 5
+	for y in n:
+		for x in n:
+			var v := 0.78 + grit.get_pixel(x, y).r * 0.32 + rng.randf_range(-0.05, 0.05)
+			img.set_pixel(x, y, Color(v, v, v))
+	for i in 60:   # pebbles: lit on the sun side, a soft shadow on the other
+		var c := Vector2(rng.randf() * n, rng.randf() * n)
+		var r := rng.randf_range(0.8, 2.6)
+		for dy in range(-4, 5):
+			for dx in range(-4, 5):
+				var off := Vector2(dx, dy)
+				var d := off.length()
+				var shadow := (off - Vector2(0.9, 0.9)).length()
+				var k := 1.0
+				if d <= r:
+					k = lerpf(1.1, 0.95, clampf((off.x + off.y) / (2.0 * r) + 0.5, 0.0, 1.0))
+				elif shadow <= r:
+					k = 0.82
+				else:
+					continue
+				var p := Vector2i(posmod(int(c.x) + dx, n), posmod(int(c.y) + dy, n))
+				var col := img.get_pixelv(p)
+				img.set_pixelv(p, Color(col.r * k, col.g * k, col.b * k))
+	var bump := img.duplicate() as Image
+	bump.bump_map_to_normal_map(5.0)
+	img.generate_mipmaps()
+	bump.generate_mipmaps()
+	_regolith = ImageTexture.create_from_image(img)
+	_regolith_n = ImageTexture.create_from_image(bump)
+	return _regolith
+
+
+## The moon's ground: vertex colours (the body's ground and rock tints) times the regolith texture,
+## mapped by world position so it lines up across the whole terrain.
+static func ground_material() -> StandardMaterial3D:
+	if _ground_mat != null:
+		return _ground_mat
+	var m := StandardMaterial3D.new()
+	m.vertex_color_use_as_albedo = true
+	m.albedo_texture = regolith()
+	m.normal_enabled = true
+	m.normal_texture = _regolith_n
+	m.normal_scale = 0.8
+	m.roughness = 1.0
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = true
+	m.uv1_scale = Vector3.ONE / REGOLITH_TILE_M
+	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	_ground_mat = m
+	return m
+
+
+## Boulders: the ground's texture, coarser, in the body's rock colour.
+static func rock_material(col: Color) -> StandardMaterial3D:
+	var key := col.to_html()
+	if _rock_mats.has(key):
+		return _rock_mats[key]
+	var m := StandardMaterial3D.new()
+	m.albedo_color = col
+	m.albedo_texture = regolith()
+	m.normal_enabled = true
+	m.normal_texture = _regolith_n
+	m.normal_scale = 1.5
+	m.roughness = 1.0
+	m.uv1_triplanar = true
+	m.uv1_scale = Vector3.ONE * 0.35
+	_rock_mats[key] = m
+	return m

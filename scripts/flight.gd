@@ -75,6 +75,9 @@ var _ground_mesh: MeshInstance3D
 var _ground_terrain: SurfaceTerrain
 var _hazards_shown := 0
 var _hazard_t := -100.0
+var sounds: WorldAudio         ## room tone, engines, the suit's breathing, footsteps, cues
+var _step_acc := 0.0
+var _last_feet := Vector3.INF
 var ops: SurfaceOps            ## the suit's air, jets and scanner, mission points and crates (on the moon)
 
 
@@ -82,6 +85,8 @@ func _ready() -> void:
 	_build_world()
 	_build_ship()
 	_build_hud()
+	sounds = WorldAudio.new()
+	add_child(sounds)
 	GameSettings.apply_scene(self, 150.0)
 	if not Session.flight_job.is_empty():
 		job = Session.flight_job
@@ -530,6 +535,7 @@ func _process(delta: float) -> void:
 	_update_hud()
 	view.set_flames(model.throttle > 0.02 and model.has_fuel())
 	view.set_lift_flames(model.lift > 0.03 and model.has_fuel())
+	_mix_audio(delta)
 	for ring in station.get_children():
 		if ring.has_meta("spin"):
 			ring.rotate_z(delta * 0.05)
@@ -1073,6 +1079,7 @@ func _build_moon(body: Dictionary) -> void:
 	add_child(moon)
 	var ground := _ground_mesh if _ground_mesh != null else _ground_for(model.terrain)
 	ground.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF   # receives shadows; casting onto itself only made acne
+	ground.material_override = SurfaceTextures.ground_material()
 	moon.add_child(ground)
 	_build_base_pad()
 	_build_camp()
@@ -1215,7 +1222,8 @@ func _build_wreck() -> void:
 	var root := Node3D.new()
 	root.position = Vector3(w.x, model.terrain.height(w.x, w.y), w.y)
 	moon.add_child(root)
-	var hull := Interiors.flat(Color(0.35, 0.38, 0.42), 0.7, 0.4)
+	var hull := Interiors.flat(Color(0.42, 0.45, 0.5), 0.7, 0.4)
+	SurfaceTextures.apply_panel(hull)   # plating, like a ship's hull
 	var burnt := Interiors.flat(Color(0.12, 0.11, 0.1), 0.9)
 	var body := MeshInstance3D.new()
 	var bb := BoxMesh.new()
@@ -1322,7 +1330,8 @@ func _build_sites() -> void:
 	rock.rings = 4
 	var body := _body()
 	var gc: Array = body.get("ground", [0.42, 0.41, 0.40])
-	rock.material = Interiors.flat(Color(float(gc[0]), float(gc[1]), float(gc[2])).darkened(0.3), 1.0)
+	var rc: Array = body.get("rock", [0.3, 0.29, 0.28])
+	rock.material = SurfaceTextures.rock_material(Color(float(gc[0]), float(gc[1]), float(gc[2])).lerp(Color(float(rc[0]), float(rc[1]), float(rc[2])), 0.4).lightened(0.25))
 	mm.mesh = rock
 	mm.instance_count = rocks.size()
 	for i in rocks.size():
@@ -1349,13 +1358,7 @@ func _build_finds() -> void:
 		var z := float(f.z)
 		var node := Node3D.new()
 		node.position = Vector3(x, model.terrain.height(x, z), z)
-		var crystal := MeshInstance3D.new()
-		var prism := PrismMesh.new()
-		prism.size = look[2]
-		prism.material = Interiors.glow(look[0], 1.6)
-		crystal.mesh = prism
-		crystal.position = Vector3(0, float(look[2].y) * 0.5, 0)
-		node.add_child(crystal)
+		_find_mesh(node, String(f.kind), look[0], look[2], hash(String(f.id)))
 		var tag := Label3D.new()
 		tag.text = look[1]
 		tag.font_size = 28
@@ -1367,6 +1370,52 @@ func _build_finds() -> void:
 		node.add_child(tag)
 		moon.add_child(node)
 		find_nodes[String(f.id)] = node
+
+
+## What a find looks like on the ground: a cluster of pointed crystals (samples, glass), or a frosted
+## core of ice half-buried in a little pile of grit.
+func _find_mesh(node: Node3D, kind: String, col: Color, size: Vector3, seed_v: int) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_v
+	var glow := Interiors.glow(col, 1.2 if kind == "rare" else 0.9)
+	var grit := MeshInstance3D.new()   # the little mound it sits in
+	var mound := SphereMesh.new()
+	mound.radius = size.x * 0.9
+	mound.height = size.x * 0.5
+	mound.radial_segments = 8
+	mound.rings = 3
+	mound.material = SurfaceTextures.rock_material(Color(0.5, 0.48, 0.46))
+	grit.mesh = mound
+	grit.position = Vector3(0, -size.x * 0.12, 0)
+	node.add_child(grit)
+	if kind == "ice":
+		var core := MeshInstance3D.new()
+		var cyl := CylinderMesh.new()
+		cyl.top_radius = size.x * 0.32
+		cyl.bottom_radius = size.x * 0.38
+		cyl.height = size.y * 1.2
+		cyl.radial_segments = 6
+		cyl.material = glow
+		core.mesh = cyl
+		core.rotation_degrees = Vector3(rng.randf_range(50, 70), rng.randf() * 360.0, 0)
+		core.position = Vector3(0, size.y * 0.2, 0)
+		node.add_child(core)
+		return
+	for i in (5 if kind == "rare" else 3):   # pointed crystals leaning out from the middle
+		var shard := MeshInstance3D.new()
+		var c := CylinderMesh.new()
+		var h := size.y * rng.randf_range(0.55, 1.0)
+		c.top_radius = 0.0
+		c.bottom_radius = size.x * rng.randf_range(0.14, 0.22)
+		c.height = h
+		c.radial_segments = 5
+		c.rings = 1
+		c.material = glow
+		shard.mesh = c
+		var lean := Vector3(rng.randf_range(-25, 25), rng.randf() * 360.0, rng.randf_range(-25, 25)) if i > 0 else Vector3.ZERO
+		shard.rotation_degrees = lean
+		shard.position = Vector3(rng.randf_range(-0.12, 0.12), h * 0.45, rng.randf_range(-0.12, 0.12))
+		node.add_child(shard)
 
 
 ## The find within reach of the suit, or {}.
@@ -1389,6 +1438,8 @@ func take_find() -> String:
 	if f.is_empty():
 		return ""
 	var r := Session.take_find(String(f.id))
+	if bool(r.ok) and sounds != null:
+		sounds.play("done")
 	if bool(r.ok) and find_nodes.has(String(f.id)):
 		(find_nodes[String(f.id)] as Node3D).visible = false
 	_find_message = String(r.message)
@@ -1604,6 +1655,35 @@ func _exit_tree() -> void:
 	if _ground_task >= 0:
 		WorkerThreadPool.wait_for_task_completion(_ground_task)
 		_ground_task = -1
+
+
+## Engines heard through the hull (not out on an airless moon), the ship's own hum aboard, the suit's
+## breathing outside, and footsteps on deck or in the dust.
+func _mix_audio(_delta: float) -> void:
+	var fuel := model.has_fuel()
+	var thr := absf(model.throttle) if fuel else 0.0
+	var lift := model.lift if fuel else 0.0
+	sounds.level("engine", 0.0 if outside else thr, 0.8 + 0.4 * thr)
+	sounds.level("lift", 0.0 if outside else lift, 0.9 + 0.3 * lift)
+	sounds.level("ship_hum", 0.0 if outside else (1.0 if walking else 0.55))
+	var running := Input.is_key_pressed(KEY_SHIFT)
+	sounds.level("breath", (1.0 if running else 0.7) if outside else 0.0, 1.15 if running else 1.0)
+	var feet := Vector3.INF
+	var on_ground := true
+	if outside and suit != null:
+		feet = suit.pos
+		on_ground = suit.on_ground
+	elif walking and walk != null:
+		feet = walk.pos
+	if feet == Vector3.INF or _last_feet == Vector3.INF:
+		_last_feet = feet
+		return
+	if on_ground:
+		_step_acc += Vector2(feet.x - _last_feet.x, feet.z - _last_feet.z).length()
+	_last_feet = feet
+	if _step_acc > (0.95 if running else 0.75):
+		_step_acc = 0.0
+		sounds.step("dust" if outside else "metal")
 
 
 ## Which surface site the ship is at: "pad" or "camp" (by the nearer pad).

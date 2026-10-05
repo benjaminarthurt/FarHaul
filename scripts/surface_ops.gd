@@ -18,6 +18,7 @@ var stack_root: Node3D       ## crates on the ground by the camp hut
 var hold_t := 0.0           ## seconds E has been held on a drill
 var site := ""              ## the surface site the ship is at: "pad" or "camp"
 var _blackout := false
+var _low_t := 0.0
 
 
 func setup(f: Node, at_site: String) -> void:
@@ -143,7 +144,13 @@ func point_in_reach() -> int:
 	return -1
 
 
+func _cue(name: String) -> void:
+	if flight.get("sounds") != null:
+		flight.sounds.play(name)
+
+
 func _point_done(i: int) -> String:
+	_cue("done")
 	var m := Session.mission()
 	m.done[i] = true
 	_mark_done(i, true)
@@ -212,8 +219,8 @@ func _set_carrying(on: bool) -> void:
 	carrying = on
 	if on and carry_node == null:
 		carry_node = _crate_mesh()
-		carry_node.scale = Vector3.ONE * 0.42
-		carry_node.position = Vector3(0, -0.62, -1.0)
+		carry_node.scale = Vector3.ONE * 0.38
+		carry_node.position = Vector3(0, -0.78, -1.15)
 		flight.camera.add_child(carry_node)
 	if carry_node != null:
 		carry_node.visible = on
@@ -258,6 +265,11 @@ func step(delta: float, running: bool) -> void:
 	var s := SurfaceWork.suit_cfg()
 	clock += delta
 	o2 -= delta * (float(s.get("run_o2_mult", 1.5)) if running else 1.0)
+	if o2 < o2_max * float(s.get("low_o2_frac", 0.2)) and o2 > 0.0:   # the low-air warning, every few seconds
+		_low_t -= delta
+		if _low_t <= 0.0:
+			_low_t = 4.0
+			_cue("low_air")
 	_update_tags()
 	var m := mission_here()
 	if not m.is_empty():
@@ -291,9 +303,11 @@ func use() -> String:
 	if not u.is_empty() and site == "camp":
 		if not carrying and hatch and int(u.done) < int(u.crates):
 			_set_carrying(true)
+			_cue("ui")
 			return _say("Crate %d of %d: carry it to the stack by the hut." % [int(u.done) + 1, int(u.crates)])
 		if carrying and flight.suit.distance_to(_ground(SurfaceWork.drop_xz().x, SurfaceWork.drop_xz().y)) <= float(SurfaceWork.unload_cfg().get("drop_radius_m", 6.0)):
 			_set_carrying(false)
+			_cue("thud")
 			var r := Session.crate_carried()
 			_refresh_stack()
 			return _say(String(r.message))

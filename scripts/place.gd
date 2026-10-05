@@ -24,6 +24,9 @@ var open_desk := ""
 var leaving := false
 var fade: ColorRect
 var _mats := {}
+var people: Array[Figure] = []
+var audio: WorldAudio
+var _step_acc := 0.0
 
 
 func _ready() -> void:
@@ -50,6 +53,9 @@ func _ready() -> void:
 	add_child(camera)
 	camera.current = true
 	_build_hud()
+	audio = WorldAudio.new()
+	add_child(audio)
+	audio.level("port_hum" if kind == "concourse" else "hab_hum", 1.0 if kind != "hut" else 0.7)
 	GameSettings.apply_scene(self, 60.0)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_apply_camera()
@@ -57,6 +63,8 @@ func _ready() -> void:
 	if Session.flash != "":
 		_say(Session.flash)
 		Session.flash = ""
+	fade.color.a = 1.0   # and in from black
+	create_tween().tween_property(fade, "color:a", 0.0, 0.35)
 
 
 # --- Building the place ------------------------------------------------------------------------------
@@ -104,7 +112,10 @@ func _box(pos: Vector3, size: Vector3, col: Color, solid := true, glow := false)
 
 ## A room: floor, ceiling and four walls (`window_north` cuts a long window in the north wall).
 func _room(w: float, d: float, h: float, wall: Color, floor_col: Color, window_north := false, ceiling := true) -> void:
-	_box(Vector3(0, -0.1, 0), Vector3(w, 0.2, d), floor_col, false)
+	var fl := _box(Vector3(0, -0.1, 0), Vector3(w, 0.2, d), floor_col, false)
+	var fm := Interiors.flat(floor_col, 0.75)
+	SurfaceTextures.apply_panel(fm)   # deck plating
+	(fl.mesh as BoxMesh).material = fm
 	if ceiling:
 		_box(Vector3(0, h + 0.1, 0), Vector3(w, 0.2, d), wall.darkened(0.25), false)
 	for side in [-1.0, 1.0]:
@@ -173,25 +184,75 @@ func _desk(id: String, label: String, pos: Vector3, face: Vector3, col: Color, s
 	desks.append({"id": id, "label": label, "pos": pos + face * 1.25})
 
 
-## A person: body, head and a coloured jacket.
-func _person(at: Vector3, face: Vector3, col: Color) -> void:
-	var body := MeshInstance3D.new()
-	var cap := CapsuleMesh.new()
-	cap.radius = 0.28
-	cap.height = 1.5
-	cap.material = _mat(col.lerp(Color(0.85, 0.85, 0.9), 0.35))
-	body.mesh = cap
-	body.position = at + Vector3(0, 1.05, 0)
-	add_child(body)
-	var head := MeshInstance3D.new()
-	var sph := SphereMesh.new()
-	sph.radius = 0.16
-	sph.height = 0.32
-	sph.material = _mat(Color(0.78, 0.62, 0.5))
-	head.mesh = sph
-	head.position = at + Vector3(0, 1.97, 0)
-	add_child(head)
-	(walker.furniture[0] as Array).append(Rect2(at.x - 0.3, at.z - 0.3, 0.6, 0.6))
+## A person (Figure) facing `face`, solid to walk into.
+func _person(at: Vector3, face: Vector3, col: Color, seated := false) -> Figure:
+	var f := Figure.make(col, hash("%s|%s" % [at, Session.day()]), seated)
+	f.position = at
+	f.rotation.y = atan2(-face.x, -face.z)
+	add_child(f)
+	people.append(f)
+	if not seated:
+		(walker.furniture[0] as Array).append(Rect2(at.x - 0.3, at.z - 0.3, 0.6, 0.6))
+	return f
+
+
+## A painted walkway line on the floor between two points.
+func _walk_line(from: Vector3, to: Vector3) -> void:
+	var mid := (from + to) * 0.5
+	var along := to - from
+	var size := Vector3(absf(along.x) + 0.12, 0.012, absf(along.z) + 0.12)
+	_box(Vector3(mid.x, 0.006, mid.z), size, Color(0.85, 0.65, 0.18), false)
+
+
+## A planter: a box of soil with a few round shrubs.
+func _planter(at: Vector3) -> void:
+	_box(at + Vector3(0, 0.3, 0), Vector3(1.6, 0.6, 0.8), Color(0.32, 0.33, 0.36))
+	var leaf := _mat(Color(0.22, 0.48, 0.25))
+	for i in 3:
+		var mi := MeshInstance3D.new()
+		var sph := SphereMesh.new()
+		sph.radius = 0.32 + 0.06 * i
+		sph.height = (0.32 + 0.06 * i) * 1.6
+		sph.radial_segments = 8
+		sph.rings = 4
+		sph.material = leaf
+		mi.mesh = sph
+		mi.position = at + Vector3(-0.5 + i * 0.5, 0.75 + 0.05 * i, 0)
+		add_child(mi)
+
+
+## A rack of glowing grow-trays.
+func _hydro_rack(at: Vector3) -> void:
+	_box(at + Vector3(0, 1.1, 0), Vector3(0.6, 2.2, 1.8), Color(0.55, 0.56, 0.58))
+	for k in 3:
+		_box(at + Vector3(0.1, 0.5 + k * 0.65, 0), Vector3(0.45, 0.2, 1.6), Color(0.3, 0.7, 0.3))
+		_box(at + Vector3(0.1, 0.78 + k * 0.65, 0), Vector3(0.45, 0.03, 1.6), Color(0.85, 0.45, 1.0), false, true)
+
+
+## A hanging screen listing the freight posted here, both sides.
+func _freight_board(at: Vector3, face := Vector3(0, 0, 1)) -> void:
+	var across := Vector3(-face.z, 0, face.x)
+	_box(at, Vector3(absf(across.x) * 4.6 + 0.12, 1.5, absf(across.z) * 4.6 + 0.12), Color(0.08, 0.09, 0.11), false)
+	for c in [-1.0, 1.0]:   # hanging cables
+		_box(at + across * c * 2.0 + Vector3(0, 1.3, 0), Vector3(0.04, 1.1, 0.04), Color(0.2, 0.2, 0.22), false)
+	var lines := PackedStringArray(["FREIGHT POSTED HERE"])
+	var offers := Contracts.offers_from(Session.system_id()) if Session.slot >= 0 else []
+	for o in offers.slice(0, 5):
+		var dest := String(LocalSpace.node(String(o.destination_port_id)).get("name", "")) if bool(o.get("local", false)) else String(Worlds.port(String(o.destination_port_id)).get("name", ""))
+		lines.append("%s  %.1f t  %s cr/t" % [dest.trim_prefix(String(Worlds.system(Session.system_id()).get("name", "")) + " ").substr(0, 22), float(o.offer), ShipStats.commas(int(o.rate))])
+	if offers.is_empty():
+		lines.append("NOTHING POSTED TODAY")
+	for side in [1.0, -1.0]:
+		var l := Label3D.new()
+		l.text = "\n".join(lines)
+		l.font_size = 32
+		l.pixel_size = 0.0056
+		l.modulate = Color(1.0, 0.75, 0.3)
+		l.outline_size = 0
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.position = at + face * side * 0.08
+		l.rotation.y = atan2(face.x * side, face.z * side)
+		add_child(l)
 
 
 ## The gate back aboard: a lit door with your ship's name over it.
@@ -216,7 +277,7 @@ func _big_sign(text: String, pos: Vector3, yaw: float) -> void:
 	var l := Label3D.new()
 	l.text = text
 	l.font_size = 120
-	l.pixel_size = 0.008
+	l.pixel_size = minf(0.008, 12.0 / (maxf(1.0, text.length()) * 120.0 * 0.62))   # fit a long name on the wall
 	l.modulate = Brand.AMBER
 	l.position = pos
 	l.rotation.y = yaw
@@ -247,6 +308,14 @@ func _build_concourse() -> void:
 	desks.append({"id": "terminal", "label": "Station terminal", "pos": Vector3(0, 0, -0.5)})
 	for x in [-9.0, 9.0]:
 		_box(Vector3(x, 0.25, -3.5), Vector3(4.0, 0.5, 0.8), Color(0.35, 0.3, 0.28))
+	_walk_line(Vector3(-21, 0, 0), Vector3(20, 0, 0))   # the walkway down the middle, and a line to each desk
+	for x in [-14.0, -5.0, 4.0, 14.0]:
+		_walk_line(Vector3(x, 0, 0.2), Vector3(x, 0, 3.6))
+	for x in [-17.0, -2.0, 7.0, 19.0]:
+		_planter(Vector3(x, 0, -5.6))
+	for x in [-16.0, -8.0, 0.0, 8.0, 16.0]:   # roof beams
+		_box(Vector3(x, 4.8, 0), Vector3(0.35, 0.3, 14.0), Color(0.3, 0.32, 0.36), false)
+	_freight_board(Vector3(0, 3.4, -1.5), Vector3(1, 0, 0))
 	_gate(Vector3(-21.8, 0, 0), Vector3(1, 0, 0), "BERTH 3  %s" % Session.ship_label().to_upper())
 	_big_sign(_place_name(), Vector3(21.7, 3.2, 0), -PI * 0.5)
 	walker.pos = Vector3(-19.5, 0, 0)
@@ -273,6 +342,10 @@ func _build_hab() -> void:
 	_box(Vector3(-2, 0.75, 1), Vector3(0.8, 1.5, 0.5), Color(0.16, 0.17, 0.2))
 	_box(Vector3(-2, 1.3, 1.26), Vector3(0.6, 0.4, 0.04), Color(0.3, 0.85, 1.0), false, true)
 	desks.append({"id": "terminal", "label": "Base terminal", "pos": Vector3(-2, 0, 2)})
+	for z in [-7.0, -4.5, 4.5, 7.0]:   # hydroponic racks either side of the airlock
+		_hydro_rack(Vector3(-9.2, 0, z))
+	_walk_line(Vector3(-9, 0, 0), Vector3(7, 0, 0))
+	_freight_board(Vector3(3.5, 3.0, 0), Vector3(-1, 0, 0))
 	_gate(Vector3(-9.8, 0, 0), Vector3(1, 0, 0), "AIRLOCK  PAD 1")
 	_big_sign(_place_name(), Vector3(0, 3.95, 9.8), PI)
 	walker.pos = Vector3(-7.5, 0, 0)
@@ -287,6 +360,12 @@ func _build_hut() -> void:
 	desks.append({"id": "terminal", "label": "Camp terminal", "pos": Vector3(1.5, 0, 2.6)})
 	for i in 3:   # crates
 		_box(Vector3(-3.5 + i * 1.3, 0.6, 3.6), Vector3(1.1, 1.2, 1.1), Color(0.45, 0.35, 0.2))
+	_box(Vector3(-2.0, 0.75, -0.4), Vector3(1.8, 0.08, 1.0), Color(0.4, 0.33, 0.24))   # a table, a worker on a break
+	_box(Vector3(-2.0, 0.37, -0.4), Vector3(0.12, 0.74, 0.12), Color(0.25, 0.22, 0.2), false)
+	_box(Vector3(-2.0, 0.45, -1.25), Vector3(0.5, 0.06, 0.5), Color(0.3, 0.3, 0.32), false)
+	_person(Vector3(-2.0, 0, -1.2), Vector3(0, 0, 1), Color(0.75, 0.45, 0.2), true)
+	for i in 4:   # suit lockers on the back wall
+		_box(Vector3(2.6 + i * 0.7, 1.0, -4.15), Vector3(0.6, 2.0, 0.4), Color(0.35, 0.4, 0.38))
 	_gate(Vector3(-6.8, 0, 0), Vector3(1, 0, 0), "AIRLOCK")
 	walker.pos = Vector3(-4.8, 0, -1)
 	walker.face(Vector3(1, 0, 0))
@@ -310,8 +389,16 @@ func _process(delta: float) -> void:
 		if Input.is_key_pressed(KEY_UP): pitch += 1.0
 		if Input.is_key_pressed(KEY_DOWN): pitch -= 1.0
 		walker.look(yaw * KEY_TURN * delta, pitch * KEY_TURN * delta)
+		var before := walker.pos
 		walker.step(minf(delta, 0.05), dir, Input.is_key_pressed(KEY_SHIFT))
+		_step_acc += Vector2(walker.pos.x - before.x, walker.pos.z - before.z).length()
+		if _step_acc > (0.95 if Input.is_key_pressed(KEY_SHIFT) else 0.75):
+			_step_acc = 0.0
+			audio.step("metal")
 	_apply_camera()
+	var eye := walker.eye()
+	for f in people:   # people look at you when you come near
+		f.look_at_point = eye if f.position.distance_to(Vector3(eye.x, f.position.y, eye.z)) < 6.0 else Vector3.INF
 	var d := desk_in_reach()
 	prompt.text = "" if open_desk != "" else ("E: %s" % String(d.label) if not d.is_empty() else "")
 
@@ -476,6 +563,7 @@ func _action(text: String, cb: Callable, enabled := true) -> Button:
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	Brand.style_button(b, 15)
 	b.disabled = not enabled
+	b.pressed.connect(func() -> void: audio.play("ui"))
 	b.pressed.connect(cb)
 	panel_list.add_child(b)
 	return b
@@ -486,7 +574,9 @@ func _go(scene: String) -> void:
 		return
 	leaving = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	get_tree().change_scene_to_file(scene)
+	var tw := create_tween()   # a short fade to black, then the next place
+	tw.tween_property(fade, "color:a", 1.0, 0.25)
+	tw.tween_callback(func() -> void: get_tree().change_scene_to_file(scene))
 
 
 ## Open a desk (also callable from tests). Most desks show a panel; the terminal and gate move on.
@@ -495,6 +585,7 @@ func use_desk(id: String) -> void:
 		_go(Session.DOCK_SCENE)
 		return
 	open_desk = id
+	audio.play("ui")
 	panel.visible = true
 	panel_status.text = ""
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

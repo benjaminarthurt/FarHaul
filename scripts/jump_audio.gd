@@ -36,7 +36,7 @@ func _player(file: String, looped: bool) -> AudioStreamPlayer:
 		s = s.duplicate()
 		s.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		s.loop_begin = 0
-		s.loop_end = int(s.data.size() / 2)    # 16-bit mono: two bytes a sample
+		s.loop_end = int(s.get_length() * s.mix_rate)   # in samples (the bytes are compressed, so not data.size())
 	p.stream = s
 	p.bus = GameSettings.bus("Effects")
 	p.volume_db = -80.0

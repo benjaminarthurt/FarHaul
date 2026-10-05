@@ -72,6 +72,8 @@ func _run() -> void:
 	check(is_equal_approx(f.suit.speed_mult, 1.3), "grip boots: 30% faster")
 	check(not f.ops.scan().is_empty(), "the scanner points to the mission: %s" % [f.ops.scan()])
 	check(f.ops.point_nodes.size() == 3, "three survey points are marked")
+	f._mix_audio(0.1)
+	check(float(f.sounds._levels.get("breath", 0.0)) > 0.0 and float(f.sounds._levels.get("engine", 1.0)) == 0.0, "outside: you hear your breathing, not the engines")
 	cr = int(Session.profile.credits)
 	var rep := int(Session.profile.get("rep", 0))
 	var pts: Array = m.points
@@ -80,6 +82,7 @@ func _run() -> void:
 		f.ops.step(0.5, false)
 		f.ops.use()
 	check(Session.mission().is_empty(), "all three beacons set: %s" % f.ops.message)
+	check("done" in f.sounds.played, "a chime for each beacon set")
 	check(int(Session.profile.credits) == cr + int(m.pay) and int(Session.profile.rep) == rep + 2, "paid %d cr and standing +2" % int(m.pay))
 	# Out of time.
 	var m2 := _find_mission("rescue")

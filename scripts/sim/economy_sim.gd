@@ -34,6 +34,9 @@ var _id := 0
 var _open_idx := {}                  # "buyer|commodity" -> orders still being delivered (so reorder checks do not scan every order ever placed)
 var _seg_cache := {}                 # (route, ports) -> segment list; routes and hubs are fixed for a scenario
 var check_every_hours := 24          # how often the full ledger audit runs (it walks every stock record)
+var search_cache := true             # off only to prove the skip changes nothing (tests)
+var _taken_this_hour := 0
+var _nothing_for := {}               # carrier id -> the board it last searched and found nothing on (see _dispatch_carriers)
 
 # ---------------------------------------------------------------- loading
 
@@ -635,10 +638,21 @@ func _dispatch_carriers() -> void:
 	order.sort_custom(func(a, b): return bool(a.get("first_look", false)) and not bool(b.get("first_look", false)))
 	var groups_all := _group_by_pair(all_offered)
 	var groups_seen := _group_by_pair(offered)
+	# An idle carrier that found nothing worth taking last hour will find nothing again unless the board
+	# it sees has changed or a day has turned (rates and fuel prices move daily). Skipping those repeat
+	# searches is most of the cost of an hour.
+	var sig_all := _board_sig(all_offered)
+	var sig_seen := _board_sig(offered)
+	_taken_this_hour = 0   # a carrier ahead in the queue taking freight changes the board for the rest
 	for c in order:
 		if c["state"] != "idle" or c["manual"]:
 			continue
 		var offered_here: Array = all_offered if bool(c.get("first_look", false)) else offered
+		var sig := "%s|%s|%d|%d" % [sig_all if bool(c.get("first_look", false)) else sig_seen, c["sys"], hour / 24, _taken_this_hour]
+		if search_cache and String(_nothing_for.get(c["id"], "")) == sig:
+			if c["sys"] != c["home"] and hour - c["idle_since"] >= int(p["idle_return_hours"]):
+				_return_home(c)
+			continue
 		var best: Dictionary = {}
 		var seen := {}
 		for k in offered_here:
@@ -663,9 +677,21 @@ func _dispatch_carriers() -> void:
 			if best.is_empty() or ev["score"] > best["score"]:
 				best = ev
 		if not best.is_empty():
+			_nothing_for.erase(c["id"])
 			_accept(c, best)
-		elif c["sys"] != c["home"] and hour - c["idle_since"] >= int(p["idle_return_hours"]):
-			_return_home(c)
+		else:
+			_nothing_for[c["id"]] = sig
+			if c["sys"] != c["home"] and hour - c["idle_since"] >= int(p["idle_return_hours"]):
+				_return_home(c)
+
+## A cheap fingerprint of a list of offered contracts: which ones, how big (a lot shrinks when part of
+## it is taken) and what they pay.
+func _board_sig(list: Array) -> String:
+	var h := 0
+	for k in list:
+		h = (h * 31 + hash([k["id"], k["scu"], k["mass_kg"], k["rate"]])) & 0x7FFFFFFF
+	return "%d:%d" % [list.size(), h]
+
 
 ## Idle ships with no work head back to their home port, where their freight originates.
 func _return_home(c: Dictionary) -> void:
@@ -790,6 +816,7 @@ func _evaluate(c: Dictionary, bundle: Array) -> Dictionary:
 	return {"bundle": bundle, "margin": margin, "margin_frac": margin / revenue, "revenue": revenue, "repo": repo}
 
 func _accept(c: Dictionary, ev: Dictionary) -> void:
+	_taken_this_hour += 1
 	var bundle: Array = ev["bundle"]
 	if bundle[0].has("parent"):
 		bundle[0] = _split_for(bundle[0])
