@@ -44,8 +44,8 @@
       <p class="note">One portable file for 64-bit Windows, about 42 MB zipped. Unzip it anywhere and run FarHaul.exe; nothing is installed. Needs a mouse and keyboard.</p>
       <dl class="slip">
         <div><dt>Version</dt><dd>0.1.0, prototype</dd></div>
-        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, get up from the helm and walk the ship, land on moons</dd></div>
-        <div><dt>Not yet</dt><dd>Planets with air, space walks, crew</dd></div>
+        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, walk your ship and the port you are berthed at, take work from people at the bar, land on moons and work outside in a suit</dd></div>
+        <div><dt>Not yet</dt><dd>Planets with air, space walks, crew, combat</dd></div>
       </dl>
     </div>
     <figure>
@@ -64,15 +64,15 @@
     <h2 id="vision-h">The game, and where it is today</h2>
     <p class="lede">Far Haul is about owning a working spaceship. The ship is a place you walk through, and freight is how you pay for it.</p>
     <p>You start as an independent operator with a cheap ship and enough money to keep it flying. You take contracts, load containers, work out whether a job is worth the fuel, and run goods between established worlds. Over time you build bigger, buy range, and head out past the end of the charts, where there is no repair yard, no fuel depot and nobody to call. The farther you go, the less is there to help you.</p>
-    <p>What you can play today: design a ship from modules and check that it works, take freight from a simulated economy of eighteen systems, and fly it. You start with a sublight ship, so your first jobs are runs between the port, fuel depot, moon and belt of your own system, flown by hand or left to the autopilot. Save up for an FTL drive and the other systems open up, with a jump that takes you there without a cut. You can also get up from the helm and walk the ship while it flies. Landing and space walks are still on the drawing board.</p>
+    <p>What you can play today: design a ship from modules and check that it works, take freight from a simulated economy of eighteen systems, and fly it. You start with a sublight ship, so your first jobs are runs between the port, fuel depot, moon and belt of your own system, flown by hand or left to the autopilot. Save up for an FTL drive and the other systems open up, with a jump that takes you there without a cut. You can also get up from the helm and walk the ship while it flies. When you are berthed you are on your feet in the port, walking between the freight office, the fuel desk, the shipyard and the bar, where people ask for rush jobs, passage and sealed crates. Fit lander legs and every moon opens up: a base and a mining camp to land at, missions to do on foot in a suit, and an outpost, an ice mine and a deep crater to fly out to. Space walks are next.</p>
 
     <h3>Build order</h3>
     <ol class="chain">
       <li class="now">Ship builder<small>Playable now</small></li>
       <li class="now">Flight<small>Playable now, with star jumps</small></li>
-      <li class="now">Walking inside<small>Playable now, rough</small></li>
-      <li class="now">Landing and exploring<small>Moons now, rough</small></li>
-      <li>Tethered space walks<small>Repair the outside</small></li>
+      <li class="now">Walking inside<small>Ships and ports, rough</small></li>
+      <li class="now">Landing and exploring<small>Moons and suit work, rough</small></li>
+      <li>Tethered space walks<small>Next: repair the outside</small></li>
     </ol>
 
     <h3>Area by area</h3>
@@ -81,17 +81,17 @@
         <thead><tr><th scope="col">Area</th><th scope="col">What the game will be</th><th scope="col">Today</th><th scope="col">Status</th></tr></thead>
         <tbody>
           <tr><th scope="row">Ship building</th><td>Ships assembled from physical modules: cockpit, hull, cargo holds, tanks, engines, radiators. Every compartment exists in the world. Balance, power, heat and thrust all matter.</td><td>A 3 m grid builder. Parts snap together at doors and mounts. Live checks for sealed hull, airlock, power, cooling, thrust-to-weight, centre of mass and an FTL drive. Undo, redo, autosave.</td><td><span class="chip playable">Playable</span></td></tr>
-          <tr><th scope="row">Menus, saves and the dock</th><td>A proper start: pick who you are and where you begin, keep several games, and always return to the last place you stood.</td><td>New game with name, species, difficulty and starting system. Five save slots. A dock at your starting system's yard with the contract board, the shipyard, the helm and your running costs. The theme song plays from the splash and loops on the title screen. Settings are placeholders. Species gives no bonuses.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Menus, saves and ports</th><td>A proper start: pick who you are and where you begin, keep several games, and always return to the last place you stood.</td><td>New game with name, species, difficulty and starting system. Five save slots. You arrive on foot in a port's concourse, with desks for freight, fuel and repairs, the shipyard and a bar; a moon base pad has a domed hab with a survey lab and suit store, and a mining camp has the foreman's hut. The old station menu is still there at the terminal. Settings cover graphics quality, display, volume and mouse. Species gives no bonuses.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Known space</th><td>Eighteen systems from the five home worlds out to the last settlement at Lastlight, joined by trade routes and named corridors. Every place needs something from somewhere else.</td><td>Written as data and now running: five species, eighteen systems, nineteen routes. The economy simulation uses all of it, and the new game screen reads it for species and starting systems.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Interiors</th><td>Cramped, practical, lived-in. Cabins, galleys, engine rooms and cockpits that look like they were built to do a job.</td><td>Each part has its own fitted interior: cockpit seats and controls, a reactor room, crew quarters with bunks and a galley, an airlock with suit lockers. You can see them from the builder camera.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>A contract board with live freight, deadlines and pay. You load, deliver and get paid. Sublight ships get in-system runs between the port, depot, moon and belt; interstellar freight needs an FTL drive. The hold is limited by what the tank can lift.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Freight and contracts</th><td>Cargo in standard containers, with real mass, value and handling needs. Demand that follows what each place makes and uses.</td><td>A contract board with live freight, deadlines and pay. You load, deliver and get paid. Sublight ships get in-system runs between the port, depot, moon and belt; interstellar freight needs an FTL drive. The hold is limited by what the tank can lift. People at the bar, dispatch and the camp foreman offer rush jobs, passengers and sealed crates, and your standing with them grows with good work.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Flying</th><td>Fly from the pilot seat. Fuel, range and an off-centre thrust line that costs manoeuvring propellant.</td><td>Free flight from the dock, flown local runs (burn, flip, brake, time compression, docking at the far station) and star jumps with a spool-up, streaking stars, a flash and a slowdown. Fuel, heat, power and hull damage all count. Jump sounds are synthesised placeholders.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Walking the ship</th><td>Leave the seat and walk the corridors while underway. A longer ship means a longer walk to engineering.</td><td>Press G at the helm to get up and walk in first person, with deck gravity. Walls, doorways, furniture and loaded containers block you. Ladder shafts change deck, and the airlock lets you off at a berth. The ship flies on as you left it.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Landing and exploring</th><td>Land on rocky worlds and moons, then explore by ship, rover and on foot.</td><td>Every system has a moon (grey, ice, dust or heavy, each with its own gravity) with a base pad and a mining camp you land on by hand. Lander legs open surface-only freight that pays more, runs start by lifting off the surface, and on foot you can bag rock samples and strip a wrecked lander to sell.</td><td><span class="chip rough">Rough</span></td></tr>
+          <tr><th scope="row">Walking the ship</th><td>Leave the seat and walk the corridors while underway. A longer ship means a longer walk to engineering.</td><td>Press G at the helm to get up and walk in first person, with deck gravity. Walls, doorways, furniture and loaded containers block you. Ladder shafts change deck, and the airlock lets you off at a berth. The ship flies on as you left it. Ports, the moon hab and the camp hut are walkable too.</td><td><span class="chip rough">Rough</span></td></tr>
+          <tr><th scope="row">Landing and exploring</th><td>Land on rocky worlds and moons, then explore by ship, rover and on foot.</td><td>Every system has a moon (grey, ice, dust or heavy, each with its own gravity) with a base pad and a mining camp you land on by hand. Lander legs open surface-only freight that pays more, and runs start by lifting off the surface. In a suit you have air to watch and kit to buy (bigger tanks, boots, a scanner, suit jets), timed missions to do, crates to carry at the camp, and samples, salvage, ice and rare crystals to find. Each moon also has an abandoned outpost, an ice mine and a deep glass crater, with boulders and slopes to land around.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Space walks and repair</th><td>Go out through the airlock on a tether to fix radiators, engines and hull damage.</td><td>Airlocks exist and the builder checks for one. Nothing outside the hull yet.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Living economy</th><td>Freight demand that comes from what places produce and need. Frontier outposts that grow because you supplied them.</td><td>A simulation of production, stock, orders and shipping carriers across all eighteen systems runs alongside you. Easy, Normal and Hard change your costs and pay, not the world; Hard sits close to insolvency. Frontier growth is not built.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Manufacturers and wear</th><td>Parts from companies with recognisable engineering habits. Components wear and fail where you can see it.</td><td>One generic part for each job. Hull damage from collisions is charged as repairs.</td><td><span class="chip planned">Planned</span></td></tr>
-          <tr><th scope="row">Crew, passengers, salvage, combat</th><td>People who live aboard, wrecks worth boarding, and danger that is a cost to avoid rather than the main event.</td><td>None of these yet.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Manufacturers and wear</th><td>Parts from companies with recognisable engineering habits. Components wear and fail where you can see it.</td><td>One generic part for each job. Hull damage stays with the ship until you pay a repair desk, and prices differ from port to port.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Crew, passengers, salvage, combat</th><td>People who live aboard, wrecks worth boarding, and danger that is a cost to avoid rather than the main event.</td><td>Passengers ride along in spare berths. Wrecks and an abandoned outpost on the moons can be stripped for salvage. No crew or combat yet.</td><td><span class="chip rough">Rough</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -108,6 +108,26 @@
       <figure>
         <button class="shot" data-full="img/jump.jpg" data-cap="Mid star jump." aria-label="Open the star jump full size"><img src="img/jump.jpg" width="1280" height="720" loading="lazy" alt="The ship in the middle of a star jump, with the stars stretched into long streaks around it."></button>
         <figcaption><strong>Star jump.</strong> Spool, streaks, a flash and a slowdown. No cut scene: you stay in the ship the whole way.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/concourse.jpg" data-cap="The concourse." aria-label="Open the concourse full size"><img src="img/concourse.jpg" width="1280" height="720" loading="lazy" alt="A long station concourse with windows on the left and lit desks on the right, the freight office nearest."></button>
+        <figcaption><strong>The concourse.</strong> Berthed, you walk the port: freight office, fuel and repairs, shipyard and bar, with the gate to your ship behind you.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/bar-people.jpg" data-cap="People with work at the bar." aria-label="Open the bar full size"><img src="img/bar-people.jpg" width="1280" height="720" loading="lazy" alt="The bar desk panel listing passengers asking for passage and a sealed crate locked until the captain is better known."></button>
+        <figcaption><strong>The bar.</strong> People ask in person for passage, rush jobs and sealed crates. Some won't deal with you until you're known.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/hab.jpg" data-cap="The moon base hab." aria-label="Open the hab full size"><img src="img/hab.jpg" width="1280" height="720" loading="lazy" alt="Inside a moon base hab with desks for the survey lab, the suit store and pad fuel."></button>
+        <figcaption><strong>The hab.</strong> On a moon base pad: dispatch, a survey lab that pays well for samples, and the suit store.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/survey.jpg" data-cap="A survey mission on foot." aria-label="Open the survey mission full size"><img src="img/survey.jpg" width="1280" height="720" loading="lazy" alt="On the moon's surface in a suit, a survey point marked with a lamp and the suit's air, jets and mission clock in the corner."></button>
+        <figcaption><strong>Surface work.</strong> Walk out to the marked points before the clock or your air runs out. The scanner points the way.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/crater.jpg" data-cap="The glass crater." aria-label="Open the glass crater full size"><img src="img/crater.jpg" width="1280" height="720" loading="lazy" alt="A deep crater seen from above, its walls in shadow and crystal tags on the floor."></button>
+        <figcaption><strong>The glass crater.</strong> Rare crystals on the floor, walls too steep to walk out of. Land inside or bring suit jets.</figcaption>
       </figure>
       <figure>
         <button class="shot" data-full="img/walk-cockpit.jpg" data-cap="On foot in the cockpit." aria-label="Open the cockpit walk view full size"><img src="img/walk-cockpit.jpg" width="1280" height="720" loading="lazy" alt="Standing in the cockpit behind the seats, looking at the dash of screens and switches and the windscreen."></button>
@@ -193,13 +213,14 @@
         <h3>Your first ship</h3>
         <ol class="steps">
           <li>Download and unzip the game, run <strong>FarHaul.exe</strong>, then choose <strong>New game</strong>. Pick a name, race, difficulty, starting world and save slot, then <strong>Begin</strong>. Later, use <strong>Continue</strong> or <strong>Load game</strong> to return.</li>
-          <li>You arrive at the dock. Press <strong>Enter shipyard</strong> to open the ship builder.</li>
+          <li>You arrive on foot in the port's concourse. Walk up to a desk and press <kbd>E</kbd> to use it. The <strong>Shipyard</strong> desk opens the ship builder. <kbd>T</kbd> opens the station terminal, which has every action as a menu.</li>
           <li>Look at the ship. Click a part in the palette on the left, then click next to the ship to place it. Green means it fits. Red tells you why not.</li>
           <li>Watch the power, cooling and cargo meters and the warnings on the right. Each warning says what is missing.</li>
           <li>Use <strong>Cargo preview</strong> to fill the hold and see the ship loaded. This only changes how the ship looks and weighs. It does not buy or sell anything.</li>
-          <li>Type a name in <strong>Ship name</strong>. Press <kbd>S</kbd> to save. Your game also autosaves. <strong>Leave shipyard</strong> (<kbd>Esc</kbd>) saves and takes you back to the dock.</li>
-          <li>Open the <strong>Contract board</strong>, accept a run and load it. A sublight ship sees runs inside its own system. Press <strong>Depart</strong> to let the autopilot fly it at the textbook fuel cost, or <strong>Fly the run</strong> to do it yourself.</li>
-          <li>Fit an <strong>FTL drive</strong> in the shipyard (about 48,000 cr with its radiator) to take freight to other systems. At the dock, <strong>Fly the jump</strong> undocks you and lets you press <kbd>J</kbd> once you are clear.</li>
+          <li>Type a name in <strong>Ship name</strong>. Press <kbd>S</kbd> to save. Your game also autosaves. <strong>Leave shipyard</strong> (<kbd>Esc</kbd>) saves and takes you back to the concourse.</li>
+          <li>At the <strong>Freight office</strong>, take a run and load it. A sublight ship sees runs inside its own system. Choose <strong>Depart on autopilot</strong> to have it flown at the textbook fuel cost, or <strong>Fly the run yourself</strong>. The people at the bar have other work: rush jobs, passengers and sealed crates.</li>
+          <li>Fit <strong>lander legs</strong> to land on a moon. At the base's hab, the suit store sells kit and dispatch posts missions; the airlock desk suits you up and puts you outside.</li>
+          <li>Fit an <strong>FTL drive</strong> in the shipyard (about 48,000 cr with its radiator) to take freight to other systems. At the freight office or the gate, <strong>Fly the jump</strong> undocks you and lets you press <kbd>J</kbd> once you are clear.</li>
         </ol>
 
         <h3>What makes a ship valid</h3>
@@ -249,6 +270,9 @@
             <tr><th scope="row">Dock</th><td><kbd>F</kbd>, or <kbd>Esc</kbd> to autopilot in</td></tr>
             <tr><th scope="row">Engage the FTL drive</th><td><kbd>J</kbd>, when clear of the station and cool</td></tr>
             <tr><th scope="row">Get up from the helm</th><td><kbd>G</kbd></td></tr>
+            <tr><th scope="row">Lift jets, hover hold (on a moon)</th><td><kbd>Space</kbd>, <kbd>H</kbd></td></tr>
+            <tr><th scope="row">Autoland on a beacon pad, or lift off on auto</th><td><kbd>Esc</kbd></td></tr>
+            <tr><th scope="row">Shut down on the pad</th><td><kbd>F</kbd></td></tr>
           </tbody>
         </table>
         <h3>Controls: on foot</h3>
@@ -256,8 +280,18 @@
           <tbody>
             <tr><th scope="row">Walk</th><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, <kbd>Shift</kbd> to run</td></tr>
             <tr><th scope="row">Look</th><td>Mouse, or arrow keys</td></tr>
-            <tr><th scope="row">Take the helm, climb a ladder, leave by the airlock</th><td><kbd>E</kbd></td></tr>
+            <tr><th scope="row">Take the helm, climb a ladder, leave by the airlock, use a desk</th><td><kbd>E</kbd></td></tr>
+            <tr><th scope="row">Station terminal (in a port)</th><td><kbd>T</kbd></td></tr>
             <tr><th scope="row">Free the mouse</th><td><kbd>Esc</kbd>, click to look again</td></tr>
+          </tbody>
+        </table>
+        <h3>Controls: in a suit</h3>
+        <table class="keys">
+          <tbody>
+            <tr><th scope="row">Walk, run</th><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, <kbd>Shift</kbd> (uses air faster)</td></tr>
+            <tr><th scope="row">Jump, suit jets</th><td><kbd>Space</kbd>, hold it in the air for jets</td></tr>
+            <tr><th scope="row">Take a find, set a beacon, pick up or drop a crate</th><td><kbd>E</kbd> (hold it on a drill)</td></tr>
+            <tr><th scope="row">Back aboard, at the hatch</th><td><kbd>Q</kbd>, or <kbd>E</kbd></td></tr>
           </tbody>
         </table>
       </div>
@@ -274,7 +308,7 @@
     </details>
     <details>
       <summary>Why can I only see a few jobs?</summary>
-      <p>Without an FTL drive your ship only sees runs inside its own system, and only ones its tank can lift: the hold is limited by fuel, so a long hop means a lighter load. Fit an FTL drive and the interstellar board opens up.</p>
+      <p>Without an FTL drive your ship only sees runs inside its own system, and only ones its tank can lift: the hold is limited by fuel, so a long hop means a lighter load. Fit an FTL drive and the interstellar board opens up. The people at the bar have more work than the board shows, and lander legs open surface runs that pay more.</p>
     </details>
     <details>
       <summary>There is no sound.</summary>
@@ -289,8 +323,12 @@
       <p>Not at the moment. Far Haul is built for Windows PCs with a mouse and keyboard. The early browser version has been retired.</p>
     </details>
     <details>
+      <summary>I ran out of air outside.</summary>
+      <p>The base or camp crew drag you back aboard and bill you 800 cr, and any mission you held fails. Watch the AIR readout top left: running uses air half as fast again, and it warns you below 20%. Bigger tanks at a hab's suit store give you up to 35 minutes.</p>
+    </details>
+    <details>
       <summary>How do I get to another star?</summary>
-      <p>Fit an FTL drive in the shipyard, accept an interstellar contract, and use <strong>Fly the jump</strong> at the dock. Get 3 km clear of the station, slow down and let the engines cool, then press <kbd>J</kbd>. A jump costs fuel, fees and days of crew wages, and the world keeps moving while you travel.</p>
+      <p>Fit an FTL drive in the shipyard, accept an interstellar contract, and choose <strong>Fly the jump</strong> at the freight office. Get 3 km clear of the station, slow down and let the engines cool, then press <kbd>J</kbd>. A jump costs fuel, fees and days of crew wages, and the world keeps moving while you travel.</p>
     </details>
   </div>
 </section>
