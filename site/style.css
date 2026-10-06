@@ -183,7 +183,7 @@ details p { margin: 0 0 16px; }
 footer { background: var(--steel); color: #9ea3ab; padding: 36px 0 44px; margin-top: 64px; border-top: 10px solid var(--amber); font-size: .95rem; }
 footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: space-between; align-items: center; }
 footer a { color: #e9e7de; }
-footer .code { font: 800 1.2rem var(--display); letter-spacing: .06em; color: #e9e7de; }
+footer .code { font: 800 1.2rem var(--display); letter-spacing: .06em; color: #e9e7de; }\n.studio-badge { display: grid; grid-template-columns: auto auto; column-gap: 8px; align-items: end; padding: 8px 12px; border: 1px solid #5e6570; color: #e9e7de; text-decoration: none; background: #20242a; line-height: 1; }\n.studio-badge:hover, .studio-badge:focus-visible { border-color: var(--amber); color: #fff; }\n.studio-badge:focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; }\n.studio-badge-kicker { grid-column: 1 / -1; font: 700 .58rem var(--body); letter-spacing: .18em; color: #9ea3ab; margin-bottom: 3px; }\n.studio-badge strong { font: 800 .95rem var(--display); letter-spacing: .055em; }\n.studio-badge-sub { font: 700 .58rem var(--body); letter-spacing: .16em; color: var(--amber); padding-bottom: 1px; }
 
 @media (max-width: 900px) {
   .hero .wrap { grid-template-columns: 1fr; gap: 36px; }
