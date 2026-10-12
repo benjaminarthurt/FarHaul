@@ -44,7 +44,7 @@ func _run() -> void:
 	check(f.get_up(), "you get up from the helm")
 	_frames(f, 4)
 	check(f.model.braking, "it keeps braking while you are on your feet")
-	check(not String(f.prompt.text).contains("BRAKE NOW") and String(f.prompt.text).contains("AUTOPILOT BRAKING"),
+	check(not String(f.prompt.text).contains("BRAKE NOW") and String(f.prompt.text).contains("AUTOPILOT"),
 			"on foot the HUD says the autopilot is braking (%s)" % f.prompt.text)
 	_key(KEY_W, true)   # still holding W from walking to the seat
 	_key(KEY_E, true)   # E sits you down (at the helm, E is roll), and is still held as you take the helm

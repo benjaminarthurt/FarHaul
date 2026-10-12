@@ -74,13 +74,58 @@ func _update_reticle() -> void:
 		sc.reticle.queue_redraw()
 		return
 	sc.reticle.nose = sc._screen_dir(sc.model.forward())
+	sc.reticle.target_edge = Vector2.INF
+	sc.reticle.travel_edge = Vector2.INF
 	var v := sc.model.vel
 	if sc.model.landed or v.length() < 0.3:
 		pass
 	else:
 		sc.reticle.prograde = sc._screen_dir(v.normalized())
 		sc.reticle.retrograde = sc._screen_dir(-v.normalized())
+	var goal := _goal()   # where you are flying to: an arrow round the edge when it is off screen
+	var to_goal := Vector3.ZERO
+	if not goal.is_empty():
+		to_goal = goal.at - sc.model.pos
+		if to_goal.length() > 1.0 and sc._screen_dir(to_goal.normalized()) == Vector2.INF:
+			var e := _edge(to_goal.normalized())
+			sc.reticle.target_edge = e.pos
+			sc.reticle.target_edge_dir = e.dir
+			sc.reticle.target_text = "%s  %s" % [goal.name, _distance(to_goal.length())]
+	if sc.reticle.prograde != Vector2.INF or sc._on_surface() or sc.model.landed or v.length() < 0.3:
+		pass
+	elif sc.reticle.target_edge != Vector2.INF and v.angle_to(to_goal) < deg_to_rad(10.0):
+		pass   # travelling toward an off-screen target: its arrow already says which way
+	else:
+		var e := _edge(v.normalized())   # travel off screen: its own arrow
+		sc.reticle.travel_edge = e.pos
+		sc.reticle.travel_edge_dir = e.dir
 	sc.reticle.queue_redraw()
+
+
+## The place being flown to, {at, name}: a run's target, else the station; {} on a moon.
+func _goal() -> Dictionary:
+	if sc._on_surface():
+		return {}
+	if sc.xfer != null and sc.phase in ["depart", "cruise"]:
+		return {"at": sc.xfer.target, "name": "◆ " + String(sc.job.destination)}
+	return {"at": Vector3.ZERO, "name": String(sc.station_label.text) if sc.station_label != null else "STATION"}
+
+
+## Where to put an arrow toward an off-screen direction, round an oval inside the screen's edges, and
+## which way it points: {pos, dir}. Directions behind the camera get the arrow on the side to turn toward.
+func _edge(dir: Vector3) -> Dictionary:
+	var local := sc.camera.global_basis.inverse() * dir
+	var d2 := Vector2(local.x, -local.y)
+	if d2.length() < 0.0001:
+		d2 = Vector2(0, 1)   # straight behind: point down, turn either way
+	d2 = d2.normalized()
+	var size := sc.get_viewport().get_visible_rect().size
+	# On an oval inside the edges, clear of the readouts top left and the prompt at the bottom.
+	return {"pos": size * 0.5 + Vector2(d2.x * size.x * 0.4, d2.y * size.y * 0.34), "dir": d2}
+
+
+static func _distance(m: float) -> String:
+	return "%.0f m" % m if m < 1000.0 else ("%.1f km" % (m / 1000.0) if m < 1.0e6 else "%.0f km" % (m / 1000.0))
 
 
 ## Where a direction from the ship lands on screen, or INF if it is behind the camera.
@@ -115,12 +160,26 @@ func _update_time() -> void:
 	sc.time_label.visible = sc.time_label.text != ""
 
 
+## How far the direction of travel is off the target: on course, a few degrees off, or moving away.
+func _course_line() -> String:
+	if sc.model.speed() < 5.0:
+		return "COURSE  not moving: point at the diamond and burn"
+	var to := sc.xfer.target - sc.model.pos
+	var off := rad_to_deg(sc.model.vel.angle_to(to))
+	if off < 0.5:
+		return "COURSE  on target"
+	if off > 90.0:
+		return "COURSE  moving away from the target (%.0f° off)" % off
+	return "COURSE  %.1f° off target: burn toward the diamond to correct" % off
+
+
 func _update_transfer_hud() -> void:
 	var rng := sc.xfer.range_to(sc.model)
 	var eta := sc.xfer.eta_s(sc.model)
 	var lines := PackedStringArray([
 		"RUN TO  %s    HOP  %.1f km/s" % [String(sc.job.destination).to_upper(), float(sc.job.dv_kms)],
 		"TARGET  %.1f km    CLOSING  %+.0f m/s    ETA  %s" % [rng / 1000.0, sc.xfer.closing(sc.model), _eta_text(eta)],
+		_course_line(),
 		"SPEED  %.0f m/s    STOPS IN  %.1f km" % [sc.model.speed(), sc.xfer.stopping_distance(sc.model) / 1000.0],
 		"THROTTLE  %d%%    THRUST  %d%%    TIME x%d" % [roundi(sc.model.throttle * 100.0), roundi(sc.model.thrust_scale() * 100.0), sc._warp()],
 		"FUEL  %.2f t    ΔV %.0f m/s    PERFECT RUN %.2f t" % [sc.model.fuel_t, sc.model.delta_v(), sc.xfer.ideal_burn_t],
@@ -130,7 +189,7 @@ func _update_transfer_hud() -> void:
 	sc.hud.text = "\n".join(lines)
 	sc.bar.value = sc.model.throttle
 	var to := sc.xfer.target - sc.model.pos
-	if not sc.camera.is_position_behind(sc.camera.global_position + to):
+	if sc.reticle.target_edge == Vector2.INF and not sc.camera.is_position_behind(sc.camera.global_position + to):
 		sc.beacon.visible = true
 		var sp := sc.camera.unproject_position(sc.camera.global_position + to.normalized() * 1000.0)
 		sc.beacon.position = sp + Vector2(12, -12)
@@ -143,13 +202,13 @@ func _update_transfer_hud() -> void:
 	elif sc.model.overheated:
 		hint = "ENGINES OVERHEATED. Wait for them to cool."
 	elif sc.model.braking:
-		hint = "Braking. It stops the ship where it is: start it at the BRAKE NOW cue to stop at the target."
+		hint = sc.brake_status()
 	elif sc.xfer.brake_now(sc.model):
-		hint = "BRAKE NOW: press X to flip and stop."
+		hint = "BRAKE NOW: press X and the autopilot stops you at the target."
 	elif sc.xfer.closing(sc.model) < -1.0:
 		hint = "You are moving away from the destination."
 	elif sc.beacon != null and not sc.beacon.visible:
-		hint = "The destination is behind you."
+		hint = "The destination is off screen: turn toward the orange arrow."
 	elif sc.model.speed() < 5.0:
 		hint = "Point at the diamond, open the throttle (W) and speed time up with period. Esc turns back."
 	sc.prompt.text = hint
@@ -235,7 +294,7 @@ func _walk_prompt() -> void:
 	elif sc.model.last_impact > float(sc.model.tune.get("soft_impact_m_s", 1.5)) and sc.model.elapsed_s - sc._impact_shown < 3.0:
 		warn = "HULL IMPACT"
 	elif sc.model.braking:
-		warn = "AUTOPILOT BRAKING"
+		warn = sc.brake_status().get_slice("   ", 0)
 	elif sc.xfer != null and sc.phase == "cruise" and sc.xfer.brake_now(sc.model):
 		warn = "BRAKE NOW: get back to the helm"
 	var parts := PackedStringArray()

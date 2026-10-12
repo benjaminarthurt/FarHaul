@@ -60,7 +60,7 @@ var help: Label
 var crosshair: Label
 const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement, times the mouse sensitivity setting
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
-const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time  / x1   G get up   Esc back to the dock   F10 menu"
+const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X autopilot stop   R assist   C camera   F dock   J jump (when clear)   , . time  / x1   G get up   Esc back to the dock   F10 menu"
 const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   Esc frees the mouse   F10 menu"
 const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   Esc autoland   F unload (landed on the pad)   G get up   C camera   F10 menu"
 const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   F10 menu"
@@ -341,14 +341,39 @@ func _warp_hold() -> String:
 		return "No time compression on the approach to the station"
 	if phase != "cruise":
 		return "No time compression near the ground"
-	if model.braking:
-		return "Held at x1 while the autopilot brakes"
-	if xfer.brake_now(model):
-		return "Held at x1 at the brake point: brake now"
+	if xfer.brake_now(model) and not model.braking:
+		return "Held at x1 at the brake point: brake now (X)"
 	var eta := xfer.eta_s(model)
 	if xfer.range_to(model) < 25000.0 or (eta >= 0.0 and eta < 60.0):
 		return "Held at x1 within 25 km or a minute of the target"
 	return ""
+
+
+## What the braking autopilot is doing, for the prompt, or "" when it is off.
+func brake_status() -> String:
+	if not model.braking:
+		return ""
+	var take := "   X or any control: take over"
+	var at_target := model.brake_to != Vector3.INF
+	match model.brake_state:
+		"coasting":
+			return "AUTOPILOT: stopping at the target. Coasting tail-first, burn in %s%s" % [_clock(model.brake_burn_in_s), take]
+		"burning":
+			var over := xfer.stopping_distance(model) - xfer.range_to(model) if xfer != null else 0.0
+			if over > 5000.0:   # past the point of stopping in time: say so rather than promise the mark
+				return "AUTOPILOT: too fast to stop at the target. Burning hard, you will overshoot by about %.0f km%s" % [over / 1000.0, take]
+			return "AUTOPILOT: stopping at the target. Burning, %.1f km to go%s" % [(model.brake_to - model.pos).length() / 1000.0, take]
+		"turning":
+			return ("AUTOPILOT: turning tail-first to stop at the target" if at_target else "AUTOPILOT: turning tail-first to stop") + take
+	if at_target:
+		return "AUTOPILOT: moving away from the target, stopping here%s" % take
+	return "AUTOPILOT: stopping here%s" % take
+
+
+static func _clock(s: float) -> String:
+	if s < 0.0:
+		return "-"
+	return "%d:%02d" % [int(s) / 60, int(s) % 60] if s < 3600.0 else "%dh %02dm" % [int(s) / 3600, (int(s) / 60) % 60]
 
 
 ## Choose a time compression rate (an index into WARPS); 0 is normal time.
@@ -450,6 +475,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_up()
 		KEY_X:
 			model.braking = not model.braking
+			# On a run the autopilot stops at the target; anywhere else it stops the ship where it is.
+			model.brake_to = xfer.target if model.braking and xfer != null and phase == "cruise" else Vector3.INF
 		KEY_R:
 			model.assist = not model.assist
 		KEY_C:

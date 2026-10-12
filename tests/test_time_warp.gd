@@ -1,7 +1,8 @@
 extends SceneTree
 ## Time compression on a run: , and . step the rate and the top right of the screen shows it. Every
-## press answers on screen. When the game holds time at 1x (leaving the station, on the approach,
-## braking, near the target) it says so, why, and when it will work. / goes straight back to 1x. The
+## press answers on screen. When the game holds time at 1x (leaving the station, on the approach, near
+## the target, at the brake point) it says so, why, and when it will work. The braking autopilot does
+## not hold it. / goes straight back to 1x. The
 ## keys work on foot too.
 ## Run: godot --headless --path . --script res://tests/test_time_warp.gd
 var fails := 0
@@ -58,11 +59,17 @@ func _run() -> void:
 	_frames(f, 1)
 	check(f._warp() == 10, "three presses of . make it x10 (%d)" % f._warp())
 	check(f.time_label.visible and String(f.time_label.text).begins_with("TIME x10"), "the top of the screen says so (%s)" % f.time_label.text)
-	f.model.vel = f.model.basis * Vector3(0, 0, -300.0)   # moving, so the autopilot has something to stop
+	f.model.vel = f.model.basis * Vector3(0, 0, -300.0)   # the braking autopilot far out: time still runs fast
 	f.model.braking = true
 	_frames(f, 1)
-	check(f._warp() == 1, "braking holds time at x1")
-	check(String(f.time_label.text).contains("(x10 set)") and String(f.time_label.text).contains("while the autopilot brakes"), "and the readout says why (%s)" % f.time_label.text)
+	check(f._warp() == 10, "the braking autopilot doesn't hold time at x1 far from the target (%d)" % f._warp())
+	var near: Vector3 = f.xfer.target - (f.xfer.target - f.model.pos).normalized() * 20000.0
+	var far_pos: Vector3 = f.model.pos
+	f.model.pos = near   # within 25 km of the target: held, and it says why
+	_frames(f, 1)
+	check(f._warp() == 1, "near the target time is held at x1")
+	check(String(f.time_label.text).contains("(x10 set)") and String(f.time_label.text).contains("within 25 km"), "and the readout says why (%s)" % f.time_label.text)
+	f.model.pos = far_pos
 	f.model.braking = false
 	f.model.vel = Vector3.ZERO
 	_press(f, KEY_COMMA)

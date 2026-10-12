@@ -20,6 +20,13 @@ var thrust_kn := 0.0             # forward thrust at full throttle
 var offset_m := 0.0              # thrust line off the centre of mass: less manoeuvring authority
 var assist := true               # damp rotation when the pilot lets go
 var braking := false             # autopilot: turn retrograde and burn to a stop
+## Where the braking autopilot should stop (a run's target), or INF to stop where the ship is. With a
+## target it coasts tail-first until it has to burn, then flies down a stopping curve that ends at the
+## target, taking out sideways drift on the way.
+var brake_to := Vector3.INF
+var brake_state := ""            # what the autopilot is doing: turning, coasting, burning or stopping
+var brake_burn_in_s := -1.0      # seconds until the stopping burn starts, while coasting
+const BRAKE_USE := 0.8           # plan the stop on this fraction of full thrust, to keep some in hand
 var tune: Dictionary = {}
 # Power and heat (flight_physics.json: loads must fit generation; heat_next = heat + generated - rejected).
 var power_gen_kw := 0.0
@@ -356,17 +363,41 @@ func _autoland() -> Dictionary:
 	return {"turn": turn, "lift": clampf(need, 0.0, 1.0)}
 
 
-## Autopilot: point at the retrograde marker, then burn in proportion to the speed left.
+## Autopilot. Without a target: point at the retrograde marker and burn in proportion to the speed
+## left. With one (brake_to) and closing on it: hold tail-first, coast while there is room, then burn
+## to follow the stopping curve v = sqrt(2 a d) down to the target, steering out any sideways drift.
 func _brake(dt: float) -> Dictionary:
 	var spd := vel.length()
+	brake_burn_in_s = -1.0
+	var want := Vector3.ZERO     # the velocity change the autopilot wants
+	var a_max := maxf(max_accel(), 0.001)
+	var to := brake_to - pos if brake_to != Vector3.INF else Vector3.ZERO
+	var closing := vel.dot(to.normalized()) if to.length() > 1.0 else 0.0
+	if brake_to != Vector3.INF and closing > 1.0:
+		var dist := maxf(to.length() - 300.0, 1.0)          # aim a little short of the mark
+		var a_plan := a_max * BRAKE_USE
+		var v_curve := sqrt(2.0 * a_plan * dist)            # fastest speed that can still stop in time
+		var desired := to.normalized() * minf(v_curve, closing)   # never speed up: only slow and straighten
+		want = desired - vel
+		if want.length() < 0.5:
+			brake_state = "coasting"
+			brake_burn_in_s = maxf(0.0, (to.length() - closing * closing / (2.0 * a_plan)) / closing)
+			want = -vel       # stay tail-first, ready
+			return _brake_steer(want, 0.0, "coasting")
+		return _brake_steer(want, clampf(want.length() / (a_max * 1.0), 0.04, 1.0), "burning")
 	if spd < float(tune.get("stop_speed_m_s", 0.15)):
 		vel = Vector3.ZERO
 		braking = false
+		brake_state = ""
 		return {"turn": Vector3.ZERO, "throttle": 0.0}
-	var want := (-vel).normalized()
-	var local := basis.inverse() * want                 # where retrograde is in ship axes (-Z is forward)
+	return _brake_steer(-vel, clampf(spd / (a_max * 1.5), 0.04, 1.0), "stopping")
+
+
+## Turn to burn along `want` and give `thr` once lined up (within about 7 degrees).
+func _brake_steer(want: Vector3, thr: float, state: String) -> Dictionary:
+	var local := basis.inverse() * want.normalized()   # where to point in ship axes (-Z is forward)
 	var fwd := Vector3(0, 0, -1)
-	var axis := fwd.cross(local)                       # rotation (ship axes) that takes forward onto retrograde
+	var axis := fwd.cross(local)                       # rotation (ship axes) that takes forward onto it
 	var angle := fwd.angle_to(local)
 	var turn := Vector3.ZERO
 	if angle > 0.002:
@@ -375,11 +406,8 @@ func _brake(dt: float) -> Dictionary:
 		var dir := axis.normalized() if axis.length() > 0.0001 else Vector3(1, 0, 0)
 		turn = dir * clampf(stop_rate, 0.0, 1.0)
 		# Our axes are pitch=X, yaw=Y, roll=Z in the ship's frame, so the rotation vector maps straight on.
-	var thr := 0.0
-	if angle < 0.12:
-		var a_max := maxf(max_accel(), 0.001)
-		thr = clampf(spd / (a_max * 1.5), 0.04, 1.0)
-	return {"turn": turn, "throttle": thr}
+	brake_state = state if angle < 0.12 else "turning"
+	return {"turn": turn, "throttle": thr if angle < 0.12 else 0.0}
 
 
 ## Where the ship starts when it leaves the dock: well clear, at rest, facing away from the station.

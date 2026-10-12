@@ -40,7 +40,16 @@ the run (`Session.flight_job`). It has three phases.
    marker about 35 degrees off the way the ship leaves. Time runs at x1 until the ship is 3 km clear.
 2. **Cruise.** The station drops away. `TransferFlight.plan` sets the distance so a perfect full burn, flip and full
    brake spends exactly the hop's delta-v, the figure the board prices fuel on (tested to match to 0.2%). Line up,
-   burn, flip at the BRAKE NOW cue (X runs the retrograde autopilot) and stop within 1.5 km at under 8 m/s.
+   burn, flip at the BRAKE NOW cue and stop within 1.5 km at under 8 m/s. X hands the stop to the
+   autopilot at any point in the cruise: it turns tail-first, coasts while there is room (the prompt
+   counts down to the burn), then follows a stopping curve to the target (`FlightModel._brake`, planned
+   on 80% of full thrust), taking out sideways drift as it goes. Started too late it says it will
+   overshoot. Moving away from the target, or off a run, X stops the ship where it is. X again or any
+   control takes over.
+   Finding the way: an orange arrow round the edge of the screen points to the target (or the station)
+   when it is off screen, with its distance; a yellow arrow does the same for the direction of travel
+   when that points elsewhere. On screen, the travel and reverse markers are labelled, and the readouts
+   give the course error ("2.1° off target").
    `,` and `.` change time compression (x1 to x60) and `/` goes straight back to x1. The rate shows top
    right. Time is held at x1 while leaving the station, near the target, at the brake point and while the
    braking autopilot runs; the readout then shows the rate chosen, why it is held and when it will work
