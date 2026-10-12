@@ -37,7 +37,7 @@ An active local contract can be flown instead of autopiloted: the dock's FLY THE
 the run (`Session.flight_job`). It has three phases.
 
 1. **Depart.** The ship undocks from the origin site's station as in free flight, and the destination is a diamond
-   marker about 35 degrees off the way the ship leaves. Time runs at x1 until the ship is 3 km clear.
+   marker about 35 degrees off the way the ship leaves. Time compression unlocks 1 km out; the cruise starts 3 km clear.
 2. **Cruise.** The station drops away. `TransferFlight.plan` sets the distance so a perfect full burn, flip and full
    brake spends exactly the hop's delta-v, the figure the board prices fuel on (tested to match to 0.2%). Line up,
    burn, flip at the BRAKE NOW cue and stop within 1.5 km at under 8 m/s. X hands the stop to the
@@ -51,10 +51,14 @@ the run (`Session.flight_job`). It has three phases.
    when that points elsewhere. On screen, the travel and reverse markers are labelled, and the readouts
    give the course error ("2.1° off target").
    `,` and `.` change time compression (x1 to x60) and `/` goes straight back to x1. The rate shows top
-   right. Time is held at x1 while leaving the station, near the target, at the brake point and while the
-   braking autopilot runs; the readout then shows the rate chosen, why it is held and when it will work
-   (leaving the station it counts down the distance to 3 km out). Every press of `,` `.` or `/` answers
-   on screen, even when nothing can change.
+   right. What runs is the rate chosen, brought down to the limit where the ship is (`_warp_limit`):
+   - x1 until 1 km out from the station (the readout counts it down), on the approach to the station,
+     and at the brake point when flying by hand (so the BRAKE NOW cue can't flash past);
+   - x5 within 25 km of the target and x2 within 5 km: reduced, not stopped;
+   - never so fast that the target is less than 10 real seconds away at the current closing speed.
+   The rate chosen comes back by itself as the limit lifts. When it is capped the readout shows the
+   rate running, the rate chosen and why. Every press of `,` `.` or `/` answers on screen. The braking
+   autopilot works at any rate.
 3. **Approach.** Arriving at the marker brings up the destination's station and rests the ship 1.5 km off its
    collar. Docking uses the free-flight rules (nose down the axis, close, under 3 m/s) and settles the run. Esc
    in this phase is an autopilot dock, so the approach is never a trap.

@@ -44,7 +44,7 @@ func _run() -> void:
 	_press(f, KEY_COMMA)
 	_press(f, KEY_COMMA)
 	_frames(f, 1)
-	check(f.time_label.visible and String(f.time_label.text).contains("starts 3 km out"), ", at x1 still answers on screen (%s)" % f.time_label.text)
+	check(f.time_label.visible and String(f.time_label.text).contains("starts 1 km out"), ", at x1 still answers on screen (%s)" % f.time_label.text)
 	f.phase = "approach"
 	_press(f, KEY_PERIOD)
 	_frames(f, 1)
@@ -65,16 +65,39 @@ func _run() -> void:
 	check(f._warp() == 10, "the braking autopilot doesn't hold time at x1 far from the target (%d)" % f._warp())
 	var near: Vector3 = f.xfer.target - (f.xfer.target - f.model.pos).normalized() * 20000.0
 	var far_pos: Vector3 = f.model.pos
-	f.model.pos = near   # within 25 km of the target: held, and it says why
+	var to_t: Vector3 = (f.xfer.target - f.model.pos).normalized()
+	f.model.braking = false
+	f.model.vel = to_t * 100.0   # closing slowly, so only the distance caps apply
+	f.model.pos = near   # within 25 km of the target: reduced, not stopped, and it says why
 	_frames(f, 1)
-	check(f._warp() == 1, "near the target time is held at x1")
-	check(String(f.time_label.text).contains("(x10 set)") and String(f.time_label.text).contains("within 25 km"), "and the readout says why (%s)" % f.time_label.text)
+	check(f._warp() == 5, "within 25 km time comes down to x5 (%d)" % f._warp())
+	check(String(f.time_label.text).begins_with("TIME x5") and String(f.time_label.text).contains("(x10 set)") and String(f.time_label.text).contains("within 25 km"),
+			"and the readout says x5, x10 set, and why (%s)" % f.time_label.text)
+	f.model.pos = f.xfer.target - to_t * 4000.0   # within 5 km: x2
+	_frames(f, 1)
+	check(f._warp() == 2, "within 5 km it comes down to x2 (%d)" % f._warp())
+	f.model.pos = f.xfer.target - to_t * 600000.0   # fast, short of the brake point: capped by the time left
+	f.model.vel = to_t * 1200.0
+	f.set_warp(f.WARPS.size() - 1)   # x60 chosen
+	_frames(f, 1)
+	check(f._warp() == 25 and String(f.time_label.text).contains("away at this speed"),
+			"closing fast, it is capped so the target stays at least 10 s away (x%d: %s)" % [f._warp(), f.time_label.text])
+	f.set_warp(3)
 	f.model.pos = far_pos
+	f.model.vel = to_t * 0.0
+	_frames(f, 1)
+	check(f._warp() == 10, "out in the open again, the rate chosen comes back by itself (%d)" % f._warp())
 	f.model.braking = false
 	f.model.vel = Vector3.ZERO
 	_press(f, KEY_COMMA)
 	_frames(f, 1)
 	check(f._warp() == 5, ", steps it down to x5 (%d)" % f._warp())
+	f.phase = "depart"   # leaving the station: it unlocks 1 km out
+	f.model.pos = f.model.pos.normalized() * 1500.0
+	_frames(f, 1)
+	check(f._warp() == 5, "leaving the station, past 1 km, time compression works (%d)" % f._warp())
+	f.phase = "cruise"
+	f.model.pos = far_pos
 	_press(f, KEY_SLASH)
 	_frames(f, 1)
 	check(f.warp_index == 0 and f._warp() == 1, "/ goes straight back to x1")

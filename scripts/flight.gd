@@ -322,31 +322,61 @@ func _process(delta: float) -> void:
 			ring.rotate_z(delta * 0.05)
 
 
-## Time compression actually in use: the rate chosen with , and . unless something holds it at 1x.
+## Time compression actually in use: the rate chosen with , and . brought down to the limit here.
 func _warp() -> int:
-	var w: int = WARPS[warp_index]
-	if w == 1 or _warp_hold() != "":
-		return 1
+	var cap := int(_warp_limit().max)
+	var w := 1
+	for r in WARPS:
+		if r <= mini(WARPS[warp_index], cap):
+			w = r
 	return w
 
 
-## Why time is held at 1x whatever rate is chosen, said so a pilot knows when it will work, or "" when
-## it isn't held.
-func _warp_hold() -> String:
+const WARP_FROM_M := 1000.0       ## time compression unlocks this far out from the station
+const WARP_REAL_S := 10.0         ## never less than this many real seconds from arriving at the target
+
+
+## How fast time may run here, and why if that is below the fastest: {max, why}. Off a run, near the
+## station on the way out, on the approach and at the brake point (flying by hand) it is x1. Closing
+## on the target it comes down in steps: x5 within 25 km, x2 within 5 km, and never so fast that the
+## target is less than WARP_REAL_S real seconds away.
+func _warp_limit() -> Dictionary:
+	var top: int = WARPS[WARPS.size() - 1]
 	if xfer == null:
-		return "Time compression works on runs only"
-	if phase == "depart":
-		return "Time compression starts %.0f km out: %.1f km to go" % [CLEAR_M / 1000.0, maxf(0.0, CLEAR_M - model.pos.length()) / 1000.0]
+		return {"max": 1, "why": "Time compression works on runs only"}
+	if phase == "depart" and model.pos.length() < WARP_FROM_M:
+		return {"max": 1, "why": "Time compression starts %.0f km out: %.1f km to go" % [WARP_FROM_M / 1000.0, (WARP_FROM_M - model.pos.length()) / 1000.0]}
 	if phase == "approach":
-		return "No time compression on the approach to the station"
-	if phase != "cruise":
-		return "No time compression near the ground"
-	if xfer.brake_now(model) and not model.braking:
-		return "Held at x1 at the brake point: brake now (X)"
+		return {"max": 1, "why": "No time compression on the approach to the station"}
+	if phase != "cruise" and phase != "depart":
+		return {"max": 1, "why": "No time compression near the ground"}
+	if phase == "cruise" and xfer.brake_now(model) and not model.braking:
+		return {"max": 1, "why": "Held at x1 at the brake point: brake now (X)"}
+	var cap := top
+	var why := ""
+	var rng := xfer.range_to(model)
+	if rng < 5000.0:
+		cap = 2
+		why = "Max x2 within 5 km of the target"
+	elif rng < 25000.0:
+		cap = 5
+		why = "Max x5 within 25 km of the target"
 	var eta := xfer.eta_s(model)
-	if xfer.range_to(model) < 25000.0 or (eta >= 0.0 and eta < 60.0):
-		return "Held at x1 within 25 km or a minute of the target"
-	return ""
+	if eta > 0.0:
+		var by_eta := 1
+		for r in WARPS:
+			if eta / float(r) >= WARP_REAL_S:
+				by_eta = r
+		if by_eta < cap:
+			cap = by_eta
+			why = "Max x%d: the target is %s away at this speed" % [by_eta, _clock(eta)]
+	return {"max": cap, "why": why}
+
+
+## Why time is held at x1 whatever rate is chosen, or "" when some compression is allowed.
+func _warp_hold() -> String:
+	var lim := _warp_limit()
+	return String(lim.why) if int(lim.max) <= 1 else ""
 
 
 ## What the braking autopilot is doing, for the prompt, or "" when it is off.

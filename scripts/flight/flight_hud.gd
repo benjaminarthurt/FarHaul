@@ -140,21 +140,23 @@ func _screen_dir(dir: Vector3) -> Vector2:
 	return p
 
 
-## The time readout, top right. Running faster: the rate and the keys. A rate chosen but held at x1:
-## that it is held, why, and when it will work. Back at x1: shown for a moment after any , . or / press,
-## with the reason if time compression can't be used here. Hidden otherwise.
+## The time readout, top right. Running at the rate chosen: the rate and the keys. Chosen faster than
+## the limit here: the rate actually running, the rate chosen, and why it is capped (it comes back on
+## its own as the cap lifts). Back at x1: shown for a moment after any , . or / press, with the reason
+## if time compression can't be used here. Hidden otherwise.
 func _update_time() -> void:
 	if sc.time_label == null:
 		return
 	var chosen: int = sc.WARPS[sc.warp_index]
-	var hold: String = sc._warp_hold()
+	var running: int = sc._warp()
+	var lim: Dictionary = sc._warp_limit()
 	sc.time_shown_s = maxf(0.0, sc.time_shown_s - sc.get_process_delta_time())
-	if chosen > 1 and hold == "":
+	if chosen > 1 and running == chosen:
 		sc.time_label.text = "TIME x%d\n, . change   / back to x1" % chosen
 	elif chosen > 1:
-		sc.time_label.text = "TIME x1   (x%d set)\n%s\n/ back to x1" % [chosen, hold]
+		sc.time_label.text = "TIME x%d   (x%d set)\n%s\n/ back to x1" % [running, chosen, lim.why]
 	elif sc.time_shown_s > 0.0:
-		sc.time_label.text = "TIME x1" + ("\n" + hold if hold != "" else "")
+		sc.time_label.text = "TIME x1" + ("\n" + String(lim.why) if int(lim.max) <= 1 else "")
 	else:
 		sc.time_label.text = ""
 	sc.time_label.visible = sc.time_label.text != ""
