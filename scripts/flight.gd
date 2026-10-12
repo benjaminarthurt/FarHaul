@@ -20,7 +20,7 @@ var planet: MeshInstance3D    ## the system's world, far off in space (hidden ov
 var hud: Label
 var prompt: Label
 var time_label: Label   ## the time compression readout, top right
-var time_shown_s := 0.0  ## seconds left to show "TIME x1" after a change back to normal time
+var time_shown_s := 0.0  ## seconds left to show the readout at x1 after a , . or / press
 var bar: ProgressBar
 var chase := true
 var cockpit_pos := Vector3.ZERO
@@ -330,28 +330,31 @@ func _warp() -> int:
 	return w
 
 
-## Why time is held at 1x whatever rate is chosen, or "" when it isn't.
+## Why time is held at 1x whatever rate is chosen, said so a pilot knows when it will work, or "" when
+## it isn't held.
 func _warp_hold() -> String:
 	if xfer == null:
-		return "only on a run"
+		return "Time compression works on runs only"
+	if phase == "depart":
+		return "Time compression starts %.0f km out: %.1f km to go" % [CLEAR_M / 1000.0, maxf(0.0, CLEAR_M - model.pos.length()) / 1000.0]
+	if phase == "approach":
+		return "No time compression on the approach to the station"
 	if phase != "cruise":
-		return "leaving the station" if phase == "depart" else "on approach"
+		return "No time compression near the ground"
 	if model.braking:
-		return "while the autopilot brakes"
+		return "Held at x1 while the autopilot brakes"
 	if xfer.brake_now(model):
-		return "at the brake point"
+		return "Held at x1 at the brake point: brake now"
 	var eta := xfer.eta_s(model)
 	if xfer.range_to(model) < 25000.0 or (eta >= 0.0 and eta < 60.0):
-		return "near the target"
+		return "Held at x1 within 25 km or a minute of the target"
 	return ""
 
 
 ## Choose a time compression rate (an index into WARPS); 0 is normal time.
 func set_warp(i: int) -> void:
-	var before := warp_index
 	warp_index = clampi(i, 0, WARPS.size() - 1)
-	if warp_index == 0 and before != 0:
-		time_shown_s = 2.0   # say we are back to normal time for a moment
+	time_shown_s = 2.5   # every press answers on screen, even when nothing can change
 
 
 ## Keep the speed markers around the ship however far it has come.

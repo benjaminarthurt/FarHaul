@@ -95,8 +95,9 @@ func _screen_dir(dir: Vector3) -> Vector2:
 	return p
 
 
-## The time readout, top right: the rate in use; the rate chosen and why it is held at 1x; or, just after going back
-## to normal time, "TIME x1". Hidden otherwise.
+## The time readout, top right. Running faster: the rate and the keys. A rate chosen but held at x1:
+## that it is held, why, and when it will work. Back at x1: shown for a moment after any , . or / press,
+## with the reason if time compression can't be used here. Hidden otherwise.
 func _update_time() -> void:
 	if sc.time_label == null:
 		return
@@ -106,9 +107,9 @@ func _update_time() -> void:
 	if chosen > 1 and hold == "":
 		sc.time_label.text = "TIME x%d\n, . change   / back to x1" % chosen
 	elif chosen > 1:
-		sc.time_label.text = "TIME x1\nx%d %s   / back to x1" % [chosen, "only on a run" if hold == "only on a run" else "held " + hold]
+		sc.time_label.text = "TIME x1   (x%d set)\n%s\n/ back to x1" % [chosen, hold]
 	elif sc.time_shown_s > 0.0:
-		sc.time_label.text = "TIME x1"
+		sc.time_label.text = "TIME x1" + ("\n" + hold if hold != "" else "")
 	else:
 		sc.time_label.text = ""
 	sc.time_label.visible = sc.time_label.text != ""

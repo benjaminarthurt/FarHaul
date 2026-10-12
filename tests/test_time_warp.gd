@@ -1,7 +1,8 @@
 extends SceneTree
-## Time compression on a run: , and . step the rate and the top of the screen shows it; when the game
-## holds time at 1x (braking, near the target) it says so and why; / goes straight back to 1x, shown
-## briefly as TIME x1. The keys work on foot too.
+## Time compression on a run: , and . step the rate and the top right of the screen shows it. Every
+## press answers on screen. When the game holds time at 1x (leaving the station, on the approach,
+## braking, near the target) it says so, why, and when it will work. / goes straight back to 1x. The
+## keys work on foot too.
 ## Run: godot --headless --path . --script res://tests/test_time_warp.gd
 var fails := 0
 func check(ok: bool, msg: String) -> void:
@@ -34,6 +35,20 @@ func _run() -> void:
 	f.set_process(false)
 	_frames(f, 1)
 	check(not f.time_label.visible, "nothing shows at normal time")
+	f.phase = "depart"   # still leaving the station: , and . can't work yet, and the readout says when they will
+	_press(f, KEY_PERIOD)
+	_frames(f, 1)
+	check(f._warp() == 1 and String(f.time_label.text).contains("(x2 set)") and String(f.time_label.text).contains("km to go"),
+			"pressing . while leaving the station says time compression starts further out (%s)" % f.time_label.text)
+	_press(f, KEY_COMMA)
+	_press(f, KEY_COMMA)
+	_frames(f, 1)
+	check(f.time_label.visible and String(f.time_label.text).contains("starts 3 km out"), ", at x1 still answers on screen (%s)" % f.time_label.text)
+	f.phase = "approach"
+	_press(f, KEY_PERIOD)
+	_frames(f, 1)
+	check(String(f.time_label.text).contains("approach"), "on the approach it says there is none there (%s)" % f.time_label.text)
+	_press(f, KEY_SLASH)
 	f.phase = "cruise"   # out on the run, far from the target and coasting
 	var to: Vector3 = f.xfer.target - f.model.pos
 	f.model.pos = f.xfer.target - to.normalized() * maxf(to.length(), 2.0e6)
@@ -47,7 +62,7 @@ func _run() -> void:
 	f.model.braking = true
 	_frames(f, 1)
 	check(f._warp() == 1, "braking holds time at x1")
-	check(String(f.time_label.text).contains("x10 held while the autopilot brakes"), "and the readout says why (%s)" % f.time_label.text)
+	check(String(f.time_label.text).contains("(x10 set)") and String(f.time_label.text).contains("while the autopilot brakes"), "and the readout says why (%s)" % f.time_label.text)
 	f.model.braking = false
 	f.model.vel = Vector3.ZERO
 	_press(f, KEY_COMMA)
@@ -56,7 +71,7 @@ func _run() -> void:
 	_press(f, KEY_SLASH)
 	_frames(f, 1)
 	check(f.warp_index == 0 and f._warp() == 1, "/ goes straight back to x1")
-	check(f.time_label.visible and f.time_label.text == "TIME x1", "and shows TIME x1 for a moment (%s)" % f.time_label.text)
+	check(f.time_label.visible and String(f.time_label.text).begins_with("TIME x1"), "and shows TIME x1 for a moment (%s)" % f.time_label.text)
 	for i in 50:
 		f.hud_c._update_time()
 		f.time_shown_s -= 0.05
