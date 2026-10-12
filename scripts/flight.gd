@@ -19,6 +19,8 @@ var station: Node3D
 var planet: MeshInstance3D    ## the system's world, far off in space (hidden over a moon)
 var hud: Label
 var prompt: Label
+var notice := ""        ## a short message that wins the prompt for a few seconds (notice_s)
+var notice_s := 0.0
 var time_label: Label   ## the time compression readout, top right
 var time_shown_s := 0.0  ## seconds left to show the readout at x1 after a , . or / press
 var bar: ProgressBar
@@ -60,7 +62,7 @@ var help: Label
 var crosshair: Label
 const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement, times the mouse sensitivity setting
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
-const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X autopilot stop   R assist   C camera   F dock   J jump (when clear)   , . time  / x1   G get up   Esc back to the dock   F10 menu"
+const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   , . time  / x1   G get up   Esc back to the dock   F10 menu"
 const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   Esc frees the mouse   F10 menu"
 const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   Esc autoland   F unload (landed on the pad)   G get up   C camera   F10 menu"
 const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   F10 menu"
@@ -205,6 +207,7 @@ func _begin_approach(distance_m: float = 1500.0) -> void:
 	model.pos = Vector3(0.35, 0.15, 1.0).normalized() * distance_m
 	model.vel = Vector3.ZERO
 	model.braking = false
+	model.course_hold = false
 	model.throttle = 0.0
 	if beacon != null:
 		beacon.visible = false
@@ -285,6 +288,11 @@ func _process(delta: float) -> void:
 			model.throttle = 0.0
 	if turn != Vector3.ZERO or thr != 0.0:
 		model.braking = false          # any pilot input takes the controls back
+	if turn != Vector3.ZERO and model.course_hold:
+		model.course_hold = false      # steering by hand: course hold lets go (the throttle stays the pilot's anyway)
+		say("Course hold off.")
+	if model.course_hold and not (phase == "cruise" or phase == "depart"):
+		model.course_hold = false
 	if xfer == null:
 		model.step(minf(delta, 0.05), turn, thr, lift_cmd)
 	else:
@@ -377,6 +385,63 @@ func _warp_limit() -> Dictionary:
 func _warp_hold() -> String:
 	var lim := _warp_limit()
 	return String(lim.why) if int(lim.max) <= 1 else ""
+
+
+## A message that takes the prompt for a few seconds.
+func say(text: String, seconds := 3.0) -> void:
+	notice = text
+	notice_s = seconds
+
+
+## Course hold on or off. It only engages on a run with the nose within COURSE_AIM_DEG of the target:
+## the pilot lines up, then hands over.
+const COURSE_AIM_DEG := 5.0
+func toggle_course_hold() -> void:
+	if model.course_hold:
+		model.course_hold = false
+		say("Course hold off.")
+		return
+	if xfer == null or not (phase == "cruise" or phase == "depart"):
+		say("Course hold works on a run, on the way to the target.")
+		return
+	var off := model.aim_error_deg(xfer.target)
+	if off > COURSE_AIM_DEG:
+		say("Course hold: point within %.0f° of the diamond first (%.0f° off now)." % [COURSE_AIM_DEG, off], 4.0)
+		return
+	model.course_hold = true
+	model.course_to = xfer.target
+	model.braking = false
+	say("Course hold on: it keeps your travel on the target. You keep the throttle.")
+
+
+## What course hold is doing, for the prompt, or "" when it is off.
+func course_status() -> String:
+	if not model.course_hold:
+		return ""
+	var off := "   V or any turn: off"
+	if model.trimming:
+		var to := (model.course_to - model.pos).normalized()
+		var drift := model.vel - to * maxf(model.vel.dot(to), 0.0)
+		return "COURSE HOLD: trimming %.1f m/s of drift%s" % [drift.length(), off]
+	if model.throttle > 0.0:
+		return "COURSE HOLD: steering the burn onto the target%s" % off
+	return "COURSE HOLD: on target%s" % off
+
+
+## Out of fuel on a run, a tug takes you to whichever is nearer: on to the destination (and the run is
+## delivered) or back to where you started. It can't land you, so a run to the surface goes back.
+func tow_goes_on() -> bool:
+	if xfer == null or model.has_fuel() or not (phase == "cruise" or phase == "depart"):
+		return false
+	if String(job.get("dest_kind", "")) in LocalSpace.SURFACE:
+		return false
+	return xfer.range_to(model) < model.pos.length()
+
+
+## What the tug would cost, for the prompt.
+static func tow_fee() -> int:
+	var lv := SimShip.level(String(Session.profile.get("difficulty", "normal")))
+	return roundi(float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)))
 
 
 ## What the braking autopilot is doing, for the prompt, or "" when it is off.
@@ -503,8 +568,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	match event.keycode:
 		KEY_G:
 			get_up()
+		KEY_V:
+			toggle_course_hold()
 		KEY_X:
 			model.braking = not model.braking
+			if model.braking:
+				model.course_hold = false   # the braking autopilot takes out drift too
 			# On a run the autopilot stops at the target; anywhere else it stops the ship where it is.
 			model.brake_to = xfer.target if model.braking and xfer != null and phase == "cruise" else Vector3.INF
 		KEY_R:
@@ -529,6 +598,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_ESCAPE:
 			if phase == "approach":
 				_arrived = true   # the station's traffic control brings the ship in
+			elif tow_goes_on():
+				_arrived = true   # out of fuel nearer the destination: the tug takes you on and the run is delivered
 			_return_to_dock()
 
 

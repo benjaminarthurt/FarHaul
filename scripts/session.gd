@@ -850,11 +850,9 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 		clock = ceilf(float(int(job.hours)) * float(People.hard_burn().time)) * 3600.0   # flown by hand, flat out
 	var r := SimWorld.settle_flight(sim, fuel_burned_t, clock, 0.0, float(ship_cost(loaded.ship, loaded.ship.library)), site_fuel_mult())
 	profile["hull_damage"] = clampf(damage, 0.0, 1.0)   # carried until repaired at a fuel and repair desk
-	var extra := 0.0
-	if arrived:
-		extra = float(cfg["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
-	if stranded:
-		extra += float(cfg["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+	var berth := float(cfg["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) if arrived else 0.0
+	var tow := float(cfg["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) if stranded else 0.0
+	var extra := berth + tow
 	sim._pay(SimWorld.PLAYER, "world", extra)
 	var msg := ""
 	if arrived:
@@ -865,8 +863,8 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 		if surface:
 			c["surface"] = true
 		data["active_contract"] = c
-		msg = (("Landed on the pad at %s." if surface else "Docked at %s.") + " Fuel %s cr, berth fee %s cr%s.%s") % [job.destination, ShipStats.commas(int(r.fuel_cost)), ShipStats.commas(roundi(extra)),
-				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", " A tug towed you in." if stranded else ""]
+		msg = (("Landed on the pad at %s." if surface else "Docked at %s.") + " Fuel %s cr, berth fee %s cr%s.%s") % [job.destination, ShipStats.commas(int(r.fuel_cost)), ShipStats.commas(roundi(berth)),
+				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", (" Out of fuel: a tug towed you in for %s cr." % ShipStats.commas(roundi(tow))) if stranded else ""]
 	elif stranded:
 		msg = "Out of fuel. A tug brought you back for %s cr plus %s cr of fuel. The load is still aboard." % [ShipStats.commas(roundi(extra)), ShipStats.commas(int(r.fuel_cost))]
 	else:

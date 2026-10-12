@@ -46,6 +46,15 @@ the run (`Session.flight_job`). It has three phases.
    on 80% of full thrust), taking out sideways drift as it goes. Started too late it says it will
    overshoot. Moving away from the target, or off a run, X stops the ship where it is. X again or any
    control takes over.
+   Course hold (V): line the nose up within 5 degrees of the diamond and press V, and it keeps the
+   direction of travel on the target from then on (`FlightModel._course`). It steers; the throttle stays
+   the pilot's. Burning, it spends the push on any sideways drift first (taken out over about 4 s) and
+   the rest toward the target; coasting, it trims drift over 0.3 m/s with small burns of its own (at
+   most 20% throttle), then rests the nose on the target. A turn key, X (the braking autopilot takes
+   over) or V again lets it go. Out of the 5 degrees, V says how far off you are.
+   Out of fuel, Esc calls a tug to whichever is nearer: on to the destination, and the run is
+   delivered (berth fee plus the tow), or back to the start. A tug can't land a ship, so a run to the
+   surface is towed back. The prompt says which, and the fee.
    Finding the way: an orange arrow round the edge of the screen points to the target (or the station)
    when it is off screen, with its distance; a yellow arrow does the same for the direction of travel
    when that points elsewhere. On screen, the travel and reverse markers are labelled, and the readouts

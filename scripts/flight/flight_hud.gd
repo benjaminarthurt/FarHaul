@@ -187,7 +187,7 @@ func _update_transfer_hud() -> void:
 		"FUEL  %.2f t    ΔV %.0f m/s    PERFECT RUN %.2f t" % [sc.model.fuel_t, sc.model.delta_v(), sc.xfer.ideal_burn_t],
 		"MASS  %.1f t    ACCEL %.2f m/s²" % [sc.model.mass_t(), sc.model.accel() if sc.model.throttle > 0.0 else sc.model.max_accel()],
 		"HEAT  %d%%    HULL  %d%%" % [roundi(sc.model.heat_fraction() * 100.0), roundi((1.0 - sc.model.damage) * 100.0)],
-		"ASSIST %s   %s" % ["ON" if sc.model.assist else "OFF", "AUTOPILOT BRAKING" if sc.model.braking else ""]])
+		"ASSIST %s   %s" % ["ON" if sc.model.assist else "OFF", "AUTOPILOT BRAKING" if sc.model.braking else ("COURSE HOLD" if sc.model.course_hold else "")]])
 	sc.hud.text = "\n".join(lines)
 	sc.bar.value = sc.model.throttle
 	var to := sc.xfer.target - sc.model.pos
@@ -199,12 +199,22 @@ func _update_transfer_hud() -> void:
 	else:
 		sc.beacon.visible = false
 	var hint := ""
-	if not sc.model.has_fuel() and not sc.xfer.arrived(sc.model):
-		hint = "OUT OF FUEL. Press Esc to call a tug."
+	if sc.notice_s > 0.0:
+		hint = sc.notice
+	elif not sc.model.has_fuel() and not sc.xfer.arrived(sc.model):
+		var fee := ShipStats.commas(sc.tow_fee())
+		if sc.tow_goes_on():
+			hint = "OUT OF FUEL. Esc: a tug tows you on to %s, the nearer (%s), and the run is delivered. Tow %s cr." % [String(sc.job.destination), _distance(sc.xfer.range_to(sc.model)), fee]
+		elif String(sc.job.get("dest_kind", "")) in LocalSpace.SURFACE:
+			hint = "OUT OF FUEL. Esc: a tug tows you back to the start (it can't land you). Tow %s cr." % fee
+		else:
+			hint = "OUT OF FUEL. Esc: a tug tows you back to the start, the nearer (%s). Tow %s cr." % [_distance(sc.model.pos.length()), fee]
 	elif sc.model.overheated:
 		hint = "ENGINES OVERHEATED. Wait for them to cool."
 	elif sc.model.braking:
 		hint = sc.brake_status()
+	elif sc.model.course_hold and not sc.xfer.brake_now(sc.model):
+		hint = sc.course_status()
 	elif sc.xfer.brake_now(sc.model):
 		hint = "BRAKE NOW: press X and the autopilot stops you at the target."
 	elif sc.xfer.closing(sc.model) < -1.0:
@@ -218,6 +228,7 @@ func _update_transfer_hud() -> void:
 
 func _update_hud() -> void:
 	_update_time()
+	sc.notice_s = maxf(0.0, sc.notice_s - sc.get_process_delta_time())
 	if sc._on_surface():
 		sc._update_descent_hud()
 		if sc.outside:

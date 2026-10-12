@@ -27,6 +27,15 @@ var brake_to := Vector3.INF
 var brake_state := ""            # what the autopilot is doing: turning, coasting, burning or stopping
 var brake_burn_in_s := -1.0      # seconds until the stopping burn starts, while coasting
 const BRAKE_USE := 0.8           # plan the stop on this fraction of full thrust, to keep some in hand
+## Course hold: keeps the direction of travel on `course_to` (a run's target). It steers the nose;
+## the pilot keeps the throttle. Burning, it angles the burn to take out sideways drift as well;
+## coasting, it makes small trim burns of its own, then points the nose back at the target.
+var course_hold := false
+var course_to := Vector3.INF
+var trimming := false            # course hold is making a trim burn (the pilot's throttle is 0)
+const TRIM_MAX := 0.2            # the most throttle a trim burn uses
+const DRIFT_OK_M_S := 0.3        # sideways drift below this is left alone
+const COURSE_TAU_S := 4.0        # burning, take sideways drift out over about this long
 var tune: Dictionary = {}
 # Power and heat (flight_physics.json: loads must fit generation; heat_next = heat + generated - rejected).
 var power_gen_kw := 0.0
@@ -196,6 +205,9 @@ func _max_turn() -> float:
 ## Advance by `dt` seconds. `turn` is the pilot's pitch/yaw/roll command, each -1..1; `throttle_cmd` is
 ## -1 (ease off), 0 (hold) or +1 (open up), applied at throttle_rate_per_s.
 func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, lift_cmd: float = 0.0) -> void:
+	if trimming:
+		throttle = 0.0   # a trim burn was course hold's, not the pilot's: back to their closed throttle
+		trimming = false
 	throttle = clampf(throttle + throttle_cmd * float(tune.get("throttle_rate_per_s", 0.8)) * dt, 0.0, 1.0)
 	var cmd := turn
 	lift = clampf(lift_cmd, 0.0, 1.0)
@@ -203,6 +215,12 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 		var auto := _brake(dt)
 		cmd = auto["turn"]
 		throttle = auto["throttle"]
+	if course_hold and not braking and course_to != Vector3.INF:
+		var ch := _course()
+		cmd = ch["turn"]
+		if ch.has("throttle"):
+			throttle = ch["throttle"]
+			trimming = true
 	if autoland and terrain != null:
 		var al := _autoland()
 		cmd = al["turn"]
@@ -223,7 +241,7 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 	var want := cmd * _max_turn()
 	var a := _turn_accel() * dt
 	for i in 3:
-		if cmd[i] != 0.0 or assist or braking or autoland:
+		if cmd[i] != 0.0 or assist or braking or autoland or course_hold:
 			ang[i] = move_toward(ang[i], want[i], a)
 	if ang.length() > 0.0:
 		basis = (basis * Basis(ang.normalized(), ang.length() * dt)).orthonormalized()
@@ -395,19 +413,57 @@ func _brake(dt: float) -> Dictionary:
 
 ## Turn to burn along `want` and give `thr` once lined up (within about 7 degrees).
 func _brake_steer(want: Vector3, thr: float, state: String) -> Dictionary:
+	var p := _point(want)
+	brake_state = state if p.angle < 0.12 else "turning"
+	return {"turn": p.turn, "throttle": thr if p.angle < 0.12 else 0.0}
+
+
+## The turn command that brings the nose round onto `want`, easing in so it settles rather than
+## overshooting, and the angle still to go: {turn, angle}.
+func _point(want: Vector3) -> Dictionary:
 	var local := basis.inverse() * want.normalized()   # where to point in ship axes (-Z is forward)
 	var fwd := Vector3(0, 0, -1)
 	var axis := fwd.cross(local)                       # rotation (ship axes) that takes forward onto it
 	var angle := fwd.angle_to(local)
 	var turn := Vector3.ZERO
 	if angle > 0.002:
-		# Ease the turn so it settles instead of overshooting: command the rate the remaining angle allows.
 		var stop_rate := sqrt(2.0 * _turn_accel() * angle) / _max_turn()
 		var dir := axis.normalized() if axis.length() > 0.0001 else Vector3(1, 0, 0)
 		turn = dir * clampf(stop_rate, 0.0, 1.0)
 		# Our axes are pitch=X, yaw=Y, roll=Z in the ship's frame, so the rotation vector maps straight on.
-	brake_state = state if angle < 0.12 else "turning"
-	return {"turn": turn, "throttle": thr if angle < 0.12 else 0.0}
+	return {"turn": turn, "angle": angle}
+
+
+## Course hold. Burning (the pilot's throttle open): point where the burn both speeds the ship toward
+## the target and cancels its sideways drift. Coasting: if it is drifting, turn across the drift and
+## trim it out with a small burn; otherwise rest the nose on the target. {turn, throttle?}
+func _course() -> Dictionary:
+	var to := course_to - pos
+	if to.length() < 1.0:
+		return {"turn": Vector3.ZERO}
+	var dir := to.normalized()
+	var closing := vel.dot(dir)
+	var drift := vel - dir * maxf(closing, 0.0)          # everything that isn't heading for the target
+	if throttle > 0.0:
+		# Spend the push on the drift first (taking it out over about COURSE_TAU_S), the rest toward
+		# the target: the burn swings the travel onto the target as it speeds the ship up.
+		var a_max := maxf(max_accel() * throttle, 0.001)
+		var side := -drift / COURSE_TAU_S
+		if side.length() > a_max:
+			side = side.normalized() * a_max
+		var ahead := sqrt(maxf(a_max * a_max - side.length_squared(), 0.0))
+		return {"turn": _point(side + dir * maxf(ahead, a_max * 0.05))["turn"]}
+	if drift.length() > DRIFT_OK_M_S:
+		var p := _point(-drift)
+		var thr := clampf(drift.length() / (maxf(max_accel(), 0.001) * 2.0), 0.02, TRIM_MAX) if p.angle < 0.12 else 0.0
+		return {"turn": p.turn, "throttle": thr}
+	return {"turn": _point(dir)["turn"]}
+
+
+## The angle in degrees between where the nose points and the direction to `at`.
+func aim_error_deg(at: Vector3) -> float:
+	var to := at - pos
+	return rad_to_deg(forward().angle_to(to)) if to.length() > 1.0 else 0.0
 
 
 ## Where the ship starts when it leaves the dock: well clear, at rest, facing away from the station.
