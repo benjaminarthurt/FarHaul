@@ -29,6 +29,10 @@ func sit_down() -> void:
 	if not sc.walking:
 		return
 	sc.walking = false
+	sc.held_from_before.clear()
+	for k in sc.FLIGHT_KEYS:   # E (to sit) and W (to walk here) are flight keys too: ignore them until let go
+		if Input.is_key_pressed(k):
+			sc.held_from_before.append(k)
 	sc.view.set_interior(false)
 	sc.help.text = sc.LAND_HELP if sc._on_surface() else sc.FLY_HELP
 	sc.crosshair.visible = false
@@ -76,10 +80,11 @@ func _walk_input(event: InputEvent) -> void:
 		KEY_ESCAPE:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		KEY_PERIOD:
-			if sc.xfer != null:
-				sc.warp_index = mini(sc.warp_index + 1, sc.WARPS.size() - 1)
+			sc.set_warp(sc.warp_index + 1)
 		KEY_COMMA:
-			sc.warp_index = maxi(sc.warp_index - 1, 0)
+			sc.set_warp(sc.warp_index - 1)
+		KEY_SLASH:
+			sc.set_warp(0)
 
 
 ## E: sit at the helm, climb a ladder, or leave by the airlock when the ship is at a berth.

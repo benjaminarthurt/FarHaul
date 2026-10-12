@@ -19,6 +19,8 @@ var station: Node3D
 var planet: MeshInstance3D    ## the system's world, far off in space (hidden over a moon)
 var hud: Label
 var prompt: Label
+var time_label: Label   ## the time compression readout, top right
+var time_shown_s := 0.0  ## seconds left to show "TIME x1" after a change back to normal time
 var bar: ProgressBar
 var chase := true
 var cockpit_pos := Vector3.ZERO
@@ -50,12 +52,16 @@ var _impact_shown := -10.0
 var _impacts_seen := 0
 var walk: ShipWalk
 var walking := false
+## Flight keys still held from before you took the helm (E to sit down is also roll; W walked you to the
+## seat). They are ignored until let go, so sitting down doesn't steer or cancel the braking autopilot.
+var held_from_before: Array[int] = []
+const FLIGHT_KEYS: Array[int] = [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_Q, KEY_E, KEY_W, KEY_S, KEY_Z]
 var help: Label
 var crosshair: Label
 const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement, times the mouse sensitivity setting
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
-const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time   G get up   Esc back to the dock   F10 menu"
-const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time   Esc frees the mouse   F10 menu"
+const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X brake autopilot   R assist   C camera   F dock   J jump (when clear)   , . time  / x1   G get up   Esc back to the dock   F10 menu"
+const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   Esc frees the mouse   F10 menu"
 const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   Esc autoland   F unload (landed on the pad)   G get up   C camera   F10 menu"
 const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   F10 menu"
 var ship_data: ShipData
@@ -264,15 +270,18 @@ func _process(delta: float) -> void:
 	elif walking:
 		_walk_step(delta)    # nobody at the helm: the ship carries on as it was
 	else:
-		if Input.is_key_pressed(KEY_UP): turn.x += 1.0
-		if Input.is_key_pressed(KEY_DOWN): turn.x -= 1.0
-		if Input.is_key_pressed(KEY_LEFT): turn.y += 1.0
-		if Input.is_key_pressed(KEY_RIGHT): turn.y -= 1.0
-		if Input.is_key_pressed(KEY_Q): turn.z += 1.0
-		if Input.is_key_pressed(KEY_E): turn.z -= 1.0
-		if Input.is_key_pressed(KEY_W): thr += 1.0
-		if Input.is_key_pressed(KEY_S): thr -= 1.0
-		if Input.is_key_pressed(KEY_Z):
+		for k in held_from_before.duplicate():
+			if not Input.is_key_pressed(k):
+				held_from_before.erase(k)
+		if _flight_key(KEY_UP): turn.x += 1.0
+		if _flight_key(KEY_DOWN): turn.x -= 1.0
+		if _flight_key(KEY_LEFT): turn.y += 1.0
+		if _flight_key(KEY_RIGHT): turn.y -= 1.0
+		if _flight_key(KEY_Q): turn.z += 1.0
+		if _flight_key(KEY_E): turn.z -= 1.0
+		if _flight_key(KEY_W): thr += 1.0
+		if _flight_key(KEY_S): thr -= 1.0
+		if _flight_key(KEY_Z):
 			model.throttle = 0.0
 	if turn != Vector3.ZERO or thr != 0.0:
 		model.braking = false          # any pilot input takes the controls back
@@ -313,15 +322,36 @@ func _process(delta: float) -> void:
 			ring.rotate_z(delta * 0.05)
 
 
-## Time compression, held to 1x when the target is close or the ship is closing fast on it.
+## Time compression actually in use: the rate chosen with , and . unless something holds it at 1x.
 func _warp() -> int:
 	var w: int = WARPS[warp_index]
-	if xfer == null or w == 1 or phase != "cruise":
-		return 1
-	var eta := xfer.eta_s(model)
-	if xfer.range_to(model) < 25000.0 or (eta >= 0.0 and eta < 60.0) or xfer.brake_now(model) or model.braking:
+	if w == 1 or _warp_hold() != "":
 		return 1
 	return w
+
+
+## Why time is held at 1x whatever rate is chosen, or "" when it isn't.
+func _warp_hold() -> String:
+	if xfer == null:
+		return "only on a run"
+	if phase != "cruise":
+		return "leaving the station" if phase == "depart" else "on approach"
+	if model.braking:
+		return "while the autopilot brakes"
+	if xfer.brake_now(model):
+		return "at the brake point"
+	var eta := xfer.eta_s(model)
+	if xfer.range_to(model) < 25000.0 or (eta >= 0.0 and eta < 60.0):
+		return "near the target"
+	return ""
+
+
+## Choose a time compression rate (an index into WARPS); 0 is normal time.
+func set_warp(i: int) -> void:
+	var before := warp_index
+	warp_index = clampi(i, 0, WARPS.size() - 1)
+	if warp_index == 0 and before != 0:
+		time_shown_s = 2.0   # say we are back to normal time for a moment
 
 
 ## Keep the speed markers around the ship however far it has come.
@@ -330,6 +360,11 @@ func _wrap_markers() -> void:
 		var rel := m.position - model.pos
 		rel = Vector3(fposmod(rel.x + 700.0, 1400.0) - 700.0, fposmod(rel.y + 700.0, 1400.0) - 700.0, fposmod(rel.z + 700.0, 1400.0) - 700.0)
 		m.position = model.pos + rel
+
+
+## A flight key held down by the pilot, not one still held from walking to the seat.
+func _flight_key(k: int) -> bool:
+	return Input.is_key_pressed(k) and not k in held_from_before
 
 
 func _apply_pose() -> void:
@@ -421,10 +456,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			if String(job.get("kind", "")) == "jump" and phase == "depart" and _jump_blocker() == "":
 				_start_jump()
 		KEY_PERIOD:
-			if xfer != null:
-				warp_index = mini(warp_index + 1, WARPS.size() - 1)
+			set_warp(warp_index + 1)
 		KEY_COMMA:
-			warp_index = maxi(warp_index - 1, 0)
+			set_warp(warp_index - 1)
+		KEY_SLASH:
+			set_warp(0)
 		KEY_F:
 			if model.can_dock():
 				if phase == "approach":

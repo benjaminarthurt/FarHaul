@@ -41,7 +41,9 @@ the run (`Session.flight_job`). It has three phases.
 2. **Cruise.** The station drops away. `TransferFlight.plan` sets the distance so a perfect full burn, flip and full
    brake spends exactly the hop's delta-v, the figure the board prices fuel on (tested to match to 0.2%). Line up,
    burn, flip at the BRAKE NOW cue (X runs the retrograde autopilot) and stop within 1.5 km at under 8 m/s.
-   `,` and `.` change time compression (x1 to x60); it drops to x1 when the target is near or closing fast.
+   `,` and `.` change time compression (x1 to x60) and `/` goes straight back to x1. The rate shows top
+   right. Time is held at x1 while leaving the station, near the target, at the brake point and while the
+   braking autopilot runs; the readout then shows the rate chosen and why it is held.
 3. **Approach.** Arriving at the marker brings up the destination's station and rests the ship 1.5 km off its
    collar. Docking uses the free-flight rules (nose down the axis, close, under 3 m/s) and settles the run. Esc
    in this phase is an autopilot dock, so the approach is never a trap.

@@ -26,6 +26,17 @@ func _build_hud() -> void:
 	sc.prompt.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 60)
 	sc.prompt.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	layer.add_child(sc.prompt)
+	sc.time_label = Label.new()   # time compression, big enough to notice
+	sc.time_label.add_theme_font_size_override("font_size", 26)
+	sc.time_label.add_theme_color_override("font_color", Brand.AMBER)
+	sc.time_label.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+	sc.time_label.add_theme_constant_override("outline_size", 6)
+	sc.time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT   # top right, clear of the readouts and below F3's
+	sc.time_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 28)
+	sc.time_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	sc.time_label.position.y = 96
+	sc.time_label.visible = false
+	layer.add_child(sc.time_label)
 	sc.bar = ProgressBar.new()
 	sc.bar.custom_minimum_size = Vector2(26, 160)
 	sc.bar.fill_mode = ProgressBar.FILL_BOTTOM_TO_TOP
@@ -84,6 +95,25 @@ func _screen_dir(dir: Vector3) -> Vector2:
 	return p
 
 
+## The time readout, top right: the rate in use; the rate chosen and why it is held at 1x; or, just after going back
+## to normal time, "TIME x1". Hidden otherwise.
+func _update_time() -> void:
+	if sc.time_label == null:
+		return
+	var chosen: int = sc.WARPS[sc.warp_index]
+	var hold: String = sc._warp_hold()
+	sc.time_shown_s = maxf(0.0, sc.time_shown_s - sc.get_process_delta_time())
+	if chosen > 1 and hold == "":
+		sc.time_label.text = "TIME x%d\n, . change   / back to x1" % chosen
+	elif chosen > 1:
+		sc.time_label.text = "TIME x1\nx%d %s   / back to x1" % [chosen, "only on a run" if hold == "only on a run" else "held " + hold]
+	elif sc.time_shown_s > 0.0:
+		sc.time_label.text = "TIME x1"
+	else:
+		sc.time_label.text = ""
+	sc.time_label.visible = sc.time_label.text != ""
+
+
 func _update_transfer_hud() -> void:
 	var rng := sc.xfer.range_to(sc.model)
 	var eta := sc.xfer.eta_s(sc.model)
@@ -125,6 +155,7 @@ func _update_transfer_hud() -> void:
 
 
 func _update_hud() -> void:
+	_update_time()
 	if sc._on_surface():
 		sc._update_descent_hud()
 		if sc.outside:
@@ -202,6 +233,8 @@ func _walk_prompt() -> void:
 		warn = "OUT OF FUEL"
 	elif sc.model.last_impact > float(sc.model.tune.get("soft_impact_m_s", 1.5)) and sc.model.elapsed_s - sc._impact_shown < 3.0:
 		warn = "HULL IMPACT"
+	elif sc.model.braking:
+		warn = "AUTOPILOT BRAKING"
 	elif sc.xfer != null and sc.phase == "cruise" and sc.xfer.brake_now(sc.model):
 		warn = "BRAKE NOW: get back to the helm"
 	var parts := PackedStringArray()

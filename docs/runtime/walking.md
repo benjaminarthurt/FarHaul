@@ -7,7 +7,11 @@ look down the ship, and walk its rooms in first person. **E** at the helm sits b
 
 - **The ship flies on without you.** Throttle, the braking autopilot and the rotation assist stay as they
   were left. Burn and get up, and the ship keeps burning. The prompt warns you about overheating, running dry,
-  a hull impact or the brake point on a run, so you know to get back to the helm.
+  a hull impact or the brake point on a run, so you know to get back to the helm; while the braking
+  autopilot runs it says so instead.
+- **Taking the helm again changes nothing.** E (to sit down) is also roll, and you may still be holding W
+  from walking to the seat: flight keys already held when you sit down are ignored until let go, so
+  sitting down never steers the ship or cancels the braking autopilot. A fresh key press does take over.
 - **Deck gravity.** The deck plate is always down, whatever the ship is doing. Ship layouts put floors on
   -Y, and thrust pushes along -Z, so real thrust gravity would turn the aft wall into the floor. It is a
   simplification, and it can change later.
@@ -21,8 +25,8 @@ look down the ship, and walk its rooms in first person. **E** at the helm sits b
 - **The airlock** lets you off when the ship is at a berth: docked, or still at the spot the flight started
   from and stopped. That ends the flight the same way docking or Esc would. Away from a berth the outer
   hatch stays shut. Space walks come later.
-- **Time compression** (`,` `.`) still works while you walk on a local run, so you can cross the ship
-  during a long coast.
+- **Time compression** (`,` `.`, and `/` for x1) still works while you walk on a local run, so you can
+  cross the ship during a long coast.
 - Walking is not allowed during a star jump's spool, warp and slowdown.
 
 ## Controls
