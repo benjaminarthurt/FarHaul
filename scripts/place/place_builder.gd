@@ -158,6 +158,7 @@ func _window_view() -> void:
 		var loaded := Session._load_ship(SaveSlots.read(Session.slot))
 		if not loaded.is_empty():
 			var view := ShipView.new()
+			view.skin = true
 			outside.add_child(view)
 			view.rebuild(loaded.ship, loaded.manifest)
 			sc._ship_data = loaded.ship
@@ -537,6 +538,7 @@ func _moon_outside(wall: Vector3, out: Vector3) -> void:
 			pad.position = at
 			outside.add_child(pad)
 			var view := ShipView.new()
+			view.skin = true
 			outside.add_child(view)
 			view.rebuild(loaded.ship, loaded.manifest)
 			view.set_interior(false)

@@ -7,9 +7,10 @@ extends Node3D
 ## and can light the engine plumes.
 
 var _rings: Array[Node3D] = []
-var _flames: Array[MeshInstance3D] = []
+var _flames: Array[Node3D] = []      ## plume pivots at each engine's mouth (EngineParts.plume)
 var _flames_on := false
-var _lift_flames: Array[MeshInstance3D] = []
+var _throttle := 1.0
+var _lift_flames: Array[Node3D] = []
 var _lift_dirty := true
 var _time := 0.0
 var _ring_mesh: TorusMesh
@@ -17,6 +18,7 @@ var _ring_mat: StandardMaterial3D
 
 var hide_above := false
 var deck := 0
+var skin := false   ## wear the outer hull (ShipSkin): in flight and on the menus, not in the builder
 
 
 func _ready() -> void:
@@ -42,10 +44,13 @@ func rebuild(ship: ShipData, manifest: CargoManifest = null, pop_index := -1) ->
 	_rings.clear()
 	_flames.clear()
 	_lift_dirty = true
+	var press := ShipSkin.pressurised_cells(ship) if skin else {}
 	for mi in ship.modules.size():
 		var m: Dictionary = ship.modules[mi]
 		var node := ship.library.get_def(m.id).build_visual()
 		node.position = ShipGrid.cell_to_world(m.cell)
+		if skin:   # external parts sit out on the skin, not buried in it
+			node.position += ShipSkin.mount_offset(ship, m, press)
 		node.rotation.y = m.rot * PI / 2.0
 		node.set_meta("deck", m.cell.y)
 		if manifest != null:
@@ -64,6 +69,9 @@ func rebuild(ship: ShipData, manifest: CargoManifest = null, pop_index := -1) ->
 		ring.basis = Basis(Quaternion(Vector3.UP, n))
 		add_child(ring)
 		_rings.append(ring)
+	if skin:   # under a hull nobody needs to see in from above, and from inside you'd see the hull
+		add_child(ShipSkin.build(ship))
+		_set_ceilings(self, true)
 	set_deck_filter(deck, hide_above)
 	set_flames(_flames_on)
 
@@ -82,8 +90,17 @@ func set_flames(on: bool) -> void:
 		f.visible = on
 
 
+## How hard the engines burn, 0..1: the plumes grow longer and brighter with it.
+func set_throttle(t: float) -> void:
+	_throttle = clampf(t, 0.0, 1.0)
+	for f in _flames:
+		for c in f.get_children():
+			if c is GeometryInstance3D:
+				(c as GeometryInstance3D).set_instance_shader_parameter("power", 0.35 + 0.65 * _throttle)
+
+
 func _collect_flames(node: Node) -> void:
-	if node is MeshInstance3D and node.has_meta("flame"):
+	if node is Node3D and node.has_meta("flame"):
 		_flames.append(node)
 	for c in node.get_children():
 		_collect_flames(c)
@@ -94,9 +111,10 @@ func _process(delta: float) -> void:
 	var pulse := 1.0 + 0.1 * sin(_time * 4.0)
 	for r in _rings:
 		r.scale = Vector3.ONE * pulse
-	if _flames_on:
+	if _flames_on:   # a little life in the plume; its length follows the throttle
+		var length := 0.4 + 0.6 * _throttle
 		for f in _flames:
-			f.scale = Vector3(1.0 + 0.08 * sin(_time * 53.0), 1.0 + 0.18 * sin(_time * 31.0 + 1.0), 1.0 + 0.08 * sin(_time * 47.0))
+			f.scale = Vector3(1.0 + 0.03 * sin(_time * 53.0), length * (1.0 + 0.05 * sin(_time * 31.0 + 1.0)), 1.0 + 0.03 * sin(_time * 47.0))
 
 
 func _apply_cargo(node: Node, origin: Vector3i, manifest: CargoManifest) -> void:
@@ -148,7 +166,7 @@ func _stencil(container: Node3D, text: String, col: Color) -> void:
 
 ## Walking inside: ceilings go solid (they are see-through so the builder can look in from above).
 func set_interior(on: bool) -> void:
-	_set_ceilings(self, on)
+	_set_ceilings(self, on or skin)
 
 
 func _set_ceilings(node: Node, on: bool) -> void:
@@ -178,7 +196,7 @@ func set_lift_flames(on: bool) -> void:
 
 
 func _find_lift(node: Node) -> void:
-	if node is MeshInstance3D and node.has_meta("lift_flame"):
+	if node is Node3D and node.has_meta("lift_flame"):
 		_lift_flames.append(node)
 	for c in node.get_children():
 		_find_lift(c)

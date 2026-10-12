@@ -166,38 +166,6 @@ func _hatch_leaf(hatch: Node3D) -> void:
 	_add_box(hatch, Vector3(0, -0.3, 0.06), Vector3(0.5, 0.1, 0.03), _mat(color.darkened(0.7), 1.0))  # wheel plate
 
 
-static var _plumes := {}
-
-
-## Exhaust: additive, unshaded, bright at the nozzle and fading to nothing along its length (the
-## cylinder's v runs from its narrow far end, 0, to the nozzle, 1).
-static func _plume(col: Color, core := false) -> StandardMaterial3D:
-	var key := "%s|%s" % [col.to_html(), core]
-	if _plumes.has(key):
-		return _plumes[key]
-	var g := Gradient.new()
-	g.set_color(0, Color(0, 0, 0))
-	g.set_color(1, col.lerp(Color(1, 1, 1), 0.6) if core else col)
-	g.add_point(0.55, (col * (0.9 if core else 0.45)))
-	var tex := GradientTexture2D.new()
-	tex.gradient = g
-	tex.fill_from = Vector2(0, 0)
-	tex.fill_to = Vector2(0, 1)
-	tex.width = 4
-	tex.height = 64
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.cull_mode = BaseMaterial3D.CULL_DISABLED
-	m.no_depth_test = false
-	m.albedo_texture = tex
-	m.texture_repeat = false   # no bleed of the bright nozzle end onto the far tip
-	m.albedo_color = Color(1, 1, 1, 1)
-	_plumes[key] = m
-	return m
-
-
 static func _glow(col: Color) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = col
@@ -424,31 +392,16 @@ func _build_external(root: Node3D) -> void:
 				leg.rotate_object_local(Vector3.RIGHT, PI * 0.5)
 				_add_box(root, foot + Vector3(0, -0.05, 0), Vector3(0.6, 0.1, 0.6), dark)
 		_add_box(root, Vector3(0, h - 0.2, 0), Vector3(2.2, 0.3, 2.2), dark)  # mounting plate
-		for k in 4:
+		var jet_steel := Interiors.flat(Color(0.34, 0.33, 0.34), 0.45, 0.6)
+		var soot := Interiors.flat(Color(0.10, 0.09, 0.09), 0.9, 0.2)
+		for k in 4:   # lift jets between the legs, firing straight down
 			var a := k * PI * 0.5 + PI * 0.25
-			var nz := Vector3(cos(a) * 0.5, h - 0.6, sin(a) * 0.5)
-			var bell := CylinderMesh.new()
-			bell.top_radius = 0.18
-			bell.bottom_radius = 0.32
-			bell.height = 0.5
-			bell.material = mat
-			var bi := MeshInstance3D.new()
-			bi.mesh = bell
-			bi.position = nz
-			root.add_child(bi)
-			var plume := CylinderMesh.new()  # lift exhaust, shown while the jets fire
-			plume.top_radius = 0.3
-			plume.bottom_radius = 0.04
-			plume.height = 2.2
-			plume.material = _plume(Color(0.55, 0.75, 1.0))
-			plume.cap_top = false
-			plume.cap_bottom = false
-			var pi_ := MeshInstance3D.new()
-			pi_.mesh = plume
-			pi_.position = nz + Vector3(0, -1.35, 0)
-			pi_.set_meta("lift_flame", true)
-			pi_.visible = false
-			root.add_child(pi_)
+			var jet := Node3D.new()
+			jet.position = Vector3(cos(a) * 0.5, h - 0.35, sin(a) * 0.5)
+			jet.rotation_degrees.x = 90.0   # the parts' +Z turns to -Y: down
+			root.add_child(jet)
+			EngineParts.bell(jet, 0.0, 0.45, 0.12, 0.3, jet_steel, soot, jet_steel, _glow(Color(1.0, 0.72, 0.42)), 0.03)
+			EngineParts.plume(jet, 0.45, 0.3, 2.4, "lift_flame")
 	elif shape == &"drive":
 		# A heavy ring on a short spine: the jump coil.
 		var ring := TorusMesh.new()
@@ -468,45 +421,24 @@ func _build_external(root: Node3D) -> void:
 			_add_box(root, Vector3(-1.2, -1.1 + k * 0.44, 0), Vector3(0.16, 0.3, 2.4), mat)
 		_add_box(root, Vector3(-1.3, 0, 0), Vector3(0.3, 0.4, 0.4), dark)
 	elif shape == &"engine":
-		# Mount plate at the front (-Z), nozzle flaring toward the back (+Z).
-		var bell := CylinderMesh.new()
-		bell.top_radius = 1.2
-		bell.bottom_radius = 0.5
-		bell.height = 2.4
-		bell.material = mat
-		var mi := MeshInstance3D.new()
-		mi.mesh = bell
-		mi.rotation_degrees.x = 90.0
-		mi.position = Vector3(0, 0, 0.2)
-		root.add_child(mi)
+		# Mount plate at the front (-Z), a short combustion chamber, then an open bell flaring to the
+		# back (+Z) with the throat glowing deep inside it. The exhaust starts at the bell's mouth.
 		_add_box(root, Vector3(0, 0, -1.25), Vector3(1.4, 1.4, 0.5), dark)
-		var exit_disc := CylinderMesh.new()  # hot throat glowing inside the bell
-		exit_disc.top_radius = 1.0
-		exit_disc.bottom_radius = 1.0
-		exit_disc.height = 0.04
-		exit_disc.material = _glow(Color(1.0, 0.55, 0.2))
-		var di := MeshInstance3D.new()
-		di.mesh = exit_disc
-		di.rotation_degrees.x = 90.0
-		di.position = Vector3(0, 0, 1.2)
-		root.add_child(di)
-		for k in 2:   # exhaust plume, only shown while burning: a wide glow and a hot core
-			var flame := CylinderMesh.new()
-			flame.top_radius = 0.15 if k == 0 else 0.05
-			flame.bottom_radius = 0.95 if k == 0 else 0.45
-			flame.height = 5.5 if k == 0 else 3.0
-			flame.radial_segments = 16
-			flame.cap_top = false
-			flame.cap_bottom = false
-			flame.material = _plume(Color(1.0, 0.55, 0.2) if k == 0 else Color(0.75, 0.85, 1.0), k == 1)
-			var fi := MeshInstance3D.new()
-			fi.mesh = flame
-			fi.rotation_degrees.x = 90.0
-			fi.position = Vector3(0, 0, 1.3 + flame.height * 0.5)
-			fi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			fi.visible = false
-			fi.set_meta("flame", true)
-			root.add_child(fi)
+		var chamber := CylinderMesh.new()
+		chamber.top_radius = 0.5
+		chamber.bottom_radius = 0.55
+		chamber.height = 0.45
+		chamber.material = dark
+		var ci := MeshInstance3D.new()
+		ci.mesh = chamber
+		ci.rotation_degrees.x = 90.0
+		ci.position = Vector3(0, 0, -0.85)
+		root.add_child(ci)
+		var steel := Interiors.flat(Color(0.34, 0.33, 0.34), 0.45, 0.6)
+		var soot := Interiors.flat(Color(0.10, 0.09, 0.09), 0.9, 0.2)
+		var lip := Interiors.flat(Color(0.62, 0.38, 0.22), 0.4, 0.7)   # heat-coloured rim
+		EngineParts.bell(root, -0.62, 1.4, 0.4, 1.15, steel, soot, lip, _glow(Color(1.0, 0.72, 0.42)))
+		EngineParts.plume(root, 1.4, 1.15, 7.5)
 	else:
 		var inset := Vector3.ONE * 0.4
 		_add_box(root, Vector3(size - Vector3i.ONE) * ShipGrid.CELL * 0.5, Vector3(size) * ShipGrid.CELL - inset, mat)

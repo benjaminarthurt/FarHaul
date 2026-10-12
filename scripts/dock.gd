@@ -72,6 +72,7 @@ func _build_world() -> void:
 	if not loaded:
 		ShipPresets.build(ship)
 	var view := ShipView.new()
+	view.skin = true
 	add_child(view)
 	var manifest := CargoManifest.new(ship)
 	view.rebuild(ship, manifest)
@@ -499,15 +500,6 @@ func _fly(system_id: String) -> void:
 	status.text = result.message
 	if bool(result.ok):
 		get_tree().reload_current_scene()
-
-
-func _fly_run() -> void:
-	var c := Session.active_contract()
-	var r := Session.begin_local_flight() if bool(c.get("local", false)) else Session.begin_jump_flight()
-	if bool(r.ok):
-		_go(Session.FLIGHT_SCENE)
-	else:
-		status.text = r.message
 
 
 func _depart() -> void:

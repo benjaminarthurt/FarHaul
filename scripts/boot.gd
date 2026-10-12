@@ -299,6 +299,7 @@ func _build_world() -> void:
 	var ship := ShipData.new(lib)
 	ShipPresets.build(ship)
 	var view := ShipView.new()
+	view.skin = true
 	world.add_child(view)
 	view.rebuild(ship)
 	view.set_flames(true)

@@ -235,6 +235,7 @@ func _build_ship() -> void:
 	ship_root = Node3D.new()
 	add_child(ship_root)
 	view = ShipView.new()
+	view.skin = true                           # the outer hull: nothing inside shows from space
 	ship_root.add_child(view)
 	view.position = -com                       # turn about the centre of mass
 	view.rebuild(ship, manifest)
@@ -323,6 +324,7 @@ func _process(delta: float) -> void:
 	_apply_pose()
 	_update_hud()
 	view.set_flames(model.throttle > 0.02 and model.has_fuel())
+	view.set_throttle(model.throttle)
 	view.set_lift_flames(model.lift > 0.03 and model.has_fuel())
 	_mix_audio(delta)
 	for ring in station.get_children():

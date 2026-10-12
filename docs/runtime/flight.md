@@ -31,6 +31,26 @@ cockpit cameras and a HUD for speed, closing rate, distance, throttle, fuel, del
 Keys: W/S throttle, Z cut, arrows pitch and yaw, Q/E roll, X brake, R assist, C camera, F dock, Esc dock.
 G gets up from the seat to walk the ship (see walking.md).
 
+### The hull and the engine (`scripts/ship_skin.gd`, `scripts/engine_parts.gd`)
+
+In flight, on the title screen, in the dock and in the port's windows the ship wears an outer hull.
+The builder leaves it off so you can see into the compartments.
+
+- The skin stands 0.5 m off the pressure walls of every pressurised compartment and is plated over
+  every outward face. Edges and corners between outward faces are rounded (radius up to 1.2 m, less
+  where a window or hatch needs the flat plate). Only the outer quarter of each round is built, so
+  nothing of it reaches back into a compartment.
+- It leaves openings, each lined through to the pressure wall: the helm's windscreen and side
+  windows, the airlock's outer hatch, and the reactor's vents. Unused doorways are plated over.
+- Unpressurised parts (engine, radiators, tanks, jump drive, cargo racks) are moved out by the
+  skin's depth so they sit on it rather than in it. Landing legs stay where they are.
+- With the skin on, ceilings are always solid: there is nothing to see in from above, and from inside
+  you would otherwise see the hull through them.
+- The engine is an open bell with a rolled copper lip and a glowing throat deep inside. The plume is
+  a shader: a pale hot core with faint shock diamonds inside a wider, fading outer plume that spreads
+  as it leaves the bell. Its length and brightness follow the throttle (`ShipView.set_throttle`).
+  Lander lift jets are smaller bells with their own plumes.
+
 ## Flying a local run (`scripts/transfer_flight.gd`)
 
 An active local contract can be flown instead of autopiloted: the dock's FLY THE RUN opens the flight scene with

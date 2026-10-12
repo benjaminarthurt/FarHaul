@@ -129,7 +129,9 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/sfx.gd` | Synthesised sound effects |
 | `scripts/ship_data.gd` | The ship as data: placement rules, removal, JSON save/load |
 | `scripts/ship_stats.gd` | Mass, centre of mass, power, heat, thrust, warnings |
-| `scripts/ship_view.gd` | Builds 3D nodes from `ShipData` |
+| `scripts/ship_view.gd` | Builds 3D nodes from `ShipData`; with `skin` on (flight, title screen, dock, port windows) it adds the outer hull |
+| `scripts/ship_skin.gd` | `ShipSkin`: the outer hull over the compartments, with rounded edges and corners, open windows, hatches and vents, and the external parts mounted out on it |
+| `scripts/engine_parts.gd` | `EngineParts`: the engine's open bell nozzle and its shader-drawn exhaust plume |
 | `scripts/builder.gd` | Camera, ghost, input, UI |
 | `scripts/boot.gd` | Start-up flow: splash, intro video, title screen, hand-off to the builder |
 | `scripts/brand.gd` | Name, tagline, palette, container codes, button style |
@@ -137,6 +139,7 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `assets/video/intro.ogv` | **Placeholder** intro video. Replace it with the real one (Godot only plays Ogg Theora) |
 | `tools/make_brand_assets.py` | Regenerates the brand images and placeholder video (needs Pillow, numpy, ffmpeg) |
 | `tests/test_ship.gd` | Headless tests for the rules and stats |
+| `tests/test_ship_skin.gd` | Headless tests for the hull skin and the engine plume |
 
 Run the tests:
 
