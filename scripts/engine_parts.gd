@@ -30,7 +30,35 @@ void fragment() {
 }
 """
 
+## Seen end-on, the plume's sides face away and it all but vanishes. A soft glow at the mouth, facing
+## the camera, fills in what you would see looking up the exhaust; it fades out as you move round
+## to the side, where the plume itself shows.
+const GLOW_SHADER := """
+shader_type spatial;
+render_mode unshaded, blend_add, cull_disabled, depth_draw_never, shadows_disabled;
+
+uniform vec3 tint : source_color = vec3(0.75, 0.82, 1.0);
+uniform float brightness = 1.0;
+instance uniform float power = 1.0;
+varying float end_on;
+
+void vertex() {
+	vec3 axis = normalize((VIEW_MATRIX * vec4(MODEL_MATRIX[1].xyz, 0.0)).xyz);
+	end_on = abs(axis.z);
+	MODELVIEW_MATRIX = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
+}
+
+void fragment() {
+	vec2 p = UV * 2.0 - 1.0;
+	float r2 = dot(p, p);
+	float glow = exp(-r2 * 5.0) + 0.6 * exp(-r2 * 30.0);
+	float edge = 1.0 - smoothstep(0.7, 1.0, sqrt(r2));
+	ALBEDO = tint * glow * edge * brightness * power * smoothstep(0.75, 0.98, end_on);
+}
+"""
+
 static var _shader: Shader
+static var _glow_shader: Shader
 static var _mats := {}
 
 
@@ -160,4 +188,24 @@ static func plume(root: Node3D, exit_z: float, r_exit: float, length: float, tag
 		mi.position = Vector3(0, (m as CylinderMesh).height * 0.5, 0)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		pivot.add_child(mi)
+	var quad := QuadMesh.new()   # the end-on glow, just out of the mouth
+	quad.size = Vector2.ONE * r_exit * 3.8
+	quad.material = _glow_material()
+	var gi := MeshInstance3D.new()
+	gi.mesh = quad
+	gi.position = Vector3(0, r_exit * 0.3, 0)
+	gi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	pivot.add_child(gi)
 	return pivot
+
+
+static func _glow_material() -> ShaderMaterial:
+	if _mats.has("glow"):
+		return _mats["glow"]
+	if _glow_shader == null:
+		_glow_shader = Shader.new()
+		_glow_shader.code = GLOW_SHADER
+	var m := ShaderMaterial.new()
+	m.shader = _glow_shader
+	_mats["glow"] = m
+	return m
