@@ -45,6 +45,8 @@ const DESKS := {
 	"port": ["freight", "fuel", "yard", "bar", "terminal", "gate"],
 	"depot": ["freight", "fuel", "bar", "terminal", "gate"], "moon": ["freight", "fuel", "bar", "terminal", "gate"],
 	"belt": ["freight", "fuel", "bar", "terminal", "gate"],
+	"venus": ["freight", "fuel", "bar", "terminal", "gate"], "jovian": ["freight", "fuel", "bar", "terminal", "gate"],
+	"saturn": ["freight", "fuel", "bar", "terminal", "gate"],
 	"pad": ["dispatch", "lab", "store", "fuel", "terminal", "gate"], "camp": ["foreman", "exchange", "terminal", "gate"],
 }
 var n_sites := 0
@@ -98,6 +100,7 @@ func _run() -> void:
 	Session.begin_new(2, "Pilot", "human", "normal", "roosevelt_independent_yards")
 	var looks := {}
 	var n_sys := 0
+	var n_want := 0
 	for s in Worlds._load("systems.json").get("systems", []):
 		var sys := String(s.id)
 		var st := SystemStyle.for_system(sys)
@@ -111,9 +114,10 @@ func _run() -> void:
 		check(not looks.has(look), "%s does not look the same as %s (%s)" % [sys, looks.get(look, ""), look])
 		looks[look] = sys
 		Session.profile["system_id"] = sys
-		for n in LocalSpace.nodes(sys):   # every site: the port, depot, moon station, belt works, pad and camp
+		for n in LocalSpace.nodes(sys):   # every site: the port, depot, moon station, belt works, pad and camp (and Sol's outer stations)
+			n_want += 1
 			await _site(sys, n)
 	check(n_sys >= 18, "every system was checked (%d)" % n_sys)
-	check(n_sites == n_sys * 6, "every site was walked (%d)" % n_sites)
+	check(n_sites == n_want and n_sites >= n_sys * 6, "every site was walked (%d of %d)" % [n_sites, n_want])
 	print("DONE fails=%d (%d systems, %d distinct looks, %d places, %d stations)" % [fails, n_sys, looks.size(), n_sites, n_stations])
 	quit(1 if fails > 0 else 0)

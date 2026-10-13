@@ -44,7 +44,7 @@ func _jump_blocker() -> String:
 	if sc.model.pos.length() < clear:
 		return "fly clear of the station: %.0f of %.0f m" % [sc.model.pos.length(), clear]
 	if sc.model.overheated or sc.model.heat_fraction() > sc._tune("jump_max_heat_fraction", 0.9):
-		return "let the ship cool before engaging the drive"
+		return "let the ship cool first. The drive is fussy"
 	if sc.model.speed() > sc._tune("jump_max_speed_m_s", 60.0):
 		return "slow below %.0f m/s to engage (X brakes)" % sc._tune("jump_max_speed_m_s", 60.0)
 	return ""
@@ -148,4 +148,6 @@ func _arrive_in_system() -> void:
 	sc.sun.rotation_degrees = Vector3(-15.0 - float(h % 50), float((h / 50) % 360), 0.0)
 	var warmth := float((h / 7) % 100) / 100.0
 	sc.sun.light_color = Color(1.0, 0.82 + 0.16 * (1.0 - warmth), 0.65 + 0.3 * (1.0 - warmth))
+	sc.world_c.rebuild_for(String(Session.profile.get("port_id", "")))   # the new system's station and worlds
+	sc.station_label.text = String(sc.job.destination).to_upper()
 	sc.model.vel = Vector3.ZERO

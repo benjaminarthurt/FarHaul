@@ -1,7 +1,7 @@
 {
  "schema_version": "0.1.0",
  "canon_status": "draft",
- "note": "In-system freight for ships with no FTL drive. Every system has its main port plus a fuel depot, a moon base and a belt works (assumed, not yet on the world map). A hop between two sites costs delta-v and hours; fuel burned follows the rocket equation from the ship's mass, so heavy loads and long hops eat the tank. Pay is per tonne per km/s of delta-v, scaled by the difficulty level's local_pay_mult (solved with tests/solve_local.gd). The moon also has surface sites, the base's landing pad and a mining camp; they are only on the board for ships with lander legs that can land there (see landing.json), and runs that touch the surface pay surface_rate_mult more per tonne-km/s.",
+ "note": "In-system freight for ships with no FTL drive. Every system has its main port plus a fuel depot, a moon base and a belt works (assumed, not yet on the world map). A hop between two sites costs delta-v and hours; fuel burned follows the rocket equation from the ship's mass, so heavy loads and long hops eat the tank. Pay is per tonne per km/s of delta-v, scaled by the difficulty level's local_pay_mult (solved with tests/solve_local.gd). The moon also has surface sites, the base's landing pad and a mining camp; they are only on the board for ships with lander legs that can land there (see landing.json), and runs that touch the surface pay surface_rate_mult more per tonne-km/s. Sol also has three outer stations (extra_sites): a cloud port at Venus, the Jovian works and the Saturn ring yards. Their hops are long (6 to 9.6 km/s), so they only show on the board for ships with the tanks to reach them.",
  "isp_s": 900,
  "kinds": {
   "port": {
@@ -21,6 +21,15 @@
   },
   "camp": {
    "name": "Mining camp"
+  },
+  "venus": {
+   "name": "Venus cloud port"
+  },
+  "jovian": {
+   "name": "Jovian works"
+  },
+  "saturn": {
+   "name": "Saturn ring yards"
   }
  },
  "hops": {
@@ -83,6 +92,90 @@
   "pad|camp": {
    "dv_kms": 0.9,
    "hours": 1
+  },
+  "port|venus": {
+   "dv_kms": 6.0,
+   "hours": 52
+  },
+  "port|jovian": {
+   "dv_kms": 7.0,
+   "hours": 70
+  },
+  "port|saturn": {
+   "dv_kms": 8.0,
+   "hours": 96
+  },
+  "depot|venus": {
+   "dv_kms": 5.2,
+   "hours": 46
+  },
+  "depot|jovian": {
+   "dv_kms": 6.2,
+   "hours": 62
+  },
+  "depot|saturn": {
+   "dv_kms": 7.2,
+   "hours": 88
+  },
+  "moon|venus": {
+   "dv_kms": 6.4,
+   "hours": 56
+  },
+  "moon|jovian": {
+   "dv_kms": 6.8,
+   "hours": 68
+  },
+  "moon|saturn": {
+   "dv_kms": 7.8,
+   "hours": 92
+  },
+  "belt|venus": {
+   "dv_kms": 7.4,
+   "hours": 66
+  },
+  "belt|jovian": {
+   "dv_kms": 4.2,
+   "hours": 40
+  },
+  "belt|saturn": {
+   "dv_kms": 5.8,
+   "hours": 60
+  },
+  "pad|venus": {
+   "dv_kms": 8.2,
+   "hours": 58
+  },
+  "pad|jovian": {
+   "dv_kms": 8.6,
+   "hours": 70
+  },
+  "pad|saturn": {
+   "dv_kms": 9.6,
+   "hours": 94
+  },
+  "camp|venus": {
+   "dv_kms": 8.2,
+   "hours": 58
+  },
+  "camp|jovian": {
+   "dv_kms": 8.6,
+   "hours": 70
+  },
+  "camp|saturn": {
+   "dv_kms": 9.6,
+   "hours": 94
+  },
+  "venus|jovian": {
+   "dv_kms": 8.6,
+   "hours": 90
+  },
+  "venus|saturn": {
+   "dv_kms": 9.4,
+   "hours": 110
+  },
+  "jovian|saturn": {
+   "dv_kms": 4.8,
+   "hours": 46
   }
  },
  "board": {
@@ -119,7 +212,10 @@
   "moon": 1.0,
   "belt": 1.15,
   "pad": 1.3,
-  "camp": 1.6
+  "camp": 1.6,
+  "venus": 1.2,
+  "jovian": 0.9,
+  "saturn": 1.25
  },
  "site_repair_rate": {
   "port": 1.0,
@@ -127,6 +223,16 @@
   "moon": 1.1,
   "belt": 0.9,
   "pad": 1.3,
-  "camp": 1.5
+  "camp": 1.5,
+  "venus": 1.2,
+  "jovian": 1.0,
+  "saturn": 1.3
+ },
+ "extra_sites": {
+  "sol": [
+   "venus",
+   "jovian",
+   "saturn"
+  ]
  }
 }

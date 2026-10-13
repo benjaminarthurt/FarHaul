@@ -2,10 +2,14 @@
 
 *Build your ship. Haul the freight. Push the frontier.*
 
-Far Haul is a first-person sci-fi freight, ship-building and exploration game. This repo is the
-playable ship-builder prototype: a grid-based spaceship builder. Pick a prefab section, rotate it, and click to snap it onto
-the ship. The ship is stored as plain data, so flight, interior walking and space walks can
-all be built on top of the same thing later. A live panel shows the ship's engineering numbers.
+Far Haul is a first-person sci-fi freight, ship-building and exploration game. You build a ship from
+modules, take freight from a simulated economy, fly it by hand, walk its corridors, land on moons and
+jump between stars, all while the bank watches your balance with professional interest. The ship is
+stored as plain data, so the builder, flight, walking and the shipyard all share one ship.
+
+Player-facing text (in the game, on the info site and in the release notes) is written in the game's
+voice: see [docs/voice.md](docs/voice.md). The rest of this README is for people working on the code,
+so it stays plain.
 
 Requires **Godot 4.4** (developed and tested on 4.4.1). Far Haul is a Windows desktop game and uses
 the **Forward+** renderer (Vulkan, with Direct3D 12 available). On machines without Vulkan it falls back to
@@ -131,6 +135,8 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/ship_stats.gd` | Mass, centre of mass, power, heat, thrust, warnings |
 | `scripts/ship_view.gd` | Builds 3D nodes from `ShipData`; with `skin` on (flight, title screen, dock, port windows) it adds the outer hull |
 | `scripts/ship_skin.gd` | `ShipSkin`: the outer hull over the compartments, with rounded edges and corners, open windows, hatches and vents, and the external parts mounted out on it |
+| `scripts/flight/sky_worlds.gd` | `SkyWorlds`: every system's worlds (Sol's real ones, the rest from canon) with clouds, air, city lights and rings; which world you see from each site (`data/world/sky_worlds.json`) |
+| `tools/make_planet_maps.py` | Regenerates `assets/planets/` (needs numpy, Pillow, scipy, global-land-mask); `python3 tools/make_planet_maps.py keshar` remakes one |
 | `scripts/engine_parts.gd` | `EngineParts`: the engine's open bell nozzle and its shader-drawn exhaust plume |
 | `scripts/builder.gd` | Camera, ghost, input, UI |
 | `scripts/boot.gd` | Start-up flow: splash, intro video, title screen, hand-off to the builder |
@@ -139,7 +145,8 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `assets/video/intro.ogv` | **Placeholder** intro video. Replace it with the real one (Godot only plays Ogg Theora) |
 | `tools/make_brand_assets.py` | Regenerates the brand images and placeholder video (needs Pillow, numpy, ffmpeg) |
 | `tests/test_ship.gd` | Headless tests for the rules and stats |
-| `tests/test_ship_skin.gd` | Headless tests for the hull skin and the engine plume |
+| `tests/test_ship_skin.gd` | Headless tests for the hull skin (including that it is sealed) and the engine plume |
+| `tests/test_sky_worlds.gd` | Headless tests for the worlds in the sky and Sol's outer stations |
 
 Run the tests:
 

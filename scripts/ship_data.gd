@@ -75,7 +75,7 @@ func remove_at(cell: Vector3i) -> String:
 		if i != idx:
 			rest.append(modules[i])
 	if not _is_one_piece(rest):
-		return "Removing that would split the ship in two"
+		return "That would split the ship in two. One is plenty"
 	modules = rest
 	occupied = _build_occupied(modules)
 	return ""

@@ -112,25 +112,25 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 	var warnings: Array[String] = []
 	if not ship.modules.is_empty():
 		if not has_helm:
-			warnings.append("No cockpit: nothing to fly this from")
+			warnings.append("No cockpit: nothing to fly it from but hope")
 		if open_doors > 0:
 			warnings.append("Hull open: %d doorway%s onto space. Cap with a module" % [open_doors, "" if open_doors == 1 else "s"])
 		if airlocks == 0:
-			warnings.append("No airlock: nobody can get in or out")
+			warnings.append("No airlock: no way in or out, captain included")
 		if power_use > power_gen:
 			warnings.append("Power short by %.0f kW" % (power_use - power_gen))
 		if heat_gen > cooling:
-			warnings.append("Overheating: %.0f kW more heat than cooling" % (heat_gen - cooling))
+			warnings.append("Overheating: %.0f kW over cooling. Physics has noticed" % (heat_gen - cooling))
 		if thrust_total - thrust_fwd > 0.01:
 			warnings.append("Some engines aren't pointing aft")
 		if thrust_total > 0.0 and thrust_offset > 1.0:
-			warnings.append("Thrust is %.1f m off the centre of mass: costs manoeuvring fuel" % thrust_offset)
+			warnings.append("Thrust is %.1f m off the centre of mass: you pay for it in manoeuvring fuel" % thrust_offset)
 		if berths < crew_needed:
-			warnings.append("Crew: this hold needs %d berths, you have %d. Add crew bunks or quarters" % [crew_needed, berths])
+			warnings.append("Crew: %d berths needed, %d fitted. Add crew bunks or quarters; cargo makes a poor pillow" % [crew_needed, berths])
 		if cargo_capacity <= 0.0:
-			warnings.append("No cargo capacity: add a hold or rack to haul freight")
+			warnings.append("No cargo capacity: add a hold or rack. Without one it's a yacht")
 		if drive_count == 0:
-			warnings.append("No FTL drive: this ship can only work inside one system")
+			warnings.append("No FTL drive: this ship stays inside one system. The stars can wait")
 
 	return {
 		"modules": ship.modules.size(),
@@ -177,7 +177,7 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 
 static func format(s: Dictionary) -> String:
 	if s.modules == 0:
-		return "SHIP STATS\nNo modules yet"
+		return "SHIP STATS\nNo modules yet. Light, at least"
 	var rel: Vector3 = s.com - s.centre
 	var hull := "sealed" if s.open_doors == 0 else "OPEN (%d doorways)" % s.open_doors
 	var lines := PackedStringArray([

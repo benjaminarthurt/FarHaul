@@ -186,7 +186,7 @@ func _refresh() -> void:
 	var s := selected_slot()
 	if SaveSlots.exists(s):
 		var p := SaveSlots.profile(s)
-		slot_note.text = "Slot %d already holds %s's game. Starting here moves that save aside; it is not deleted." % [s + 1, p.name]
+		slot_note.text = "Slot %d holds %s's game. Starting here moves that save aside; it is not deleted, just ignored." % [s + 1, p.name]
 		slot_note.add_theme_color_override("font_color", Brand.AMBER)
 	else:
 		slot_note.text = "Slot %d is empty." % (s + 1)

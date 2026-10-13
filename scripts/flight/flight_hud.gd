@@ -204,13 +204,13 @@ func _update_transfer_hud() -> void:
 	elif not sc.model.has_fuel() and not sc.xfer.arrived(sc.model):
 		var fee := ShipStats.commas(sc.tow_fee())
 		if sc.tow_goes_on():
-			hint = "OUT OF FUEL. Esc: a tug tows you on to %s, the nearer (%s), and the run is delivered. Tow %s cr." % [String(sc.job.destination), _distance(sc.xfer.range_to(sc.model)), fee]
+			hint = "OUT OF FUEL. Esc: a tug tows you on to %s, the nearer (%s), and the run is delivered. Tow %s cr, sympathy extra." % [String(sc.job.destination), _distance(sc.xfer.range_to(sc.model)), fee]
 		elif String(sc.job.get("dest_kind", "")) in LocalSpace.SURFACE:
-			hint = "OUT OF FUEL. Esc: a tug tows you back to the start (it can't land you). Tow %s cr." % fee
+			hint = "OUT OF FUEL. Esc: a tug tows you back to the start. It's a tug: it can't land you. Tow %s cr." % fee
 		else:
-			hint = "OUT OF FUEL. Esc: a tug tows you back to the start, the nearer (%s). Tow %s cr." % [_distance(sc.model.pos.length()), fee]
+			hint = "OUT OF FUEL. Esc: a tug tows you back to the start, the nearer (%s). Tow %s cr, payable in advance." % [_distance(sc.model.pos.length()), fee]
 	elif sc.model.overheated:
-		hint = "ENGINES OVERHEATED. Wait for them to cool."
+		hint = "ENGINES OVERHEATED. Wait while they cool and sulk."
 	elif sc.model.braking:
 		hint = sc.brake_status()
 	elif sc.model.course_hold and not sc.xfer.brake_now(sc.model):
@@ -218,11 +218,11 @@ func _update_transfer_hud() -> void:
 	elif sc.xfer.brake_now(sc.model):
 		hint = "BRAKE NOW: press X and the autopilot stops you at the target."
 	elif sc.xfer.closing(sc.model) < -1.0:
-		hint = "You are moving away from the destination."
+		hint = "Moving away from the destination. It won't follow."
 	elif sc.beacon != null and not sc.beacon.visible:
-		hint = "The destination is off screen: turn toward the orange arrow."
+		hint = "The destination is off screen. Turn toward the orange arrow; it knows."
 	elif sc.model.speed() < 5.0:
-		hint = "Point at the diamond, open the throttle (W) and speed time up with period. Esc turns back."
+		hint = "Point at the diamond, throttle up (W), period speeds time up. Esc turns back. The cargo won't haul itself."
 	sc.prompt.text = hint
 
 
@@ -272,11 +272,11 @@ func _update_hud() -> void:
 	else:
 		sc.prompt.text = ""
 	if sc.model.overheated:
-		sc.prompt.text = "ENGINES OVERHEATED. Wait for them to cool."
+		sc.prompt.text = "ENGINES OVERHEATED. Wait while they cool and sulk."
 	elif sc.model.last_impact > float(sc.model.tune.get("soft_impact_m_s", 1.5)) and sc.model.elapsed_s - sc._impact_shown < 3.0:
 		sc.prompt.text = "HULL IMPACT"
 	if not sc.model.has_fuel() and sc.model.speed() > 1.0:
-		sc.prompt.text = "OUT OF FUEL. You are drifting."
+		sc.prompt.text = "OUT OF FUEL. Drifting, free of charge."
 	if String(sc.job.get("kind", "")) == "jump" and sc.phase == "depart" and not sc.model.overheated:
 		var why := sc._jump_blocker()
 		sc.prompt.text = "J: engage the FTL drive for %s (%.1f ly)" % [String(sc.job.destination), float(sc.job.ly)] if why == "" else "Jump to %s: %s" % [String(sc.job.destination), why]
@@ -296,9 +296,9 @@ func _walk_prompt() -> void:
 		hint = "E: climb %s (look up or down)" % ("up or down" if bool(hx.up) and bool(hx.down) else ("up" if bool(hx.up) else "down"))
 	elif sc.walk.near_airlock():
 		if sc._on_surface():
-			hint = "E: step outside onto the surface" if sc.model.landed else "The outer hatch stays shut until the ship is down"
+			hint = "E: step outside onto the surface" if sc.model.landed else "Outer hatch stays shut until the ship is down. Wise policy."
 		else:
-			hint = "E: leave the ship" if sc._berthed() else "The outer hatch stays shut away from a berth"
+			hint = "E: leave the ship" if sc._berthed() else "Outer hatch stays shut until you berth. Outside is mostly vacuum."
 	var warn := ""
 	if sc.model.overheated:
 		warn = "ENGINES OVERHEATED"
@@ -360,11 +360,11 @@ func _update_descent_hud() -> void:
 		elif not sc.model.has_fuel():
 			hint = "OUT OF FUEL"
 		else:
-			hint = "Climb clear of the moon. W/S still runs the main engine."
+			hint = "Climb clear of the moon; it wants you back. W/S runs the main engine."
 	elif sc.model.landed and sc.model.on_pad():
-		hint = ("Landed. F: shut down and unload.   G: get up and walk outside.") if not sc.job.is_empty() else "On the pad. F: shut down.   G: get up and walk outside."
+		hint = ("Landed, in one piece. F: shut down and unload.   G: get up and walk outside.") if not sc.job.is_empty() else "On the pad. F: shut down.   G: get up and walk outside."
 	elif sc.model.landed:
-		hint = "Down %.0f m from the %s. Lift off (Space) and set down within %d m%s." % [to_pad, "camp's pad" if sc._target_kind == "camp" else "pad",
+		hint = "Down %.0f m from the %s. Close isn't landed. Lift off (Space) and set down within %d m%s." % [to_pad, "camp's pad" if sc._target_kind == "camp" else "pad",
 				int(sc.model.zone_m if sc.model.zone_m > 0.0 else float(sc.model.land_cfg.get("landing_zone_m", 120.0))),
 				"" if sc.model.has_fuel() else ". Out of fuel: F calls a crawler to tow you in"]
 	elif not sc.model.has_fuel():

@@ -21,6 +21,9 @@ working sites rather than the front door. Each is its own kind of site, not a co
 |---|---|---|
 | Fuel depot | Banded propellant spheres round the spine, a fuelling boom | Fuel lines overhead, propellant gauges by the gate |
 | Belt works | A captured asteroid, a smelter, a conveyor to the rock, rubble | Ore buckets on an overhead line, an ore chunk on a plinth |
+| Venus cloud port (Sol) | Gold sunshades over the spine, big radiators | A plain concourse |
+| Jovian works (Sol) | A long scoop boom reaching down, hydrogen tanks | A plain concourse |
+| Saturn ring yards (Sol) | Ice blocks cut from the rings, a cutting frame | A plain concourse |
 | Moon station | Dishes listening to the base below, landers on cradles | A map of the base, suit lockers |
 
 They have no shipyard, no landmark sign and no named bar. In space they keep the system's colours,

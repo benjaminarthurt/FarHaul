@@ -1,0 +1,723 @@
+{
+ "schema_version": "0.1.0",
+ "canon_status": "draft",
+ "note": "How each system's worlds look from its sites (scripts/flight/sky_worlds.gd). Maps are in assets/planets, made by tools/make_planet_maps.py. Sol's worlds are the real ones; the others are drawn from the environment and visual_identity lines in worlds.json. size scales the world (1 = the usual 1400 m sphere at 3600 m); distance pushes it further off (ringed giants, so the rings fit in view). atmo is the haze and air glow at the edge; clouds is cover 0..1 and cloud_tint its colour; ocean is how much the water shines; lights is how bright the cities are on the night side; lava glows. face is the longitude turned toward the viewer. systems maps each site kind to [the world in view, the world far off] (\"*\" is every other site). The far-off neighbours are the giants and moons named in system_bodies.json. Carver, Port Meridian and Waystation have no lived-on world in canon, so their view is a gas giant or the rock the habitat sits on.",
+ "worlds": {
+  "earth": {
+   "map": "earth",
+   "mask": true,
+   "tilt": 23.4,
+   "face": 45,
+   "atmosphere": [
+    0.38,
+    0.62,
+    1.0
+   ],
+   "atmo": 0.55,
+   "clouds": 0.9,
+   "ocean": 1.0,
+   "lights": 1.0
+  },
+  "luna": {
+   "map": "luna",
+   "tilt": 6.7,
+   "face": 15
+  },
+  "mars": {
+   "map": "mars",
+   "tilt": 25.2,
+   "face": 60,
+   "atmosphere": [
+    0.95,
+    0.62,
+    0.42
+   ],
+   "atmo": 0.22
+  },
+  "venus": {
+   "map": "venus",
+   "tilt": 3,
+   "face": 0,
+   "atmosphere": [
+    1.0,
+    0.9,
+    0.65
+   ],
+   "atmo": 0.5,
+   "size": 0.95
+  },
+  "jupiter": {
+   "map": "jupiter",
+   "tilt": 3.1,
+   "face": 40,
+   "atmosphere": [
+    0.9,
+    0.82,
+    0.7
+   ],
+   "atmo": 0.25,
+   "size": 1.9,
+   "gas": true
+  },
+  "saturn": {
+   "map": "saturn",
+   "tilt": 26.7,
+   "face": 0,
+   "atmosphere": [
+    0.95,
+    0.88,
+    0.7
+   ],
+   "atmo": 0.2,
+   "size": 1.7,
+   "gas": true,
+   "rings": {
+    "inner": 1.24,
+    "outer": 2.27,
+    "colour": [
+     0.86,
+     0.8,
+     0.68
+    ],
+    "opacity": 0.9
+   },
+   "distance": 2.0
+  },
+  "europa": {
+   "map": "europa",
+   "tilt": 0,
+   "face": 0
+  },
+  "titan": {
+   "map": "titan",
+   "tilt": 0,
+   "face": 0,
+   "atmosphere": [
+    0.95,
+    0.65,
+    0.3
+   ],
+   "atmo": 0.6
+  },
+  "keshar_prime": {
+   "map": "keshar_prime",
+   "mask": true,
+   "tilt": 18,
+   "face": 20,
+   "atmosphere": [
+    0.95,
+    0.82,
+    0.55
+   ],
+   "atmo": 0.75,
+   "clouds": 0.95,
+   "cloud_tint": [
+    0.95,
+    0.9,
+    0.78
+   ],
+   "ocean": 0.7,
+   "lights": 1.0
+  },
+  "ilos_prime": {
+   "map": "ilos_prime",
+   "mask": true,
+   "tilt": 9,
+   "face": -30,
+   "atmosphere": [
+    0.55,
+    0.5,
+    1.0
+   ],
+   "atmo": 0.7,
+   "clouds": 0.55,
+   "cloud_tint": [
+    0.88,
+    0.9,
+    1.0
+   ],
+   "ocean": 0.8,
+   "lights": 0.8
+  },
+  "veyara_prime": {
+   "map": "veyara_prime",
+   "mask": true,
+   "tilt": 15,
+   "face": 100,
+   "atmosphere": [
+    0.4,
+    0.75,
+    0.85
+   ],
+   "atmo": 0.6,
+   "clouds": 1.05,
+   "cloud_tint": [
+    0.94,
+    0.97,
+    0.97
+   ],
+   "ocean": 1.0,
+   "lights": 0.9
+  },
+  "orun_prime": {
+   "map": "orun_prime",
+   "mask": true,
+   "tilt": 30,
+   "face": 0,
+   "atmosphere": [
+    1.0,
+    0.7,
+    0.4
+   ],
+   "atmo": 0.5,
+   "clouds": 0.25,
+   "cloud_tint": [
+    0.92,
+    0.8,
+    0.65
+   ],
+   "ocean": 0.5,
+   "lights": 0.6
+  },
+  "concord_prime": {
+   "map": "concord_prime",
+   "mask": true,
+   "tilt": 21,
+   "face": 10,
+   "atmosphere": [
+    0.45,
+    0.7,
+    1.0
+   ],
+   "atmo": 0.5,
+   "clouds": 0.8,
+   "ocean": 1.0,
+   "lights": 1.2
+  },
+  "roosevelt": {
+   "map": "roosevelt",
+   "mask": true,
+   "tilt": 27,
+   "face": 60,
+   "atmosphere": [
+    0.6,
+    0.72,
+    0.95
+   ],
+   "atmo": 0.45,
+   "clouds": 0.9,
+   "cloud_tint": [
+    0.88,
+    0.9,
+    0.95
+   ],
+   "ocean": 0.7,
+   "lights": 0.9
+  },
+  "hesperus_prime": {
+   "map": "hesperus_prime",
+   "mask": true,
+   "tilt": 12,
+   "face": 0,
+   "atmosphere": [
+    0.45,
+    0.68,
+    1.0
+   ],
+   "atmo": 0.5,
+   "clouds": 0.7,
+   "ocean": 1.0,
+   "lights": 0.5
+  },
+  "iron_gate_prime": {
+   "map": "iron_gate_prime",
+   "mask": true,
+   "tilt": 8,
+   "face": 80,
+   "atmosphere": [
+    0.75,
+    0.68,
+    0.6
+   ],
+   "atmo": 0.4,
+   "clouds": 0.4,
+   "cloud_tint": [
+    0.85,
+    0.82,
+    0.78
+   ],
+   "ocean": 0.7,
+   "lights": 1.0
+  },
+  "bradbury_prime": {
+   "map": "bradbury_prime",
+   "mask": true,
+   "tilt": 14,
+   "face": 30,
+   "atmosphere": [
+    0.55,
+    0.72,
+    1.0
+   ],
+   "atmo": 0.3,
+   "clouds": 0.45,
+   "ocean": 0.9,
+   "lights": 0.8
+  },
+  "pelagos_prime": {
+   "map": "pelagos_prime",
+   "mask": true,
+   "tilt": 11,
+   "face": 0,
+   "atmosphere": [
+    0.4,
+    0.72,
+    1.0
+   ],
+   "atmo": 0.55,
+   "clouds": 0.85,
+   "ocean": 1.0,
+   "lights": 0.8
+  },
+  "tidemark_prime": {
+   "map": "tidemark_prime",
+   "mask": true,
+   "tilt": 20,
+   "face": 0,
+   "atmosphere": [
+    0.4,
+    0.55,
+    0.75
+   ],
+   "atmo": 0.65,
+   "clouds": 1.25,
+   "cloud_tint": [
+    0.8,
+    0.83,
+    0.88
+   ],
+   "ocean": 1.0,
+   "lights": 0.0
+  },
+  "foundry_prime": {
+   "map": "foundry_prime",
+   "mask": true,
+   "tilt": 5,
+   "face": 0,
+   "atmosphere": [
+    0.85,
+    0.6,
+    0.45
+   ],
+   "atmo": 0.35,
+   "clouds": 0.35,
+   "cloud_tint": [
+    0.78,
+    0.74,
+    0.7
+   ],
+   "ocean": 0.4,
+   "lights": 0.7,
+   "lava": 1.0
+  },
+  "talos_prime": {
+   "map": "talos_prime",
+   "mask": true,
+   "tilt": 16,
+   "face": 0,
+   "atmosphere": [
+    0.75,
+    0.7,
+    0.85
+   ],
+   "atmo": 0.25,
+   "clouds": 0.2,
+   "ocean": 0.6,
+   "lights": 1.0
+  },
+  "lastlight_settlement": {
+   "map": "lastlight_settlement",
+   "mask": true,
+   "tilt": 24,
+   "face": 0,
+   "atmosphere": [
+    0.55,
+    0.65,
+    0.85
+   ],
+   "atmo": 0.3,
+   "clouds": 0.6,
+   "cloud_tint": [
+    0.88,
+    0.9,
+    0.94
+   ],
+   "ocean": 0.7,
+   "lights": 2.0
+  },
+  "tor": {
+   "map": "tor",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.8,
+    0.6,
+    0.4
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true
+  },
+  "elen": {
+   "map": "elen",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.8,
+    0.78,
+    0.95
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true
+  },
+  "oruvai": {
+   "map": "oruvai",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.5,
+    0.75,
+    0.7
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true
+  },
+  "arbitrator": {
+   "map": "arbitrator",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.8,
+    0.82,
+    0.85
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true,
+   "rings": {
+    "inner": 1.3,
+    "outer": 1.6,
+    "colour": [
+     0.7,
+     0.68,
+     0.62
+    ],
+    "opacity": 0.35
+   }
+  },
+  "longhorn": {
+   "map": "longhorn",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.85,
+    0.65,
+    0.45
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true
+  },
+  "rainmaker": {
+   "map": "rainmaker",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.6,
+    0.68,
+    0.78
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true
+  },
+  "hammer": {
+   "map": "hammer",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.6,
+    0.58,
+    0.55
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true
+  },
+  "breaker": {
+   "map": "breaker",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.5,
+    0.72,
+    0.85
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true
+  },
+  "stormhold": {
+   "map": "stormhold",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.4,
+    0.5,
+    0.75
+   ],
+   "atmo": 0.25,
+   "size": 1.5,
+   "gas": true
+  },
+  "prospector": {
+   "map": "prospector",
+   "tilt": 10,
+   "face": 0,
+   "atmosphere": [
+    0.85,
+    0.78,
+    0.55
+   ],
+   "atmo": 0.25,
+   "size": 1.8,
+   "gas": true
+  },
+  "meridian_host": {
+   "map": "meridian_host",
+   "tilt": 12,
+   "face": 0,
+   "atmosphere": [
+    0.7,
+    0.8,
+    0.95
+   ],
+   "atmo": 0.25,
+   "size": 1.8,
+   "gas": true,
+   "rings": {
+    "inner": 1.35,
+    "outer": 1.7,
+    "colour": [
+     0.62,
+     0.66,
+     0.7
+    ],
+    "opacity": 0.45
+   },
+   "distance": 1.6
+  },
+  "cinder": {
+   "map": "rock_dark",
+   "tilt": 0,
+   "face": 0
+  },
+  "layover": {
+   "map": "ice_dirty",
+   "tilt": 0,
+   "face": 0
+  },
+  "crossroads": {
+   "map": "rock_grey",
+   "tilt": 0,
+   "face": 0,
+   "size": 0.6
+  },
+  "burnt_rock": {
+   "map": "rock_dark",
+   "tilt": 0,
+   "face": 90
+  },
+  "var": {
+   "map": "rock_grey",
+   "tilt": 0,
+   "face": 0
+  },
+  "mariner": {
+   "map": "ice_dirty",
+   "tilt": 0,
+   "face": 120,
+   "atmosphere": [
+    0.7,
+    0.8,
+    0.9
+   ],
+   "atmo": 0.15
+  },
+  "lift": {
+   "map": "rock_grey",
+   "tilt": 0,
+   "face": 200
+  },
+  "claim": {
+   "map": "rock_grey",
+   "tilt": 0,
+   "face": 60
+  },
+  "beacon_moon": {
+   "map": "rock_grey",
+   "tilt": 0,
+   "face": 300
+  }
+ },
+ "systems": {
+  "sol": {
+   "port": [
+    "earth",
+    "luna"
+   ],
+   "depot": [
+    "earth",
+    "luna"
+   ],
+   "moon": [
+    "luna",
+    "earth"
+   ],
+   "pad": [
+    "luna",
+    "earth"
+   ],
+   "camp": [
+    "luna",
+    "earth"
+   ],
+   "belt": [
+    "mars",
+    "jupiter"
+   ],
+   "venus": [
+    "venus",
+    "earth"
+   ],
+   "jovian": [
+    "jupiter",
+    "europa"
+   ],
+   "saturn": [
+    "saturn",
+    "titan"
+   ]
+  },
+  "keshar": {
+   "*": [
+    "keshar_prime",
+    "tor"
+   ]
+  },
+  "ilos": {
+   "*": [
+    "ilos_prime",
+    "elen"
+   ]
+  },
+  "veyara": {
+   "*": [
+    "veyara_prime",
+    "oruvai"
+   ]
+  },
+  "orun": {
+   "*": [
+    "orun_prime",
+    "var"
+   ]
+  },
+  "concord": {
+   "*": [
+    "concord_prime",
+    "arbitrator"
+   ]
+  },
+  "new_houston": {
+   "*": [
+    "roosevelt",
+    "longhorn"
+   ]
+  },
+  "hesperus": {
+   "*": [
+    "hesperus_prime",
+    "rainmaker"
+   ]
+  },
+  "iron_gate": {
+   "*": [
+    "iron_gate_prime",
+    "hammer"
+   ]
+  },
+  "carver": {
+   "*": [
+    "prospector",
+    "cinder"
+   ]
+  },
+  "bradbury": {
+   "*": [
+    "bradbury_prime",
+    "mariner"
+   ]
+  },
+  "pelagos": {
+   "*": [
+    "pelagos_prime",
+    "breaker"
+   ]
+  },
+  "tidemark": {
+   "*": [
+    "tidemark_prime",
+    "stormhold"
+   ]
+  },
+  "foundry": {
+   "*": [
+    "foundry_prime",
+    "lift"
+   ]
+  },
+  "port_meridian": {
+   "*": [
+    "meridian_host",
+    "layover"
+   ]
+  },
+  "talos": {
+   "*": [
+    "talos_prime",
+    "claim"
+   ]
+  },
+  "waystation": {
+   "*": [
+    "crossroads",
+    "burnt_rock"
+   ]
+  },
+  "lastlight": {
+   "*": [
+    "lastlight_settlement",
+    "beacon_moon"
+   ]
+  }
+ },
+ "moon_body": {
+  "sol": {
+   "body": "moon",
+   "name": "Luna"
+  }
+ }
+}

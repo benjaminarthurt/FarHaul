@@ -6,7 +6,7 @@ terminal all come back to it (`Session.PLACE_SCENE`).
 
 | Where | Room | Desks |
 |---|---|---|
-| Port, fuel depot, belt works, moon base station | Concourse, 26 × 10 m to 56 × 16 m by the system's tier, with a long window | Freight office, fuel and repairs, shipyard (ports only), bar and bunks |
+| Port, fuel depot, belt works, moon base station, Sol's outer stations | Concourse, 26 × 10 m to 56 × 16 m by the system's tier, with a long window | Freight office, fuel and repairs, shipyard (ports only), bar and bunks |
 | Moon base pad | Hab, 20 × 20 m, under a dome | Dispatch, survey lab, suit store, pad fuel and repairs |
 | Mining camp | Foreman's hut, 14 × 9 m | Foreman, ore and parts exchange |
 

@@ -402,7 +402,7 @@ func _build_right_column(ui: Control) -> void:
 	_add_action_button(brow, "Unload", _unload_cargo)
 	_add_action_button(brow, "Unload all", _unload_all)
 	var hint := Label.new()
-	hint.text = "Fill the hold to see the ship loaded. Preview only."
+	hint.text = "Fill the hold to see it loaded. Preview only, imaginary cargo."
 	hint.modulate = Color(0.65, 0.7, 0.8)
 	hint.add_theme_font_size_override("font_size", 12)
 	cbox.add_child(hint)
@@ -429,7 +429,7 @@ func _build_welcome(ui: Control) -> void:
 	var body := Label.new()
 	body.custom_minimum_size = Vector2(460, 0)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.text = "You start with a small hauler and %s credits.\n\n1. Build. Click to place a part, Shift+click to remove it. Green ghost means it fits, red tells you why not. Cyan rings are open doorways: cap them so the hull is sealed.\n2. Watch the power, cooling and cargo meters on the right.\n3. Use Cargo preview to see how the ship looks fully loaded. Save when you are happy." % ShipStats.commas(_start_funds())
+	body.text = "You start with a small hauler and %s credits.\n\n1. Build. Click to place a part, Shift+click to remove it. Green ghost means it fits, red tells you why not. Cyan rings are open doorways: cap them so the hull is sealed.\n2. Watch the power, cooling and cargo meters on the right.\n3. Use Cargo preview to see how the ship looks fully loaded. Save when you are happy, or at least resigned." % ShipStats.commas(_start_funds())
 	box.add_child(body)
 	var go := Button.new()
 	go.text = "Start building"
@@ -764,7 +764,7 @@ func _update_ghost() -> void:
 		if hover_rot != rot:
 			note = "  (turned to fit)"
 		if def.cost > _credits():
-			hover_error = "Can't afford: need %s cr more" % ShipStats.commas(def.cost - _credits())
+			hover_error = "Can't afford: %s cr short. Bank says no" % ShipStats.commas(def.cost - _credits())
 	ghost_mat.albedo_color = GOOD if hover_error == "" else BAD
 	ghost.position = ShipGrid.cell_to_world(hover_cell)
 	ghost.rotation.y = hover_rot * PI / 2.0
@@ -942,9 +942,9 @@ func _load_cargo() -> void:
 	if is_zero_approx(offered):
 		message = "Nothing on offer"
 	elif manifest.capacity() <= 0.0:
-		message = "No cargo space on this ship"
+		message = "No cargo space aboard. Add a hold"
 	elif loaded < offered - 0.001:
-		message = "Loaded %.1f t of %s; no room for the other %.1f t" % [loaded, goods, offered - loaded]
+		message = "Loaded %.1f t of %s; the other %.1f t won't fit. The hold isn't elastic" % [loaded, goods, offered - loaded]
 	else:
 		message = "Loaded %.1f t of %s; %.1f t of space still free" % [loaded, goods, manifest.free_space_for(c)]
 	_sfx(&"place" if loaded > 0.0 else &"error")
@@ -1027,7 +1027,7 @@ func _save() -> void:
 	if _write_save(path):
 		message = "Saved to slot %d" % (Session.slot + 1) if Session.slot >= 0 else "Saved to " + ProjectSettings.globalize_path(path)
 	else:
-		message = "Could not save (error %d)" % FileAccess.get_open_error()
+		message = "Save failed (error %d). Try again" % FileAccess.get_open_error()
 	_refresh_info()
 
 
@@ -1053,7 +1053,7 @@ func _clear() -> void:
 	var before := _snapshot()
 	ship.clear()
 	manifest.contents.clear()
-	message = "Cleared. Everything refunded"
+	message = "Cleared. Full refund, for once"
 	_sfx(&"remove")
 	_commit(before)
 	_refresh_ship()

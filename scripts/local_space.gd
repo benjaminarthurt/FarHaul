@@ -1,15 +1,18 @@
 class_name LocalSpace
 extends RefCounted
 ## Freight inside one star system, flown on sublight engines alone. Every system has its main port
-## and three more sites (fuel depot, moon base, belt works). A hop costs delta-v and hours; the fuel
+## and three more sites (fuel depot, moon base, belt works), plus the moon's pad and camp; Sol adds
+## stations at Venus, Jupiter and Saturn, which are long hops that need big tanks. A hop costs delta-v and hours; the fuel
 ## burned comes from the rocket equation, so a heavy load or a long hop can be more than the tank
 ## holds. This is the only work a ship without an FTL drive can take. See data/runtime/local_space.json.
 
 const PATH := "res://data/runtime/local_space.json"
 const G0 := 9.81
 const SEP := "__"
-const KINDS := ["port", "depot", "moon", "belt", "pad", "camp"]
+const KINDS := ["port", "depot", "moon", "belt", "pad", "camp"]   ## every system has these
+const EXTRA := ["venus", "jovian", "saturn"]   ## only where a system lists them (Sol's planets): local_space.json "extra_sites"
 const SURFACE := ["pad", "camp"]   ## on the moon's surface: reached by landing, left by lifting off
+const OUT_SITES := ["depot", "belt", "moon", "venus", "jovian", "saturn"]   ## working stations, not the front door
 
 static var _cfg: Dictionary = {}
 static var pay_override := -1.0   ## solver hook: replaces the level multiplier when >= 0
@@ -29,7 +32,9 @@ static func nodes(system_id: String) -> Array[Dictionary]:
 	var sys_name := String(Worlds.system(system_id).get("name", system_id.replace("_", " ").capitalize()))
 	out.append({"id": String(main.get("id", system_id + SEP + "port")), "kind": "port", "system_id": system_id,
 			"name": String(main.get("name", sys_name + " Port")), "type": String(main.get("type", "port"))})
-	for kind in ["depot", "moon", "belt", "pad", "camp"]:
+	var kinds: Array = ["depot", "moon", "belt", "pad", "camp"]
+	kinds.append_array(config().get("extra_sites", {}).get(system_id, []))
+	for kind in kinds:
 		out.append({"id": system_id + SEP + kind, "kind": kind, "system_id": system_id, "surface": kind in SURFACE,
 				"name": "%s %s" % [sys_name, String(config()["kinds"][kind]["name"])], "type": kind})
 	return out
@@ -45,8 +50,13 @@ static func body(system_id: String) -> Dictionary:
 	var land := SurfaceTerrain.config()
 	var kinds: Array = land.get("body_order", ["moon"])
 	var key := String(kinds[absi(hash(system_id)) % kinds.size()])
+	var real: Dictionary = SkyWorlds.moon_body(system_id)   # a moon people know (Sol's is Luna)
+	if not real.is_empty():
+		key = String(real.body)
 	var b: Dictionary = land.get("bodies", {}).get(key, {}).duplicate()
 	b["id"] = key
+	if not real.is_empty():
+		b["name"] = String(real.name)
 	return b
 
 
@@ -87,9 +97,10 @@ static func node(id: String) -> Dictionary:
 static func hop(kind_a: String, kind_b: String) -> Dictionary:
 	if kind_a == kind_b:
 		return {}
-	var a := KINDS.find(kind_a)
-	var b := KINDS.find(kind_b)
-	var key := "%s|%s" % [KINDS[mini(a, b)], KINDS[maxi(a, b)]]
+	var order: Array = KINDS + EXTRA
+	var a := order.find(kind_a)
+	var b := order.find(kind_b)
+	var key := "%s|%s" % [order[mini(a, b)], order[maxi(a, b)]]
 	return config()["hops"].get(key, {})
 
 
@@ -174,7 +185,7 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 			"hours": int(h["hours"]),
 			"min_twr": 0.05,
 			"deadline_days": float(b["deadline_days"]),
-			"blurb": "Surface run: needs lander legs." if surface else "Local run inside the system, sublight.",
+			"blurb": "Surface run: needs lander legs." if surface else "Local run inside the system. Sublight, no drama.",
 			"surface": surface,
 		})
 	return out

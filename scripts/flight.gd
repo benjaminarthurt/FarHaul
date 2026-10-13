@@ -134,8 +134,8 @@ func _build_world() -> void:
 	world_c._build_world()
 
 
-func _make_station() -> Node3D:
-	return world_c._make_station()
+func _make_station(port_id := "") -> Node3D:
+	return world_c._make_station(port_id)
 
 
 ## A flown local run: undock from the origin site, fly clear, cruise to the destination (the clock can be
@@ -201,6 +201,8 @@ func _arrive_in_system() -> void:
 ## off its docking collar.
 func _begin_approach(distance_m: float = 1500.0) -> void:
 	phase = "approach"
+	if not String(job.get("dest_kind", "")) in LocalSpace.SURFACE:
+		world_c.rebuild_for(String(job.get("dest_id", "")))   # the destination's own station and worlds
 	station.visible = true
 	station_label.text = String(job.destination).to_upper()
 	model.station_solid = true
@@ -245,7 +247,7 @@ func _build_ship() -> void:
 			cockpit_pos = ShipGrid.cell_to_world(m.cell) - com + Vector3(0, Interiors.FLOOR + 1.2, 0.05)   # seated eye height, between the seats
 	camera = Camera3D.new()
 	camera.fov = 70.0
-	camera.far = 9000.0
+	camera.far = 16000.0   # the ringed giants are big and far off
 	add_child(camera)
 	camera.current = true
 	_apply_pose()
@@ -353,11 +355,11 @@ const WARP_REAL_S := 10.0         ## never less than this many real seconds from
 func _warp_limit() -> Dictionary:
 	var top: int = WARPS[WARPS.size() - 1]
 	if xfer == null:
-		return {"max": 1, "why": "Time compression works on runs only"}
+		return {"max": 1, "why": "Time compression is for runs, not loitering"}
 	if phase == "depart" and model.pos.length() < WARP_FROM_M:
 		return {"max": 1, "why": "Time compression starts %.0f km out: %.1f km to go" % [WARP_FROM_M / 1000.0, (WARP_FROM_M - model.pos.length()) / 1000.0]}
 	if phase == "approach":
-		return {"max": 1, "why": "No time compression on the approach to the station"}
+		return {"max": 1, "why": "No time compression on the approach: docking is real time"}
 	if phase != "cruise" and phase != "depart":
 		return {"max": 1, "why": "No time compression near the ground"}
 	if phase == "cruise" and xfer.brake_now(model) and not model.braking:
@@ -404,16 +406,16 @@ func toggle_course_hold() -> void:
 		say("Course hold off.")
 		return
 	if xfer == null or not (phase == "cruise" or phase == "depart"):
-		say("Course hold works on a run, on the way to the target.")
+		say("Course hold needs a run and a target. Sightseeing is manual.")
 		return
 	var off := model.aim_error_deg(xfer.target)
 	if off > COURSE_AIM_DEG:
-		say("Course hold: point within %.0f° of the diamond first (%.0f° off now)." % [COURSE_AIM_DEG, off], 4.0)
+		say("Course hold: point within %.0f° of the diamond. You're %.0f° off. It can't read minds." % [COURSE_AIM_DEG, off], 4.0)
 		return
 	model.course_hold = true
 	model.course_to = xfer.target
 	model.braking = false
-	say("Course hold on: it keeps your travel on the target. You keep the throttle.")
+	say("Course hold on: travel stays on the target. Throttle and fuel bill stay yours.")
 
 
 ## What course hold is doing, for the prompt, or "" when it is off.
@@ -458,7 +460,7 @@ func brake_status() -> String:
 		"burning":
 			var over := xfer.stopping_distance(model) - xfer.range_to(model) if xfer != null else 0.0
 			if over > 5000.0:   # past the point of stopping in time: say so rather than promise the mark
-				return "AUTOPILOT: too fast to stop at the target. Burning hard, you will overshoot by about %.0f km%s" % [over / 1000.0, take]
+				return "AUTOPILOT: too fast to stop at the target. Burning hard, but physics says you overshoot by about %.0f km%s" % [over / 1000.0, take]
 			return "AUTOPILOT: stopping at the target. Burning, %.1f km to go%s" % [(model.brake_to - model.pos).length() / 1000.0, take]
 		"turning":
 			return ("AUTOPILOT: turning tail-first to stop at the target" if at_target else "AUTOPILOT: turning tail-first to stop") + take

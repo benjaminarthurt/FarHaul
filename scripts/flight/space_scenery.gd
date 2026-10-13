@@ -59,8 +59,8 @@ func _build_world() -> void:
 var style := {}
 
 
-func _make_station() -> Node3D:
-	style = SystemStyle.for_site(String(Session.profile.get("port_id", "")))
+func _make_station(port_id := "") -> Node3D:
+	style = SystemStyle.for_site(port_id if port_id != "" else String(Session.profile.get("port_id", "")))
 	var root := Node3D.new()
 	var base: Color = style.get("station", Color(0.42, 0.46, 0.52))
 	var steel := Interiors.flat(base.darkened(0.1), 0.7, 0.3)
@@ -132,6 +132,23 @@ func _make_station() -> Node3D:
 	return root
 
 
+## The station and the worlds of the place you're arriving at (a run's destination, or the port at the
+## end of a jump), in place of the ones you left: Saturn's yards should come with Saturn.
+func rebuild_for(port_id: String) -> void:
+	if port_id == "":
+		return
+	var shown := sc.station.visible
+	sc.station.queue_free()
+	if sc.planet != null:
+		sc.planet.queue_free()
+	boxes.clear()   # the flight model holds this same array
+	sc.station = _make_station(port_id)
+	sc.add_child(sc.station)
+	sc.station.visible = shown
+	sc.station_label.text = String(LocalSpace.node(port_id).get("name", sc.station_label.text)).to_upper()
+	_build_planet()
+
+
 ## How many of a thing a station of this tier has: `by_tier` lists core..extreme frontier.
 func _count(by_tier: Array) -> int:
 	var order := ["core", "developed", "outer", "frontier", "extreme_frontier"]
@@ -142,7 +159,7 @@ func _count(by_tier: Array) -> int:
 func _build_architecture(root: Node3D, steel: Material, dark: Material) -> void:
 	var accent: Color = style.get("accent", Color(1.0, 0.6, 0.2))
 	var site := String(style.get("site_kind", "port"))
-	var at_port := not site in ["depot", "belt", "moon"]   # out-sites keep the space aft for their own works
+	var at_port := not site in LocalSpace.OUT_SITES   # out-sites keep the space aft for their own works
 	match String(style.get("architecture", "colonial")):
 		"kesh":   # massive: a second, heavier rear block and orange warning bands round the spine
 			if at_port:
@@ -347,6 +364,46 @@ func _build_port_type(root: Node3D, steel: Material, dark: Material) -> void:
 			for lx in [-1.8, 1.8]:
 				_solid(root, Vector3(side * 14.0 + lx, -9.0, -36), Vector3(0.3, 2.4, 0.3), steel)
 			_lamp(root, Vector3(side * 14.0, -3.6, -36), Color(1.0, 0.8, 0.4), 0.7)
+	if t == "cloud_port":   # Venus: gold sunshades over the spine and big radiators, because it's hot here
+		var gold := Interiors.flat(Color(0.85, 0.66, 0.28), 0.35, 0.8)
+		for side in [-1.0, 1.0]:
+			_solid(root, Vector3(side * 16.0, 0, -40), Vector3(22, 0.4, 26), gold)
+			for f in 3:
+				_solid(root, Vector3(side * 6.0, -10.0 - f * 4.0, -44), Vector3(0.3, 3.0, 22), Interiors.flat(Color(0.75, 0.75, 0.78), 0.4, 0.4))
+		_lamp(root, Vector3(0, 8, -52), Color(1.0, 0.85, 0.5), 1.2)
+	if t == "gas_works":   # Jupiter: a long scoop boom reaching down and pressure tanks of hydrogen fuel
+		_solid(root, Vector3(0, -24, -46), Vector3(2.2, 40, 2.2), steel)   # the scoop boom
+		_solid(root, Vector3(0, -45, -46), Vector3(7, 4, 7), dark)   # the scoop head
+		_lamp(root, Vector3(0, -47.5, -46), Color(1.0, 0.55, 0.2), 2.2)
+		boxes.append(AABB(Vector3(-4, -48, -50), Vector3(8, 46, 8)))
+		var tank := Interiors.flat(Color(0.82, 0.8, 0.74), 0.5, 0.3)
+		for k in 4:
+			var a := k * TAU / 4.0 + PI / 4.0
+			var mi := MeshInstance3D.new()
+			var cm := CapsuleMesh.new()
+			cm.radius = 3.4
+			cm.height = 18.0
+			cm.material = tank
+			mi.mesh = cm
+			mi.rotation_degrees.x = 90.0
+			mi.position = Vector3(cos(a) * 11.0, sin(a) * 11.0, -50)
+			root.add_child(mi)
+			boxes.append(AABB(mi.position - Vector3(3.4, 3.4, 9), Vector3(6.8, 6.8, 18)))
+	if t == "ring_yard":   # Saturn: ice blocks cut from the rings, a cutting frame and a yard tug
+		var ice := Interiors.flat(Color(0.86, 0.9, 0.95), 0.25, 0.0)
+		var rng := RandomNumberGenerator.new()
+		rng.seed = hash("ring_yard")
+		for k in 14:
+			var a := rng.randf() * TAU
+			var at := Vector3(cos(a) * rng.randf_range(20, 42), sin(a) * rng.randf_range(10, 30), rng.randf_range(-100, -50))
+			var b := _solid(root, at, Vector3.ONE * rng.randf_range(2.0, 5.0), ice)
+			b.rotation = Vector3(rng.randf() * 3, rng.randf() * 3, rng.randf() * 3)
+		for z in [-48.0, -64.0]:
+			_solid(root, Vector3(0, 13, z), Vector3(26, 1.0, 1.0), steel)   # the cutting frame
+			_solid(root, Vector3(-13, 6, z), Vector3(1.0, 14, 1.0), steel)
+			_solid(root, Vector3(13, 6, z), Vector3(1.0, 14, 1.0), steel)
+		_solid(root, Vector3(0, 8, -56), Vector3(6, 6, 6), ice)
+		_lamp(root, Vector3(0, 14, -56), Color(0.5, 0.85, 1.0), 1.4)
 	if t.contains("frontier"):   # bare scaffold round the rear module, still being built out
 		var sm := Interiors.flat(Color(0.55, 0.5, 0.4), 0.8, 0.4)
 		for x in [-11.0, 11.0]:
@@ -397,7 +454,7 @@ func _build_modules(root: Node3D, steel: Material, dark: Material) -> void:
 	_solid(root, Vector3(0, 0, -36), Vector3(16, 16, 12), hull)                     # rear module
 	_solid(root, Vector3(0, 0, -46), Vector3(8, 8, 8), dark)
 	var crate_cols := [Color(0.7, 0.35, 0.2), Color(0.25, 0.4, 0.6), Color(0.6, 0.55, 0.25), Color(0.35, 0.5, 0.35)]
-	var at_port := not String(style.get("site_kind", "port")) in ["depot", "belt", "moon"]
+	var at_port := not String(style.get("site_kind", "port")) in LocalSpace.OUT_SITES
 	for k in (4 if at_port else 0):   # cargo stacks on the rear module's sides (ports only)
 		var a := k * PI * 0.5
 		var out := Vector3(cos(a), sin(a), 0)
@@ -427,40 +484,60 @@ func _build_planet() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(Session.system_id())
 	var hues := [Color(0.35, 0.55, 0.85), Color(0.7, 0.55, 0.38), Color(0.45, 0.62, 0.45), Color(0.75, 0.72, 0.68), Color(0.6, 0.4, 0.35)]
-	var planet := MeshInstance3D.new()
-	var sph := SphereMesh.new()
-	sph.radius = 1400.0
-	sph.height = 2800.0
-	sph.radial_segments = 64
-	sph.rings = 32
-	var pm := StandardMaterial3D.new()
-	pm.albedo_color = (style.get("planet", hues[rng.randi() % hues.size()]) as Color).darkened(0.2) if not style.is_empty() \
-			else (hues[rng.randi() % hues.size()] as Color).darkened(0.45)
-	pm.albedo_texture = SurfaceTextures.regolith()
-	pm.uv1_scale = Vector3(8, 4, 1)
-	pm.roughness = 1.0
-	pm.rim_enabled = true
-	pm.rim = 0.7
-	pm.rim_tint = 0.3
-	sph.material = pm
-	planet.mesh = sph
 	# Off to one side of the sun, so it shows a lit face and a night side rather than a full disc.
 	var to_sun := -(sc.sun.global_transform.basis.z if sc.sun.is_inside_tree() else Basis.from_euler(sc.sun.rotation) * Vector3(0, 0, 1))
 	var dir := (Basis(Vector3.UP, deg_to_rad(105.0)) * Vector3(to_sun.x, 0, to_sun.z).normalized()).normalized()
-	planet.position = dir * 3600.0 + Vector3(0, -1400.0, 0)
+	var real := SkyWorlds.for_site(String(style.get("system_id", Session.system_id())), String(style.get("site_kind", "port")))
+	var sunward := -to_sun   # a light shines along its -Z: `to_sun` above is the way the light travels
+	var planet: MeshInstance3D
+	var radius := 1400.0
+	var far: MeshInstance3D = null
+	if not real.is_empty():   # this system's own world (Sol's are the real ones)
+		var k := SkyWorlds.size(String(real[0]))   # gas giants are drawn bigger and further off
+		radius = 1400.0 * k
+		planet = SkyWorlds.build(String(real[0]), radius, sunward, -dir)
+		var off := float(SkyWorlds.world(String(real[0])).get("distance", 1.0))   # ringed giants sit further off
+		planet.position = (dir * 3600.0 + Vector3(0, -1400.0, 0)) * k * off
+		if String(real[1]) != "":   # and its neighbour, small and far off
+			var at := (Basis(Vector3.UP, deg_to_rad(-38.0)) * dir) * 8200.0 + Vector3(0, 900.0, 0)
+			far = SkyWorlds.build(String(real[1]), 260.0 * SkyWorlds.size(String(real[1])), sunward, -at.normalized())
+			far.transform = planet.transform.affine_inverse() * Transform3D(Basis.from_euler(far.rotation), at)
+			planet.add_child(far)
+	else:
+		planet = MeshInstance3D.new()
+		var sph := SphereMesh.new()
+		sph.radius = 1400.0
+		sph.height = 2800.0
+		sph.radial_segments = 64
+		sph.rings = 32
+		var pm := StandardMaterial3D.new()
+		pm.albedo_color = (style.get("planet", hues[rng.randi() % hues.size()]) as Color).darkened(0.2) if not style.is_empty() \
+				else (hues[rng.randi() % hues.size()] as Color).darkened(0.45)
+		pm.albedo_texture = SurfaceTextures.regolith()
+		pm.uv1_scale = Vector3(8, 4, 1)
+		pm.roughness = 1.0
+		pm.rim_enabled = true
+		pm.rim = 0.7
+		pm.rim_tint = 0.3
+		sph.material = pm
+		planet.mesh = sph
+		planet.position = dir * 3600.0 + Vector3(0, -1400.0, 0)
 	planet.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	sc.add_child(planet)
 	sc.planet = planet
+	SkyWorlds.settle(planet)
+	if far != null:
+		SkyWorlds.settle(far)
 	var pt := String(style.get("port_type", ""))
 	if pt.begins_with("surface") or pt.begins_with("floating"):   # a transfer platform: its tether runs down to the world
-		_tether(planet.position)
+		_tether(planet.position, radius)
 
 
 ## A space elevator's cable from the rear of the station down to the world's surface. It hangs from
 ## the planet node, so it hides with the world when you are down on a moon.
-func _tether(world_centre: Vector3) -> void:
+func _tether(world_centre: Vector3, radius := 1400.0) -> void:
 	var from := Vector3(0, -6, -36)
-	var to := world_centre + (from - world_centre).normalized() * 1400.0
+	var to := world_centre + (from - world_centre).normalized() * radius
 	var mi := MeshInstance3D.new()
 	var c := CylinderMesh.new()
 	c.top_radius = 0.6

@@ -83,7 +83,7 @@ static func build(ship: ShipData) -> Node3D:
 				if done_edges.has(key):
 					continue
 				done_edges[key] = true
-				_fillet(root, press, c, d, e, r, mat)
+				_fillet(root, ship, press, c, d, e, r, mat)
 		for dx in [-1, 1]:   # rounded caps on convex corners
 			for dy in [-1, 1]:
 				for dz in [-1, 1]:
@@ -164,7 +164,7 @@ static func _face(root: Node3D, ship: ShipData, press: Dictionary, c: Vector3i, 
 			if not press.has(c + e):
 				edge = _outer() - r    # convex: the fillet carries the curve round
 			elif press.has(c + e + d):
-				edge = h - GAP         # inside corner: meet the neighbour's plate where it stands off its wall
+				edge = h               # inside corner: run on under the neighbour's skin, so no seam opens
 			lim["%d%d" % [k, s]] = edge
 	var area := Rect2(-float(lim["0-1"]), -float(lim["1-1"]), float(lim["0-1"]) + float(lim["01"]), float(lim["1-1"]) + float(lim["11"]))
 	var holes := _holes(ship, c, d, info)
@@ -233,41 +233,55 @@ static func _holes(ship: ShipData, c: Vector3i, d: Vector3i, info: Dictionary) -
 
 
 ## A quarter-round along the edge between outward faces d and e of cell c. It runs the cell's length,
-## stopping short where a corner cap takes over or carrying on into the next compartment.
-static func _fillet(root: Node3D, press: Dictionary, c: Vector3i, d: Vector3i, e: Vector3i, r: float, mat: Material) -> void:
+## stopping short where a corner cap takes over, carrying on into the next compartment, or, at an
+## inside corner, running on until it meets the other compartment's hull, point by point round the
+## curve, so the two curves close on each other even when their radii differ.
+static func _fillet(root: Node3D, ship: ShipData, press: Dictionary, c: Vector3i, d: Vector3i, e: Vector3i, r: float, mat: Material) -> void:
 	var along := Vector3i.ONE - Vector3i(absi(d.x), absi(d.y), absi(d.z)) - Vector3i(absi(e.x), absi(e.y), absi(e.z))
 	var a := _axis(along)
 	var h := ShipGrid.CELL * 0.5
-	var ends := []
+	var o := _outer()
+	var seg := 10
+	var ends := []   # per end: an array of seg + 1 distances from the cell centre along the edge
 	for s in [-1, 1]:
 		var step := Vector3i.ZERO
 		step[a] = s
-		# Where another compartment carries on: run to the cell's edge if its hull carries the same
-		# curve on, or stop where its plate stands off if it closes the corner; at the end of the hull,
-		# stop where the corner cap takes over.
 		var nb := c + step
-		if not press.has(nb):
-			ends.append(_outer() - r)
-		elif press.has(nb + d) or press.has(nb + e):
-			ends.append(h - GAP)
-		else:
-			ends.append(h)
+		var row := []
+		var closes_d := press.has(nb + d)
+		var closes_e := press.has(nb + e)
+		for i in seg + 1:
+			var th := PI * 0.5 * i / seg
+			var dist := h   # carries on flat into the next compartment's curve, or both sides closed
+			if not press.has(nb):
+				dist = o - r   # the end of the hull: the corner cap takes over
+			elif closes_d != closes_e:
+				# An inside corner: the compartment at nb + f faces us with its hull, flat up to its
+				# own curve. Run on until this point of the curve meets that surface.
+				var f := d if closes_d else e
+				var q: Vector3i = nb + f
+				var rq := _radius(ship, press, q, press[q])
+				var up := (o - r) + r * (sin(th) if closes_d else cos(th))   # height along the other direction
+				var reach := o
+				if up > o - rq:
+					var k := up - (o - rq)
+					reach = (o - rq) + sqrt(maxf(0.0, rq * rq - k * k))
+				dist = ShipGrid.CELL - reach
+			row.append(dist)
+		ends.append(row)
 	# Only the outer quarter of the round: a whole cylinder would poke back through the pressure
 	# walls into the compartment, where the crew would find it.
-	var base := Vector3(c) * ShipGrid.CELL + (Vector3(d) + Vector3(e)) * (_outer() - r)
-	var lo := Vector3.ZERO
-	lo[a] = -float(ends[0])
-	var hi := Vector3.ZERO
-	hi[a] = float(ends[1])
-	var seg := 10
+	var base := Vector3(c) * ShipGrid.CELL + (Vector3(d) + Vector3(e)) * (o - r)
 	var rows: Array = []
 	var norms: Array = []
-	for end in [lo, hi]:
+	for k in 2:
 		var row: Array[Vector3] = []
 		var nrow: Array[Vector3] = []
 		for i in seg + 1:
 			var th := PI * 0.5 * i / seg
 			var n := Vector3(d) * cos(th) + Vector3(e) * sin(th)
+			var end := Vector3.ZERO
+			end[a] = float(ends[k][i]) * (-1.0 if k == 0 else 1.0)
 			row.append(base + end + n * r)
 			nrow.append(n)
 		rows.append(row)

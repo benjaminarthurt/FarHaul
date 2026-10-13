@@ -36,7 +36,7 @@ func _init() -> void:
 	_row(grid, "Music volume", _slider("music", 0.0, 1.0, 0.05))
 	_row(grid, "Effects volume", _slider("effects", 0.0, 1.0, 0.05))
 	_row(grid, "Mouse sensitivity", _slider("mouse", 0.2, 3.0, 0.1))
-	var keys := Brand.note("Keys: WASD and arrows, shown on screen in each mode. Rebinding is not built yet.", 13)
+	var keys := Brand.note("Keys: WASD and arrows, shown on screen in each mode. Rebinding isn't built yet. The developer has a list.", 13)
 	keys.custom_minimum_size = Vector2(460, 0)
 	keys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(keys)

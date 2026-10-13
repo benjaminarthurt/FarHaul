@@ -44,12 +44,55 @@ The builder leaves it off so you can see into the compartments.
   windows, the airlock's outer hatch, and the reactor's vents. Unused doorways are plated over.
 - Unpressurised parts (engine, radiators, tanks, jump drive, cargo racks) are moved out by the
   skin's depth so they sit on it rather than in it. Landing legs stay where they are.
+- At an inside corner (the airlock against the main hull, say) each rounded edge runs on, point by
+  point round its curve, until it meets the other compartment's hull, so the two close on each other
+  even when their radii differ; flat plates run on under the neighbour's skin. `tests/test_ship_skin.gd`
+  casts rays out from the gap between wall and skin and fails if any escape.
 - With the skin on, ceilings are always solid: there is nothing to see in from above, and from inside
   you would otherwise see the hull through them.
 - The engine is an open bell with a rolled copper lip and a glowing throat deep inside. The plume is
   a shader: a pale hot core with faint shock diamonds inside a wider, fading outer plume that spreads
   as it leaves the bell. Its length and brightness follow the throttle (`ShipView.set_throttle`).
-  Lander lift jets are smaller bells with their own plumes.
+  Lander lift jets are smaller bells with their own plumes. Seen end-on (the chase camera) a soft
+  glow at the mouth stands in for the plume, fading as the view moves round to the side.
+
+### Worlds in the sky (`scripts/flight/sky_worlds.gd`, `data/world/sky_worlds.json`)
+
+Every system shows its own world, and Sol shows the real ones. Maps are equirectangular JPEGs in
+`assets/planets/` made by `tools/make_planet_maps.py`: Earth's coastlines are NOAA GLOBE data (via the
+`global-land-mask` package); Mars, Luna, Venus, Jupiter, Saturn, Europa and Titan follow their real
+looks; every other world is generated from its canon in `data/world/worlds.json` (each generator
+function quotes the line it draws on), so Keshar has shallow jade seas under a yellow haze, Ilos has
+escarpments under violet air, Veyara is ocean with island arcs, Foundry has lava cracks, and so on.
+Lived-on worlds have a `_mask.jpg` (water, city lights, lava).
+
+The shader lights a day and a night side, adds drifting clouds tinted by the world's air, shining
+water, city lights on the night side and glowing lava; a shell adds the air's glow on the sunlit
+limb. Gas giants skip clouds and seas; Saturn (and Port Meridian's giant) get rings, with the
+planet's shadow across them. `size` and `distance` in the data draw the giants bigger and further off
+(the camera's far plane is 16 km for them). Each world turns its `face` longitude toward you.
+
+| Site in Sol | In view | Far off |
+|---|---|---|
+| Main port, fuel depot | Earth | Luna |
+| Moon station (and its pad and camp) | Luna | Earth |
+| Belt works | Mars | Jupiter |
+| Venus cloud port | Venus | Earth |
+| Jovian works | Jupiter | Europa |
+| Saturn ring yards | Saturn | Titan |
+
+Other systems show their world from every site, with a neighbour from `data/world/system_bodies.json`
+far off: usually the system's gas giant (Tor, Elen, Oruvai, Arbitrator, Longhorn, Rainmaker, Hammer,
+Breaker, Stormhold), otherwise a moon or icy world. Carver, Port Meridian and Waystation have no
+lived-on world in canon, so they show what is there: Carver's fuel giant Prospector with rocky Cinder,
+the ringed giant Meridian that the port orbits with its icy moon Layover, and Crossroads, the airless
+rock under the Waystation habitat, with Burnt Rock nearer the star.
+
+Sol's landing body is always Luna (the grey moon); other systems pick one from `body_order`.
+
+When a run reaches its destination (or a jump reaches the new system), the scenery is rebuilt for
+the place you're arriving at (`SpaceScenery.rebuild_for`): its station and its worlds, not the ones
+you left.
 
 ## Flying a local run (`scripts/transfer_flight.gd`)
 

@@ -4,12 +4,12 @@ extends RefCounted
 ## Each is shown once per game (profile.hints_seen). Pure rules over the session, so they test easily.
 
 const LIST := [
-	{"id": "welcome", "where": "concourse", "text": "Welcome aboard the station. Walk to the FREIGHT OFFICE and press E to see the work posted here. People at the BAR have jobs of their own. T opens the station terminal."},
-	{"id": "holding", "where": "", "text": "You have a load aboard. Go through the GATE and FLY THE RUN yourself, or DEPART ON AUTOPILOT at the freight office."},
-	{"id": "arrived", "where": "", "text": "You've arrived. DELIVER THE LOAD at the freight office (or dispatch, or the foreman) to be paid."},
-	{"id": "money", "where": "concourse", "text": "With some money put by, the SHIPYARD can fit LANDER LEGS (moons and surface work, which pays more) or crew bunks (passengers). An FTL drive opens the other stars."},
-	{"id": "hab", "where": "hab", "text": "A moon base hab. DISPATCH posts timed surface missions, the SUIT STORE sells air tanks and kit, and the LAB pays well for rock samples. The airlock suits you up."},
-	{"id": "hut", "where": "hut", "text": "The mining camp. The FOREMAN has work, the EXCHANGE pays well for ice. There's no crane here: unload your freight by hand to keep the whole fee."},
+	{"id": "welcome", "where": "concourse", "text": "Welcome to the station, Captain. Walk to the FREIGHT OFFICE and press E to see what needs hauling. People at the BAR have jobs of their own, and opinions to go with them. T opens the station terminal."},
+	{"id": "holding", "where": "", "text": "You have a load aboard, and it won't deliver itself. Go through the GATE and FLY THE RUN yourself, or DEPART ON AUTOPILOT at the freight office."},
+	{"id": "arrived", "where": "", "text": "You made it. DELIVER THE LOAD at the freight office (or dispatch, or the foreman) and get paid before anyone asks questions."},
+	{"id": "money", "where": "concourse", "text": "With some money put by, the SHIPYARD can fit LANDER LEGS (moons and surface work, which pays more) or crew bunks (passengers). An FTL drive opens the other stars, at a price that's also astronomical."},
+	{"id": "hab", "where": "hab", "text": "A moon base hab: all the comforts of a tin can. DISPATCH posts timed surface missions, the SUIT STORE sells air tanks and kit, and the LAB pays well for rock samples. The airlock suits you up."},
+	{"id": "hut", "where": "hut", "text": "The mining camp. The FOREMAN has work, and the EXCHANGE pays well for ice. There's no crane here, only you and the low gravity: unload your freight by hand to keep the whole fee."},
 ]
 
 

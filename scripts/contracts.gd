@@ -55,7 +55,7 @@ static func offers_from(system_id: String, limit: int = 8) -> Array[Dictionary]:
 				"destination_port_id": String(Worlds.primary_port(destination_id).get("id", "")),
 				"distance_ly": distance,
 				"min_twr": 0.05,
-				"blurb": "Market freight generated from local surplus and destination demand."
+				"blurb": "Market freight: they have too much, someone else wants it."
 			})
 	offers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.rate) > int(b.rate))
 	return offers.slice(0, mini(limit, offers.size())) + local_extra

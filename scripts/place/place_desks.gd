@@ -18,7 +18,7 @@ func _fill(id: String) -> void:
 		"fuel":
 			_desk_fuel()
 		"yard":
-			sc._clear_panel("Shipyard", "Build, refit and fit parts to your ship. The yard can change anything, at a price.")
+			sc._clear_panel("Shipyard", "Build, refit and fit parts to your ship. The yard can change anything except the price.")
 			sc._action("ENTER THE SHIPYARD", func() -> void:
 				Session.profile["location"] = "shipyard"
 				Session.save_profile()
@@ -26,9 +26,9 @@ func _fill(id: String) -> void:
 		"bar":
 			_desk_bar()
 		"lab":
-			_desk_sell("Survey lab", "The lab pays well for rock samples and glass crystals. It has no use for salvage or ice.", {"sample": 1.4, "rare": 1.4, "salvage": 0.0, "ice": 0.0})
+			_desk_sell("Survey lab", "The lab pays well for rock samples and glass crystals. Salvage and ice? Science has standards.", {"sample": 1.4, "rare": 1.4, "salvage": 0.0, "ice": 0.0})
 		"exchange":
-			_desk_sell("Ore and parts exchange", "The camp buys anything, cheaply, except ice: the drills need water, and it pays well for that.", {"sample": 0.8, "salvage": 0.9, "ice": 1.3, "rare": 0.8})
+			_desk_sell("Ore and parts exchange", "The camp buys anything, cheaply. Ice is the exception: the drills drink water, so it pays well.", {"sample": 0.8, "salvage": 0.9, "ice": 1.3, "rare": 0.8})
 		"store":
 			_desk_store()
 		"gate":
@@ -39,7 +39,7 @@ func _desk_freight(id: String) -> void:
 	var title: String = {"freight": "Freight office", "dispatch": "Dispatch", "foreman": "Foreman"}[id]
 	sc._clear_panel(title)
 	if Session.insolvent():
-		sc.panel_list.add_child(Brand.note("No one will give a bankrupt captain freight. The bank will take the ship at half price, clear the debt and lend you a starter hauler.", 15))
+		sc.panel_list.add_child(Brand.note("No one gives freight to a bankrupt captain. The bank will take the ship at half price, clear the debt and lend you a starter hauler. It's very generous with your ship.", 15))
 		sc._action("LET THE BANK STEP IN", func() -> void:
 			var r := Session.restructure()
 			Session.flash = String(r.message)
@@ -100,7 +100,7 @@ func _desk_freight(id: String) -> void:
 		sc.panel_list.add_child(Brand.heading("POSTED WORK", 15))
 	var offers := Contracts.offers_from(Session.system_id())
 	if offers.is_empty():
-		sc.panel_list.add_child(Brand.note("Nothing posted here right now. Wait a day at the bunks, or fly empty somewhere busier.", 15))
+		sc.panel_list.add_child(Brand.note("Nothing posted right now. Wait a day at the bunks, or fly empty somewhere less sleepy.", 15))
 	var stats := {}
 	var loaded := Session._load_ship(SaveSlots.read(Session.slot)) if Session.slot >= 0 else {}
 	if not loaded.is_empty():
@@ -175,7 +175,7 @@ func _people_section() -> void:
 
 func _desk_fuel() -> void:
 	var mult := Session.site_fuel_mult()
-	sc._clear_panel("Fuel and repairs", "Fuel here costs %d%% of the system price (%s). You are charged for what you burn when you leave or land." % [roundi(mult * 100.0),
+	sc._clear_panel("Fuel and repairs", "Fuel here costs %d%% of the system price (%s). You pay for every drop you burn when you leave or land." % [roundi(mult * 100.0),
 			"cheap: a fuel depot" if mult < 0.95 else ("dear: it has to come up from the surface or down from orbit" if mult > 1.2 else "the usual")])
 	var dmg := float(Session.profile.get("hull_damage", 0.0))
 	sc.panel_list.add_child(Brand.note("Hull: %d%%%s" % [roundi((1.0 - dmg) * 100.0), "" if dmg <= 0.0 else ". A damaged hull loses thrust until it is fixed."], 15))
@@ -193,7 +193,7 @@ func _desk_fuel() -> void:
 
 
 func _desk_bar() -> void:
-	sc._clear_panel("Bar and bunks", "Captains and crews pass through here between jobs, and some of them have work that never reaches the board.")
+	sc._clear_panel("Bar and bunks", "Captains and crews drift through between jobs. Some have work that never reaches the board, for reasons they'd rather not discuss.")
 	_people_section()
 	sc.panel_list.add_child(Brand.heading("BUNKS", 15))
 	var idle := Session.active_contract().is_empty() and Session.sim != null and not Session.insolvent()
@@ -219,7 +219,7 @@ func _desk_sell(title: String, note: String, rates: Dictionary) -> void:
 
 func _desk_store() -> void:
 	var owned := Session.gear_owned()
-	sc._clear_panel("Suit store", "Kit for working outside. Your suit holds %s of air." % SurfaceWork.clock(SurfaceWork.o2_capacity(owned)))
+	sc._clear_panel("Suit store", "Kit for the great airless outdoors. Your suit holds %s of air." % SurfaceWork.clock(SurfaceWork.o2_capacity(owned)))
 	for gid in SurfaceWork.GEAR_ORDER:
 		var g := SurfaceWork.gear(gid)
 		var have: bool = gid in owned

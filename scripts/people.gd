@@ -23,11 +23,11 @@ const FIRST := ["Ade", "Bea", "Cass", "Dov", "Esk", "Fen", "Gale", "Hiro", "Ines
 const LAST := ["Okafor", "Brandt", "Szabo", "Reyes", "Tanaka", "Moreau", "Kowal", "Haddad", "Lindqvist", "Osei", "Varga",
 		"Castell", "Ibsen", "Nakamura", "Duarte", "Pell", "Achebe", "Rourke"]
 const LINES := {
-	"rush": ["The line at %s is down until this arrives. Can you go now?", "I promised %s this by tonight. I'll pay for speed.",
+	"rush": ["The line at %s is down until this arrives. Every hour costs. Can you go now?", "I promised %s this by tonight. I'll pay for speed, not excuses.",
 			"%s needs these yesterday. Today will have to do."],
-	"passenger": ["We need passage to %s. We'll keep out of the way.", "Shift change at %s and the shuttle's broken. Room for us?",
+	"passenger": ["We need passage to %s. We'll keep off the controls.", "Shift change at %s and the shuttle's broken again. Room for us?",
 			"Going to %s. I hear you fly steady."],
-	"sealed": ["Sealed crate for %s. Don't open it, don't ask, land it gently.", "This goes to %s as it is. The seal stays on.",
+	"sealed": ["Sealed crate for %s. Don't open it, don't ask, land it gently.", "This goes to %s as it is. Seal on. Ignore the humming.",
 			"A private consignment for %s. Good pay for a smooth ride."],
 }
 
@@ -107,7 +107,7 @@ static func posted(node_id: String, day: int, stats: Dictionary, level: Dictiona
 				j["rate"] = roundi(maxf(float(j.rate) * float(k.rate_mult), float(trip_cost.call(float(j.offer), float(j.dv_kms))) * float(k.pays_trip_cost_x) / float(j.offer)) * bonus)
 				j["due_in_hours"] = maxi(1, roundi(float(j.hours) * float(k.due_frac)))
 				j["title"] = "Rush: %s" % String(j.title)
-				j["blurb"] = "Due in %d h, sooner than the usual %d h: fly it yourself or pay for a hard burn. Late: half pay." % [int(j.due_in_hours), int(j.hours)]
+				j["blurb"] = "Due in %d h, sooner than the usual %d h: fly it yourself or pay for a hard burn. Late: half pay, and a long face." % [int(j.due_in_hours), int(j.hours)]
 			"passenger":
 				var n := rng.randi_range(int(k.seats[0]), int(k.seats[1]))
 				j["seats"] = n
@@ -115,13 +115,13 @@ static func posted(node_id: String, day: int, stats: Dictionary, level: Dictiona
 				j["fare"] = roundi(float(trip_cost.call(0.0, float(j.dv_kms))) * (float(k.pays_trip_cost_x[0]) + float(k.pays_trip_cost_x[1]) * n) * bonus)
 				j["rate"] = 0
 				j["title"] = "%d passenger%s to %s" % [n, "" if n == 1 else "s", dest]
-				j["blurb"] = "Needs %d spare berth%s. A hard landing halves the fare." % [n, "" if n == 1 else "s"]
+				j["blurb"] = "Needs %d spare berth%s. A hard landing halves the fare. They notice." % [n, "" if n == 1 else "s"]
 			"sealed":
 				var frac := rng.randf_range(float(k.tonnes_frac[0]), float(k.tonnes_frac[1]))
 				j["offer"] = maxf(1.0, snappedf(float(j.offer) * frac, 0.5))
 				j["rate"] = roundi(maxf(float(j.rate) * float(k.rate_mult), float(trip_cost.call(float(j.offer), float(j.dv_kms))) * float(k.pays_trip_cost_x) / float(j.offer)) * bonus)
 				j["title"] = "Sealed crate to %s" % dest
-				j["blurb"] = "Any hull damage on the way breaks the seal: most of the pay is lost."
+				j["blurb"] = "Any hull damage on the way breaks the seal, and most of the pay goes with it."
 				if rep < int(k.min_rep):
 					j["locked"] = "Needs %s standing (%d)" % [standing(int(k.min_rep)), int(k.min_rep)]
 		out.append(j)
@@ -138,11 +138,11 @@ static func settle(c: Dictionary, payment: int, now_hour: int, damage: float) ->
 	match kind:
 		"rush":
 			if now_hour > int(c.get("due_hour", 1 << 30)):
-				return {"payment": roundi(payment * float(k.late_pay)), "rep": int(k.rep_late), "note": "late: %s paid half" % String(c.person)}
-			return {"payment": payment, "rep": int(k.rep_on_time), "note": "on time for %s" % String(c.person)}
+				return {"payment": roundi(payment * float(k.late_pay)), "rep": int(k.rep_late), "note": "late: %s paid half, with a look" % String(c.person)}
+			return {"payment": payment, "rep": int(k.rep_on_time), "note": "on time for %s, who almost smiled" % String(c.person)}
 		"passenger":
 			if hurt:
-				return {"payment": roundi(payment * float(k.rough_pay)), "rep": int(k.rep_rough), "note": "a rough ride: %s paid half the fare" % String(c.person)}
+				return {"payment": roundi(payment * float(k.rough_pay)), "rep": int(k.rep_rough), "note": "a rough ride: %s paid half the fare, shakily" % String(c.person)}
 			return {"payment": payment, "rep": int(k.rep_ok), "note": "a smooth ride for %s" % String(c.person)}
 		"sealed":
 			if hurt:

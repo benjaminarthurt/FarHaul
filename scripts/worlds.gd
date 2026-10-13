@@ -37,7 +37,7 @@ const RACES := [
 const DIFFICULTIES := [
 	{"id": "easy", "name": "Easy", "funds": 220000, "blurb": "Start with 220,000 credits."},
 	{"id": "normal", "name": "Normal", "funds": 150000, "blurb": "Start with 150,000 credits."},
-	{"id": "hard", "name": "Hard", "funds": 110000, "blurb": "Start with 110,000 credits. The starter ship leaves you very little."},
+	{"id": "hard", "name": "Hard", "funds": 110000, "blurb": "Start with 110,000 credits. The starter ship eats most of it."},
 ]
 
 static var _cache := {}
@@ -222,6 +222,14 @@ static func _homeworld_name(sys: Dictionary, dest_id: String) -> String:
 
 static func system(id: String) -> Dictionary:
 	return _by_id(_load("systems.json").get("systems", []), id)
+
+
+## Every system's id, in the order systems.json lists them.
+static func system_ids() -> Array[String]:
+	var out: Array[String] = []
+	for s in _load("systems.json").get("systems", []):
+		out.append(String(s.get("id", "")))
+	return out
 
 
 ## The places a player of this species can begin: their home system first, then the shared starts.

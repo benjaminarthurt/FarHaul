@@ -159,7 +159,7 @@ func _build_ui() -> void:
 					"you can afford it" if int(p.credits) >= price else "%s cr to save" % ShipStats.commas(price - int(p.credits))])
 		_row(grid, "Crew pay", "%s cr/day  ·  %s rates" % [", ".join(pay), String(Session.sim.carriers[SimWorld.PLAYER]["home"]).replace("_", " ").capitalize()])
 	if Session.insolvent():
-		var broke := Brand.note("INSOLVENT. Your cash is gone and the bank is taking the ship. This run is over: start a new game from the main menu.", 16)
+		var broke := Brand.note("INSOLVENT. Your cash is gone and the bank is taking the ship, with its usual tact. This run is over: start a new game from the main menu.", 16)
 		broke.add_theme_color_override("font_color", Color(0.95, 0.4, 0.3))
 		broke.custom_minimum_size = Vector2(440, 0)
 		col.add_child(broke)
@@ -168,11 +168,11 @@ func _build_ui() -> void:
 				ShipStats.commas(roundi(float(rep.revenue))), ShipStats.commas(roundi(float(rep.costs)))], 15)
 		recap.custom_minimum_size = Vector2(440, 0)
 		col.add_child(recap)
-		var offer := Brand.note("Or let the bank step in: it takes the ship at half price, clears your debt and lends you a starter hauler with ten days of running costs. It goes on your record.", 15)
+		var offer := Brand.note("Or let the bank step in: it takes the ship at half price, clears your debt and lends you a starter hauler with ten days of running costs. It goes on your record, which the bank never forgets.", 15)
 		offer.custom_minimum_size = Vector2(440, 0)
 		col.add_child(offer)
 	elif Session.sim != null and SimWorld.runway_days(Session.sim) < 7 and Session.active_contract().is_empty():
-		var warn := Brand.note("Cash covers less than a week of running costs. Take freight now.", 15)
+		var warn := Brand.note("Cash covers under a week of running costs. Take freight now, before the bank does.", 15)
 		warn.add_theme_color_override("font_color", Brand.AMBER)
 		col.add_child(warn)
 	col.add_child(_gap(10))
@@ -190,10 +190,10 @@ func _build_ui() -> void:
 	depart_btn = _button(menu, "DEPART", _depart)
 	deliver_btn = _button(menu, "DELIVER FREIGHT", _deliver)
 	helm_btn = _button(menu, "TAKE THE HELM", _take_helm)
-	helm_btn.tooltip_text = "Fly the ship in free flight around the dock. No time passes and nothing is lost: it is practice until star jumps arrive."
+	helm_btn.tooltip_text = "Fly the ship in free flight around the dock. No time passes and nothing is lost: it's practice until star jumps arrive, whenever that is."
 	wait_btn = _button(menu, "WAIT A DAY", _wait_day)
 	fly_btn = _button(menu, "FLY EMPTY", _show_destinations)
-	wait_btn.tooltip_text = "Let a day pass. The rest of the economy keeps moving; your crew and ship still cost money."
+	wait_btn.tooltip_text = "Let a day pass. The rest of the economy keeps moving; your crew and ship still cost money. They always do."
 	fly_btn.tooltip_text = "Fly without cargo to another system, to reach freight or leave a port with none."
 	var finds := Session.finds_aboard() if Session.slot >= 0 else {}
 	if int(finds.get("value", 0)) > 0:
@@ -204,7 +204,7 @@ func _build_ui() -> void:
 	status.add_theme_color_override("font_color", Brand.MUTED)
 	status.add_theme_font_size_override("font_size", 13)
 	col.add_child(status)
-	yard_btn.tooltip_text = "The shipyard is where you build and fit your ship. It is only open at a yard like this one."
+	yard_btn.tooltip_text = "The shipyard is where you build and fit your ship. It's only open at a yard like this one, so shop while you can."
 	# The freight board and the fly-empty list open in a scrolling panel on the right, so they are on
 	# screen however long the menu is.
 	side = PanelContainer.new()
@@ -238,7 +238,7 @@ func _build_ui() -> void:
 	fly_list = VBoxContainer.new()
 	fly_list.add_theme_constant_override("separation", 4)
 	fly_panel.add_child(fly_list)
-	var note := Brand.note("The shipyard is where you build and fit your ship. It is only open at a yard like this one.")
+	var note := Brand.note("The shipyard is where you build and fit your ship. It's only open at a yard like this one, so shop while you can.")
 	note.custom_minimum_size = Vector2(380, 0)
 	col.add_child(note)
 
@@ -330,7 +330,7 @@ func _sublight() -> bool:
 
 func _show_contracts() -> void:
 	if Session.insolvent():
-		status.text = "No one will give a bankrupt captain freight."
+		status.text = "No freight for a bankrupt captain. Let the bank step in."
 		return
 	contract_panel.visible = not contract_panel.visible
 	fly_panel.visible = false
@@ -345,9 +345,9 @@ func _show_contracts() -> void:
 	contract_list.add_child(heading)
 	var offers := Contracts.offers_from(system_id)
 	if _sublight():
-		contract_list.add_child(Brand.note("No FTL drive fitted: you can only haul inside this system. Fit a drive in the shipyard to take freight between stars.", 14))
+		contract_list.add_child(Brand.note("No FTL drive fitted: you can only haul inside this system. Fit a drive in the shipyard to take freight between stars. They won't come to you.", 14))
 	if offers.is_empty():
-		contract_list.add_child(Brand.note("No profitable freight is posted here right now."))
+		contract_list.add_child(Brand.note("No profitable freight here right now, only the other kind."))
 		return
 	var active := Session.active_contract()
 	if not active.is_empty():
@@ -458,7 +458,7 @@ func _show_destinations() -> void:
 	if options.is_empty():
 		fly_list.add_child(Brand.note("No other system is within reach of your tanks."))
 		return
-	fly_list.add_child(Brand.note("You pay fuel, port fees, crew and ship costs for the trip and earn nothing until you load freight."))
+	fly_list.add_child(Brand.note("You pay fuel, port fees, crew and ship costs for the trip and earn nothing until you load freight. Scenery is free."))
 	for o in options.slice(0, 8):
 		var sid: String = o.system_id
 		var line := Button.new()
@@ -476,7 +476,7 @@ func _show_sites() -> void:
 	if sites.is_empty():
 		fly_list.add_child(Brand.note("Nowhere else in this system is within reach of your tanks."))
 		return
-	fly_list.add_child(Brand.note("You pay fuel, a berth fee and running costs and earn nothing until you load a job there.", 14))
+	fly_list.add_child(Brand.note("You pay fuel, a berth fee and running costs, and earn nothing until you load a job there. Sightseeing is expensive.", 14))
 	for o in sites:
 		var sid: String = o.id
 		var line := Button.new()

@@ -131,21 +131,23 @@ static func for_system(system_id: String) -> Dictionary:
 
 
 ## The style for a site in a system: the system's own for its main port; a step smaller and rougher for
-## its fuel depot, belt works and moon station, which are working sites rather than the front door.
+## its fuel depot, belt works, moon station and Sol's outer-planet stations, which are working sites
+## rather than the front door.
 static func for_site(port_id: String) -> Dictionary:
 	var n := LocalSpace.node(port_id)
 	var sys := String(n.get("system_id", "")) if not n.is_empty() else String(Worlds.port(port_id).get("system_id", Session.system_id()))
 	var st := for_system(sys).duplicate()
 	var kind := String(n.get("kind", "port")) if not n.is_empty() else "port"
 	st["site_kind"] = kind
-	if kind in ["depot", "belt", "moon"]:
+	if kind in LocalSpace.OUT_SITES:
 		var order := ["core", "developed", "outer", "frontier", "extreme_frontier"]
 		var t: String = order[mini(order.find(String(st.tier)) + 1, order.size() - 1)]
 		st.merge(TIER[t], true)
 		st["tier"] = t
 		st["bar_name"] = "Bar and bunks"
 		st["landmark"] = {}   # the system's landmark is at its main port, not out here
-		st["port_type"] = {"depot": "fuel_depot", "belt": "belt_works", "moon": "moon_station"}[kind]
+		st["port_type"] = {"depot": "fuel_depot", "belt": "belt_works", "moon": "moon_station", "venus": "cloud_port",
+				"jovian": "gas_works", "saturn": "ring_yard"}[kind]
 	return st
 
 

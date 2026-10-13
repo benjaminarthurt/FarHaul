@@ -321,7 +321,7 @@ func _rough_ground() -> void:
 	for r in rocks:
 		if Vector2(pos.x - r.x, pos.z - r.y).length() < r.z + foot:
 			damage = minf(1.0, damage + float(sc.get("boulder_damage", 0.12)))
-			hazard = "Set down on a boulder: the legs took it badly"
+			hazard = "Set down on a boulder. The legs took it personally"
 			hazards_seen += 1
 			impacts += 1
 			return
@@ -329,7 +329,7 @@ func _rough_ground() -> void:
 	var lim := float(sc.get("land_slope_deg", 10.0))
 	if slope > lim:
 		damage = minf(1.0, damage + (slope - lim) * float(sc.get("slope_damage_per_deg", 0.012)))
-		hazard = "Landed on a %d° slope: the ship slid and scraped" % roundi(slope)
+		hazard = "Landed on a %d° slope: slid and scraped. Pick flatter rock" % roundi(slope)
 		hazards_seen += 1
 		impacts += 1
 

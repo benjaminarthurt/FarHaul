@@ -5,6 +5,7 @@ Each tag `vX.Y.Z` publishes the notes in `docs/releases/vX.Y.Z.md` as the GitHub
 
 ## Voice
 
+Release notes use the game's voice (see [../voice.md](../voice.md)); the specifics for notes follow.
 Far Haul's release notes are meant to be fun to read. Write them like a tired, sardonic freight
 captain's log: dry jokes, sarcasm, and a fair amount of complaining about the bank, the tugs, the
 physics and the developer. Keep these rules:

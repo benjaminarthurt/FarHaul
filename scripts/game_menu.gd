@@ -102,7 +102,7 @@ func open() -> void:
 		return
 	_mouse_before = Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	note.text = "Saving keeps your game as it was when you left port; this flight is not saved." if in_flight else ""
+	note.text = "A save keeps the game as you left port; this flight is not saved. Officially, it never happened." if in_flight else ""
 	dim.visible = true
 	panel.visible = true
 	get_tree().paused = true
