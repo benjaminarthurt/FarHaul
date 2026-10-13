@@ -10,8 +10,12 @@ extends Node
 ## - It follows the game: commands go through FlightScene.pilot(), the same code the keys use, with
 ##   the same limits (time compression caps, course hold's 5 degrees, docking range).
 ##
+## - In port it can do what the desks do (port_state(), port_command()): take freight, depart on
+##   autopilot, deliver, wait a day, hire and let go crew, buy kits and repairs. Through Session, the
+##   same calls the desks make.
+##
 ## Routes: GET / (the page, remote/index.html), POST /api/pair {code} -> {token},
-## GET /api/state, GET /api/chart?view=system|space, POST /api/cmd {action, value}. Every /api call
+## GET /api/state, GET /api/chart?view=system|space, POST /api/cmd {action, value, id}. Every /api call
 ## but pair needs the X-Remote-Token header. Plain HTTP, one request per connection.
 
 const PORT := 8417
@@ -26,6 +30,9 @@ var _clients: Array = []         ## {peer: StreamPeerTCP, buf: PackedByteArray, 
 var _fails := {}                 ## address -> [count, unlock time]
 var _page := ""
 var _last_seen := 0.0            ## when a paired device last asked for the state (seconds since start)
+var _port_cache := {}            ## the last port_state(), reused while nothing has changed (it reads the save)
+var _port_key := ""
+var _port_t := 0.0
 
 
 ## Start or stop the remote to match the setting. Called as each scene opens (GameSettings.apply_scene).
@@ -184,7 +191,7 @@ func _answer(req: Dictionary, host: String) -> PackedByteArray:
 				var cmd = JSON.parse_string(String(req.body))
 				if typeof(cmd) != TYPE_DICTIONARY:
 					return _json(400, {"error": "Commands are JSON."})
-				return _json(200, command(String(cmd.get("action", "")), float(cmd.get("value", 0.0))))
+				return _json(200, command(String(cmd.get("action", "")), float(cmd.get("value", 0.0)), String(cmd.get("id", ""))))
 	return _json(404, {"error": "Nothing here."})
 
 
@@ -221,14 +228,194 @@ func state() -> Dictionary:
 	elif Session.slot >= 0:
 		out.scene = "dock"
 		out.where = "Docked"
+	if _in_port(scene):
+		var now := Time.get_ticks_msec() / 1000.0
+		var k := "%d|%d|%s|%d|%s|%d" % [int(Session.profile.get("credits", 0)), Session.day(), String(Session.profile.get("port_id", "")), Session.crew().size(),
+				String(Session.active_contract().get("status", "")), Session.patch_kits() * 10 + Session.spares_kits()]
+		if k != _port_key or now - _port_t > 5.0:
+			_port_cache = port_state()
+			_port_key = k
+			_port_t = now
+		out["port"] = _port_cache
+		var loaded := Session._load_ship(SaveSlots.read(Session.slot))
+		if not loaded.is_empty():
+			var c := Session.active_contract()
+			out["status"] = status_block(loaded.ship, Session.wear(), Session.hull(), _crew_in_port(),
+					{"cargo_t": float(c.get("accepted_tonnes", 0.0)) if String(c.get("person_kind", "")) != "passenger" else 0.0})
 	return out
 
 
-func command(action: String, value: float) -> Dictionary:
+## In a saved game, berthed, and not in the shipyard or a flight: the desks' business is open.
+func _in_port(scene: Node) -> bool:
+	if Session.slot < 0 or Session.sim == null or String(Session.profile.get("location", "dock")) == "shipyard" or scene == null:
+		return false
+	return scene.scene_file_path in [Session.PLACE_SCENE, Session.DOCK_SCENE]
+
+
+func command(action: String, value: float, id := "") -> Dictionary:
 	var scene := get_tree().current_scene if get_tree() != null else null
+	if action in PORT_ACTIONS:
+		if not _in_port(scene):
+			return {"ok": false, "message": "That's desk business: berth first." if scene is FlightScene else "Not from here. Be in port, on your feet or at the terminal."}
+		var r := port_command(action, id)
+		_port_key = ""
+		_after_port(scene, action, r)
+		return r
 	if scene == null or not scene.has_method("remote_command"):
 		return {"ok": false, "message": "Nothing to fly from here. Take the helm first."}
 	return scene.remote_command(action, value)
+
+
+# --- The ship's state, for the status panel --------------------------------------------------------
+
+## One block for the page's ship panel, in port or in flight: hull, crew and what they're doing, every
+## working part's condition, kits aboard, cargo and fuel.
+## `crew_rows`: [{name, role, role_name, skill, doing}]. `extra`: {cargo_t, fuel, fuel_max}.
+static func status_block(ship: ShipData, wear: Dictionary, hull: float, crew_rows: Array, extra: Dictionary = {}) -> Dictionary:
+	var parts := []
+	for p in Wear.parts(ship, wear):
+		parts.append({"name": String(p.name), "condition": Wear.condition(float(p.wear)), "failed": float(p.wear) >= 1.0,
+				"worn": float(p.wear) >= float(Wear.cfg().get("worn_at", 0.75))})
+	var st := ShipStats.compute(ship)
+	var out := {"hull": hull, "crew": crew_rows, "aboard": 1 + crew_rows.size(), "berths": int(st.get("berths", 0)),
+			"parts": parts, "patch_kits": Session.patch_kits(), "patch_kit_max": Session.patch_kit_max(),
+			"spares_kits": Session.spares_kits(), "spares_kit_max": int(Wear.cfg().get("spares_kit_max", 4)),
+			"cargo_t": float(extra.get("cargo_t", 0.0)), "cargo_max": float(st.get("cargo_capacity", 0.0))}
+	if extra.has("fuel"):
+		out["fuel"] = float(extra.fuel)
+		out["fuel_max"] = float(extra.fuel_max)
+	var c := Session.active_contract() if Session.slot >= 0 else {}
+	if not c.is_empty():
+		out["load"] = String(c.get("title", ""))
+	return out
+
+
+static func _crew_in_port() -> Array:
+	var out := []
+	for p in Session.crew():
+		var r := String(p.get("role", ""))
+		out.append({"name": String(p.get("name", "")), "role": r, "role_name": Crew.role_name(r), "skill": int(p.get("skill", 1)),
+				"doing": "Ashore, %s" % ["at the bar", "asleep in a bunk", "complaining about the coffee", "haggling at the market", "writing home"][absi(hash(String(p.get("id", "")) + str(Session.day()))) % 5]})
+	return out
+
+
+# --- In port: the desks from the phone ------------------------------------------------------------
+
+const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "repair", "overhaul"]
+
+
+## What the desks offer right now: the active contract and what can be done with it, the freight board
+## and people with work, the crew and who's looking for a berth, and the repair desk's prices.
+static func port_state() -> Dictionary:
+	var out := {"insolvent": Session.insolvent()}
+	var loaded := Session._load_ship(SaveSlots.read(Session.slot))
+	var stats := Session.ship_stats(loaded.ship) if not loaded.is_empty() else {}
+	var c := Session.active_contract()
+	var here := String(Session.profile.get("port_id", ""))
+	if not c.is_empty():
+		var local := bool(c.get("local", false))
+		var arrived := String(c.get("status", "")) == "arrived"
+		var at_start := String(c.get("origin_port_id", "")) == here if local else String(c.get("origin_system_id", "")) == Session.system_id()
+		var at_end := (String(c.get("destination_port_id", "")) == here or (bool(c.get("surface", false)) and LocalSpace.is_surface(here))) if local \
+				else String(c.get("destination_system_id", "")) == Session.system_id()
+		var pax := String(c.get("person_kind", "")) == "passenger"
+		out["active"] = {"title": String(c.get("title", "")), "passengers": pax, "seats": int(c.get("seats", 0)),
+				"tonnes": float(c.get("accepted_tonnes", c.get("offer", 0.0))), "pay": int(c.get("pay_total", 0)),
+				"to": _dest_name(c), "arrived": arrived, "can_depart": at_start and not arrived and Session.hull_block() == "",
+				"depart_why": Session.hull_block() if at_start and not arrived else "", "hard_burn": at_start and not arrived and c.has("due_hour"),
+				"can_deliver": arrived and at_end, "camp": arrived and at_end and Session.surface_site() == "camp" and not pax,
+				"due_in_h": int(c.due_hour) - int(Session.sim.hour) if c.has("due_hour") and Session.sim != null else -9999}
+	var board := []
+	if c.is_empty() and not Session.insolvent():
+		for o in Contracts.offers_from(Session.system_id()):
+			board.append(_offer_row(o, stats))
+		for j in Session.people_here():
+			board.append(_offer_row(j, stats))
+	out["board"] = board
+	var cands := []
+	var free := Session.free_berths(stats) if not stats.is_empty() else 0
+	var mult := float(SimShip.level(String(Session.profile.get("difficulty", "normal"))).get("wage_mult", 1.0))
+	for p in Session.crew_candidates():
+		cands.append({"id": String(p.id), "name": String(p.name), "species": String(Worlds.species(String(p.species)).name), "role": String(p.role),
+				"role_name": Crew.role_name(String(p.role)), "skill": int(p.skill), "wage": roundi(float(p.wage) * mult),
+				"fee": roundi(float(p.wage) * float(Crew.cfg().get("hire_fee_days", 1)) * mult), "line": String(p.line),
+				"does": String(Crew.role(String(p.role)).get("does", ""))})
+	var crew := []
+	for p in Session.crew():
+		crew.append({"id": String(p.id), "name": String(p.name), "role": String(p.role), "role_name": Crew.role_name(String(p.role)), "skill": int(p.skill),
+				"wage": roundi(float(p.wage) * mult), "severance": roundi(float(p.wage) * float(Crew.cfg().get("severance_days", 2)) * mult),
+				"does": String(Crew.role(String(p.role)).get("does", ""))})
+	out["crew"] = crew
+	out["candidates"] = cands
+	out["free_berths"] = maxi(0, free)
+	out["crew_needed"] = int(stats.get("crew_needed", 1))
+	out["shop"] = {"repair": Session.repair_cost(), "overhaul": Session.overhaul_cost(), "patch_kit": Session.patch_kit_price(),
+			"spares_kit": Session.spares_kit_price(), "hull": Session.hull(), "parts": Wear.summary(loaded.ship, Session.wear()) if not loaded.is_empty() else ""}
+	out["can_wait"] = c.is_empty() and not Session.insolvent()
+	return out
+
+
+static func _dest_name(c: Dictionary) -> String:
+	if bool(c.get("local", false)):
+		return String(LocalSpace.node(String(c.get("destination_port_id", ""))).get("name", "the site"))
+	return String(Worlds.port(String(c.get("destination_port_id", ""))).get("name", String(c.get("destination_system_id", ""))))
+
+
+static func _offer_row(o: Dictionary, stats: Dictionary) -> Dictionary:
+	var pax := String(o.get("person_kind", "")) == "passenger"
+	var local := bool(o.get("local", false))
+	var row := {"id": String(o.get("id", "")), "kind": String(o.get("person_kind", "")) if o.has("person_kind") else ("surface" if bool(o.get("surface", false)) else ("local" if local else "freight")),
+			"what": "%d seat%s" % [int(o.seats), "" if int(o.seats) == 1 else "s"] if pax else String(Worlds.commodity(String(o.get("commodity", ""))).get("name", o.get("commodity", ""))),
+			"to": _dest_name(o), "tonnes": 0.0 if pax else float(o.get("offer", 0.0)),
+			"pay": int(o.fare) if pax else roundi(float(o.get("offer", 0.0)) * float(o.get("rate", 0.0))),
+			"time": "%d h" % int(o.get("hours", 0)) if local else "%.2f ly" % float(o.get("distance_ly", 0.0)),
+			"person": String(o.get("person", "")), "line": String(o.get("line", "")), "locked": String(o.get("locked", ""))}
+	if local and not stats.is_empty() and not pax:
+		row["fuel"] = roundi(float(Session.local_trip_cost(stats, float(o.get("offer", 0.0)), float(o.get("dv_kms", 0.0))).total))
+	return row
+
+
+## Do one desk thing. `id` is the offer or person it's about.
+static func port_command(action: String, id: String) -> Dictionary:
+	match action:
+		"accept":
+			for o in Contracts.offers_from(Session.system_id()) + Session.people_here():
+				if String(o.get("id", "")) == id:
+					return Session.accept_contract(o)
+			return {"ok": false, "message": "That job's gone. Someone quicker took it."}
+		"depart":
+			return Session.depart_active_contract()
+		"hard_burn":
+			return Session.depart_active_contract(true)
+		"deliver":
+			return Session.deliver_active_contract()
+		"wait":
+			return Session.wait_days(1)
+		"hire":
+			return Session.hire(id)
+		"fire":
+			return Session.fire(id)
+		"buy_patch_kit":
+			return Session.buy_patch_kits(1)
+		"buy_spares_kit":
+			return Session.buy_spares_kit()
+		"repair":
+			return Session.repair_hull()
+		"overhaul":
+			return Session.overhaul_parts()
+	return {"ok": false, "message": "The desks don't do that."}
+
+
+## Keep the game's own screen honest after the phone changed something: the open desk redraws, and
+## when the ship has moved or a day has passed the place rebuilds around you.
+static func _after_port(scene: Node, action: String, r: Dictionary) -> void:
+	if scene == null or not bool(r.get("ok", false)):
+		return
+	if action in ["depart", "hard_burn", "wait", "deliver"] and scene.is_inside_tree():
+		Session.flash = String(r.get("message", ""))
+		scene.get_tree().reload_current_scene.call_deferred()
+	elif scene.has_method("_refill"):
+		scene._refill()
 
 
 ## The map's data: the system chart (bodies and sites) or known space, from StarMap's layout.

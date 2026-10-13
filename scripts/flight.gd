@@ -106,6 +106,9 @@ var alerts: Array = []         ## hull warnings so far this flight, newest last:
 var _hull_warned := 0          ## how many hull warning marks have been passed (and said)
 var salvage_fee := 0           ## what the rescue tug's salvage crew would charge, on top of the tow
 var wear := {}                 ## wear on the working parts this flight (Wear), saved when it ends
+var remote_retro_until := 0.0  ## the remote is holding the braking thrusters until this time (seconds, real)
+var remote_slide := Vector2.ZERO   ## and the manoeuvring thrusters this way (x right, y up)
+var remote_slide_until := 0.0
 var _wear_apply_t := 0.0
 var _wear_damage := -1.0       ## hull damage last frame: a knock to the hull shakes a part loose
 var _was_landed := false
@@ -340,6 +343,12 @@ func _process(delta: float) -> void:
 			retro_cmd = 1.0
 			if model.retro_kn <= 0.0 and notice_s <= 0.0:
 				say("No braking thrusters fitted. The shipyard sells them; physics doesn't give them away.")
+	if not outside and eva == null:   # the remote's hold buttons: held by sending again before they run out
+		var now := Time.get_ticks_msec() / 1000.0
+		if now < remote_retro_until and not _on_surface():
+			retro_cmd = 1.0
+		if now < remote_slide_until:
+			strafe_cmd = (strafe_cmd + remote_slide).limit_length(1.4)
 	if turn != Vector3.ZERO or thr != 0.0 or retro_cmd > 0.0 or strafe_cmd != Vector2.ZERO:
 		model.braking = false          # any pilot input takes the controls back
 	if turn != Vector3.ZERO and model.course_hold:
@@ -396,7 +405,7 @@ func _process(delta: float) -> void:
 func pilot(action: String, value: float = 0.0) -> Dictionary:
 	if leaving or _jumping():
 		return {"ok": false, "message": "Hands off: the ship is busy."}
-	if model.disabled() and action in ["throttle", "brake", "course", "assist"]:
+	if model.disabled() and action in ["throttle", "brake", "course", "assist", "retro", "slide_left", "slide_right", "slide_up", "slide_down", "jump"]:
 		return {"ok": false, "message": "Nothing answers the helm. Call the tug."}
 	match action:
 		"throttle":   # set the throttle outright (the remote's lever); any pilot input takes the controls back
@@ -445,6 +454,33 @@ func pilot(action: String, value: float = 0.0) -> Dictionary:
 			_arrived = true
 			_return_to_dock()
 			return {"ok": true, "message": "Traffic control has you."}
+		"retro":   # hold the braking thrusters (B): the remote sends this again and again while held; 0 lets go
+			if _on_surface():
+				return {"ok": false, "message": "On the moon, fly from the helm."}
+			if model.retro_kn <= 0.0:
+				return {"ok": false, "message": "No braking thrusters fitted. The shipyard sells them."}
+			remote_retro_until = (Time.get_ticks_msec() / 1000.0 + REMOTE_HOLD_S) if value > 0.0 else 0.0
+			return {"ok": true, "message": ""}
+		"slide_left", "slide_right", "slide_up", "slide_down":   # hold the manoeuvring thrusters (Ctrl + arrows)
+			if model.rcs_y_kn <= 0.0:
+				return {"ok": false, "message": "No manoeuvring thrusters fitted. Sideways is a shipyard purchase."}
+			var d: Vector2 = {"slide_left": Vector2.LEFT, "slide_right": Vector2.RIGHT, "slide_up": Vector2(0, 1), "slide_down": Vector2(0, -1)}[action]
+			remote_slide = d if value > 0.0 else Vector2.ZERO
+			remote_slide_until = (Time.get_ticks_msec() / 1000.0 + REMOTE_HOLD_S) if value > 0.0 else 0.0
+			return {"ok": true, "message": ""}
+		"jump":   # J: engage the FTL drive, once clear and slow
+			if String(job.get("kind", "")) != "jump":
+				return {"ok": false, "message": "No jump planned. Take an interstellar contract and fly the jump."}
+			var why := _jump_blocker()
+			if why != "":
+				return {"ok": false, "message": "Not yet: %s." % why}
+			_start_jump()
+			return {"ok": true, "message": "FTL drive spooling."}
+		"reel_in":   # from a space walk, the tether winch (the pause menu's REEL IN)
+			if eva == null:
+				return {"ok": false, "message": "Nobody's outside to reel in."}
+			foot_c.end_space_walk("Reeled in on the tether winch from the remote. Undignified, but quick.")
+			return {"ok": true, "message": "Reeled in."}
 		"tug":   # out of fuel, or the hull breached: the tug (T at the helm)
 			if model.has_fuel() and not model.disabled():
 				return {"ok": false, "message": "There's fuel in the tank and air in the hull. The tug only comes for the helpless."}
@@ -470,8 +506,22 @@ func remote_state() -> Dictionary:
 			"disabled": model.disabled(), "can_tug": not model.has_fuel() or model.disabled(), "faults": model.faults(),
 			"leak_t_h": model.leak_t_per_h(), "cargo_hurt": model.cargo_hurt, "alerts": alerts,
 			"parts": Wear.summary(ship_data, wear) if ship_data != null else "",
+			"has_retro": model.retro_kn > 0.0, "has_rcs": model.rcs_y_kn > 0.0, "retro": model.retro, "strafe": [model.strafe.x, model.strafe.y],
 			"prompt": prompt.text if prompt != null else "", "help": help.text if help != null else ""}, true)
+	if String(job.get("kind", "")) == "jump" and phase == "depart":
+		var why := _jump_blocker()
+		st["jump_ready"] = why == ""
+		st["jump_why"] = why
+	if eva != null:
+		st["eva"] = {"air": eva.o2, "air_max": eva.o2_max, "tether_m": eva.tether_m, "tether_left": eva.tether_left(), "distance": eva.distance(),
+				"strain": eva.strain, "snapped": eva.snapped, "tool": eva.tool, "at_hatch": eva.at_hatch(), "repairs": eva.repairs}
+	if ship_data != null:
+		st["status"] = ShipRemote.status_block(ship_data, wear, model.hull(), crew_c.status() if crew_c != null else [],
+				{"cargo_t": model.cargo_t, "fuel": model.fuel_t, "fuel_max": float(stats.get("fuel", model.fuel_t))})
 	return st
+
+
+const REMOTE_HOLD_S := 0.45   ## how long one "hold" from the remote lasts; the page repeats it while the button is down
 
 
 ## A command from the ship remote. The same controls as the keys, by name (see pilot()).

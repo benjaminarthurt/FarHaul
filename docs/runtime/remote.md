@@ -30,12 +30,20 @@ it keeps answering while the game is paused.
 | `POST /api/pair` | `{code}` → `{token}` |
 | `GET /api/state` | Where you are, credits and day; in flight also the gauges, the run, the autopilots, time compression and its cap, what can be done (dock, traffic control, tug) and the cockpit's prompt (`FlightScene.remote_state()`) |
 | `GET /api/chart` | The system chart (bodies and sites, from `StarMap`); `?view=space` for known space |
-| `POST /api/cmd` | `{action, value}` → `{ok, message}` |
+| `POST /api/cmd` | `{action, value, id}` → `{ok, message}` |
 
 Commands go through `FlightScene.pilot(action, value)`, the same function the keys call:
 `throttle` (0..1, like holding W/S, and it takes the controls back from the braking autopilot),
 `cut`, `brake`, `course`, `assist`, `warp_up`, `warp_down`, `warp_reset`, `dock` (in range),
-`traffic` (on the approach: T), `tug` (out of fuel or breached: T). Steering stays at the helm.
+`traffic` (on the approach: T), `tug` (out of fuel or breached: T), `retro` (braking thrusters, B),
+`slide_left` / `slide_right` / `slide_up` / `slide_down` (manoeuvring thrusters, Ctrl + arrows), `jump`
+(J, when `_jump_blocker()` allows), `reel_in` (from a space walk, the pause menu's reel-in). Steering
+stays at the helm.
+
+`retro` and the slides are holds: each one lasts `FlightScene.REMOTE_HOLD_S` (0.45 s) and the page sends
+it again every 250 ms while the button is down, then `value 0` on release. A phone that loses signal
+mid-hold lets go by itself. They act like the keys: any of them takes the controls back from the
+braking autopilot.
 
 ## The page
 
@@ -54,3 +62,39 @@ on for looking at the page in a browser.
 `alerts` (the flight's hull warnings, newest last). The page shows the faults under the hull gauge,
 a red banner for the latest alert (the phone vibrates when one is new; OK dismisses it, except a
 breach, which stays), greys out the dead controls and offers the rescue tug when disabled.
+
+## Space walks
+
+In a space walk, `/api/state` carries `eva`: `{air, air_max, tether_m, tether_left, distance, strain,
+snapped, tool, at_hatch, repairs}`. The page shows a space walk card above the map: air as a clock and
+a bar, tether paid out, strain, an adrift warning when the tether has snapped, **Reel me in** (`reel_in`)
+and **Cut the engines** (`cut`).
+
+## The ship panel
+
+`status` (in flight and in port, `ShipRemote.status_block`): hull, crew aboard and berths, every
+working part's condition (`Wear.parts`), patch and spares kits, the hold, the load. Each crew row has a
+`doing` line: in flight from `CrewWork.status()` (the engineer's and deck tech's next job and why
+they're waiting, whether the pilot has the helm, the loadmaster and steward), in port a line about
+where they are ashore.
+
+## In port: the desks
+
+When the current scene is the place scene or the station terminal (`ShipRemote._in_port`: a saved game,
+not the shipyard, not a flight), `/api/state` carries `port` (`ShipRemote.port_state()`, cached until
+credits, day, site, crew, contract status or kits change, or 5 s): the active contract and what it
+allows (`can_depart`, `hard_burn`, `can_deliver`, `camp`), the freight board plus people with work
+(`board`, rows with `id`), the crew with wages and severance, today's candidates, free berths, and the
+repair desk's prices. Port actions take an `id` where they need one:
+
+`accept` (board id), `depart`, `hard_burn`, `deliver`, `wait` (a day), `hire` / `fire` (person id),
+`buy_patch_kit`, `buy_spares_kit`, `repair`, `overhaul`. Each is the Session call the desk makes.
+After one, an open desk redraws (`_refill`); after departing, delivering or waiting the scene reloads
+so the place matches where the ship now is. Port actions are refused in flight ("berth first") and in
+the shipyard. Flying a run yourself still starts at the gate in the game. Letting crew go takes two
+taps on the page.
+
+The page swaps the helm and gauges for **The desks** (Freight, Crew, Repairs tabs) in port. Lists are
+redrawn only when their data changes, so a tap isn't lost to the twice-a-second poll.
+
+`tests/serve_remote.gd -- seconds hull flight|eva|port` serves each case for a browser.

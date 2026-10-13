@@ -119,8 +119,69 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
 .pair button { width: 100%; min-height: 56px; border: 0; border-radius: var(--r); background: var(--amber); color: var(--hull); font-size: 18px; }
 .pair .err { color: var(--warn); min-height: 1.4em; }
 
+/* Hold buttons and the slide pad: thrusters fire while a finger is on them. */
+.thrusters { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.key.hold { touch-action: none; user-select: none; -webkit-user-select: none; }
+.key.hold.on { border-color: var(--route); background: #10262e; box-shadow: inset 0 0 0 1px var(--route); }
+.pad { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 44px); gap: 6px; }
+.pad .key { min-height: 0; padding: 0; align-items: center; justify-content: center; text-align: center; font-size: 18px; }
+.pad .mid { display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--dim); letter-spacing: .04em; }
+.pad-wrap { display: grid; gap: 4px; }
+.pad-wrap > small, .retro-wrap > small { font-size: 12px; color: var(--dim); }
+.retro-wrap { display: grid; gap: 4px; }
+.retro-wrap .key { min-height: 144px; align-items: center; text-align: center; }
+
+/* Space walk: air is the clock, the tether and its strain are the leash. */
+.eva-card { border-color: var(--amber-dim); }
+.eva-air { display: flex; align-items: baseline; gap: 10px; }
+.eva-air b { font-size: 40px; font-weight: 400; }
+.eva-air span { color: var(--dim); font-size: 14px; }
+.eva-bars { display: grid; gap: 10px; margin: 10px 0 12px; }
+.eva-low b { color: var(--warn); }
+.adrift { padding: 10px 12px; border: 1px solid var(--warn); border-radius: var(--r); color: #ffd8cf; background: #2a1210; margin-bottom: 10px; font-size: 15px; line-height: 1.35; }
+.eva-keys { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* The ship and crew panel. */
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--dim); margin-bottom: 10px; }
+.facts b { color: var(--ink); font-weight: 400; }
+.cols { display: grid; gap: 14px; }
+.list { display: grid; }
+.list h3 { margin: 0 0 6px; font-size: 13px; font-weight: 400; color: var(--dim); }
+.who { padding: 8px 0; border-top: 1px solid var(--plate-2); }
+.who .n { display: flex; justify-content: space-between; gap: 10px; }
+.who .n small { color: var(--amber); font-size: 12px; white-space: nowrap; }
+.who .d { color: var(--dim); font-size: 13px; margin-top: 2px; }
+.part { display: grid; grid-template-columns: minmax(0, 1fr) 72px 44px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--plate-2); font-size: 14px; }
+.part .t { height: 6px; background: var(--plate-2); border-radius: 3px; overflow: hidden; }
+.part .t i { display: block; height: 100%; background: var(--go); }
+.part.worn .t i { background: var(--amber); } .part.failed .t i { background: var(--warn); }
+.part.failed { color: var(--warn); }
+.part span:last-child { text-align: right; color: var(--dim); }
+.empty { color: var(--dim); font-size: 14px; padding: 6px 0; }
+
+/* The desks, in port. */
+.seg { display: flex; gap: 4px; margin-bottom: 12px; }
+.seg .chip { flex: 1; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--plate-2); }
+.row .m b { font-weight: 400; display: block; }
+.row .m small { display: block; color: var(--dim); font-size: 13px; margin-top: 2px; line-height: 1.35; }
+.row .m q { display: block; color: var(--dim); font-size: 13px; font-style: italic; margin-top: 2px; }
+.act { min-height: 44px; min-width: 88px; padding: 0 14px; border-radius: var(--r); border: 1px solid var(--edge); background: var(--plate-2); }
+.act.go { border-color: var(--go); color: var(--go); }
+.act.sure { border-color: var(--warn); color: var(--warn); }
+.act:disabled { opacity: .35; }
+.tag { display: inline-block; font-size: 11px; letter-spacing: .04em; color: var(--hull); background: var(--dim); border-radius: 3px; padding: 1px 5px; margin-right: 6px; vertical-align: 1px; }
+.tag.rush { background: var(--warn); } .tag.passenger { background: var(--route); } .tag.sealed { background: var(--amber); } .tag.surface { background: #b3bf99; }
+.active { padding: 10px 12px; border: 1px solid var(--amber-dim); border-radius: var(--r); background: #1d1810; margin-bottom: 8px; }
+.active b { font-weight: 400; font-size: 18px; display: block; }
+.active small { color: var(--dim); font-size: 13px; }
+.active .acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.note { color: var(--dim); font-size: 13px; margin: 8px 0 0; line-height: 1.4; }
+
+@media (min-width: 600px) { .cols { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 900px) {
-  main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; grid-template-areas: "trip trip" "map gauges" "map helm"; align-items: start; }
+  main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr auto; grid-template-areas: "trip trip" "eva eva" "map gauges" "map helm" "ship ship"; align-items: start; }
+  .eva-card { grid-area: eva; } .ship-card { grid-area: ship; } .port-card { grid-area: helm; }
   .lever { height: max(220px, min(300px, calc(100dvh - 560px))); }
   .map canvas { aspect-ratio: auto; height: min(calc(100dvh - 330px), 760px); min-height: 420px; }
   .trip { grid-area: trip; } .map { grid-area: map; } .gauges-card { grid-area: gauges; } .helm-card { grid-area: helm; }
@@ -160,6 +221,22 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
         <div class="num"><b id="nEta">-</b><span id="nEtaLabel">arriving in</span></div>
         <div class="num"><b id="nClose">0</b><span>closing</span></div>
       </div>
+    </section>
+
+    <section class="card eva-card" id="evaCard" hidden aria-live="polite">
+      <h2>Space walk</h2>
+      <div class="adrift" id="adrift" hidden></div>
+      <div class="eva-air" id="evaAirRow"><b id="evaAir">-</b><span>of air left</span></div>
+      <div class="eva-bars">
+        <div class="bar" id="bAir"><div class="l">Air <b id="gAir">-</b></div><div class="t"><i></i></div></div>
+        <div class="bar" id="bTether"><div class="l">Tether out <b id="gTether">-</b></div><div class="t"><i></i></div></div>
+        <div class="bar" id="bStrain"><div class="l">Strain <b id="gStrain">-</b></div><div class="t"><i></i></div></div>
+      </div>
+      <div class="eva-keys">
+        <button class="key go" id="kReel">Reel me in<small>the tether winch</small></button>
+        <button class="key" id="kEvaCut">Cut the engines<small>stop pulling on me · Z</small></button>
+      </div>
+      <p class="note" id="evaNote"></p>
     </section>
 
     <section class="card map">
@@ -220,10 +297,43 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
             <button class="key" id="kFast" aria-label="Faster time">+</button>
           </div>
           <button class="key wide" id="kReal">Back to x1<small>/</small></button>
+          <div class="thrusters" id="thrusters" hidden>
+            <div class="retro-wrap" id="retroWrap"><button class="key hold" id="kRetro" data-act="retro">Braking<br>thrusters<small>hold · B</small></button></div>
+            <div class="pad-wrap" id="padWrap">
+              <div class="pad" role="group" aria-label="Manoeuvring thrusters">
+                <span></span><button class="key hold" data-act="slide_up" aria-label="Slide up">▲</button><span></span>
+                <button class="key hold" data-act="slide_left" aria-label="Slide left">◀</button><span class="mid">SLIDE</span><button class="key hold" data-act="slide_right" aria-label="Slide right">▶</button>
+                <span></span><button class="key hold" data-act="slide_down" aria-label="Slide down">▼</button><span></span>
+              </div>
+              <small>hold · Ctrl + arrows</small>
+            </div>
+          </div>
+          <button class="key wide go" id="kJump" hidden>Engage the FTL drive<small id="jumpWhy">J</small></button>
           <button class="key wide go" id="kDock" hidden>Dock<small>in range · F</small></button>
           <button class="key wide go" id="kTraffic" hidden>Let traffic control bring her in<small>on the approach · T</small></button>
           <button class="key wide" id="kTug" hidden><span id="tugText">Call the tug</span><small id="tugWhy">out of fuel · T</small></button>
         </div>
+      </div>
+    </section>
+
+    <section class="card port-card" id="portCard" hidden>
+      <h2>The desks</h2>
+      <div class="seg" role="group" aria-label="Desk">
+        <button class="chip" data-tab="freight" aria-pressed="true">Freight</button>
+        <button class="chip" data-tab="crew" aria-pressed="false">Crew</button>
+        <button class="chip" data-tab="shop" aria-pressed="false">Repairs</button>
+      </div>
+      <div id="tabFreight"></div>
+      <div id="tabCrew" hidden></div>
+      <div id="tabShop" hidden></div>
+    </section>
+
+    <section class="card ship-card" id="shipCard" hidden>
+      <h2>Ship and crew</h2>
+      <div class="facts" id="facts"></div>
+      <div class="cols">
+        <div class="list"><h3>Crew</h3><div id="crewList"></div></div>
+        <div class="list"><h3>Working parts</h3><div id="partList"></div></div>
       </div>
     </section>
   </main>
@@ -249,10 +359,10 @@ async function api(path, body) {
   if (r.status === 401) { showPairing(); throw new Error("unpaired"); }
   return r.json();
 }
-async function cmd(action, value) {
+async function cmd(action, value, id) {
   if (navigator.vibrate) navigator.vibrate(12);
   try {
-    const r = await api("/api/cmd", { action, value: value || 0 });
+    const r = await api("/api/cmd", { action, value: value || 0, id: id || "" });
     if (r.message) toast(r.message);
     poll();
   } catch (e) {}
@@ -354,11 +464,144 @@ function render() {
     const surface = !!s.on_surface;
     $("kBrake").disabled = surface; $("lever").style.opacity = surface ? .4 : 1;
   }
+  // In flight: the thrusters the ship has, and the drive when a jump is planned.
+  if (flying) {
+    $("thrusters").hidden = !(s.has_retro || s.has_rcs) || !!s.on_surface;
+    $("retroWrap").hidden = !s.has_retro; $("padWrap").hidden = !s.has_rcs;
+    $("thrusters").style.gridTemplateColumns = s.has_retro && s.has_rcs ? "1fr 1fr" : "1fr";
+    $("kJump").hidden = s.jump_ready == null;
+    $("kJump").disabled = !s.jump_ready;
+    $("jumpWhy").textContent = s.jump_ready ? "clear and slow · J" : (s.jump_why || "");
+  }
+  // In port the helm gives way to the desks.
+  $("portCard").hidden = !s.port;
+  document.querySelector(".helm-card").hidden = !!s.port;
+  document.querySelector(".gauges-card").hidden = !!s.port;   // berthed: the status panel says it better
+  renderEva(s);
+  renderShip(s.status);
+  renderPort(s.port);
   $("prompt").textContent = s.prompt || "";
   $("prompt").classList.toggle("breach", !!s.disabled);
   faults(s);
   alarms(s);
 }
+
+// ---- Space walk ---------------------------------------------------------------------------
+function mmss(sec) { sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }
+function renderEva(s) {
+  const e = s.eva;
+  $("evaCard").hidden = !e;
+  if (!e) return;
+  const air = e.air_max > 0 ? e.air / e.air_max : 0;
+  $("evaAir").textContent = mmss(e.air);
+  $("evaAirRow").classList.toggle("eva-low", air < 0.25);
+  $("gAir").textContent = Math.round(air * 100) + "%"; bar("bAir", air, "", air < 0.25);
+  const out = e.tether_m - e.tether_left;
+  $("gTether").textContent = e.snapped ? "snapped" : Math.round(out) + " of " + Math.round(e.tether_m) + " m";
+  bar("bTether", e.snapped ? 1 : out / Math.max(1, e.tether_m), "", e.snapped || e.tether_left < 3);
+  $("gStrain").textContent = Math.round(e.strain * 100) + "%"; bar("bStrain", e.strain, "", e.strain > 0.6);
+  $("adrift").hidden = !e.snapped;
+  $("adrift").textContent = e.snapped ? "Tether snapped. You're " + Math.round(e.distance) + " m from the hatch and the winch has nothing to wind. Jet back, or wait for the tug." : "";
+  $("kReel").disabled = !!e.snapped;
+  $("evaNote").textContent = (e.at_hatch ? "At the hatch: Q at the keyboard climbs back in. " : "") + "In hand: " + (e.tool === "torch" ? "the torch" : "the wrench") + (e.repairs ? " · " + e.repairs + " fixed this walk" : "");
+}
+
+// ---- Ship and crew ------------------------------------------------------------------------
+let shipKey = "";
+function esc(t) { return String(t == null ? "" : t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
+function renderShip(st) {
+  $("shipCard").hidden = !st;
+  if (!st) return;
+  const facts = ["Hull <b>" + Math.round(st.hull * 100) + "%</b>", "Aboard <b>" + st.aboard + " of " + st.berths + " berths</b>",
+    "Patch kits <b>" + st.patch_kits + "/" + st.patch_kit_max + "</b>", "Spares <b>" + st.spares_kits + "/" + st.spares_kit_max + "</b>"];
+  if (st.cargo_max > 0) facts.push("Hold <b>" + st.cargo_t.toFixed(1) + " of " + st.cargo_max.toFixed(0) + " t</b>");
+  if (st.load) facts.push("Load <b>" + esc(st.load) + "</b>");
+  const html = facts.map(f => "<span>" + f + "</span>").join("");
+  const crew = st.crew.length ? st.crew.map(c => '<div class="who"><div class="n"><span>' + esc(c.name) + '</span><small>' + esc(c.role_name) + " " + "●".repeat(c.skill) + "○".repeat(5 - c.skill) +
+    '</small></div><div class="d">' + esc(c.doing) + "</div></div>").join("") : '<div class="empty">Just you. Hire hands at the bar.</div>';
+  const parts = st.parts.length ? st.parts.map(p => '<div class="part' + (p.failed ? " failed" : p.worn || p.condition < 50 ? " worn" : "") + '"><span>' + esc(p.name) + '</span><div class="t"><i style="width:' + p.condition + '%"></i></div><span>' +
+    (p.failed ? "failed" : p.condition + "%") + "</span></div>").join("") : '<div class="empty">Nothing that wears.</div>';
+  const key = html + crew + parts;
+  if (key === shipKey) return;
+  shipKey = key;
+  $("facts").innerHTML = html; $("crewList").innerHTML = crew; $("partList").innerHTML = parts;
+}
+
+// ---- The desks, in port -------------------------------------------------------------------
+let portKey = "", tab = "freight", sure = "", sureT = 0;
+for (const b of document.querySelectorAll("[data-tab]")) b.addEventListener("click", () => {
+  tab = b.dataset.tab;
+  for (const c of document.querySelectorAll("[data-tab]")) c.setAttribute("aria-pressed", c === b ? "true" : "false");
+  $("tabFreight").hidden = tab !== "freight"; $("tabCrew").hidden = tab !== "crew"; $("tabShop").hidden = tab !== "shop";
+});
+function cr(n) { return Math.round(n).toLocaleString() + " cr"; }
+function row(main, btn) { return '<div class="row"><div class="m">' + main + "</div>" + (btn || "") + "</div>"; }
+function act(text, action, id, opts) {
+  opts = opts || {};
+  return '<button class="act' + (opts.go ? " go" : "") + (sure === action + "|" + id ? " sure" : "") + '" data-action="' + action + '" data-id="' + esc(id || "") + '"' + (opts.confirm ? ' data-confirm="' + esc(opts.confirm) + '"' : "") +
+    (opts.off ? " disabled" : "") + ">" + esc(sure === action + "|" + id ? opts.confirm : text) + "</button>";
+}
+function renderPort(p) {
+  if (!p) { portKey = ""; return; }
+  const key = JSON.stringify(p) + "|" + sure + "|" + (state.credits || 0);
+  if (key === portKey) return;
+  portKey = key;
+  const credits = state.credits || 0;
+  // Freight.
+  let f = "";
+  if (p.insolvent) f += '<p class="note">Insolvent. The bank wants a word, at the freight office. Nobody gives a bankrupt captain freight.</p>';
+  const a = p.active;
+  if (a) {
+    let acts = "";
+    if (a.can_depart) acts += act("Depart on autopilot", "depart", "", { go: true });
+    if (a.hard_burn && a.can_depart) acts += act("Hard burn", "hard_burn", "");
+    if (a.can_deliver) acts += act(a.camp ? "Pay the camp crew to unload" : a.passengers ? "Set the passengers down" : "Deliver the load", "deliver", "", { go: true });
+    const due = a.due_in_h > -9999 && !a.arrived ? (a.due_in_h >= 0 ? " · due in " + a.due_in_h + " h" : " · late") : "";
+    f += '<div class="active"><b>' + esc(a.title) + "</b><small>" + (a.passengers ? a.seats + " passenger" + (a.seats === 1 ? "" : "s") : a.tonnes.toFixed(1) + " t") + " to " + esc(a.to) +
+      (a.pay ? " · " + cr(a.pay) : "") + due + (a.arrived ? " · arrived" : "") + "</small>" + (acts ? '<div class="acts">' + acts + "</div>" : "") +
+      (a.depart_why ? '<p class="note">' + esc(a.depart_why) + "</p>" : "") + (!a.can_depart && !a.can_deliver && !a.depart_why ? '<p class="note">To fly it yourself, take the helm in the game.</p>' : "") + "</div>";
+  } else if (!p.insolvent) {
+    f += p.board.length ? "" : '<p class="note">Nothing posted. Wait a day, or fly somewhere less sleepy.</p>';
+    for (const o of p.board) {
+      const tag = o.kind && o.kind !== "freight" ? '<span class="tag ' + esc(o.kind) + '">' + esc(o.kind.toUpperCase()) + "</span>" : "";
+      const sub = (o.tonnes ? o.tonnes.toFixed(1) + " t · " : "") + esc(o.time) + " · " + cr(o.pay) + (o.fuel ? " · fuel about " + cr(o.fuel) : "");
+      f += row(tag + "<b>" + esc(o.what) + " → " + esc(o.to) + "</b><small>" + sub + "</small>" + (o.person ? "<q>" + esc(o.person) + ": " + esc(o.line) + "</q>" : "") +
+        (o.locked ? "<small>" + esc(o.locked) + "</small>" : ""), act("Take it", "accept", o.id, { off: !!o.locked }));
+    }
+  }
+  if (p.can_wait) f += row("<b>Rent a bunk and wait a day</b><small>The board changes. Wages don't stop.</small>", act("Wait", "wait", ""));
+  $("tabFreight").innerHTML = f;
+  // Crew.
+  let c = '<p class="note" style="margin-top:0">' + (state.status ? state.status.aboard : 1) + " aboard counting you, " + p.free_berths + " berth" + (p.free_berths === 1 ? "" : "s") + " free." +
+    (state.status && state.status.aboard < p.crew_needed ? " This ship needs " + p.crew_needed + " aboard to take freight." : "") + "</p>";
+  for (const m of p.crew) c += row("<b>" + esc(m.name) + "</b><small>" + esc(m.role_name) + ", skill " + m.skill + " · " + cr(m.wage) + "/day</small><small>" + esc(m.does) + "</small>",
+    act("Let go", "fire", m.id, { confirm: "Sure? " + cr(m.severance) }));
+  c += '<h3 style="margin:14px 0 0;font-size:13px;font-weight:400;color:var(--dim)">Looking for a berth</h3>';
+  if (!p.candidates.length) c += '<p class="note">Nobody looking today.</p>';
+  for (const m of p.candidates) c += row("<b>" + esc(m.name) + "</b><small>" + esc(m.role_name) + ", skill " + m.skill + " · " + esc(m.species) + " · " + cr(m.wage) + "/day, " + cr(m.fee) + " to sign</small><q>" + esc(m.line) + "</q><small>" + esc(m.does) + "</small>",
+    act("Hire", "hire", m.id, { go: true, off: p.free_berths <= 0 || credits < m.fee }));
+  if (p.free_berths <= 0) c += '<p class="note">No free berth. Fit crew bunks at the shipyard first.</p>';
+  $("tabCrew").innerHTML = c;
+  // Repairs.
+  const sh = p.shop;
+  let r = row("<b>Repair the hull</b><small>Hull " + Math.round(sh.hull * 100) + "%. All of it, properly, patches and all.</small>", act(sh.repair > 0 ? cr(sh.repair) : "Sound", "repair", "", { off: sh.repair <= 0 || credits < sh.repair }));
+  r += row("<b>Overhaul the working parts</b><small>" + (sh.parts ? esc(sh.parts) : "Nothing worn past the warning line.") + "</small>", act(sh.overhaul > 0 ? cr(sh.overhaul) : "No need", "overhaul", "", { off: sh.overhaul <= 0 || credits < sh.overhaul }));
+  const stt = state.status || {};
+  r += row("<b>Patch kit</b><small>For holes in the hull: yours or the deck tech's. " + (stt.patch_kits || 0) + " of " + (stt.patch_kit_max || 8) + " aboard.</small>", act(cr(sh.patch_kit), "buy_patch_kit", "", { off: (stt.patch_kits || 0) >= (stt.patch_kit_max || 8) || credits < sh.patch_kit }));
+  r += row("<b>Spares kit</b><small>Brings a failed part back. " + (stt.spares_kits || 0) + " of " + (stt.spares_kit_max || 4) + " aboard.</small>", act(cr(sh.spares_kit), "buy_spares_kit", "", { off: (stt.spares_kits || 0) >= (stt.spares_kit_max || 4) || credits < sh.spares_kit }));
+  $("tabShop").innerHTML = r;
+}
+$("portCard").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-action]");
+  if (!b || b.disabled) return;
+  const k = b.dataset.action + "|" + b.dataset.id;
+  if (b.dataset.confirm && sure !== k) {   // letting someone go takes a second tap
+    sure = k; clearTimeout(sureT); sureT = setTimeout(() => { sure = ""; portKey = ""; renderPort(state.port); }, 3500);
+    portKey = ""; renderPort(state.port); return;
+  }
+  sure = ""; portKey = "";
+  cmd(b.dataset.action, 0, b.dataset.id);
+});
 
 // ---- Hull trouble -------------------------------------------------------------------------
 const FAULT_WORDS = { cooling: "Radiators cracked", leak: "Leaking fuel", cargo: "Knocks reach the cargo", disabled: "Breached: nothing answers the helm" };
@@ -424,6 +667,19 @@ $("lever").addEventListener("keydown", (e) => {
 const keys = { kCut: "cut", kBrake: "brake", kCourse: "course", kAssist: "assist", kSlow: "warp_down", kFast: "warp_up", kReal: "warp_reset",
   kDock: "dock", kTraffic: "traffic", kTug: "tug" };
 for (const id in keys) $(id).addEventListener("click", () => cmd(keys[id]));
+$("kJump").addEventListener("click", () => cmd("jump"));
+$("kReel").addEventListener("click", () => cmd("reel_in"));
+$("kEvaCut").addEventListener("click", () => cmd("cut"));
+// Hold to fire: the ship gets the command again every quarter second while a finger is on the button.
+for (const b of document.querySelectorAll(".key.hold")) {
+  let t = 0;
+  const send = (v) => api("/api/cmd", { action: b.dataset.act, value: v }).then(r => { if (!r.ok && r.message) toast(r.message); }).catch(() => {});
+  const down = (e) => { e.preventDefault(); if (t) return; b.setPointerCapture && b.setPointerCapture(e.pointerId); b.classList.add("on"); if (navigator.vibrate) navigator.vibrate(12); send(1); t = setInterval(() => send(1), 250); };
+  const up = () => { if (!t) return; clearInterval(t); t = 0; b.classList.remove("on"); send(0); };
+  b.addEventListener("pointerdown", down);
+  b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up); b.addEventListener("lostpointercapture", up);
+  b.addEventListener("contextmenu", (e) => e.preventDefault());
+}
 $("pairBtn").addEventListener("click", pair);
 $("code").addEventListener("keydown", (e) => { if (e.key === "Enter") pair(); });
 

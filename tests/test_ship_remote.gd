@@ -95,6 +95,101 @@ func _run() -> void:
 	var before := int(f.warp_index)
 	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "warp_up"}), token)
 	check(f.warp_index == before + 1 and f._warp() <= int(f._warp_limit().max), "time compression goes up, inside the game's cap")
+	f.model.braking = false
+	r = await _http(HTTPClient.METHOD_GET, "/api/state", "", token)
+	var stt: Dictionary = r.json.get("status", {})
+	check((stt.get("parts", []) as Array).size() > 0 and stt.has("patch_kits") and stt.has("crew"), "the ship panel: parts, kits and crew (%d parts)" % (stt.get("parts", []) as Array).size())
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "retro", "value": 1}), token)
+	check(not r.json.get("ok", true) and String(r.json.get("message", "")).contains("No braking thrusters"), "no braking thrusters fitted: the remote says so")
+	f.model.retro_kn = 20.0
+	f.model.rcs_x_kn = 10.0
+	f.model.rcs_y_kn = 10.0
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "retro", "value": 1}), token)
+	f._process(0.05)
+	check(r.json.get("ok", false) and f.model.retro > 0.0, "holding the braking thrusters fires them (%.2f)" % f.model.retro)
+	await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "retro", "value": 0}), token)
+	f._process(0.05)
+	check(f.model.retro == 0.0, "letting go stops them")
+	await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "slide_left", "value": 1}), token)
+	f._process(0.05)
+	check(f.model.strafe.x < 0.0, "the slide pad fires the manoeuvring thrusters (%.2f)" % f.model.strafe.x)
+	f.remote_slide_until = 0.0
+	var t_end := Time.get_ticks_msec() + 700
+	await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "retro", "value": 1}), token)
+	while Time.get_ticks_msec() < t_end:
+		await process_frame
+	f._process(0.05)
+	check(f.model.retro == 0.0, "and a hold that stops arriving runs out by itself (the phone lost signal)")
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "jump"}), token)
+	check(not r.json.get("ok", true) and String(r.json.get("message", "")).contains("No jump"), "no jump planned on a run: %s" % r.json.get("message", ""))
+	print("a space walk")
+	f.model.throttle = 0.0
+	f.get_up()
+	f.walk.stand_in_airlock()
+	f.use()
+	r = await _http(HTTPClient.METHOD_GET, "/api/state", "", token)
+	var eva: Dictionary = r.json.get("eva", {})
+	check(f.eva != null and float(eva.get("air", 0.0)) > 0.0 and eva.has("tether_left") and eva.has("strain"), "out on the tether: air, tether and strain on the phone")
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "reel_in"}), token)
+	check(r.json.get("ok", false) and f.eva == null, "reel me in: back aboard")
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "accept", "id": "x"}), token)
+	check(not r.json.get("ok", true) and String(r.json.get("message", "")).contains("berth"), "desk business waits until you're berthed: %s" % r.json.get("message", ""))
+	f.queue_free()
+	await process_frame
+	Session.flight_job = {}
+
+	print("in port")
+	Session.begin_new(2, "Pilot", "human", "normal", "roosevelt_independent_yards")
+	var data := SaveSlots.read(Session.slot)
+	var cabin := ShipData.new(ModuleLibrary.new())
+	ShipPresets.build(cabin, ShipPresets.STARTER_CABIN)
+	data["modules"] = (JSON.parse_string(cabin.to_json()) as Dictionary)["modules"]
+	data["cargo"] = CargoManifest.new(cabin).to_dict()
+	SaveSlots.write(Session.slot, data)
+	Session.profile["hints_seen"] = ["welcome", "money", "crew"]
+	Session.save_profile()
+	var pl: Node = load(Session.PLACE_SCENE).instantiate()
+	root.add_child(pl)
+	current_scene = pl
+	await process_frame
+	r = await _http(HTTPClient.METHOD_GET, "/api/state", "", token)
+	var port: Dictionary = r.json.get("port", {})
+	check(r.json.get("scene", "") == "port" and (port.get("board", []) as Array).size() > 0 and (port.get("candidates", []) as Array).size() == 4 and r.json.has("status"),
+			"berthed: the freight board, the bar and the ship panel (%d jobs)" % (port.get("board", []) as Array).size())
+	var cand: Dictionary = port.candidates[0]
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "hire", "id": String(cand.id)}), token)
+	check(r.json.get("ok", false) and Session.crew().size() == 1, "hire from the phone: %s" % r.json.get("message", ""))
+	r = await _http(HTTPClient.METHOD_GET, "/api/state", "", token)
+	check((r.json.status.crew as Array).size() == 1 and String(r.json.status.crew[0].doing).begins_with("Ashore"), "and they're on the crew list, ashore")
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "fire", "id": String(cand.id)}), token)
+	check(r.json.get("ok", false) and Session.crew().is_empty(), "let go from the phone: %s" % r.json.get("message", ""))
+	var kits := Session.patch_kits()
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "buy_patch_kit"}), token)
+	check(r.json.get("ok", false) and Session.patch_kits() == kits + 1, "buy a patch kit")
+	var job := {}
+	for o in port.board:
+		if String(o.get("kind", "")) in ["local", "freight"] and String(o.get("locked", "")) == "":
+			job = o
+			break
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "accept", "id": String(job.get("id", ""))}), token)
+	check(r.json.get("ok", false) and not Session.active_contract().is_empty(), "take a job off the board: %s" % r.json.get("message", ""))
+	r = await _http(HTTPClient.METHOD_GET, "/api/state", "", token)
+	var active: Dictionary = r.json.port.get("active", {})
+	check(bool(active.get("can_depart", false)) and (r.json.port.board as Array).is_empty(), "with a load aboard, the board gives way to the run: depart on autopilot")
+	var where0 := String(Session.profile.port_id)
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "depart"}), token)
+	check(r.json.get("ok", false) and String(Session.profile.port_id) != where0, "depart from the phone: %s" % r.json.get("message", ""))
+	for i in 4:
+		await process_frame
+	pl = current_scene
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "deliver"}), token)
+	check(r.json.get("ok", false) and Session.active_contract().is_empty(), "and deliver: %s" % r.json.get("message", ""))
+	for i in 4:
+		await process_frame
+	Session.profile["location"] = "shipyard"
+	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "wait"}), token)
+	check(not r.json.get("ok", true), "not from the shipyard")
+	Session.profile["location"] = "dock"
 	ShipRemote.new_code()
 	r = await _http(HTTPClient.METHOD_GET, "/api/state", "", token)
 	check(r.code == 401, "a new code unpairs the old token (%d)" % r.code)

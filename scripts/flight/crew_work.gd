@@ -14,6 +14,7 @@ var pilot_braked := false  ## the pilot has taken the brake point this run
 var pilot_waiting := false ## the pilot is holding off braking because someone's outside
 var jobs := 0              ## things the crew did this flight (for tests and the log)
 var figures: Array[Figure] = []   ## the crew aboard, at their posts, seen when you walk the ship
+var passengers := false    ## a passenger run: the steward has someone to look after
 
 ## Where each job stands its watch, by module id, in order of preference.
 const POSTS := {
@@ -33,6 +34,7 @@ func _init(scene: FlightScene) -> void:
 	sc = scene
 	roster = (Session.crew() as Array).duplicate(true) if Session.slot >= 0 else []
 	wear_mult = Crew.wear_mult(roster)
+	passengers = Session.slot >= 0 and String(Session.active_contract().get("person_kind", "")) == "passenger"
 
 
 func has(role_id: String) -> bool:
@@ -51,6 +53,52 @@ func hud_line() -> String:
 	for p in roster:
 		bits.append("%s %s" % [Crew.short(p), Crew.role_name(String(p.role))])
 	return "CREW  " + ", ".join(bits).to_upper()
+
+
+## What each of them is up to, for the ship remote: [{name, role, role_name, skill, doing}].
+func status() -> Array:
+	var out := []
+	for p in roster:
+		var r := String(p.get("role", ""))
+		var best: bool = Crew.who(roster, r) == p   # a second of the same job helps out, but the best one leads
+		out.append({"name": String(p.get("name", "")), "role": r, "role_name": Crew.role_name(r), "skill": int(p.get("skill", 1)),
+				"doing": _doing(r) if best else "Helping %s" % Crew.short(Crew.who(roster, r))})
+	return out
+
+
+func _doing(r: String) -> String:
+	match r:
+		"engineer":
+			var kits := [Session.spares_kits()]
+			var probe := sc.wear.duplicate()
+			if sc.ship_data == null or Crew.service_one(sc.ship_data, probe, kits).is_empty():
+				return "Nothing to service: every part as good as a wrench gets it"
+			return "Next part serviced in %s" % SurfaceWork.clock(maxf(0.0, Crew.every_s(roster, "engineer", "service_every_s") - engineer_t))
+		"deck_tech":
+			var cap := float(SpaceWalk.tuning().get("repair_cap_hull", 0.5))
+			var shown: Array = sc.view._damage.visible_marks() if sc.view != null and sc.view._damage != null else []
+			if shown.is_empty():
+				return "Nothing to fix: the hull's sound"
+			if sc.model.hull() >= cap - 0.001:
+				return "Hull at %d%%: the rest is yard work" % roundi(cap * 100.0)
+			if Crew.pick_mark(shown, sc.model.hull(), Session.patch_kits()) < 0:
+				return "Only holes left, and no patch kits"
+			if not _quiet():
+				return "Waiting for the engines to go quiet before going out"
+			return "Out on the hull in %s" % SurfaceWork.clock(maxf(0.0, Crew.every_s(roster, "deck_tech", "fix_every_s") - deck_t))
+		"pilot":
+			if pilot_waiting and sc.eva != null:
+				return "Holding off braking: you're on the tether"
+			if sc.model.braking and pilot_braked:
+				return "Has the helm: braking for the target"
+			if sc.walking or sc.eva != null:
+				return "Has the helm while you're up"
+			return "Standing by in the cockpit"
+		"loadmaster":
+			return "Load lashed down" if sc.model.cargo_t > 0.01 else "Nothing aboard to lash"
+		"steward":
+			return "Looking after the passengers" if passengers else "No passengers: polishing the galley"
+	return ""
 
 
 func _quiet() -> bool:

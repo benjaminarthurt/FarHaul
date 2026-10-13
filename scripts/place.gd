@@ -176,7 +176,7 @@ func desk_in_reach() -> Dictionary:
 ## The ship remote's view of the port: berthed, so just where you are (the map comes with it).
 func remote_state() -> Dictionary:
 	var st := map_state()
-	st.merge({"scene": "port", "prompt": "Berthed. Take the helm (the gate, then the ship) and the remote gets its controls."}, true)
+	st.merge({"scene": "port", "prompt": "Berthed. The desks are on the remote; to fly, take the helm in the game and the controls come alive here."}, true)
 	return st
 
 
