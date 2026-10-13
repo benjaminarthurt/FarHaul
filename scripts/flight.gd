@@ -104,6 +104,11 @@ var alarm: AudioStreamPlayer   ## the hull alarm
 var alerts: Array = []         ## hull warnings so far this flight, newest last: {text, level, t} (the remote shows them)
 var _hull_warned := 0          ## how many hull warning marks have been passed (and said)
 var salvage_fee := 0           ## what the rescue tug's salvage crew would charge, on top of the tow
+var wear := {}                 ## wear on the working parts this flight (Wear), saved when it ends
+var _wear_apply_t := 0.0
+var _wear_damage := -1.0       ## hull damage last frame: a knock to the hull shakes a part loose
+var _was_landed := false
+var _wear_rng := RandomNumberGenerator.new()
 
 
 func _init() -> void:
@@ -249,6 +254,11 @@ func _build_ship() -> void:
 		model.damage = clampf(float(Session.profile.get("hull_damage", 0.0)), 0.0, 1.0)   # dents stay until repaired
 	_hull_warned = _hull_passed()   # old news isn't announced again, just shown
 	salvage_fee = Session.salvage_fee(float(Session.ship_cost(ship, ship.library)))
+	wear = (Session.profile.get("wear", {}) as Dictionary).duplicate() if Session.slot >= 0 else {}
+	Wear.apply(model, ship, wear)   # worn engines push less, worn radiators shed less, failed parts nothing
+	_wear_damage = model.damage
+	_was_landed = model.landed
+	_wear_rng.seed = 90210
 	alarm = AudioStreamPlayer.new()
 	alarm.stream = Sfx.stream(&"alarm")
 	alarm.volume_db = -4.0
@@ -363,10 +373,11 @@ func _process(delta: float) -> void:
 		_impacts_seen = model.impacts
 		_impact_shown = model.elapsed_s
 	_check_hull()
+	_wear_step(minf(delta, 0.05) * float(_warp()))
 	view.set_damage(model.damage)
 	_apply_pose()
 	_update_hud()
-	view.set_flames(model.throttle > 0.02 and model.has_fuel())
+	view.set_flames(model.throttle > 0.02 and model.has_fuel() and model.thrust_kn > 0.0)
 	view.set_throttle(model.throttle)
 	view.set_lift_flames(model.lift > 0.03 and model.has_fuel())
 	view.set_retro_flames(model.retro > 0.02 and model.has_fuel())
@@ -455,6 +466,7 @@ func remote_state() -> Dictionary:
 			"can_dock": model.can_dock(), "approach": phase == "approach", "out_of_fuel": not model.has_fuel(),
 			"disabled": model.disabled(), "can_tug": not model.has_fuel() or model.disabled(), "faults": model.faults(),
 			"leak_t_h": model.leak_t_per_h(), "cargo_hurt": model.cargo_hurt, "alerts": alerts,
+			"parts": Wear.summary(ship_data, wear) if ship_data != null else "",
 			"prompt": prompt.text if prompt != null else "", "help": help.text if help != null else ""}, true)
 	return st
 
@@ -610,6 +622,56 @@ func tow_goes_on() -> bool:
 	if String(job.get("dest_kind", "")) in LocalSpace.SURFACE:
 		return false
 	return xfer.range_to(model) < model.pos.length()
+
+
+## Wear the working parts by what the ship did over `dt` seconds of game time, say so when one wears
+## past the warning line or fails, and keep the flight model's outputs in step with the wear.
+func _wear_step(dt: float) -> void:
+	if ship_data == null or dt <= 0.0 or leaving:
+		return
+	var c := Wear.cfg()
+	var crossed := {}
+	if model.throttle > 0.0 and model.has_fuel() and model.thrust_scale() > 0.0:
+		crossed.merge(Wear.add(wear, ship_data, "engine", float(c.get("engine_per_s_full", 0.00005)) * model.throttle * dt
+				* (float(c.get("engine_hot_mult", 3.0)) if model.heat_fraction() > 0.8 else 1.0)))
+	if model.overheated:
+		crossed.merge(Wear.add(wear, ship_data, "radiator", float(c.get("radiator_overheated_per_s", 0.003)) * dt))
+	elif model.heat_fraction() > 0.6:
+		crossed.merge(Wear.add(wear, ship_data, "radiator", float(c.get("radiator_per_s_hot", 0.0004)) * (model.heat_fraction() - 0.6) / 0.4 * dt))
+	if model.retro > 0.0:
+		crossed.merge(Wear.add(wear, ship_data, "retro", float(c.get("thruster_per_s", 0.0006)) * model.retro * dt))
+	if model.strafe != Vector2.ZERO:
+		crossed.merge(Wear.add(wear, ship_data, "rcs", float(c.get("thruster_per_s", 0.0006)) * model.strafe.length() * dt))
+	if model.landed and not _was_landed:
+		crossed.merge(Wear.add(wear, ship_data, "legs", float(c.get("legs_per_landing", 0.01))))
+	_was_landed = model.landed
+	if model.damage > _wear_damage + 0.0001:   # knocks to the hull shake parts loose
+		crossed.merge(Wear.knock(wear, ship_data, model.damage - _wear_damage, _wear_rng.randf()))
+	_wear_damage = model.damage
+	_wear_apply_t -= dt
+	if not crossed.is_empty() or _wear_apply_t <= 0.0:
+		_wear_apply_t = 1.0
+		Wear.apply(model, ship_data, wear)
+	for k in crossed:
+		_wear_warning(String(k), String(crossed[k]))
+
+
+func _wear_warning(k: String, what: String) -> void:
+	var name := "A part"
+	for p in Wear.parts(ship_data, wear):
+		if String(p.key) == k:
+			name = String(p.name)
+	var text := ""
+	if what == "failed":
+		text = "%s FAILED. It does nothing now. Space walk with a spares kit, or a yard." % name.to_upper()
+		if alarm != null:
+			alarm.play()
+	else:
+		text = "%s WORN: %d%% left and getting weaker. Service it on a space walk, or at a yard." % [name.to_upper(), Wear.condition(float(wear.get(k, 0.0)))]
+	say(text, 6.0)
+	alerts.append({"text": text, "level": "danger" if what == "failed" else "warn", "t": model.elapsed_s})
+	if alerts.size() > 6:
+		alerts.pop_front()
 
 
 ## Hull warning marks passed so far (flight_tuning.json hull_faults.warn_at_hull), plus one for a breach.
@@ -864,7 +926,7 @@ func _return_to_dock() -> void:
 	if leaving:
 		return
 	leaving = true
-	Session.flight_extra.merge({"rescue": model.disabled(), "cargo_hurt": model.cargo_hurt}, true)   # keeps "adrift" if a space walk ended in the dark
+	Session.flight_extra.merge({"rescue": model.disabled(), "cargo_hurt": model.cargo_hurt, "wear": wear}, true)   # keeps "adrift" if a space walk ended in the dark
 	if String(job.get("kind", "")) == "jump":
 		Session.finish_jump_flight(model.fuel_burned_t, model.elapsed_s, model.damage, (not model.has_fuel() or model.disabled()) and (phase != "approach" or not model.can_dock()))
 	elif xfer != null:

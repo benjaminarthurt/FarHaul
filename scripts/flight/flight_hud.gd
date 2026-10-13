@@ -244,6 +244,9 @@ func _hull_line() -> String:
 				line += "    LEAK %.1f t/h" % m.leak_t_per_h()
 			"cargo":
 				line += "    CARGO AT RISK" if m.cargo_t > 0.0 else ""
+	var parts := Wear.summary(sc.ship_data, sc.wear) if sc.ship_data != null else ""
+	if parts != "":
+		line += "\nPARTS  " + parts.to_upper()
 	return line
 
 
@@ -255,6 +258,9 @@ func _update_hud() -> void:
 		sc.prompt.text = sc.rescue_hint()
 	elif at_helm and sc.notice_s > 0.0:
 		sc.prompt.text = sc.notice   # a fresh message wins the prompt everywhere, not just on a run
+		if sc.notice.contains("FAILED") or sc.notice.contains("WORN"):
+			sc.prompt.add_theme_color_override("font_color", Brand.ALARM)
+			return
 	if sc.model.strafe != Vector2.ZERO and at_helm:
 		var dirs := PackedStringArray()
 		if sc.model.strafe.x < 0.0: dirs.append("LEFT")

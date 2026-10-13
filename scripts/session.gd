@@ -315,6 +315,7 @@ static func travel_empty(dest_system_id: String) -> Dictionary:
 	if not bool(r.ok):
 		return r
 	var hours := sim.run_player_until(SimWorld.PLAYER, "done")
+	_autopilot_wear(loaded.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)))
 	profile["system_id"] = dest_system_id
 	profile["port_id"] = sim.net.primary_port(dest_system_id)
 	_commit_sim(data, loaded.ship)
@@ -434,6 +435,7 @@ static func local_reposition(dest_id: String) -> Dictionary:
 		var before := int(profile.credits)
 		sim._pay(SimWorld.PLAYER, "world", float(site["cost"]))
 		sim.run_hours(int(site["hours"]))
+		_autopilot_wear(loaded.ship, float(Wear.cfg().get("reposition_engine", 0.01)), 0.0)
 		profile["port_id"] = dest_id
 		_commit_sim(data, loaded.ship)
 		data["profile"] = profile
@@ -721,6 +723,8 @@ static func hull() -> float:
 ## Why port control won't let the ship go, or "" when it will. A breached hull (0%) goes nowhere at
 ## all; below the unsafe line (25%) it may still fly empty (`with_load` false), at the captain's risk.
 static func hull_block(with_load := true) -> String:
+	if slot >= 0 and not engines_work():
+		return "Every engine has failed. The clamps stay shut until something can push: a space walk with a spares kit, or the yard's overhaul."
 	var h := hull()
 	if h <= 0.001:
 		return "The hull is breached. Port control won't even open the clamps. The repair desk does patches, on account if it must."
@@ -795,6 +799,8 @@ static var flight_extra: Dictionary = {}
 static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> String:
 	var ex := flight_extra
 	flight_extra = {}
+	if ex.has("wear"):   # wear and tear from the flight, and any servicing on a space walk
+		profile["wear"] = (ex.wear as Dictionary).duplicate()
 	var rescue := bool(ex.get("rescue", false))
 	var adrift_note := ""
 	if bool(ex.get("adrift", false)):   # the captain drifted off on a space walk: a tug fished them out
@@ -822,6 +828,87 @@ static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> 
 	if lost > 0.005:
 		parts.append(" About %d%% of the load is %s; the consignee will notice." % [roundi(lost * 100.0), "over the side or in pieces" if rescue else "dented"])
 	return adrift_note + "".join(parts)
+
+
+## Wear and tear (Wear) ------------------------------------------------------------------------------
+
+static func wear() -> Dictionary:
+	return profile.get("wear", {})
+
+
+static func engines_work() -> bool:
+	var loaded := _load_ship(SaveSlots.read(slot))
+	if loaded.is_empty():
+		return true
+	return float(Wear.effective(loaded.ship, wear()).thrust_fwd) > 0.0
+
+
+## Autopilot and sim trips wear the engines and radiators by the fuel they burn (or a flat amount).
+static func _autopilot_wear(ship: ShipData, engine: float, radiator: float) -> void:
+	var w := wear().duplicate()
+	Wear.add(w, ship, "engine", engine)
+	Wear.add(w, ship, "radiator", radiator)
+	profile["wear"] = w
+
+
+static func overhaul_cost() -> int:
+	if slot < 0:
+		return 0
+	var loaded := _load_ship(SaveSlots.read(slot))
+	if loaded.is_empty():
+		return 0
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	return Wear.overhaul_cost(loaded.ship, wear(), float(lv.get("maintenance_mult", 1.0)) * site_repair_mult())
+
+
+## The yard overhauls every working part to new.
+static func overhaul_parts() -> Dictionary:
+	var cost := overhaul_cost()
+	if cost <= 0:
+		return {"ok": false, "message": "Nothing's worn. The yard's mechanic looks disappointed."}
+	if int(profile.get("credits", 0)) < cost:
+		return {"ok": false, "message": "An overhaul costs %s cr; you have %s cr." % [ShipStats.commas(cost), ShipStats.commas(int(profile.credits))]}
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty() or sim == null:
+		return {"ok": false, "message": "Couldn't load the ship from the save."}
+	_sync_sim(loaded.ship)
+	sim._pay(SimWorld.PLAYER, "world", float(cost))
+	profile["wear"] = {}
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Every working part overhauled to new for %s cr. The engines sound younger." % ShipStats.commas(cost)}
+
+
+static func spares_kits() -> int:
+	return int(profile.get("spares_kits", 0))
+
+
+static func spares_kit_price() -> int:
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	return roundi(float(Wear.cfg().get("spares_kit_cr", 1500)) * float(lv.get("maintenance_mult", 1.0)) * site_repair_mult())
+
+
+static func buy_spares_kit() -> Dictionary:
+	if slot < 0 or sim == null:
+		return {"ok": false, "message": "No saved game, no shop."}
+	if spares_kits() >= int(Wear.cfg().get("spares_kit_max", 4)):
+		return {"ok": false, "message": "The spares locker is full. Optimism has limits."}
+	var price := spares_kit_price()
+	if int(profile.get("credits", 0)) < price:
+		return {"ok": false, "message": "A spares kit costs %s cr; you have %s cr." % [ShipStats.commas(price), ShipStats.commas(int(profile.credits))]}
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return {"ok": false, "message": "Couldn't load the ship from the save."}
+	_sync_sim(loaded.ship)
+	sim._pay(SimWorld.PLAYER, "world", float(price))
+	profile["spares_kits"] = spares_kits() + 1
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Bought a spares kit for %s cr: seals, valves, a pump, and a bag of mystery bolts. %d aboard." % [ShipStats.commas(price), spares_kits()]}
 
 
 ## Patch kits aboard, for space-walk repairs (SpaceWalk): what's carried, what one costs, how many fit.
@@ -956,6 +1043,7 @@ static func commit_jump() -> Dictionary:
 		return {"ok": false, "days": 0.0, "message": "Couldn't load the ship from the save."}
 	_sync_sim(loaded_ship.ship)
 	var hours := sim.run_player_until(SimWorld.PLAYER, "arrival")
+	_autopilot_wear(loaded_ship.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)))
 	profile["system_id"] = String(c.destination_system_id)
 	profile["port_id"] = String(c.destination_port_id)
 	c["status"] = "arrived"
@@ -1079,6 +1167,8 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 	_sync_sim(loaded_ship.ship)
 	sim._pay(SimWorld.PLAYER, "world", float(cost.total))
 	sim.run_hours(hours)
+	var wc := Wear.cfg()
+	_autopilot_wear(loaded_ship.ship, float(cost.burn_t) * float(wc.get("autopilot_engine_per_t", 0.006)), float(cost.burn_t) * float(wc.get("autopilot_radiator_per_t", 0.003)))
 	profile["port_id"] = String(c.destination_port_id)
 	c["status"] = "arrived"
 	data["active_contract"] = c
@@ -1202,6 +1292,7 @@ static func depart_active_contract(hard := false) -> Dictionary:
 		_sync_sim(loaded_ship.ship)
 		var hours := sim.run_player_until(SimWorld.PLAYER, "arrival")
 		days_text = " The trip took %.1f days." % (hours / 24.0)
+		_autopilot_wear(loaded_ship.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)))
 	profile["system_id"] = String(c.destination_system_id)
 	profile["port_id"] = String(c.destination_port_id)
 	c["status"] = "arrived"

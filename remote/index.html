@@ -365,6 +365,7 @@ const FAULT_WORDS = { cooling: "Radiators cracked", leak: "Leaking fuel", cargo:
 function faults(s) {
   const f = (s.faults || []).map(k => k === "leak" && s.leak_t_h ? "Leaking " + s.leak_t_h.toFixed(1) + " t/h" : FAULT_WORDS[k] || k);
   if (s.cargo_hurt > 0.005) f.push(Math.round(s.cargo_hurt * 100) + "% of the load damaged");
+  if (s.parts) f.push(s.parts);
   $("faults").textContent = f.join(" · ");
 }
 let alarmSeen = "", alarmClosed = "";

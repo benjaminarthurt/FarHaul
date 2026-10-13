@@ -73,5 +73,36 @@
     "tether_snap_n": 2500.0,
     "tether_give_s": 0.25,
     "adrift_lost_m": 150.0
+  },
+  "wear": {
+    "note": "Wear and tear on working parts (scripts/wear.gd). Wear runs 0 new .. 1 failed. Placeholders.",
+    "loss": {
+      "engine": 0.4,
+      "radiator": 0.6,
+      "retro": 0.5,
+      "rcs": 0.5,
+      "legs": 0.5
+    },
+    "engine_per_s_full": 5e-05,
+    "engine_hot_mult": 3.0,
+    "radiator_per_s_hot": 0.0004,
+    "radiator_overheated_per_s": 0.003,
+    "thruster_per_s": 0.0006,
+    "legs_per_landing": 0.01,
+    "knock_per_damage": 1.5,
+    "autopilot_engine_per_t": 0.006,
+    "autopilot_radiator_per_t": 0.003,
+    "jump_engine": 0.03,
+    "jump_radiator": 0.02,
+    "reposition_engine": 0.01,
+    "worn_at": 0.75,
+    "eva_service": 0.3,
+    "eva_floor": 0.5,
+    "eva_replace_to": 0.6,
+    "eva_service_s": 6.0,
+    "eva_replace_s": 10.0,
+    "overhaul_fraction_of_part": 0.45,
+    "spares_kit_cr": 1500,
+    "spares_kit_max": 4
   }
 }

@@ -196,6 +196,20 @@ func _desk_fuel() -> void:
 			var r := Session.patch_hull(to2, true)
 			sc._say(String(r.message))
 			sc._refill())
+	var parts_line := ""
+	var loaded_p := Session._load_ship(SaveSlots.read(Session.slot)) if Session.slot >= 0 else {}
+	if not loaded_p.is_empty():
+		parts_line = Wear.summary(loaded_p.ship, Session.wear())
+	sc.panel_list.add_child(Brand.note("Working parts: %s" % (parts_line if parts_line != "" else "all in decent shape. Wear shows up as you fly."), 15))
+	var oc := Session.overhaul_cost()
+	sc._action("OVERHAUL THE WORKING PARTS  %s cr" % ShipStats.commas(oc) if oc > 0 else "THE PARTS NEED NO OVERHAUL", func() -> void:
+		var r := Session.overhaul_parts()
+		sc._say(String(r.message))
+		sc._refill(), oc > 0 and int(Session.profile.get("credits", 0)) >= oc)
+	sc._action("BUY A SPARES KIT  %s cr  (%d aboard, for bringing a failed part back on a space walk)" % [ShipStats.commas(Session.spares_kit_price()), Session.spares_kits()], func() -> void:
+		var r := Session.buy_spares_kit()
+		sc._say(String(r.message))
+		sc._refill(), Session.spares_kits() < int(Wear.cfg().get("spares_kit_max", 4)))
 	var kits := Session.patch_kits()
 	var kit_cr := Session.patch_kit_price()
 	sc.panel_list.add_child(Brand.note("Patch kits aboard: %d of %d. For fixing the hull yourself on a space walk, up to 50%%: loose plating needs only hands, holes need a kit." % [kits, Session.patch_kit_max()], 14))

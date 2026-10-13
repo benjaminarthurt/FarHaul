@@ -13,6 +13,13 @@ func _run() -> void:
 	Session.begin_new(2, "Pilot", "human", "normal", "roosevelt_independent_yards")
 	Session.profile["hull_damage"] = 0.7
 	Session.profile["patch_kits"] = 3
+	var ship := ShipData.new(ModuleLibrary.new())
+	ShipPresets.build(ship)
+	var wear := {}
+	for p in Wear.parts(ship, {}):
+		wear[String(p.key)] = 1.0 if String(p.kind) == "engine" else 0.82
+	Session.profile["wear"] = wear
+	Session.profile["spares_kits"] = 1
 	Session.save_profile()
 	Session.flight_job = {}
 	var f: Node = load(Session.FLIGHT_SCENE).instantiate()
@@ -83,6 +90,20 @@ func _run() -> void:
 	f.foot_c._eva_tools(0.05)
 	await _frames(f, 3)
 	await _shot(out, "04c_patched")
+	var engine_t := -1
+	for t in f.foot_c._eva_parts():
+		if String(f.foot_c._part(int(t)).kind) == "engine":
+			engine_t = int(t)
+	var ep: Vector3 = f.foot_c._part_pos(engine_t - OnFoot.PART)
+	f.eva.pos = ep + Vector3(-3.0, 2.5, -1.0)
+	var to3: Vector3 = ep - f.eva.pos
+	f.eva.yaw = atan2(-to3.x, -to3.z)
+	f.eva.pitch = asin(clampf(to3.normalized().y, -1.0, 1.0))
+	f.eva.message_t = 0.0
+	f.foot_c._eva_tools(0.05)
+	await _frames(f, 3)
+	f.foot_c._eva_tools(0.05)
+	await _shot(out, "04d_failed_engine")
 	f.eva.pos = f.eva.anchor + (-f.walk.airlock_face + Vector3(0, 0.6, 0.3)).normalized() * 26.0
 	var back: Vector3 = Vector3(0, 0, 4) - f.eva.pos
 	f.eva.yaw = atan2(-back.x, -back.z)

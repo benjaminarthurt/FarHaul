@@ -178,6 +178,8 @@ func work_s(i: int) -> float:
 
 ## Which tool a mark wants.
 static func tool_for(i: int) -> String:
+	if i >= 1000:   # a working part (OnFoot.PART): machinery wants the wrench
+		return "wrench"
 	return "torch" if ShipDamage.needs_kit(i) else "wrench"
 
 

@@ -184,6 +184,54 @@ func _eva_say(text: String) -> void:
 		sc.eva.message_t = 4.0
 
 
+const PART := 1000   ## space-walk targets at or above this are working parts (PART + module index); below, hull marks
+
+
+## Worn or failed working parts a space walk can do something about: {PART + module index: where}.
+func _eva_parts() -> Dictionary:
+	var out := {}
+	if sc.ship_data == null:
+		return out
+	var floor_w := float(Wear.cfg().get("eva_floor", 0.5))
+	for p in Wear.parts(sc.ship_data, sc.wear):
+		if float(p.wear) > floor_w + 0.005 and int(p.i) < sc.view.get_child_count():
+			out[PART + int(p.i)] = _part_pos(int(p.i))
+	return out
+
+
+## Where a part is, in the ship view's frame (the low-profile ones sit against the hull).
+func _part_pos(i: int) -> Vector3:
+	var node := sc.view.get_child(i) as Node3D
+	var body := node.get_node_or_null("Body") as Node3D
+	return node.position + (node.basis * body.position if body != null else Vector3.ZERO)
+
+
+func _part(i: int) -> Dictionary:
+	for p in Wear.parts(sc.ship_data, sc.wear):
+		if int(p.i) == i - PART:
+			return p
+	return {}
+
+
+## Everything there is to fix: hull marks and working parts.
+func _eva_targets() -> Dictionary:
+	var out := _eva_marks()
+	out.merge(_eva_parts())
+	return out
+
+
+## Why part target `i` can't be worked on right now, or "".
+func _part_blocked(i: int, in_hand: String) -> String:
+	var p := _part(i)
+	if p.is_empty():
+		return "Nothing to do there."
+	if in_hand != "wrench":
+		return "Machinery wants the wrench (1). The torch would only make it modern art."
+	if float(p.wear) >= 1.0 and Session.spares_kits() <= 0:
+		return "%s has failed: it needs a spares kit, and you have none. The repair desk sells them." % String(p.name)
+	return ""
+
+
 ## The marks showing on the hull, {index: where}, in the ship view's frame.
 func _eva_marks() -> Dictionary:
 	var out := {}
@@ -258,12 +306,12 @@ func eva_work(dt: float, holding: bool, tool := "") -> String:
 		return ""
 	if tool != "":
 		e.tool = tool
-	var i := e.mark_in_reach(_eva_marks())
+	var i := e.mark_in_reach(_eva_targets())
 	if not holding or i < 0:
 		e.work_t = 0.0
 		e.work_on = -1
 		return ""
-	var why := SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool)
+	var why := _part_blocked(i, e.tool) if i >= PART else SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool)
 	if why != "":
 		e.work_t = 0.0
 		_eva_say(why)
@@ -272,12 +320,38 @@ func eva_work(dt: float, holding: bool, tool := "") -> String:
 		e.work_on = i
 		e.work_t = 0.0
 	e.work_t += dt
-	if e.work_t < e.work_s(i):
+	if e.work_t < _work_s(i):
 		return "working"
-	_eva_repair(i)
+	if i >= PART:
+		_eva_service(i)
+	else:
+		_eva_repair(i)
 	e.work_t = 0.0
 	e.work_on = -1
 	return "done"
+
+
+func _work_s(i: int) -> float:
+	if i >= PART:
+		var p := _part(i)
+		return float(Wear.cfg().get("eva_replace_s", 10.0)) if not p.is_empty() and float(p.wear) >= 1.0 else float(Wear.cfg().get("eva_service_s", 6.0))
+	return sc.eva.work_s(i)
+
+
+## A part seen to: serviced (worn), or brought back with a spares kit (failed).
+func _eva_service(i: int) -> void:
+	var p := _part(i)
+	if p.is_empty():
+		return
+	var failed := float(p.wear) >= 1.0
+	if failed:
+		Session.profile["spares_kits"] = maxi(0, Session.spares_kits() - 1)
+	sc.wear[String(p.key)] = Wear.eva_fixed(float(p.wear))
+	Wear.apply(sc.model, sc.ship_data, sc.wear)
+	sc.eva.repairs += 1
+	if sc.sounds != null:
+		sc.sounds.play("done")
+	_eva_say(("%s back from the dead: new seals and a pump from the spares kit. %d%%." if failed else "%s serviced: cleaned, tightened, persuaded. %d%%. The rest is yard work.") % [String(p.name), Wear.condition(float(sc.wear[String(p.key)]))])
 
 
 ## A mark fixed: hull back, a kit used if it was a hole, a welded plate where the mark was.
@@ -330,7 +404,7 @@ func _eva_input(event: InputEvent) -> void:
 	if event.keycode == KEY_2:
 		sc.eva.tool = "torch"
 		return
-	if sc.eva.at_hatch() and (event.keycode == KEY_Q or (event.keycode == KEY_E and sc.eva.mark_in_reach(_eva_marks()) < 0)):
+	if sc.eva.at_hatch() and (event.keycode == KEY_Q or (event.keycode == KEY_E and sc.eva.mark_in_reach(_eva_targets()) < 0)):
 		end_space_walk()
 
 
@@ -342,19 +416,30 @@ func _eva_hud() -> void:
 	sc.hud.text = "\n".join(PackedStringArray([
 		"SPACE WALK    %s" % ("ADRIFT  %.0f m from the hatch" % e.distance() if e.snapped else "TETHER  %.0f m left" % e.tether_left()),
 		"AIR  %s%s" % [SurfaceWork.clock(e.o2), "   LOW: HEAD BACK" if low else ""],
-		"IN HAND  %s    PATCH KITS  %d" % ["WRENCH (1)" if e.tool == "wrench" else "TORCH (2)", Session.patch_kits()],
-		"HULL  %d%%%s    SPOTS TO FIX  %d" % [roundi(sc.model.hull() * 100.0), "  (space-walk limit)" if sc.model.hull() >= cap - 0.001 else "", _eva_marks().size()],
+		"IN HAND  %s    PATCH KITS  %d    SPARES  %d" % ["WRENCH (1)" if e.tool == "wrench" else "TORCH (2)", Session.patch_kits(), Session.spares_kits()],
+		"HULL  %d%%%s    JOBS  %d" % [roundi(sc.model.hull() * 100.0), "  (space-walk limit)" if sc.model.hull() >= cap - 0.001 else "", _eva_targets().size()],
 	]))
-	var i := e.mark_in_reach(_eva_marks())
+	var i := e.mark_in_reach(_eva_targets())
 	var hint := ""
 	if e.message_t > 0.0:
 		hint = e.message
+	elif i >= PART:
+		var p := _part(i)
+		var why := _part_blocked(i, e.tool)
+		if why != "":
+			hint = why
+		elif e.work_on == i:
+			hint = "%s  %d%%" % ["FITTING SPARES" if float(p.wear) >= 1.0 else "SERVICING", roundi(e.work_t / _work_s(i) * 100.0)]
+		elif float(p.wear) >= 1.0:
+			hint = "%s: FAILED. Hold E (or click): fit the spares kit (1 of %d)" % [String(p.name), Session.spares_kits()]
+		else:
+			hint = "%s: %d%%. Hold E (or click): service it with the wrench (free, up to %d%%)" % [String(p.name), Wear.condition(float(p.wear)), Wear.condition(float(Wear.cfg().get("eva_floor", 0.5)))]
 	elif i >= 0:
 		var why := SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool)
 		if why != "":
 			hint = why
 		elif e.work_on == i:
-			hint = "%s  %d%%" % ["WELDING A PATCH" if ShipDamage.needs_kit(i) else "SEATING THE PLATING", roundi(e.work_t / e.work_s(i) * 100.0)]
+			hint = "%s  %d%%" % ["WELDING A PATCH" if ShipDamage.needs_kit(i) else "SEATING THE PLATING", roundi(e.work_t / _work_s(i) * 100.0)]
 		elif ShipDamage.needs_kit(i):
 			hint = "A hole. Hold E (or click): torch a patch over it (1 kit of %d)" % Session.patch_kits()
 		else:
@@ -367,10 +452,10 @@ func _eva_hud() -> void:
 		hint = "TETHER STRAIN %d%%. The ship's dragging you. Get in close to the hull or it'll snap." % roundi(e.strain * 100.0)
 	elif e.tether_left() < 2.0:
 		hint = "End of the tether. It's %.0f m, not a suggestion." % e.tether_m
-	elif _eva_marks().is_empty():
+	elif _eva_targets().is_empty():
 		hint = "Nothing to fix out here. The hatch is where you left it."
 	else:
-		hint = "Drift to a scorch mark and hold E. WASD drift, Space/Ctrl up/down, Shift for more jet."
+		hint = "Drift to a scorch mark or a tagged part and hold E. WASD drift, Space/Ctrl up/down, Shift for more jet."
 	if e.at_hatch() and i >= 0 and e.message_t <= 0.0:
 		hint += "   Q: back aboard"
 	sc.prompt.text = hint
@@ -582,6 +667,10 @@ func _free_eva_ui() -> void:
 	if _sparks != null and is_instance_valid(_sparks):
 		_sparks.queue_free()
 	_sparks = null
+	for k in _part_tags:
+		if is_instance_valid(_part_tags[k]):
+			(_part_tags[k] as Label3D).queue_free()
+	_part_tags.clear()
 
 
 func _update_eva_ui() -> void:
@@ -721,8 +810,41 @@ func _eva_tools(dt: float) -> void:
 	_flame.scale = Vector3.ONE * (0.8 + 0.4 * randf()) if lit else Vector3.ONE
 	_torch_light.light_energy = (2.5 + randf() * 1.5) if lit else 0.0
 	_sparks.emitting = working
-	if working:
+	if working and e.work_on >= PART:
+		_sparks.position = _part_pos(e.work_on - PART)
+		_sparks.direction = Vector3.UP
+	elif working:
 		var site: Dictionary = sc.view._damage.sites[e.work_on]
 		_sparks.position = site.pos
 		_sparks.direction = site.normal
+	if working:
 		_sparks.color_ramp.set_color(0, Color(0.7, 0.9, 1.0, 1.0) if lit else Color(1.0, 0.95, 0.7, 1.0))
+	_update_part_tags()
+
+
+var _part_tags := {}   ## module index -> Label3D naming a worn part, while outside
+
+
+## Name tags on the parts that want attention, so they can be found from outside.
+func _update_part_tags() -> void:
+	var want := _eva_parts()
+	for k in _part_tags.keys():
+		if not want.has(PART + int(k)) and is_instance_valid(_part_tags[k]):
+			(_part_tags[k] as Label3D).visible = false
+	for t in want:
+		var i := int(t) - PART
+		var tag: Label3D = _part_tags.get(i)
+		if tag == null or not is_instance_valid(tag):
+			tag = Label3D.new()
+			tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			tag.no_depth_test = true
+			tag.font_size = 40
+			tag.pixel_size = 0.004
+			tag.outline_size = 8
+			sc.view.add_child(tag)
+			_part_tags[i] = tag
+		var p := _part(int(t))
+		tag.visible = true
+		tag.position = (want[t] as Vector3) + Vector3(0, 1.2, 0)
+		tag.text = "%s  %s" % [String(p.name).to_upper(), "FAILED" if float(p.wear) >= 1.0 else "%d%%" % Wear.condition(float(p.wear))]
+		tag.modulate = Brand.ALARM if float(p.wear) >= 1.0 else Brand.AMBER
