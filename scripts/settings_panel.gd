@@ -99,11 +99,46 @@ func _row(grid: GridContainer, label: String, control: Control) -> void:
 	grid.add_child(control)
 
 
-func _check(key: String) -> CheckBox:
-	var cb := CheckBox.new()
-	cb.button_pressed = bool(GameSettings.get_value(key))
-	cb.toggled.connect(func(on: bool) -> void: GameSettings.set_value(key, on))
-	return cb
+## An on/off switch for a setting: a plain button that says ON or OFF, because the stock checkbox
+## all but vanished against the panel and an option nobody can see is an option nobody uses.
+func _check(key: String) -> Button:
+	var b := Button.new()
+	b.toggle_mode = true
+	b.focus_mode = Control.FOCUS_ALL
+	b.custom_minimum_size = Vector2(96, 34)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	b.add_theme_font_size_override("font_size", 15)
+	var off := _switch_box(Brand.STEEL_LIGHT, Brand.MUTED)
+	var on := _switch_box(Brand.AMBER, Brand.AMBER)
+	b.add_theme_stylebox_override("normal", off)
+	b.add_theme_stylebox_override("hover", _switch_box(Brand.STEEL_LIGHT, Brand.AMBER))
+	b.add_theme_stylebox_override("focus", _switch_box(Color(0, 0, 0, 0), Brand.AMBER))
+	b.add_theme_stylebox_override("pressed", on)
+	b.add_theme_stylebox_override("hover_pressed", on)
+	b.add_theme_color_override("font_color", Brand.OFFWHITE)
+	b.add_theme_color_override("font_hover_color", Brand.OFFWHITE)
+	b.add_theme_color_override("font_focus_color", Brand.OFFWHITE)
+	b.add_theme_color_override("font_pressed_color", Brand.STEEL_DARK)
+	b.add_theme_color_override("font_hover_pressed_color", Brand.STEEL_DARK)
+	b.toggled.connect(func(pressed: bool) -> void:
+		b.text = "ON" if pressed else "OFF"
+		GameSettings.set_value(key, pressed))
+	b.button_pressed = bool(GameSettings.get_value(key))
+	b.text = "ON" if b.button_pressed else "OFF"
+	return b
+
+
+static func _switch_box(fill: Color, edge: Color) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = fill
+	sb.border_color = edge
+	sb.set_border_width_all(2)
+	sb.set_corner_radius_all(4)
+	sb.content_margin_left = 14
+	sb.content_margin_right = 14
+	sb.content_margin_top = 4
+	sb.content_margin_bottom = 4
+	return sb
 
 
 func _slider(key: String, lo: float, hi: float, step: float) -> HSlider:
