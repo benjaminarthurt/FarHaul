@@ -60,8 +60,9 @@ func _run() -> void:
 	check(f.walk.near_airlock() and f.prompt.text.contains("leave the ship"), "at the berth the airlock offers the way off (%s)" % f.prompt.text)
 	f.model.vel = Vector3(0, 0, 20)
 	f._update_hud()
-	check(f.prompt.text.contains("stays shut"), "under way it does not (%s)" % f.prompt.text)
-	check(f.use() == "", "and E does nothing")
+	check(f.prompt.text.contains("tether"), "under way it offers a space walk instead (%s)" % f.prompt.text)
+	check(f.use() == "space walk" and f.eva != null, "and E goes out on the tether")
+	f.foot_c.end_space_walk()
 	f.model.vel = Vector3.ZERO
 	check(f.use() == "airlock" and f.leaving, "E at the berth leaves the ship")
 	print("DONE fails=", fails)

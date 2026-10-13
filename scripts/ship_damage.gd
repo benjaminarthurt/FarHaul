@@ -6,6 +6,10 @@ extends Node3D
 ##
 ## The marks sit on the outward faces of the pressurised compartments, the same faces ShipSkin plates,
 ## picked in a fixed order for each ship so a dent stays where it was from one flight to the next.
+##
+## The marks are also where a space walk repairs the hull (SpaceWalk): each one is worth 1/MAX_SCORCH of
+## the hull. Even-numbered ones are loose plating (fixed by hand), odd ones are holes (a patch kit).
+## A patched mark shows a welded plate instead, until a yard repairs the hull properly.
 
 const MAX_SCORCH := 16
 const SCORCH_SIZE := 2.6
@@ -15,6 +19,8 @@ const SPARK_FROM := 0.25      ## and the first sparks
 var sites: Array = []          ## {pos, normal} on the skin, in ShipView's frame, in the order they go
 var damage := -1.0
 var _scorches: Array[Decal] = []
+var _plates: Array[MeshInstance3D] = []
+var patched := {}              ## mark index -> true: welded over on a space walk
 var _vents: Array[CPUParticles3D] = []
 var _sparks: Array[CPUParticles3D] = []
 var _spark_wait := 0.0
@@ -61,6 +67,20 @@ func setup(ship: ShipData) -> void:
 		dc.visible = false
 		add_child(dc)
 		_scorches.append(dc)
+		var plate := MeshInstance3D.new()   # what a patch looks like: a bright plate welded over the spot
+		var pm := BoxMesh.new()
+		pm.size = Vector3(1.0, 0.05, 0.8) * _rng.randf_range(0.8, 1.15)
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.70, 0.71, 0.72)
+		mat.metallic = 0.7
+		mat.roughness = 0.35
+		pm.material = mat
+		plate.mesh = pm
+		plate.position = s.pos + (s.normal as Vector3) * 0.03
+		plate.basis = _facing(s.normal).rotated(s.normal, _rng.randf_range(-0.4, 0.4))
+		plate.visible = false
+		add_child(plate)
+		_plates.append(plate)
 	for i in mini(sites.size(), 3):   # vents on the last-picked sites, sparks on the first few
 		var s: Dictionary = sites[sites.size() - 1 - i]
 		var v := _vent()
@@ -92,9 +112,14 @@ func set_damage(d: float) -> void:
 		return
 	damage = d
 	var hull := 1.0 - d
-	var marks := roundi(d * float(_scorches.size()))
+	var marks := roundi(d * float(MAX_SCORCH))
+	var shown := 0
 	for i in _scorches.size():
-		_scorches[i].visible = i < marks
+		var p := patched.has(i)
+		_plates[i].visible = p and needs_kit(i)   # a hole gets a welded plate; seated plating just looks right again
+		_scorches[i].visible = not p and shown < marks
+		if _scorches[i].visible:
+			shown += 1
 		_scorches[i].modulate = Color(1, 1, 1, clampf(0.8 + d * 0.4, 0.0, 1.0))
 	var vents := 0
 	if hull < VENT_FROM:
@@ -104,6 +129,30 @@ func set_damage(d: float) -> void:
 		_vents[i].initial_velocity_max = 2.0 + 4.0 * d
 	for i in _sparks.size():
 		_sparks[i].set_meta("live", hull < SPARK_FROM and (i == 0 or hull <= 0.001))
+
+
+## Which marks show now (indexes into `sites`): the spots a space walk can work on.
+func visible_marks() -> Array[int]:
+	var out: Array[int] = []
+	for i in _scorches.size():
+		if _scorches[i].visible:
+			out.append(i)
+	return out
+
+
+## Loose plating (fixed by hand) or a hole (needs a patch kit).
+static func needs_kit(i: int) -> bool:
+	return i % 2 == 1
+
+
+## Mark these spots welded over, and show it.
+func set_patched(list: Array) -> void:
+	patched.clear()
+	for i in list:
+		patched[int(i)] = true
+	var d := damage
+	damage = -1.0
+	set_damage(d)
 
 
 func _process(delta: float) -> void:

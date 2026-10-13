@@ -196,6 +196,18 @@ func _desk_fuel() -> void:
 			var r := Session.patch_hull(to2, true)
 			sc._say(String(r.message))
 			sc._refill())
+	var kits := Session.patch_kits()
+	var kit_cr := Session.patch_kit_price()
+	sc.panel_list.add_child(Brand.note("Patch kits aboard: %d of %d. For fixing the hull yourself on a space walk, up to 50%%: loose plating needs only hands, holes need a kit." % [kits, Session.patch_kit_max()], 14))
+	sc._action("BUY A PATCH KIT  %s cr" % ShipStats.commas(kit_cr), func() -> void:
+		var r := Session.buy_patch_kits(1)
+		sc._say(String(r.message))
+		sc._refill(), kits < Session.patch_kit_max())
+	if Session.patch_kit_max() - kits > 1:
+		sc._action("FILL THE KIT LOCKER  %d for %s cr" % [Session.patch_kit_max() - kits, ShipStats.commas(kit_cr * (Session.patch_kit_max() - kits))], func() -> void:
+			var r := Session.buy_patch_kits(Session.patch_kit_max())
+			sc._say(String(r.message))
+			sc._refill())
 	var f := Session.finds_aboard()
 	if int(f.value) > 0:
 		sc._action("SELL YOUR FINDS  %s cr  (%s)" % [ShipStats.commas(int(f.value)), SurfaceFinds.describe(f)], func() -> void:

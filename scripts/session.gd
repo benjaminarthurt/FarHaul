@@ -796,6 +796,12 @@ static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> 
 	var ex := flight_extra
 	flight_extra = {}
 	var rescue := bool(ex.get("rescue", false))
+	var adrift_note := ""
+	if bool(ex.get("adrift", false)):   # the captain drifted off on a space walk: a tug fished them out
+		var lvd := SimShip.level(String(profile.get("difficulty", "normal")))
+		var fish := float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lvd.get("port_fee_mult", 1.0))
+		sim._pay(SimWorld.PLAYER, "world", fish)
+		adrift_note = " A tug fished you out of the dark and towed the ship in: %s cr, and a story nobody believes." % ShipStats.commas(roundi(fish))
 	var hurt := clampf(float(ex.get("cargo_hurt", 0.0)), 0.0, 1.0)
 	var salvage := salvage_fee(ship_price) if rescue else 0
 	if salvage > 0:
@@ -815,7 +821,46 @@ static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> 
 		parts.append(" The salvage crew added %s cr for the privilege." % ShipStats.commas(salvage))
 	if lost > 0.005:
 		parts.append(" About %d%% of the load is %s; the consignee will notice." % [roundi(lost * 100.0), "over the side or in pieces" if rescue else "dented"])
-	return "".join(parts)
+	return adrift_note + "".join(parts)
+
+
+## Patch kits aboard, for space-walk repairs (SpaceWalk): what's carried, what one costs, how many fit.
+static func patch_kits() -> int:
+	return int(profile.get("patch_kits", 0))
+
+
+static func patch_kit_price() -> int:
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	return roundi(float(SpaceWalk.tuning().get("patch_kit_cr", 400)) * float(lv.get("maintenance_mult", 1.0)) * site_repair_mult())
+
+
+static func patch_kit_max() -> int:
+	return int(SpaceWalk.tuning().get("patch_kit_max", 8))
+
+
+## Buy `n` patch kits here (as many as fit and the money covers).
+static func buy_patch_kits(n: int) -> Dictionary:
+	if slot < 0 or sim == null:
+		return {"ok": false, "message": "No saved game, no shop."}
+	var price := patch_kit_price()
+	var room := patch_kit_max() - patch_kits()
+	n = mini(n, room)
+	if n <= 0:
+		return {"ok": false, "message": "The kit locker is full: %d kits. Go and break something." % patch_kit_max()}
+	n = mini(n, int(profile.get("credits", 0)) / maxi(price, 1))
+	if n <= 0:
+		return {"ok": false, "message": "A patch kit costs %s cr; you have %s cr." % [ShipStats.commas(price), ShipStats.commas(int(profile.credits))]}
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return {"ok": false, "message": "Couldn't load the ship from the save."}
+	_sync_sim(loaded.ship)
+	sim._pay(SimWorld.PLAYER, "world", float(price * n))
+	profile["patch_kits"] = patch_kits() + n
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	return {"ok": true, "message": "Bought %d patch kit%s for %s cr. %d aboard. Plates, sealant, a welder with opinions." % [n, "" if n == 1 else "s", ShipStats.commas(price * n), patch_kits()]}
 
 
 ## Pay the yard here to make the hull good again (it also restores the thrust damage takes away).
@@ -832,6 +877,7 @@ static func repair_hull() -> Dictionary:
 	_sync_sim(loaded.ship)
 	sim._pay(SimWorld.PLAYER, "world", float(cost))
 	profile["hull_damage"] = 0.0
+	profile["hull_patches"] = []   # the yard replaces the welded-on patches with proper plating
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)

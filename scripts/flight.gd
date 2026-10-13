@@ -57,6 +57,7 @@ var _impact_shown := -10.0
 var _impacts_seen := 0
 var walk: ShipWalk
 var walking := false
+var eva: SpaceWalk = null      ## out on a tethered space walk (scripts/flight/space_walk.gd), or null
 ## Flight keys still held from before you took the helm (E to sit down is also roll; W walked you to the
 ## seat). They are ignored until let go, so sitting down doesn't steer or cancel the braking autopilot.
 var held_from_before: Array[int] = []
@@ -68,6 +69,7 @@ const KEY_TURN := 1.8          ## radians per second with the arrow keys
 const FLY_HELP := "W/S throttle   Z cut   B braking thrusters   arrows pitch+yaw   Ctrl+arrows slide   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   T traffic/tug   , . time  / x1   M map   G get up   Esc menu"
 const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   M map   Esc menu"
 const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   T autoland   F unload (landed on the pad)   G get up   C camera   M map   Esc menu"
+const EVA_HELP := "WASD drift   Space/Ctrl up/down   Shift more jet   mouse or arrows look   1 wrench  2 torch   hold E or click: fix a mark   Q at the hatch: back aboard   Esc menu"
 const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   F10 menu"
 var ship_data: ShipData
 var moon: MoonScenery          ## the ground and everything on it, once the ship is over a moon
@@ -260,6 +262,8 @@ func _build_ship() -> void:
 	ship_root.add_child(view)
 	view.position = -com                       # turn about the centre of mass
 	view.rebuild(ship, manifest)
+	if Session.slot >= 0:
+		view.set_patched(Session.profile.get("hull_patches", []))   # spots welded over on earlier space walks
 	walk = ShipWalk.build(ship, view)
 	for m in ship.modules:
 		if ship.library.get_def(m.id).helm:
@@ -294,6 +298,8 @@ func _process(delta: float) -> void:
 	var lift_cmd := _lift_command()
 	if outside:
 		_suit_step(delta)
+	elif eva != null:
+		foot_c._eva_step(delta)   # nobody at the helm: the ship coasts
 	elif walking:
 		_walk_step(delta)    # nobody at the helm: the ship carries on as it was
 	else:
@@ -440,7 +446,7 @@ func pilot(action: String, value: float = 0.0) -> Dictionary:
 func remote_state() -> Dictionary:
 	var st := map_state()
 	var lim := _warp_limit()
-	st.merge({"scene": "flight", "phase": phase, "on_surface": _on_surface(), "walking": walking or outside,
+	st.merge({"scene": "flight", "phase": phase, "on_surface": _on_surface(), "walking": walking or outside or eva != null, "space_walk": eva != null,
 			"speed": model.speed(), "throttle": model.throttle, "fuel_max": float(stats.get("fuel", model.fuel_t)),
 			"heat": model.heat_fraction(), "overheated": model.overheated, "hull": 1.0 - model.damage,
 			"mass": model.mass_t(), "accel": model.accel(), "dv": model.delta_v(),
@@ -466,6 +472,8 @@ func map_state() -> Dictionary:
 	var here := String(LocalSpace.node(st.site_id).get("name", "the station"))
 	if _on_surface():
 		st.where = "On the surface, near %s" % here
+	elif eva != null:
+		st.where = "On a space walk, near %s" % here
 	elif walking or outside:
 		st.where = "On foot aboard, near %s" % here
 	elif job.is_empty():
@@ -512,6 +520,8 @@ const WARP_REAL_S := 10.0         ## never less than this many real seconds from
 ## target is less than WARP_REAL_S real seconds away.
 func _warp_limit() -> Dictionary:
 	var top: int = WARPS[WARPS.size() - 1]
+	if eva != null:
+		return {"max": 1, "why": "Crew outside: time stays at x1"}
 	if model.disabled():
 		return {"max": 1, "why": "Breached: nothing to speed up but the wait for the tug"}
 	if xfer == null:
@@ -712,6 +722,9 @@ func _apply_pose() -> void:
 	if outside:
 		camera.global_position = suit.eye()
 		camera.global_basis = suit.look_basis()
+	elif eva != null:
+		camera.global_position = model.pos + model.basis * (view.position + eva.pos)
+		camera.global_basis = model.basis * eva.look_basis()
 	elif walking:
 		camera.global_position = model.pos + model.basis * (view.position + walk.eye())
 		camera.global_basis = model.basis * walk.look_basis()
@@ -746,6 +759,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if outside and not leaving:
 		_suit_input(event)
+		return
+	if eva != null and not leaving:
+		foot_c._eva_input(event)
 		return
 	if walking and not leaving:
 		_walk_input(event)
@@ -827,6 +843,9 @@ func menu_actions() -> Array:
 	var out := []
 	if leaving or _jumping():
 		return out
+	if eva != null:
+		out.append({"text": "REEL IN THE TETHER: BACK ABOARD", "call": func() -> void: foot_c.end_space_walk("Reeled in on the tether winch. Undignified, but quick.")})
+		return out
 	if model.disabled() or (not model.has_fuel() and _stranded()):
 		out.append({"text": "CALL THE RESCUE TUG  %s cr" % ShipStats.commas(tow_fee() + salvage_fee) if model.disabled() else "CALL THE TUG  %s cr" % ShipStats.commas(tow_fee()),
 				"call": func() -> void: call_for_help() if not _on_surface() else _return_to_dock()})
@@ -845,7 +864,7 @@ func _return_to_dock() -> void:
 	if leaving:
 		return
 	leaving = true
-	Session.flight_extra = {"rescue": model.disabled(), "cargo_hurt": model.cargo_hurt}
+	Session.flight_extra.merge({"rescue": model.disabled(), "cargo_hurt": model.cargo_hurt}, true)   # keeps "adrift" if a space walk ended in the dark
 	if String(job.get("kind", "")) == "jump":
 		Session.finish_jump_flight(model.fuel_burned_t, model.elapsed_s, model.damage, (not model.has_fuel() or model.disabled()) and (phase != "approach" or not model.can_dock()))
 	elif xfer != null:
@@ -1016,7 +1035,7 @@ func _mix_audio(_delta: float) -> void:
 	sounds.level("lift", 0.0 if outside else lift, 0.9 + 0.3 * lift)
 	sounds.level("ship_hum", 0.0 if outside else (1.0 if walking else 0.55))
 	var running := Input.is_key_pressed(KEY_SHIFT)
-	sounds.level("breath", (1.0 if running else 0.7) if outside else 0.0, 1.15 if running else 1.0)
+	sounds.level("breath", (1.0 if running else 0.7) if outside or eva != null else 0.0, 1.15 if running else 1.0)
 	var feet := Vector3.INF
 	var on_ground := true
 	if outside and suit != null:

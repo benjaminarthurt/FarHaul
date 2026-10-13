@@ -43,9 +43,9 @@
       </div>
       <p class="note">One portable file for 64-bit Windows, about 42 MB zipped. Unzip it anywhere and run FarHaul.exe; nothing is installed. Needs a mouse and keyboard.</p>
       <dl class="slip">
-        <div><dt>Version</dt><dd>0.7.0, prototype</dd></div>
+        <div><dt>Version</dt><dd>0.8.0, prototype</dd></div>
         <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, walk your ship and ports that look like the people who built them, take work from people at the bar, land on moons and work outside in a suit, fly all the way out to Saturn's rings if your tanks are up to it, check the map to see how far you've got to go, and fly the long hauls from a phone on the sofa</dd></div>
-        <div><dt>Not yet</dt><dd>Planets with air, space walks, crew, combat. Patience is required and, sadly, not sold anywhere</dd></div>
+        <div><dt>Not yet</dt><dd>Planets with air, crew, combat. Patience is required and, sadly, not sold anywhere</dd></div>
       </dl>
     </div>
     <figure>
@@ -64,7 +64,7 @@
     <h2 id="vision-h">The game, and where it is today</h2>
     <p class="lede">Far Haul is about owning a working spaceship. The ship is a place you walk through, and freight is how you pay for it. The bank would like you to remember the second part.</p>
     <p>You start as an independent operator with a cheap ship and just enough money to keep it flying, if nothing breaks. You take contracts, load containers, work out whether a job is worth the fuel, and run goods between established worlds. Over time you build bigger, buy range, and head out past the end of the charts, where there's no repair yard, no fuel depot and nobody to call. The farther you go, the less there is to help you, which is either the appeal or the warning.</p>
-    <p>What you can play today: design a ship from modules and find out whether it works, take freight from a simulated economy of eighteen systems, and fly it. You start with a sublight ship, so your first jobs are runs between the port, fuel depot, moon and belt of your own system, flown by hand or left to the autopilot. Save up for an FTL drive and the other systems open up, with a jump that takes you there without a cut. You can also get up from the helm and walk the ship while it flies. When you are berthed you are on your feet in the port, walking between the freight office, the fuel desk, the shipyard and the bar, where people ask for rush jobs, passage and sealed crates. Fit lander legs and every moon opens up: a base and a mining camp to land at, missions to do on foot in a suit, and an outpost, an ice mine and a deep crater to fly out to. Space walks are next. Now that the ship has an outside, someone has to go and stand on it.</p>
+    <p>What you can play today: design a ship from modules and find out whether it works, take freight from a simulated economy of eighteen systems, and fly it. You start with a sublight ship, so your first jobs are runs between the port, fuel depot, moon and belt of your own system, flown by hand or left to the autopilot. Save up for an FTL drive and the other systems open up, with a jump that takes you there without a cut. You can also get up from the helm and walk the ship while it flies. When you are berthed you are on your feet in the port, walking between the freight office, the fuel desk, the shipyard and the bar, where people ask for rush jobs, passage and sealed crates. Fit lander legs and every moon opens up: a base and a mining camp to land at, missions to do on foot in a suit, and an outpost, an ice mine and a deep crater to fly out to. And now there are space walks: out of the airlock on a tether with a wrench and a torch, patching the hull yourself while the ship coasts, unless somebody left the engine on.</p>
 
     <h3>Build order</h3>
     <ol class="chain">
@@ -72,7 +72,7 @@
       <li class="now">Flight<small>Playable now, with star jumps</small></li>
       <li class="now">Walking inside<small>Ships and ports, rough</small></li>
       <li class="now">Landing and exploring<small>Moons and suit work, rough</small></li>
-      <li>Tethered space walks<small>Next: repair the outside</small></li>
+      <li class="now">Tethered space walks<small>Hull repairs by hand, rough</small></li>
     </ol>
 
     <h3>Area by area</h3>
@@ -89,7 +89,7 @@
           <tr><th scope="row">Ship remote</th><td>A second screen for the cockpit on a phone or tablet.</td><td>Switch it on in Settings and open the address it shows on any phone or tablet on the same Wi-Fi: the trip, the map, the gauges, a throttle lever and the autopilots, with the same limits as the keys. Steering stays at the helm.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Walking the ship</th><td>Leave the seat and walk the corridors while underway. A longer ship means a longer walk to engineering.</td><td>Press G at the helm to get up and walk in first person, with deck gravity. Walls, doorways, furniture and loaded containers block you. Ladder shafts change deck, and the airlock lets you off at a berth. The ship flies on as you left it. Ports, the moon hab and the camp hut are walkable too.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Landing and exploring</th><td>Land on rocky worlds and moons, then explore by ship, rover and on foot.</td><td>Every system has a moon (grey, ice, dust or heavy, each with its own gravity; Sol's is Luna) with a base pad and a mining camp you land on by hand. Lander legs open surface-only freight that pays more, and runs start by lifting off the surface. In a suit you have air to watch and kit to buy (bigger tanks, boots, a scanner, suit jets), timed missions to do, crates to carry at the camp, and samples, salvage, ice and rare crystals to find. Each moon also has an abandoned outpost, an ice mine and a deep glass crater, with boulders and slopes to land around, ideally not on.</td><td><span class="chip rough">Rough</span></td></tr>
-          <tr><th scope="row">Space walks and repair</th><td>Go out through the airlock on a tether to fix radiators, engines and hull damage.</td><td>Airlocks exist and the builder insists on one. Nothing to do outside the hull yet, except admire it.</td><td><span class="chip planned">Planned</span></td></tr>
+          <tr><th scope="row">Space walks and repair</th><td>Go out through the airlock on a tether to fix radiators, engines and hull damage.</td><td>Out of the airlock in space on a 30 m tether, on the suit's air and jets. Fix the hull's scorch marks by hand: a wrench for loose plating, a torch and a patch kit for holes, up to 50%. A ship that burns, brakes or spins strains the tether, and it can snap. Radiators and engines aren't repairable yet.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Living economy</th><td>Freight demand that comes from what places produce and need. Frontier outposts that grow because you supplied them.</td><td>A simulation of production, stock, orders and shipping carriers across all eighteen systems runs alongside you. Easy, Normal and Hard change your costs and pay, not the world; Hard lives a few bad days from insolvency. Frontier growth isn't built yet.</td><td><span class="chip rough">Rough</span></td></tr>
           <tr><th scope="row">Manufacturers and wear</th><td>Parts from companies with recognisable engineering habits. Components wear and fail where you can see it.</td><td>One generic part for each job. Hull damage stays with the ship until you pay a repair desk, and prices differ from port to port, so shop around while dented. Short of cash, the desk patches what you can afford, or enough to fly freight again on account. You can see the damage from outside: scorches, venting plates and sparks.</td><td><span class="chip planned">Planned</span></td></tr>
           <tr><th scope="row">Crew, passengers, salvage, combat</th><td>People who live aboard, wrecks worth boarding, and danger that is a cost to avoid rather than the main event.</td><td>Passengers ride along in spare berths. Wrecks and an abandoned outpost on the moons can be stripped for salvage. No crew or combat yet. It's quiet out here. Suspiciously quiet.</td><td><span class="chip rough">Rough</span></td></tr>
@@ -220,6 +220,10 @@
         <figcaption><strong>Known space.</strong> Tab or zoom out and the system becomes a dot among eighteen, with the routes between them and the jump you're about to make.</figcaption>
       </figure>
       <figure>
+        <button class="shot" data-full="img/space-walk.jpg" data-cap="Space walk." aria-label="Open the space walk screenshot full size"><img src="img/space-walk.jpg" width="1280" height="720" loading="lazy" alt="First person on a space walk: a gloved hand holding a welding torch with a blue flame against a scorched patch of hull, sparks flying, with air, tether and strain gauges at the top left."></button>
+        <figcaption><strong>Space walk.</strong> A torch, a patch kit and a hole. The gauges are air, tether and how hard the ship is pulling on you.</figcaption>
+      </figure>
+      <figure>
         <button class="shot" data-full="img/retro.jpg" data-cap="Braking thrusters." aria-label="Open the braking thrusters screenshot full size"><img src="img/retro.jpg" width="1280" height="720" loading="lazy" alt="The side of the starter ship close up: a slim braking thruster fairing lying along the hull beside the cockpit, its two small nozzles firing blue-white plumes toward the bow."></button>
         <figcaption><strong>Braking thrusters.</strong> A slim fairing with two little nozzles facing the wrong way on purpose. Hold B and the ship slows without turning round.</figcaption>
       </figure>
@@ -316,6 +320,7 @@
           <li>Fit <strong>lander legs</strong> to land on a moon. At the base's hab, the suit store sells kit and dispatch posts missions; the airlock desk suits you up and puts you outside.</li>
           <li>Fit <strong>braking thrusters</strong> on the side of the hull, nozzles to the bow, and hold <kbd>B</kbd> to slow down without turning round. The braking autopilot uses them too, which makes docking much less of a pirouette.</li>
           <li>Add <strong>manoeuvring thrusters</strong> and hold <kbd>Ctrl</kbd> with the arrow keys to slide sideways or up and down without turning. Together with braking thrusters, the autopilot can line you up and stop you nose-on.</li>
+          <li>Away from a berth, the airlock takes you on a <strong>space walk</strong>. Buy patch kits at the repair desk, then fix the scorch marks: <kbd>1</kbd> wrench for loose plating, <kbd>2</kbd> torch and a kit for holes, hold <kbd>E</kbd>. Up to 50%; past that it's yard work. Watch the air gauge, and don't leave the engine running.</li>
           <li>Fit an <strong>FTL drive</strong> in the shipyard (about 48,000 cr with its radiator) to take freight to other systems. At the freight office or the gate, <strong>Fly the jump</strong> undocks you and lets you press <kbd>J</kbd> once you are clear.</li>
         </ol>
 
@@ -399,6 +404,15 @@
             <tr><th scope="row">Back aboard, at the hatch</th><td><kbd>Q</kbd>, or <kbd>E</kbd></td></tr>
           </tbody>
         </table>
+        <h3>Controls: on a space walk</h3>
+        <table class="keys">
+          <tbody>
+            <tr><th scope="row">Drift on the suit jets</th><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, <kbd>Space</kbd> / <kbd>Ctrl</kbd> up and down, <kbd>Shift</kbd> for more</td></tr>
+            <tr><th scope="row">Wrench, torch</th><td><kbd>1</kbd>, <kbd>2</kbd>, or the mouse wheel</td></tr>
+            <tr><th scope="row">Fix the mark in front of you</th><td>Hold <kbd>E</kbd>, or the left mouse button</td></tr>
+            <tr><th scope="row">Back aboard, at the hatch</th><td><kbd>Q</kbd></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -470,7 +484,7 @@
 
     <h3>The prototype</h3>
     <dl class="facts">
-      <dt>Version</dt><dd>0.7.0, prototype</dd>
+      <dt>Version</dt><dd>0.8.0, prototype</dd>
       <dt>Built with</dt><dd>Godot 4.4, written in GDScript, using the Forward+ renderer (Vulkan) on Windows.</dd>
       <dt>Art and sound</dt><dd>The textures, sky, logo and every sound effect (engines, footsteps, room tone, the suit, the jump) are generated in code. Earth's coastlines come from NOAA's public-domain GLOBE elevation data. The theme song is a custom track. The intro video is a placeholder, and knows it.</dd>
       <dt>Placeholders</dt><dd>Prices, part stats and the intro video will all change, usually at the worst possible moment.</dd>
@@ -485,7 +499,7 @@
 <footer>
   <div class="wrap">
     <span class="code">FHCU 000001-0</span>
-    <span>Far Haul prototype 0.7.0</span>
+    <span>Far Haul prototype 0.8.0</span>
     <span><a href="https://github.com/benjaminarthurt/FarHaul/releases/latest">Download for Windows</a> &nbsp; <a href="https://github.com/benjaminarthurt/FarHaul">Source on GitHub</a></span>
     <a class="studio-badge" href="https://signalfoundry.games/" target="_blank" rel="noopener" aria-label="Built at Signal Foundry Games"><span class="studio-badge-kicker">BUILT AT</span><strong>SIGNAL FOUNDRY</strong><span class="studio-badge-sub">GAMES</span></a>
   </div>

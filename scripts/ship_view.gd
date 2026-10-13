@@ -82,6 +82,7 @@ func rebuild(ship: ShipData, manifest: CargoManifest = null, pop_index := -1) ->
 		_damage.setup(ship)
 		add_child(_damage)
 		_damage.set_damage(_damage_level)
+		_damage.set_patched(_patched)
 	else:
 		_damage = null
 	set_deck_filter(deck, hide_above)
@@ -120,6 +121,16 @@ func set_deck_filter(level: int, hide: bool) -> void:
 	for child in get_children():
 		if child.has_meta("deck"):
 			child.visible = not (hide and int(child.get_meta("deck")) > level)
+
+
+var _patched: Array = []
+
+
+## Spots welded over on a space walk (ShipDamage mark indexes).
+func set_patched(list: Array) -> void:
+	_patched = list.duplicate()
+	if _damage != null:
+		_damage.set_patched(_patched)
 
 
 ## How battered the hull looks, 0 (new) .. 1 (breached). Only a skinned ship shows it.

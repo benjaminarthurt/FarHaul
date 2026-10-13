@@ -57,5 +57,21 @@
     "rescue_salvage_fraction_of_ship": 0.08,
     "rescue_cargo_loss": 0.3,
     "patch_step": 0.05
+  },
+  "eva": {
+    "note": "Tethered space walks (scripts/flight/space_walk.gd). Placeholders.",
+    "tether_m": 30.0,
+    "jet_accel_m_s2": 1.6,
+    "max_speed_m_s": 2.5,
+    "stabilise_m_s2": 1.2,
+    "fix_s": 4.0,
+    "patch_s": 7.0,
+    "repair_cap_hull": 0.5,
+    "patch_kit_cr": 400,
+    "patch_kit_max": 8,
+    "suit_mass_kg": 150.0,
+    "tether_snap_n": 2500.0,
+    "tether_give_s": 0.25,
+    "adrift_lost_m": 150.0
   }
 }

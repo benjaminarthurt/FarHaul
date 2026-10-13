@@ -250,7 +250,7 @@ func _hull_line() -> String:
 func _update_hud() -> void:
 	_update_hud_body()
 	# A breached hull wins the prompt at the helm: there's only one thing left to do.
-	var at_helm := not sc.walking and not sc.outside and not sc._jumping()
+	var at_helm := not sc.walking and not sc.outside and sc.eva == null and not sc._jumping()
 	if sc.model.disabled() and at_helm:
 		sc.prompt.text = sc.rescue_hint()
 	elif at_helm and sc.notice_s > 0.0:
@@ -269,6 +269,10 @@ func _update_hud() -> void:
 
 func _update_hud_body() -> void:
 	_update_time()
+	if sc.eva != null:
+		sc.notice_s = maxf(0.0, sc.notice_s - sc.get_process_delta_time())
+		sc.foot_c._eva_hud()
+		return
 	sc.notice_s = maxf(0.0, sc.notice_s - sc.get_process_delta_time())
 	if sc._on_surface():
 		sc._update_descent_hud()
@@ -339,7 +343,7 @@ func _walk_prompt() -> void:
 		if sc._on_surface():
 			hint = "E: step outside onto the surface" if sc.model.landed else "Outer hatch stays shut until the ship is down. Wise policy."
 		else:
-			hint = "E: leave the ship" if sc._berthed() else "Outer hatch stays shut until you berth. Outside is mostly vacuum."
+			hint = "E: leave the ship" if sc._berthed() else ("E: suit up and go out on the tether" if sc.foot_c.space_walk_blocker() == "" else "Outer hatch stays shut. Outside is mostly vacuum.")
 	var warn := ""
 	if sc.model.disabled():
 		warn = "HULL BREACHED: back to the helm and call the tug (T)"

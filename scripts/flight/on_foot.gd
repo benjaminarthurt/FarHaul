@@ -101,7 +101,280 @@ func use() -> String:
 		sc.sit_down()
 		sc._return_to_dock()
 		return "airlock"
+	if sc.walk.near_airlock() and space_walk_blocker() == "":
+		go_space_walk()
+		return "space walk"
 	return ""
+
+
+# --- Space walks (SpaceWalk) -------------------------------------------------------------------------
+
+## Why the airlock won't let you out on a tether right now, or "".
+func space_walk_blocker() -> String:
+	if sc._on_surface() or sc._jumping() or sc.eva != null or sc.walk.airlock == Vector3.INF:
+		return "not here"
+	if sc.phase == "spool" or sc.phase == "warp":
+		return "not mid-jump"
+	return ""
+
+
+## Out of the airlock on the tether. Nobody's at the helm: the ship carries on doing whatever it was,
+## and if that's burning, braking or spinning, the tether will feel it. Time runs at x1 while someone's
+## outside.
+func go_space_walk() -> bool:
+	if space_walk_blocker() != "":
+		return false
+	var owned: Array = Session.gear_owned() if Session.slot >= 0 else []
+	sc.eva = SpaceWalk.make(sc.ship_data, sc.walk.airlock, -sc.walk.airlock_face, SurfaceWork.o2_capacity(owned))
+	sc.eva.sc = sc
+	sc.eva.com = sc.com
+	sc.eva.last_ship_vel = sc.model.vel
+	sc.set_warp(0)
+	_build_eva_ui()
+	sc.walking = false
+	sc.view.set_interior(false)
+	sc.help.text = sc.EVA_HELP
+	sc.crosshair.visible = true
+	sc.bar.visible = false
+	var line := MeshInstance3D.new()   # the tether: a thin yellow line from the hatch to the suit
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.015
+	cyl.bottom_radius = 0.015
+	cyl.height = 1.0
+	cyl.radial_segments = 6
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.95, 0.75, 0.15)
+	m.emission_enabled = true
+	m.emission = Color(0.5, 0.35, 0.05)
+	cyl.material = m
+	line.mesh = cyl
+	sc.view.add_child(line)
+	sc.eva.tether_line = line
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	var busy := sc.model.throttle > 0.01 or sc.model.braking or sc.model.course_hold or sc.model.ang.length() > 0.02
+	_eva_say("Outside, clipped on. %s Wrench (1) for loose plating, torch (2) for holes." % ("The ship's still under way and nobody's driving: mind the tether." if busy else "The ship's coasting; nobody's driving."))
+	sc._apply_pose()
+	return true
+
+
+## Back in through the hatch (or reeled in), standing in the airlock.
+func end_space_walk(why := "") -> void:
+	if sc.eva == null:
+		return
+	if sc.eva.tether_line != null:
+		sc.eva.tether_line.queue_free()
+	_free_eva_ui()
+	var fixed := sc.eva.repairs
+	sc.eva = null
+	sc.walking = true
+	sc.walk.stand_in_airlock()
+	sc.view.set_interior(true)
+	sc.help.text = sc.WALK_HELP
+	sc.bar.visible = true
+	if why != "":
+		sc.say(why, 5.0)
+	elif fixed > 0:
+		sc.say("Back aboard. %d spot%s fixed; hull at %d%%." % [fixed, "" if fixed == 1 else "s", roundi(sc.model.hull() * 100.0)], 4.0)
+	sc._apply_pose()
+
+
+func _eva_say(text: String) -> void:
+	if sc.eva != null:
+		sc.eva.message = text
+		sc.eva.message_t = 4.0
+
+
+## The marks showing on the hull, {index: where}, in the ship view's frame.
+func _eva_marks() -> Dictionary:
+	var out := {}
+	var dmg: ShipDamage = sc.view._damage
+	if dmg == null:
+		return out
+	for i in dmg.visible_marks():
+		out[i] = dmg.sites[i].pos
+	return out
+
+
+func _eva_step(delta: float) -> void:
+	var e := sc.eva
+	var mv := Vector3.ZERO
+	if Input.is_key_pressed(KEY_W): mv.z += 1.0
+	if Input.is_key_pressed(KEY_S): mv.z -= 1.0
+	if Input.is_key_pressed(KEY_D): mv.x += 1.0
+	if Input.is_key_pressed(KEY_A): mv.x -= 1.0
+	if Input.is_key_pressed(KEY_SPACE): mv.y += 1.0
+	if Input.is_key_pressed(KEY_CTRL): mv.y -= 1.0
+	var yaw := 0.0
+	var pitch := 0.0
+	if Input.is_key_pressed(KEY_LEFT): yaw += 1.0
+	if Input.is_key_pressed(KEY_RIGHT): yaw -= 1.0
+	if Input.is_key_pressed(KEY_UP): pitch += 1.0
+	if Input.is_key_pressed(KEY_DOWN): pitch -= 1.0
+	e.look(yaw * sc.KEY_TURN * delta, pitch * sc.KEY_TURN * delta)
+	var dt := minf(delta, 0.05)
+	var a_ship := Vector3.ZERO   # the ship's acceleration since last frame, in its own axes
+	if e.last_ship_vel != Vector3.INF and dt > 0.0:
+		a_ship = sc.model.basis.inverse() * ((sc.model.vel - e.last_ship_vel) / dt)
+	e.last_ship_vel = sc.model.vel
+	var was_snapped := e.snapped
+	e.step(dt, mv, Input.is_key_pressed(KEY_SHIFT), a_ship, sc.model.ang)
+	e.message_t = maxf(0.0, e.message_t - dt)
+	if e.snapped and not was_snapped:
+		tether_snapped()
+	eva_work(dt, Input.is_key_pressed(KEY_E) or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT))
+	_eva_tether()
+	_eva_tools(dt)
+	_update_eva_ui()
+	if e.snapped and (e.distance() > float(e.cfg.get("adrift_lost_m", 150.0)) or e.o2 <= 0.0):
+		adrift_rescue()
+	elif e.o2 <= 0.0:
+		end_space_walk("OUT OF AIR. The winch reeled you in through the hatch, gasping. Next time, watch the gauge.")
+
+
+## The tether's gone: no winch, no limit. The suit's jets still work, if the ship holds still long enough.
+func tether_snapped() -> void:
+	if sc.eva.tether_line != null:
+		sc.eva.tether_line.queue_free()
+		sc.eva.tether_line = null
+	if sc.alarm != null:
+		sc.alarm.play()
+	_eva_say("TETHER SNAPPED. You're adrift. Jet back to the hatch before the ship leaves without you.")
+
+
+## Lost in the dark (too far, or out of air with no tether to reel in): a tug fishes you out and tows
+## the ship in, for a fee. The flight ends.
+func adrift_rescue() -> void:
+	Session.flight_extra["adrift"] = true
+	end_space_walk("")
+	sc.sit_down()
+	sc._return_to_dock()
+
+
+## Hold E (or the mouse button) on a mark with the right tool to fix it. Returns what happened, for
+## tests: "", "working", "done" or a refusal. `tool` overrides what's in hand.
+func eva_work(dt: float, holding: bool, tool := "") -> String:
+	var e := sc.eva
+	if e == null:
+		return ""
+	if tool != "":
+		e.tool = tool
+	var i := e.mark_in_reach(_eva_marks())
+	if not holding or i < 0:
+		e.work_t = 0.0
+		e.work_on = -1
+		return ""
+	var why := SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool)
+	if why != "":
+		e.work_t = 0.0
+		_eva_say(why)
+		return why
+	if e.work_on != i:
+		e.work_on = i
+		e.work_t = 0.0
+	e.work_t += dt
+	if e.work_t < e.work_s(i):
+		return "working"
+	_eva_repair(i)
+	e.work_t = 0.0
+	e.work_on = -1
+	return "done"
+
+
+## A mark fixed: hull back, a kit used if it was a hole, a welded plate where the mark was.
+func _eva_repair(i: int) -> void:
+	var kit := ShipDamage.needs_kit(i)
+	if kit:
+		Session.profile["patch_kits"] = maxi(0, Session.patch_kits() - 1)
+	sc.model.damage = SpaceWalk.repaired(sc.model.damage)
+	var patches: Array = Session.profile.get("hull_patches", [])
+	if not patches.has(i):
+		patches.append(i)
+	Session.profile["hull_patches"] = patches
+	sc.view.set_patched(patches)
+	sc.view.set_damage(sc.model.damage)
+	sc._hull_warned = sc._hull_passed()
+	sc.eva.repairs += 1
+	if sc.sounds != null:
+		sc.sounds.play("done")
+	_eva_say(("Hole patched. %d kit%s left." % [Session.patch_kits(), "" if Session.patch_kits() == 1 else "s"] if kit else "Plating seated and bolted down. Free, apart from the dignity.") + "  Hull %d%%." % roundi(sc.model.hull() * 100.0))
+
+
+## Lay the tether from the clip to the suit.
+func _eva_tether() -> void:
+	var e := sc.eva
+	if e == null or e.tether_line == null:
+		return
+	var a := e.anchor
+	var b := e.pos + e.look_basis() * Vector3(0, -0.6, 0.2)   # clipped to the suit's belt, not its eyes
+	var d := b - a
+	e.tether_line.position = (a + b) * 0.5
+	if d.length() > 0.01:   # the cylinder runs along its Y: turn it onto the line and stretch it to length
+		e.tether_line.basis = Basis(Quaternion(Vector3.UP, d.normalized())) * Basis.from_scale(Vector3(1, d.length(), 1))
+
+
+func _eva_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		sc.eva.look(-event.relative.x * sc.MOUSE_TURN * GameSettings.mouse_sensitivity(), -event.relative.y * sc.MOUSE_TURN * GameSettings.mouse_sensitivity())
+		return
+	if event is InputEventMouseButton and event.pressed:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		return
+	if event is InputEventMouseButton and event.pressed and (event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+		sc.eva.tool = "torch" if sc.eva.tool == "wrench" else "wrench"
+		return
+	if not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	if event.keycode == KEY_1:
+		sc.eva.tool = "wrench"
+		return
+	if event.keycode == KEY_2:
+		sc.eva.tool = "torch"
+		return
+	if sc.eva.at_hatch() and (event.keycode == KEY_Q or (event.keycode == KEY_E and sc.eva.mark_in_reach(_eva_marks()) < 0)):
+		end_space_walk()
+
+
+## The HUD on a space walk: air, tether, kits, hull; the prompt says what's in reach.
+func _eva_hud() -> void:
+	var e := sc.eva
+	var low := e.o2 < e.o2_max * 0.2
+	var cap := float(e.cfg.get("repair_cap_hull", 0.5))
+	sc.hud.text = "\n".join(PackedStringArray([
+		"SPACE WALK    %s" % ("ADRIFT  %.0f m from the hatch" % e.distance() if e.snapped else "TETHER  %.0f m left" % e.tether_left()),
+		"AIR  %s%s" % [SurfaceWork.clock(e.o2), "   LOW: HEAD BACK" if low else ""],
+		"IN HAND  %s    PATCH KITS  %d" % ["WRENCH (1)" if e.tool == "wrench" else "TORCH (2)", Session.patch_kits()],
+		"HULL  %d%%%s    SPOTS TO FIX  %d" % [roundi(sc.model.hull() * 100.0), "  (space-walk limit)" if sc.model.hull() >= cap - 0.001 else "", _eva_marks().size()],
+	]))
+	var i := e.mark_in_reach(_eva_marks())
+	var hint := ""
+	if e.message_t > 0.0:
+		hint = e.message
+	elif i >= 0:
+		var why := SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool)
+		if why != "":
+			hint = why
+		elif e.work_on == i:
+			hint = "%s  %d%%" % ["WELDING A PATCH" if ShipDamage.needs_kit(i) else "SEATING THE PLATING", roundi(e.work_t / e.work_s(i) * 100.0)]
+		elif ShipDamage.needs_kit(i):
+			hint = "A hole. Hold E (or click): torch a patch over it (1 kit of %d)" % Session.patch_kits()
+		else:
+			hint = "Loose plating. Hold E (or click): wrench it down (free)"
+	elif e.at_hatch():
+		hint = "E or Q: back aboard"
+	elif e.snapped:
+		hint = "ADRIFT. Jet back to the hatch (it's %.0f m). Past %.0f m, a tug fishes you out, at a price." % [e.distance(), float(e.cfg.get("adrift_lost_m", 150.0))]
+	elif e.strain > 0.6:
+		hint = "TETHER STRAIN %d%%. The ship's dragging you. Get in close to the hull or it'll snap." % roundi(e.strain * 100.0)
+	elif e.tether_left() < 2.0:
+		hint = "End of the tether. It's %.0f m, not a suggestion." % e.tether_m
+	elif _eva_marks().is_empty():
+		hint = "Nothing to fix out here. The hatch is where you left it."
+	else:
+		hint = "Drift to a scorch mark and hold E. WASD drift, Space/Ctrl up/down, Shift for more jet."
+	if e.at_hatch() and i >= 0 and e.message_t <= 0.0:
+		hint += "   Q: back aboard"
+	sc.prompt.text = hint
+
 
 
 ## The find within reach of the suit, or {}.
@@ -241,3 +514,215 @@ func blackout() -> void:
 func walk_from_airlock() -> void:
 	if sc.walking and sc.walk.stand_in_airlock():
 		sc._apply_pose()
+
+
+# --- Space-walk gauges and tools ---------------------------------------------------------------------
+
+var _eva_ui: Control
+var _air_bar: ProgressBar
+var _strain_bar: ProgressBar
+var _rope_bar: ProgressBar
+var _tools: Node3D
+var _wrench: Node3D
+var _torch: Node3D
+var _flame: MeshInstance3D
+var _torch_light: OmniLight3D
+var _sparks: CPUParticles3D
+var _swing := 0.0
+
+
+static func _gauge_box(col: Color) -> StyleBoxFlat:
+	var b := StyleBoxFlat.new()
+	b.bg_color = col
+	b.set_corner_radius_all(3)
+	return b
+
+
+func _gauge(parent: Control, label: String, col: Color) -> ProgressBar:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	parent.add_child(row)
+	var l := Label.new()
+	l.text = label
+	l.custom_minimum_size = Vector2(74, 0)
+	l.add_theme_font_size_override("font_size", 14)
+	l.add_theme_color_override("font_color", Brand.OFFWHITE)
+	row.add_child(l)
+	var b := ProgressBar.new()
+	b.custom_minimum_size = Vector2(220, 16)
+	b.max_value = 1.0
+	b.show_percentage = false
+	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	b.add_theme_stylebox_override("background", _gauge_box(Color(0.1, 0.12, 0.15, 0.85)))
+	b.add_theme_stylebox_override("fill", _gauge_box(col))
+	row.add_child(b)
+	return b
+
+
+## The gauges: air left, tether paid out, and the strain on it.
+func _build_eva_ui() -> void:
+	_free_eva_ui()
+	_eva_ui = VBoxContainer.new()
+	_eva_ui.add_theme_constant_override("separation", 6)
+	_eva_ui.position = Vector2(28, 150)
+	sc.hud.get_parent().add_child(_eva_ui)
+	_air_bar = _gauge(_eva_ui, "AIR", Color(0.35, 0.7, 1.0))
+	_rope_bar = _gauge(_eva_ui, "TETHER", Color(0.95, 0.75, 0.15))
+	_strain_bar = _gauge(_eva_ui, "STRAIN", Color(0.4, 0.85, 0.45))
+	_build_tools()
+
+
+func _free_eva_ui() -> void:
+	if _eva_ui != null and is_instance_valid(_eva_ui):
+		_eva_ui.queue_free()
+	_eva_ui = null
+	if _tools != null and is_instance_valid(_tools):
+		_tools.queue_free()
+	_tools = null
+	if _sparks != null and is_instance_valid(_sparks):
+		_sparks.queue_free()
+	_sparks = null
+
+
+func _update_eva_ui() -> void:
+	var e := sc.eva
+	if e == null or _eva_ui == null:
+		return
+	_air_bar.value = e.o2 / maxf(e.o2_max, 1.0)
+	var low := e.o2 < e.o2_max * 0.2
+	_air_bar.add_theme_stylebox_override("fill", _gauge_box(Brand.ALARM if low else Color(0.35, 0.7, 1.0)))
+	_rope_bar.value = 1.0 if e.snapped else clampf(e.distance() / e.tether_m, 0.0, 1.0)
+	_rope_bar.modulate = Color(1, 1, 1, 0.35) if e.snapped else Color.WHITE
+	_strain_bar.value = 1.0 if e.snapped else clampf(e.strain, 0.0, 1.0)
+	var col := Color(0.4, 0.85, 0.45) if e.strain < 0.4 else (Brand.AMBER if e.strain < 0.75 else Brand.ALARM)
+	_strain_bar.add_theme_stylebox_override("fill", _gauge_box(Brand.ALARM if e.snapped else col))
+
+
+## A wrench and a torch held in front of the camera, low and to the right.
+func _build_tools() -> void:
+	_tools = Node3D.new()
+	_tools.name = "EvaTools"
+	sc.camera.add_child(_tools)
+	_tools.position = Vector3(0.3, -0.26, -0.6)
+	var steel := Interiors.flat(Color(0.62, 0.64, 0.68), 0.35, 0.85)
+	var grip := Interiors.flat(Color(0.75, 0.25, 0.12), 0.8, 0.1)
+	var glove := Interiors.flat(Color(0.55, 0.56, 0.58), 0.9, 0.0)   # the suit's glove, holding it
+	# The wrench: a red grip, a steel shank and an open jaw, held pointing up and away.
+	_wrench = Node3D.new()
+	_tools.add_child(_wrench)
+	_box(_wrench, Vector3(0, -0.03, 0.03), Vector3(0.06, 0.05, 0.07), glove)
+	_box(_wrench, Vector3(0, 0.06, 0), Vector3(0.035, 0.14, 0.035), grip)
+	_box(_wrench, Vector3(0, 0.2, 0), Vector3(0.03, 0.18, 0.018), steel)
+	_box(_wrench, Vector3(-0.03, 0.31, 0), Vector3(0.02, 0.06, 0.02), steel)
+	_box(_wrench, Vector3(0.03, 0.31, 0), Vector3(0.02, 0.06, 0.02), steel)
+	_box(_wrench, Vector3(0, 0.285, 0), Vector3(0.08, 0.02, 0.02), steel)
+	_wrench.rotation_degrees = Vector3(-35, 0, -15)
+	# The torch: a tank-grey body, a bent copper neck, a nozzle, and a flame when it's lit.
+	_torch = Node3D.new()
+	_tools.add_child(_torch)
+	_box(_torch, Vector3(0, -0.03, 0.03), Vector3(0.06, 0.05, 0.07), glove)
+	var body := MeshInstance3D.new()
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.035
+	cyl.bottom_radius = 0.04
+	cyl.height = 0.2
+	cyl.material = Interiors.flat(Color(0.3, 0.32, 0.36), 0.6, 0.4)
+	body.mesh = cyl
+	body.position = Vector3(0, 0.08, 0)
+	_torch.add_child(body)
+	_box(_torch, Vector3(0, 0.2, -0.03), Vector3(0.02, 0.06, 0.02), Interiors.flat(Color(0.72, 0.42, 0.2), 0.4, 0.7))
+	_box(_torch, Vector3(0, 0.23, -0.08), Vector3(0.018, 0.018, 0.08), steel)
+	_flame = MeshInstance3D.new()
+	var cone := CylinderMesh.new()
+	cone.top_radius = 0.0
+	cone.bottom_radius = 0.03
+	cone.height = 0.22
+	var fm := StandardMaterial3D.new()
+	fm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	fm.albedo_color = Color(0.6, 0.85, 1.0)
+	fm.emission_enabled = true
+	fm.emission = Color(0.6, 0.85, 1.0)
+	fm.emission_energy_multiplier = 4.0
+	cone.material = fm
+	_flame.mesh = cone
+	_flame.position = Vector3(0, 0.23, -0.23)
+	_flame.rotation_degrees.x = -90.0
+	_flame.visible = false
+	_torch.add_child(_flame)
+	var glow := MeshInstance3D.new()   # the hot spot at the nozzle: the flame points away from you, so this is what you see
+	var q := QuadMesh.new()
+	q.size = Vector2(0.14, 0.14)
+	var gm := StandardMaterial3D.new()
+	gm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	gm.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	gm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	gm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	gm.albedo_texture = ShipDamage._puff_texture()
+	gm.albedo_color = Color(0.7, 0.9, 1.0)
+	q.material = gm
+	glow.mesh = q
+	glow.position = Vector3(0, -0.1, 0.0)
+	_flame.add_child(glow)
+	_torch_light = OmniLight3D.new()
+	_torch_light.light_color = Color(0.6, 0.8, 1.0)
+	_torch_light.omni_range = 4.0
+	_torch_light.light_energy = 0.0
+	_torch_light.position = Vector3(0, 0.23, -0.25)
+	_torch.add_child(_torch_light)
+	_torch.rotation_degrees = Vector3(-30, 0, -10)
+	# Sparks where the work is: out on the hull, placed on the mark being worked.
+	_sparks = CPUParticles3D.new()
+	_sparks.amount = 60
+	_sparks.lifetime = 0.35
+	_sparks.emitting = false
+	_sparks.spread = 80.0
+	_sparks.gravity = Vector3.ZERO
+	_sparks.initial_velocity_min = 1.0
+	_sparks.initial_velocity_max = 3.0
+	var g := Gradient.new()
+	g.set_color(0, Color(1.0, 0.95, 0.7, 1.0))
+	g.set_color(1, Color(1.0, 0.4, 0.1, 0.0))
+	_sparks.color_ramp = g
+	var sm := BoxMesh.new()
+	sm.size = Vector3(0.008, 0.008, 0.05)
+	var smat := StandardMaterial3D.new()
+	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	smat.vertex_color_use_as_albedo = true
+	smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	sm.material = smat
+	_sparks.mesh = sm
+	_sparks.particle_flag_align_y = true
+	sc.view.add_child(_sparks)
+
+
+func _box(parent: Node3D, at: Vector3, size: Vector3, mat: Material) -> void:
+	var mi := MeshInstance3D.new()
+	var b := BoxMesh.new()
+	b.size = size
+	b.material = mat
+	mi.mesh = b
+	mi.position = at
+	parent.add_child(mi)
+
+
+## The tool in hand, and it moving when it's working: the wrench rocks, the torch lights and throws sparks.
+func _eva_tools(dt: float) -> void:
+	var e := sc.eva
+	if e == null or _tools == null:
+		return
+	_wrench.visible = e.tool == "wrench"
+	_torch.visible = e.tool == "torch"
+	var working := e.work_on >= 0 and e.work_t > 0.0
+	_swing += dt * (9.0 if working else 0.0)
+	_wrench.rotation_degrees = Vector3(-35 + (sin(_swing) * 25.0 if working and e.tool == "wrench" else 0.0), 0, -15)
+	_tools.position = Vector3(0.3, -0.26, -0.6) + (Vector3.ZERO if not working else Vector3(-0.05, 0.03, -0.05))
+	var lit := working and e.tool == "torch"
+	_flame.visible = lit
+	_flame.scale = Vector3.ONE * (0.8 + 0.4 * randf()) if lit else Vector3.ONE
+	_torch_light.light_energy = (2.5 + randf() * 1.5) if lit else 0.0
+	_sparks.emitting = working
+	if working:
+		var site: Dictionary = sc.view._damage.sites[e.work_on]
+		_sparks.position = site.pos
+		_sparks.direction = site.normal
+		_sparks.color_ramp.set_color(0, Color(0.7, 0.9, 1.0, 1.0) if lit else Color(1.0, 0.95, 0.7, 1.0))

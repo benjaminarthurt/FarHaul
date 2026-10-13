@@ -23,8 +23,8 @@ look down the ship, and walk its rooms in first person. **E** at the helm sits b
 - **Ladder shafts:** stand over the hatch and press E. You go up if you are looking up (or up is the only
   way), and down otherwise.
 - **The airlock** lets you off when the ship is at a berth: docked, or still at the spot the flight started
-  from and stopped. That ends the flight the same way docking would. Away from a berth the outer
-  hatch stays shut. Space walks come later.
+  from and stopped. That ends the flight the same way docking would. Away from a berth it takes you out on a
+  tether instead: see space_walk.md.
 - **Time compression** (`,` `.`, and `/` for x1) still works while you walk on a local run, so you can
   cross the ship during a long coast.
 - Walking is not allowed during a star jump's spool, warp and slowdown.
