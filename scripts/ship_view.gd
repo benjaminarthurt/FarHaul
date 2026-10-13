@@ -46,6 +46,8 @@ func rebuild(ship: ShipData, manifest: CargoManifest = null, pop_index := -1) ->
 	_rings.clear()
 	_flames.clear()
 	_lift_dirty = true
+	_retro_dirty = true
+	_rcs_dirty = true
 	var press := ShipSkin.pressurised_cells(ship) if skin else {}
 	for mi in ship.modules.size():
 		var m: Dictionary = ship.modules[mi]
@@ -54,6 +56,8 @@ func rebuild(ship: ShipData, manifest: CargoManifest = null, pop_index := -1) ->
 		if skin:   # external parts sit out on the skin, not buried in it
 			node.position += ShipSkin.mount_offset(ship, m, press)
 		node.rotation.y = m.rot * PI / 2.0
+		if ship.library.get_def(m.id).hug:
+			_hug(node, ship, m)
 		node.set_meta("deck", m.cell.y)
 		if manifest != null:
 			_apply_cargo(node, m.cell, manifest)
@@ -82,6 +86,32 @@ func rebuild(ship: ShipData, manifest: CargoManifest = null, pop_index := -1) ->
 		_damage = null
 	set_deck_filter(deck, hide_above)
 	set_flames(_flames_on)
+
+
+## Slide a low-profile part's body flat against the hull it's bolted to, and turn it so its thin side
+## faces the hull: on top or underneath it lies flat; on a side it stands on edge.
+func _hug(node: Node3D, ship: ShipData, m: Dictionary) -> void:
+	var body := node.get_node_or_null("Body") as Node3D
+	if body == null:
+		return
+	var hull := {}
+	for other in ship.modules:
+		if ship.library.get_def(other.id).pressurized:
+			for c in ship.world_cells(other.id, other.cell, other.rot):
+				hull[c] = true
+	var cell: Vector3i = m.cell
+	for n in [Vector3i(0, -1, 0), Vector3i(0, 1, 0), Vector3i(1, 0, 0), Vector3i(-1, 0, 0), Vector3i(0, 0, 1), Vector3i(0, 0, -1)]:
+		if hull.has(cell + n):
+			var local := Basis(Vector3.UP, m.rot * PI / 2.0).inverse() * Vector3(n)
+			body.position = local * HUG_IN
+			if absf(local.x) > 0.5:
+				body.rotation.z = PI * 0.5 * signf(local.x)   # on a side: the flat foot turns to face it
+			elif local.y > 0.5:
+				body.rotation.z = PI                       # underneath a deck above: upside down
+			return
+
+
+const HUG_IN := 1.2   ## how far a low-profile part's body moves from its cell's centre toward the hull
 
 
 func set_deck_filter(level: int, hide: bool) -> void:
@@ -201,6 +231,48 @@ func _set_ceilings(node: Node, on: bool) -> void:
 
 
 ## Lift-jet plumes under lander legs. The plumes are found once per rebuild.
+var _retro_flames: Array[Node3D] = []
+var _retro_dirty := true
+
+
+## The braking thrusters' plumes, out of the bow.
+func set_retro_flames(on: bool) -> void:
+	if _retro_dirty or (_retro_flames.size() > 0 and not is_instance_valid(_retro_flames[0])):
+		_retro_flames.clear()
+		_find_tag(self, "retro_flame", _retro_flames)
+		_retro_dirty = false
+	for f in _retro_flames:
+		f.visible = on
+
+
+var _rcs_flames: Array = []   ## [plume, push direction in the ship's frame]
+var _rcs_dirty := true
+
+
+## Light the manoeuvring nozzles that push the way `strafe` asks (x right, y up, in the ship's frame).
+func set_rcs(strafe: Vector2) -> void:
+	if _rcs_dirty or (_rcs_flames.size() > 0 and not is_instance_valid(_rcs_flames[0][0])):
+		_rcs_flames.clear()
+		if not is_inside_tree():
+			return
+		var found: Array[Node3D] = []
+		_find_tag(self, "rcs_flame", found)
+		var to_ship := global_basis.inverse()
+		for f in found:   # a plume runs along its pivot's +Y, away from the nozzle: the push is the other way
+			_rcs_flames.append([f, -(to_ship * f.global_basis.y).normalized()])
+		_rcs_dirty = false
+	var want := Vector3(strafe.x, strafe.y, 0.0)
+	for pair in _rcs_flames:
+		(pair[0] as Node3D).visible = want.length() > 0.05 and (pair[1] as Vector3).dot(want) > 0.5
+
+
+func _find_tag(node: Node, tag: String, out: Array[Node3D]) -> void:
+	if node is Node3D and node.has_meta(tag):
+		out.append(node)
+	for c in node.get_children():
+		_find_tag(c, tag, out)
+
+
 func set_lift_flames(on: bool) -> void:
 	if _lift_dirty:
 		_lift_flames.clear()

@@ -137,6 +137,20 @@ func _add_defaults() -> void:
 		[_mount(o, DIR_U)],
 		{"group": &"external", "pressurized": false, "shape": &"legs", "mass": 1.0, "cost": 12000,
 			"lift": 70.0, "power": -4.0, "heat": 4.0})
+	# Braking thrusters: a slim fairing with two small nozzles facing the bow, pushing the ship backward. A fraction of
+	# an engine, but enough to bleed off speed on a docking approach without turning round. Mounts on any
+	# bare side of the hull (or on a frame): fit it the right way round and it fires forward.
+	_def(&"retro_thrusters", "Braking thrusters", one, Color(0.46, 0.48, 0.52),
+		[_mount(o, DIR_S), _mount(o, DIR_E), _mount(o, DIR_W), _mount(o, DIR_U), _mount(o, DIR_D)],
+		{"group": &"external", "pressurized": false, "shape": &"retro", "mass": 0.6, "cost": 9000,
+			"retro": 20.0, "power": -3.0, "heat": 4.0, "hug": true})
+	# Manoeuvring thrusters: a low puck of small nozzles that sits flat on the hull, for sliding the ship sideways or up and
+	# down without turning (Ctrl + arrows). Fit them square to the ship: turned a quarter round, the side
+	# nozzles push fore and aft instead.
+	_def(&"rcs_thrusters", "Manoeuvring thrusters", one, Color(0.46, 0.48, 0.52),
+		[_mount(o, DIR_N), _mount(o, DIR_S), _mount(o, DIR_E), _mount(o, DIR_W), _mount(o, DIR_U), _mount(o, DIR_D)],
+		{"group": &"external", "pressurized": false, "shape": &"rcs", "mass": 0.4, "cost": 7000,
+			"rcs": 10.0, "power": -2.0, "heat": 3.0, "hug": true})
 	# Jump drive: bolts on like any external part and makes the ship faster between stars. It needs
 	# power and sheds heat, and its mass counts against thrust-to-weight like everything else.
 	_def(&"jump_drive", "FTL drive", one, Color(0.35, 0.50, 0.75),

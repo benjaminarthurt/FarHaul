@@ -1,7 +1,9 @@
 class_name GameMenu
 extends CanvasLayer
-## The in-game menu, in every scene but the title: F10 anywhere, or Esc in a port. It pauses the game
-## and offers Resume, Save game, Settings, Main menu and Quit. F3 toggles a frame-rate readout.
+## The in-game menu, in every scene but the title: Esc (or F10) anywhere. It pauses the game and offers
+## Resume, whatever the scene adds (menu_actions(): in flight, the tug or turning back), Save game,
+## Settings, Main menu and Quit. A scene that needs Esc for itself for a moment (a desk open in a port)
+## says so with wants_escape(). F3 toggles a frame-rate readout.
 ## GameSettings.apply_scene adds one to each scene (attach()).
 
 const KEY := KEY_F10
@@ -18,6 +20,7 @@ var dim: ColorRect
 var _mouse_before := Input.MOUSE_MODE_VISIBLE
 var _perf_t := 0.0
 var in_flight := false
+var extra: VBoxContainer   ## the scene's own actions (menu_actions()), rebuilt each time the menu opens
 
 
 ## Add the menu to `scene` once (not on the title screen).
@@ -56,6 +59,9 @@ func _ready() -> void:
 	panel.add_child(list)
 	list.add_child(Brand.heading("PAUSED", 20))
 	_button("RESUME", close)
+	extra = VBoxContainer.new()
+	extra.add_theme_constant_override("separation", 8)
+	list.add_child(extra)
 	_button("SAVE GAME", _save)
 	_button("SETTINGS", _settings)
 	_button("MAIN MENU", _main_menu)
@@ -105,6 +111,20 @@ func open() -> void:
 	note.text = "A save keeps the game as you left port; this flight is not saved. Officially, it never happened." if in_flight else ""
 	if ShipRemote.instance != null:   # where the phone goes, in case it wandered off
 		note.text = (note.text + "\n\n" if note.text != "" else "") + "Ship remote: " + ShipRemote.where()
+	for c in extra.get_children():
+		c.queue_free()
+	var scene := get_parent()
+	if scene != null and scene.has_method("menu_actions"):
+		for a in scene.menu_actions():
+			var act: Dictionary = a
+			var b := Button.new()
+			b.text = String(act.text)
+			Brand.style_button(b, 18)
+			var cb: Callable = act.call
+			b.pressed.connect(func() -> void:
+				close()
+				cb.call())
+			extra.add_child(b)
 	dim.visible = true
 	panel.visible = true
 	get_tree().paused = true
@@ -147,8 +167,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			open()
 		get_viewport().set_input_as_handled()
-	elif event.keycode == KEY_ESCAPE and is_open():
-		close()
+	elif event.keycode == KEY_ESCAPE:
+		if is_open():
+			close()
+		else:
+			var scene := get_parent()
+			if scene != null and scene.has_method("wants_escape") and scene.wants_escape():
+				return   # the scene closes its own panel first
+			open()
 		get_viewport().set_input_as_handled()
 
 

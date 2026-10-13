@@ -36,7 +36,9 @@ plays on a `Music` bus; jump sounds and builder clicks play on an `Effects` bus.
 
 ## In-game menu, hints and the frame-rate readout
 
-- **Menu** (`scripts/game_menu.gd`): F10 in any scene but the title, or Esc in a port, pauses the game.
+- **Menu** (`scripts/game_menu.gd`): Esc or F10 in any scene but the title pauses the game. A scene can
+  keep Esc for a moment (`wants_escape()`: a port's open desk closes first) and add its own entries
+  (`menu_actions()`: in flight, the tug, traffic control, turning back, ending a free flight).
   It offers Resume, Save game, Settings, Main menu and Quit to desktop. In flight it says that saving
   keeps the game as it was when you left port, because a flight in progress is not saved.
   `GameSettings.apply_scene` adds the menu to every scene.

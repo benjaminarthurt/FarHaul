@@ -25,7 +25,7 @@ What happens as the hull loses integrity, and what happens at 0%. Tuning lives i
 - `disabled()` is true at damage ≥ 0.999. Thrust and lift scale to 0, throttle, braking, course hold
   and autoland go off, and pilot input does nothing (no rotation either; the ship keeps whatever spin
   it had).
-- The flight scene's prompt switches to the rescue line. Esc (or the remote's tug button) ends the
+- The flight scene's prompt switches to the rescue line. T (or the remote's tug button, or the pause menu) ends the
   flight as a rescue: it works like running out of fuel (`tow_goes_on()` picks the nearer end of a
   run), plus a salvage fee and cargo loss.
 - No jump can be started while disabled.

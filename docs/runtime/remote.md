@@ -35,7 +35,7 @@ it keeps answering while the game is paused.
 Commands go through `FlightScene.pilot(action, value)`, the same function the keys call:
 `throttle` (0..1, like holding W/S, and it takes the controls back from the braking autopilot),
 `cut`, `brake`, `course`, `assist`, `warp_up`, `warp_down`, `warp_reset`, `dock` (in range),
-`traffic` (on the approach: Esc), `tug` (out of fuel: Esc). Steering stays at the helm.
+`traffic` (on the approach: T), `tug` (out of fuel or breached: T). Steering stays at the helm.
 
 ## The page
 

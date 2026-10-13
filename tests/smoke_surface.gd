@@ -82,7 +82,7 @@ func _run() -> void:
 	await process_frame
 	check(f.phase == "descent" and f._target_kind == dest_kind, "arriving brings the descent onto the %s" % dest_kind)
 	if dest_kind == "camp":
-		f._unhandled_input(_key(KEY_ESCAPE))
+		f._unhandled_input(_key(KEY_T))
 		check(not f.model.autoland, "the camp has no beacon: no autopilot")
 	f.model.pos = f.model.pad + Vector3(6, 40 + f.model.foot_m, 4)
 	f.model.vel = Vector3.ZERO
@@ -104,14 +104,14 @@ func _run() -> void:
 	root.add_child(g)
 	await process_frame
 	check(g.phase == "ascent" and g.model.landed and g.model.on_pad(), "the run starts on the surface pad, landed")
-	g._unhandled_input(_key(KEY_ESCAPE))
-	check(g.auto_ascent, "Esc lifts off on auto")
+	g._unhandled_input(_key(KEY_T))
+	check(g.auto_ascent, "T lifts off on auto")
 	var t := 0.0
 	while t < 600.0 and g.phase == "ascent":
 		g._process(0.05)
 		t += 0.05
 	check(g.phase == "approach" and g.station.visible and g.model.gravity == 0.0, "clear of the moon (%.0f s), it approaches the base's station" % t)
-	g._unhandled_input(_key(KEY_ESCAPE))
+	g._unhandled_input(_key(KEY_T))
 	check(g.leaving and String(Session.profile.port_id).ends_with("__moon"), "docked at the station (%s)" % String(Session.profile.port_id))
 	check(bool(Session.deliver_active_contract().ok), "delivered")
 	g.queue_free()

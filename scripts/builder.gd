@@ -317,7 +317,7 @@ func _build_palette(ui: Control) -> void:
 	_add_action_button(row2, "Frame (F)", _frame_ship)
 	var row3 := HBoxContainer.new()
 	box.add_child(row3)
-	_add_action_button(row3, "Leave shipyard (Esc)", _leave)
+	_add_action_button(row3, "Leave shipyard (L)", _leave)
 
 	info_label = Label.new()
 	info_label.custom_minimum_size = Vector2(270, 0)
@@ -509,6 +509,12 @@ func _module_tooltip(def: ModuleDef) -> String:
 		lines.append("Thrust %.0f kN" % def.thrust)
 	if def.fuel > 0.0:
 		lines.append("Fuel %.0f t" % def.fuel)
+	if def.lift > 0.0:
+		lines.append("Lift %.0f kN, for landing" % def.lift)
+	if def.rcs > 0.0:
+		lines.append("Manoeuvring %.0f kN each way, sideways and up/down (Ctrl + arrows in flight)" % def.rcs)
+	if def.retro > 0.0:
+		lines.append("Braking %.0f kN, firing toward the bow (B in flight)" % def.retro)
 	if def.cargo_slots > 0:
 		lines.append("Cargo %d containers, %.0f t" % [def.cargo_slots, def.cargo_capacity])
 	if def.helm:
@@ -566,7 +572,7 @@ func _on_key(key: Key) -> void:
 			_set_level(level + 1)
 		KEY_S:
 			_save()
-		KEY_ESCAPE:
+		KEY_L:
 			_leave()
 		KEY_C:
 			_clear()

@@ -23,7 +23,7 @@ look down the ship, and walk its rooms in first person. **E** at the helm sits b
 - **Ladder shafts:** stand over the hatch and press E. You go up if you are looking up (or up is the only
   way), and down otherwise.
 - **The airlock** lets you off when the ship is at a berth: docked, or still at the spot the flight started
-  from and stopped. That ends the flight the same way docking or Esc would. Away from a berth the outer
+  from and stopped. That ends the flight the same way docking would. Away from a berth the outer
   hatch stays shut. Space walks come later.
 - **Time compression** (`,` `.`, and `/` for x1) still works while you walk on a local run, so you can
   cross the ship during a long coast.
@@ -31,7 +31,7 @@ look down the ship, and walk its rooms in first person. **E** at the helm sits b
 
 ## Controls
 
-WASD walk, mouse or arrow keys look, Shift run (4 m/s, walking is 2.2 m/s), E use. Esc frees the mouse,
+WASD walk, mouse or arrow keys look, Shift run (4 m/s, walking is 2.2 m/s), E use. Esc brings up the pause menu (which frees the mouse),
 and a click captures it again. In a browser, the first click or key press may be needed before the mouse
 locks.
 

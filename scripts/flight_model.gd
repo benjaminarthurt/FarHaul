@@ -65,6 +65,12 @@ var gravity := 0.0                # m/s^2 down (-Y); 0 in space
 var terrain: SurfaceTerrain = null
 var lift_kn := 0.0                # lift jets at full power
 var lift := 0.0                   # 0..1, set every step
+var retro_kn := 0.0               # braking thrusters at full power, pushing the ship backward (along +Z)
+var retro := 0.0                  # 0..1, set every step: the pilot's B, or the braking autopilot
+var rcs_x_kn := 0.0               # manoeuvring thrusters, each way: sideways (ship X)
+var rcs_y_kn := 0.0               # and up and down (ship Y)
+var strafe := Vector2.ZERO        # -1..1 each, set every step: x right, y up (Ctrl + arrows)
+const RETRO_STOP_S := 40.0        # the braking autopilot uses the thrusters, nose on, when they stop the ship within this
 var foot_m := 3.0                 # centre of mass down to the feet
 var landed := false
 var autoland := false             # autopilot: level out, null the drift, settle on the pad
@@ -98,6 +104,9 @@ static func from_stats(stats: Dictionary) -> FlightModel:
 	m.cooling_kw = float(stats.get("cooling", 0.0))
 	m.radius_m = float(stats.get("radius", 6.0))
 	m.lift_kn = float(stats.get("lift", 0.0))
+	m.retro_kn = float(stats.get("retro", 0.0))
+	m.rcs_x_kn = float(stats.get("rcs_x", 0.0))
+	m.rcs_y_kn = float(stats.get("rcs_y", 0.0))
 	if stats.has("foot_y") and stats.has("com"):
 		m.foot_m = float((stats["com"] as Vector3).y) - float(stats["foot_y"])
 	return m
@@ -179,6 +188,8 @@ func hurt(amount: float) -> void:
 func _shut_down() -> void:
 	throttle = 0.0
 	lift = 0.0
+	retro = 0.0
+	strafe = Vector2.ZERO
 	braking = false
 	brake_state = ""
 	course_hold = false
@@ -274,13 +285,15 @@ func _max_turn() -> float:
 
 ## Advance by `dt` seconds. `turn` is the pilot's pitch/yaw/roll command, each -1..1; `throttle_cmd` is
 ## -1 (ease off), 0 (hold) or +1 (open up), applied at throttle_rate_per_s.
-func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, lift_cmd: float = 0.0) -> void:
+func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, lift_cmd: float = 0.0, retro_cmd: float = 0.0, strafe_cmd := Vector2.ZERO) -> void:
 	if trimming:
 		throttle = 0.0   # a trim burn was course hold's, not the pilot's: back to their closed throttle
 		trimming = false
 	throttle = clampf(throttle + throttle_cmd * float(tune.get("throttle_rate_per_s", 0.8)) * dt, 0.0, 1.0)
 	var cmd := turn
 	lift = clampf(lift_cmd, 0.0, 1.0)
+	retro = clampf(retro_cmd, 0.0, 1.0) if retro_kn > 0.0 else 0.0
+	strafe = Vector2(clampf(strafe_cmd.x, -1.0, 1.0) if rcs_x_kn > 0.0 else 0.0, clampf(strafe_cmd.y, -1.0, 1.0) if rcs_y_kn > 0.0 else 0.0)
 	if disabled():
 		_shut_down()
 		cmd = Vector3.ZERO
@@ -289,6 +302,9 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 		var auto := _brake(dt)
 		cmd = auto["turn"]
 		throttle = auto["throttle"]
+		retro = float(auto.get("retro", 0.0))
+		if auto.has("strafe"):
+			strafe = auto["strafe"]
 	if course_hold and not braking and course_to != Vector3.INF:
 		var ch := _course()
 		cmd = ch["turn"]
@@ -334,6 +350,21 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 		if not has_fuel():
 			fuel_t = 0.0
 			throttle = 0.0
+	if retro > 0.0 and has_fuel() and scale > 0.0:   # braking thrusters: push backward, burn like the rest
+		var want_r := retro_kn * 1000.0 * retro * scale / (float(tune.get("isp_s", 900.0)) * G0) * dt / 1000.0
+		var burn_r := minf(want_r, fuel_t)
+		var eff_r := burn_r / want_r if want_r > 0.0 else 0.0
+		vel -= forward() * (retro_kn / mass_t()) * retro * scale * eff_r * dt
+		fuel_t -= burn_r
+		fuel_burned_t += burn_r
+	if strafe != Vector2.ZERO and has_fuel() and scale > 0.0 and not landed:   # manoeuvring thrusters
+		var kn := absf(strafe.x) * rcs_x_kn + absf(strafe.y) * rcs_y_kn
+		var want_s := kn * 1000.0 * scale / (float(tune.get("isp_s", 900.0)) * G0) * dt / 1000.0
+		var burn_s := minf(want_s, fuel_t)
+		var eff_s := burn_s / want_s if want_s > 0.0 else 0.0
+		vel += (basis.x * strafe.x * rcs_x_kn + basis.y * strafe.y * rcs_y_kn) / mass_t() * scale * eff_s * dt
+		fuel_t -= burn_s
+		fuel_burned_t += burn_s
 	if lift > 0.0 and has_fuel() and lift_kn > 0.0 and scale > 0.0:
 		var want_l := _lift_flow_kg_s(lift * scale) * dt / 1000.0
 		var burn_l := minf(want_l, fuel_t)
@@ -483,6 +514,19 @@ func _brake(dt: float) -> Dictionary:
 		braking = false
 		brake_state = ""
 		return {"turn": Vector3.ZERO, "throttle": 0.0}
+	# Moving roughly nose-first and slow enough for the braking thrusters: stop on them, nose on, rather
+	# than turning tail-first (a docking approach stays lined up).
+	var a_retro := retro_kn / mass_t() if mass_t() > 0.0 else 0.0
+	if a_retro > 0.0 and vel.dot(forward()) > 0.0 and rad_to_deg(forward().angle_to(vel)) < 30.0 and spd / a_retro < RETRO_STOP_S:
+		brake_state = "retro"
+		# Manoeuvring thrusters, if fitted, take out the sideways drift at the same time.
+		var side := Vector2(vel.dot(basis.x), vel.dot(basis.y))
+		var st := Vector2.ZERO
+		if rcs_x_kn > 0.0 and absf(side.x) > 0.05:
+			st.x = -clampf(side.x / (rcs_x_kn / mass_t() * 1.5), -1.0, 1.0)
+		if rcs_y_kn > 0.0 and absf(side.y) > 0.05:
+			st.y = -clampf(side.y / (rcs_y_kn / mass_t() * 1.5), -1.0, 1.0)
+		return {"turn": Vector3.ZERO, "throttle": 0.0, "retro": clampf(spd / (a_retro * 1.5), 0.05, 1.0), "strafe": st}
 	return _brake_steer(-vel, clampf(spd / (a_max * 1.5), 0.04, 1.0), "stopping")
 
 

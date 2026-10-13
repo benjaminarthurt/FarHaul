@@ -77,8 +77,6 @@ func _walk_input(event: InputEvent) -> void:
 	match event.keycode:
 		KEY_E:
 			sc.use()
-		KEY_ESCAPE:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		KEY_PERIOD:
 			sc.set_warp(sc.warp_index + 1)
 		KEY_COMMA:
@@ -217,8 +215,6 @@ func _suit_input(event: InputEvent) -> void:
 				sc.come_aboard()
 		KEY_Q:
 			sc.come_aboard()
-		KEY_ESCAPE:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 ## Which surface site the ship is at: "pad" or "camp" (by the nearer pad).

@@ -31,7 +31,7 @@ gravity is 1.62 m/s².
 - **Space** fires the lift jets at full power. **H** holds a hover (the jets cancel the fall).
   Tilting with the arrows and Q/E steers, because the jets push along the ship's up axis. W/S still
   runs the main engine.
-- **Esc** hands it to the autopilot. It holds about 150 m while it flies over the pad, then comes
+- **T** hands it to the autopilot. It holds about 150 m while it flies over the pad, then comes
   straight down. It never descends faster than the jets can stop it from that height, and it slows to
   under 1 m/s at the end. From the start point it lands the loaded starter-with-legs in about
   2.5 minutes for about 2 t of fuel.
@@ -94,7 +94,7 @@ cruise:
 - **To the surface:** depart, cruise, then descend onto the pad or camp. From the base's station it
   goes straight to the descent.
 - **From the surface:** the run starts landed on the origin pad (the `ascent` phase). Lift off with
-  Space, or Esc for full lift on auto. At 1.5 km (`ascent_clear_m`) the moon drops away, and the run
+  Space, or T for full lift on auto. At 1.5 km (`ascent_clear_m`) the moon drops away, and the run
   either approaches the base's station or goes into the cruise.
 - **Pad to camp:** a hop across the same ground, a descent from a standing start.
 - **The camp has no beacon,** so no autopilot: you land it by hand, within 60 m (`camp_zone_m`).

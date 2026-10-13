@@ -1,5 +1,5 @@
 extends SceneTree
-## The in-game menu (F10, or Esc in a port) pauses and resumes, saves, opens settings; F3 shows the
+## The in-game menu (Esc or F10, everywhere) pauses and resumes, saves, opens settings; F3 shows the
 ## frame-rate readout; the title screen has no menu. One-time hints show once each, when they fit.
 ## Run: godot --headless --path . --script res://tests/test_game_menu.gd
 var fails := 0
@@ -67,10 +67,41 @@ func _run() -> void:
 	await process_frame
 	var fm: GameMenu = f.get_node_or_null("GameMenu")
 	check(fm != null and fm.in_flight, "flight has the menu")
-	fm.open()
+	f._unhandled_input(_key(KEY_ESCAPE))
+	fm._unhandled_input(_key(KEY_ESCAPE))
+	check(fm.is_open() and paused and not f.leaving, "Esc in flight opens the menu, and the ship stays where it is")
 	check("not saved" in fm.note.text, "and says a flight in progress is not saved")
-	fm.close()
-	f.queue_free()
+	var labels := []
+	for c in fm.extra.get_children():
+		labels.append((c as Button).text)
+	check(labels.size() == 1 and String(labels[0]).begins_with("END THE FLIGHT"), "it offers to end a free flight: %s" % str(labels))
+	fm._unhandled_input(_key(KEY_ESCAPE))
+	check(not fm.is_open() and not paused, "Esc again carries on flying")
+	f.walking = true
+	f._unhandled_input(_key(KEY_ESCAPE))
+	fm._unhandled_input(_key(KEY_ESCAPE))
+	check(fm.is_open() and not f.leaving, "on foot aboard, too")
+	(fm.extra.get_child(0) as Button).pressed.emit()
+	check(not fm.is_open() and f.leaving, "and ending the flight from the menu takes you back to the berth")
+	await process_frame
+	await process_frame
+	var ship_scene := get_root().get_children().filter(func(n: Node) -> bool: return n.get_node_or_null("GameMenu") != null)
+	for n in ship_scene:
+		n.queue_free()
+	await process_frame
+	Session.slot = 2
+	Session.load_slot(2)
+	var y: Node = load(Session.YARD_SCENE).instantiate()
+	root.add_child(y)
+	await process_frame
+	var ym: GameMenu = y.get_node_or_null("GameMenu")
+	y._unhandled_input(_key(KEY_ESCAPE))
+	if ym != null:
+		ym._unhandled_input(_key(KEY_ESCAPE))
+	check(ym != null and ym.is_open() and y.is_inside_tree(), "Esc in the shipyard opens the menu instead of leaving")
+	if ym != null:
+		ym.close()
+	y.queue_free()
 	await process_frame
 	var b: Node = load(Session.BOOT_SCENE).instantiate()
 	root.add_child(b)

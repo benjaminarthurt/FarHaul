@@ -142,7 +142,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	check(f.model.disabled() and f.alerts.size() == 1 and String(f.alerts[0].level) == "breach", "the breach is announced, once")
-	check(f.prompt.text.begins_with("HULL BREACHED") and f.prompt.text.contains("Esc"), "the cockpit says what to do: %s" % f.prompt.text)
+	check(f.prompt.text.begins_with("HULL BREACHED") and f.prompt.text.contains("T: the rescue tug"), "the cockpit says what to do: %s" % f.prompt.text)
 	var st: Dictionary = f.remote_state()
 	check(bool(st.disabled) and bool(st.can_tug) and (st.alerts as Array).size() == 1, "the remote hears about it")
 	check(not bool(f.pilot("throttle", 1.0).ok) and not bool(f.pilot("brake").ok), "the controls are dead")

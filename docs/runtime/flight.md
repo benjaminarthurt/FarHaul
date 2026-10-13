@@ -14,6 +14,24 @@ acceleration is thrust over current mass, and mass is dry plus fuel plus cargo.
 - Turning slows with mass (a loaded ship is sluggish) and with how far the thrust line sits off the
   centre of mass. The rotation assist damps spin when the pilot lets go.
 - The braking autopilot (X) turns the ship retrograde and burns in proportion to the speed left.
+- Braking thrusters (`retro_thrusters`, optional, external) fire toward the bow and push the ship backward:
+  20 kN each, a quarter of an engine. Low profile (`ModuleDef.hug`): a slim fairing whose `Body` the ship
+  view slides flat against the hull face it's bolted to (`ShipView._hug`). They mount on any bare side of the hull (sockets S, E, W, U, D), and
+  count only when their nozzles face forward (`ShipStats` `retro`; the builder warns about any that don't).
+  The pilot holds **B**; they burn fuel like the rest and scale with power, overheating and hull damage.
+  The braking autopilot uses them, nose on, when the ship is moving within 30° of where it points and
+  they can stop it within 40 s (`RETRO_STOP_S`), so a docking approach stays lined up; otherwise it flips
+  and burns as before. Plumes are tagged `retro_flame` (`ShipView.set_retro_flames`).
+  Tests: `tests/test_retro_thrusters.gd`; renders: `tests/capture_retro.gd`.
+- Manoeuvring thrusters (`rcs_thrusters`, optional, external) slide the ship without turning it: 10 kN
+  each way per pod, sideways (ship X) and up/down (ship Y). Mounts on any face, and is low profile like the
+  braking thrusters (a puck under `Body`, slid flat against the hull). The side nozzles turn with
+  the module, so a pod turned a quarter round gives no sideways push (`ShipStats` `rcs_x`, `rcs_y`; the
+  builder warns). The pilot holds **Ctrl + arrows** (the arrows alone still pitch and yaw); they burn
+  fuel and scale like the other thrusters, and do nothing while landed. When the braking autopilot is
+  stopping on braking thrusters, it also uses these to take out sideways and vertical drift. Nozzle plumes
+  are tagged `rcs_flame` with their push direction (`ShipView.set_rcs`).
+  Tests: `tests/test_rcs_thrusters.gd`.
 - Power and heat follow `flight_physics.json`: the engines draw power and shed heat in proportion to throttle.
   A power shortfall browns the engines out (thrust scales by generation over demand); heat builds when the
   ship makes more than its radiators shed, and past the limit the engines shut down until they cool.
@@ -30,7 +48,9 @@ acceleration is thrust over current mass, and mass is dry plus fuel plus cargo.
 
 The player's saved ship (or the starter) is rebuilt around its centre of mass, with chase and
 cockpit cameras and a HUD for speed, closing rate, distance, throttle, fuel, delta-v and mass.
-Keys: W/S throttle, Z cut, arrows pitch and yaw, Q/E roll, X brake, R assist, C camera, F dock, Esc dock.
+Keys: W/S throttle, Z cut, B braking thrusters, arrows pitch and yaw, Q/E roll, X brake, R assist, C camera,
+F dock, T traffic control or the tug, Esc the pause menu (which also ends a free flight or turns a run back:
+`FlightScene.menu_actions()`).
 G gets up from the seat to walk the ship (see walking.md).
 
 ### The hull and the engine (`scripts/ship_skin.gd`, `scripts/engine_parts.gd`)
@@ -143,7 +163,7 @@ the run (`Session.flight_job`). It has three phases.
    the rest toward the target; coasting, it trims drift over 0.3 m/s with small burns of its own (at
    most 20% throttle), then rests the nose on the target. A turn key, X (the braking autopilot takes
    over) or V again lets it go. Out of the 5 degrees, V says how far off you are.
-   Out of fuel, Esc calls a tug to whichever is nearer: on to the destination, and the run is
+   Out of fuel, T calls a tug to whichever is nearer: on to the destination, and the run is
    delivered (berth fee plus the tow), or back to the start. A tug can't land a ship, so a run to the
    surface is towed back. The prompt says which, and the fee.
    Finding the way: an orange arrow round the edge of the screen points to the target (or the station)
@@ -160,11 +180,11 @@ the run (`Session.flight_job`). It has three phases.
    rate running, the rate chosen and why. Every press of `,` `.` or `/` answers on screen. The braking
    autopilot works at any rate.
 3. **Approach.** Arriving at the marker brings up the destination's station and rests the ship 1.5 km off its
-   collar. Docking uses the free-flight rules (nose down the axis, close, under 3 m/s) and settles the run. Esc
+   collar. Docking uses the free-flight rules (nose down the axis, close, under 3 m/s) and settles the run. T
    in this phase is an autopilot dock, so the approach is never a trap.
 
 Fuel is whatever the flight actually burned, so sloppy flying costs more than the DEPART autopilot's textbook
-figure; hull repairs from collisions are charged too. Esc or F at the origin during depart or cruise turns back
+figure; hull repairs from collisions are charged too. TURN BACK in the pause menu (or F at the origin) during depart or cruise turns back
 (fuel and hours charged, the load stays aboard at the start). Running dry means a tug and a tow fee. Settling
 runs the hop's hours and the berth fee through the sim; the run is then delivered at the dock as before.
 
@@ -191,7 +211,7 @@ synthesised by `tools/gen_jump_audio.py` (no samples, no licences; rerun it afte
 `assets/audio/jump/`. Any file can be swapped for a recording of the same name. Levels are placeholders to tune
 by ear in `jump_audio.json`.
 
-Inputs are locked from J until the approach. Before J, Esc or docking back turns the flight round (fuel
+Inputs are locked from J until the approach. Before J, TURN BACK in the pause menu or docking back turns the flight round (fuel
 charged, the load stays aboard). `tests/smoke_jump.gd` runs the whole sequence headless;
 `tests/capture_jump.gd` renders its frames to PNGs under xvfb-run for looking at it.
 

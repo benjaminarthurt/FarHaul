@@ -46,8 +46,8 @@ func _run() -> void:
 	await process_frame
 	check(f.phase == "descent" and f.moon != null and f.model.gravity > 1.0, "arriving brings the descent over the moon")
 	check(f.model.altitude() > 1000.0 and f.hud.text.contains("ALTITUDE"), "high above the pad (%.0f m)" % f.model.altitude())
-	f._unhandled_input(_key(KEY_ESCAPE))
-	check(f.model.autoland, "Esc hands it to the autopilot")
+	f._unhandled_input(_key(KEY_T))
+	check(f.model.autoland, "T hands it to the autopilot")
 	var t := 0.0
 	while t < 400.0 and not f.model.landed:
 		f._process(0.05)

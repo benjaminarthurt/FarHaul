@@ -208,11 +208,11 @@ func _update_transfer_hud() -> void:
 	elif not sc.model.has_fuel() and not sc.xfer.arrived(sc.model):
 		var fee := ShipStats.commas(sc.tow_fee())
 		if sc.tow_goes_on():
-			hint = "OUT OF FUEL. Esc: a tug tows you on to %s, the nearer (%s), and the run is delivered. Tow %s cr, sympathy extra." % [String(sc.job.destination), _distance(sc.xfer.range_to(sc.model)), fee]
+			hint = "OUT OF FUEL. T: a tug tows you on to %s, the nearer (%s), and the run is delivered. Tow %s cr, sympathy extra." % [String(sc.job.destination), _distance(sc.xfer.range_to(sc.model)), fee]
 		elif String(sc.job.get("dest_kind", "")) in LocalSpace.SURFACE:
-			hint = "OUT OF FUEL. Esc: a tug tows you back to the start. It's a tug: it can't land you. Tow %s cr." % fee
+			hint = "OUT OF FUEL. T: a tug tows you back to the start. It's a tug: it can't land you. Tow %s cr." % fee
 		else:
-			hint = "OUT OF FUEL. Esc: a tug tows you back to the start, the nearer (%s). Tow %s cr, payable in advance." % [_distance(sc.model.pos.length()), fee]
+			hint = "OUT OF FUEL. T: a tug tows you back to the start, the nearer (%s). Tow %s cr, payable in advance." % [_distance(sc.model.pos.length()), fee]
 	elif sc.model.overheated:
 		hint = "ENGINES OVERHEATED. Wait while they cool and sulk."
 	elif sc.model.braking:
@@ -226,7 +226,7 @@ func _update_transfer_hud() -> void:
 	elif sc.beacon != null and not sc.beacon.visible:
 		hint = "The destination is off screen. Turn toward the orange arrow; it knows."
 	elif sc.model.speed() < 5.0:
-		hint = "Point at the diamond, throttle up (W), period speeds time up. Esc turns back. The cargo won't haul itself."
+		hint = "Point at the diamond, throttle up (W), period speeds time up. Esc for the menu to turn back. The cargo won't haul itself."
 	sc.prompt.text = hint
 
 
@@ -253,8 +253,17 @@ func _update_hud() -> void:
 	var at_helm := not sc.walking and not sc.outside and not sc._jumping()
 	if sc.model.disabled() and at_helm:
 		sc.prompt.text = sc.rescue_hint()
-	elif at_helm and sc.notice_s > 0.0 and sc.notice.begins_with("HULL"):
-		sc.prompt.text = sc.notice   # a hull warning wins the prompt everywhere, not just on a run
+	elif at_helm and sc.notice_s > 0.0:
+		sc.prompt.text = sc.notice   # a fresh message wins the prompt everywhere, not just on a run
+	if sc.model.strafe != Vector2.ZERO and at_helm:
+		var dirs := PackedStringArray()
+		if sc.model.strafe.x < 0.0: dirs.append("LEFT")
+		if sc.model.strafe.x > 0.0: dirs.append("RIGHT")
+		if sc.model.strafe.y > 0.0: dirs.append("UP")
+		if sc.model.strafe.y < 0.0: dirs.append("DOWN")
+		sc.hud.text += "\nMANOEUVRING  %s" % " ".join(dirs)
+	if sc.model.retro > 0.02 and at_helm and not sc._on_surface():
+		sc.hud.text += "\nBRAKING THRUSTERS  %d%%    -%.2f m/s²" % [roundi(sc.model.retro * 100.0), sc.model.retro_kn * sc.model.retro * sc.model.thrust_scale() / maxf(sc.model.mass_t(), 0.001)]
 	sc.prompt.add_theme_color_override("font_color", Brand.ALARM if sc.model.disabled() or (sc.notice_s > 0.0 and sc.notice.begins_with("HULL")) else Brand.AMBER)
 
 
@@ -285,7 +294,7 @@ func _update_hud_body() -> void:
 		_hull_line(),
 		"ASSIST %s   %s" % ["ON" if sc.model.assist else "OFF", "AUTOPILOT BRAKING" if sc.model.braking else ""]])
 	if sc.phase == "approach":
-		lines.insert(0, "APPROACH  %s    Esc: autopilot dock" % String(sc.job.destination).to_upper())
+		lines.insert(0, "APPROACH  %s    T: traffic control brings you in" % String(sc.job.destination).to_upper())
 	sc.hud.text = "\n".join(lines)
 	sc.bar.value = sc.model.throttle
 	if sc.model.can_dock():
@@ -333,7 +342,7 @@ func _walk_prompt() -> void:
 			hint = "E: leave the ship" if sc._berthed() else "Outer hatch stays shut until you berth. Outside is mostly vacuum."
 	var warn := ""
 	if sc.model.disabled():
-		warn = "HULL BREACHED: back to the helm and call the tug (Esc)"
+		warn = "HULL BREACHED: back to the helm and call the tug (T)"
 	elif sc.model.overheated:
 		warn = "ENGINES OVERHEATED"
 	elif not sc.model.has_fuel() and sc.model.speed() > 1.0:
@@ -358,12 +367,12 @@ func _update_descent_hud() -> void:
 	var target := "MINING CAMP" if sc._target_kind == "camp" else "BASE PAD"
 	var head := ""
 	if sc.phase == "ascent":
-		head = "LIFT-OFF  %s    %s" % [String(body.get("name", "Moon")).to_upper(), "AUTO LIFT ON (Esc)" if sc.auto_ascent else "Esc: lift off on auto"]
+		head = "LIFT-OFF  %s    %s" % [String(body.get("name", "Moon")).to_upper(), "AUTO LIFT ON (T)" if sc.auto_ascent else "T: lift off on auto"]
 	elif sc.job.is_empty():
 		head = "%s  %s    %s" % [String(body.get("name", "Moon")).to_upper(), target, "HOVER HOLD (H)" if sc.hover_hold else "F on the pad: shut down"]
 	else:
 		head = "DESCENT  %s  %s    %s" % [String(sc.job.get("destination", "")).to_upper(), String(body.get("name", "")).to_upper(),
-				"AUTOLAND ON (Esc)" if sc.model.autoland else ("no beacon: land by hand" if not sc._beacon else ("HOVER HOLD (H)" if sc.hover_hold else "Esc: autoland"))]
+				"AUTOLAND ON (T)" if sc.model.autoland else ("no beacon: land by hand" if not sc._beacon else ("HOVER HOLD (H)" if sc.hover_hold else "T: autoland"))]
 	var lines := PackedStringArray([head,
 		"ALTITUDE  %.0f m    V/S  %+.1f m/s    DRIFT  %.1f m/s" % [alt, sc.model.vel.y, Vector2(sc.model.vel.x, sc.model.vel.z).length()],
 		("CLIMB TO  %.0f m" % float(sc.model.land_cfg.get("ascent_clear_m", 1500.0))) if sc.phase == "ascent" else "%s  %.0f m    TILT  %.0f°" % [target, to_pad, sc.model.tilt_deg()],
@@ -390,7 +399,7 @@ func _update_descent_hud() -> void:
 		return
 	if sc.phase == "ascent":
 		if sc.model.landed:
-			hint = "Space: lift off (or Esc for auto).  F: stay and shut down.  G: get up and walk outside."
+			hint = "Space: lift off (or T for auto).  F: stay and shut down.  G: get up and walk outside."
 		elif not sc.model.has_fuel():
 			hint = "OUT OF FUEL"
 		else:
@@ -408,7 +417,7 @@ func _update_descent_hud() -> void:
 	elif alt < 60.0 and sc.model.vel.y < -float(sc.model.land_cfg.get("touchdown_speed_m_s", 3.0)) * 1.5:
 		hint = "SINKING FAST: hold Space"
 	elif not sc.model.autoland:
-		hint = "Space: lift jets.  H: hover.  Tilt to drift toward the pad.%s" % ("  Esc: let the autopilot land." if sc._beacon else "")
+		hint = "Space: lift jets.  H: hover.  Tilt to drift toward the pad.%s" % ("  T: let the autopilot land." if sc._beacon else "")
 	sc.prompt.text = hint
 
 

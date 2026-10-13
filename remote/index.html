@@ -221,8 +221,8 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
           </div>
           <button class="key wide" id="kReal">Back to x1<small>/</small></button>
           <button class="key wide go" id="kDock" hidden>Dock<small>in range · F</small></button>
-          <button class="key wide go" id="kTraffic" hidden>Let traffic control bring her in<small>on the approach · Esc</small></button>
-          <button class="key wide" id="kTug" hidden><span id="tugText">Call the tug</span><small id="tugWhy">out of fuel · Esc</small></button>
+          <button class="key wide go" id="kTraffic" hidden>Let traffic control bring her in<small>on the approach · T</small></button>
+          <button class="key wide" id="kTug" hidden><span id="tugText">Call the tug</span><small id="tugWhy">out of fuel · T</small></button>
         </div>
       </div>
     </section>
@@ -349,7 +349,7 @@ function render() {
     $("kTraffic").hidden = !(s.approach && !s.can_dock);
     $("kTug").hidden = !(s.can_tug || s.out_of_fuel);
     $("tugText").textContent = s.disabled ? "Call the rescue tug" : "Call the tug";
-    $("tugWhy").textContent = s.disabled ? "hull breached · Esc" : "out of fuel · Esc";
+    $("tugWhy").textContent = s.disabled ? "hull breached · T" : "out of fuel · T";
     $("helm").classList.toggle("dead", !!s.disabled);
     const surface = !!s.on_surface;
     $("kBrake").disabled = surface; $("lever").style.opacity = surface ? .4 : 1;

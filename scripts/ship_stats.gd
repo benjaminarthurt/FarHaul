@@ -37,6 +37,11 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 	var cargo_carried := 0.0
 	var lift := 0.0
 	var legs := 0
+	var retro := 0.0
+	var retro_total := 0.0
+	var rcs_x := 0.0   # kN each way, sideways
+	var rcs_y := 0.0   # kN each way, up and down
+	var rcs_sideways := 0
 
 	for mi in ship.modules.size():
 		var m: Dictionary = ship.modules[mi]
@@ -62,6 +67,15 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		lift += d.lift
 		if d.lift > 0.0:
 			legs += 1
+		if d.rcs > 0.0:   # side nozzles push along the module's X (which turns with it); top and bottom along Y
+			var side := absf(float(ShipGrid.rotate_cell(Vector3i(1, 0, 0), m.rot).x))
+			rcs_x += d.rcs * side
+			rcs_y += d.rcs
+			if side < 0.5:
+				rcs_sideways += 1
+		if d.retro > 0.0:   # braking thrusters fire along the module's local -Z, pushing the ship toward +Z
+			retro_total += d.retro
+			retro += d.retro * maxf(float(ShipGrid.rotate_cell(Vector3i(0, 0, 1), m.rot).z), 0.0)
 		var carried := d.cargo_capacity * cargo_load
 		if manifest != null:
 			carried = manifest.mass_at(mi)
@@ -129,6 +143,10 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 			warnings.append("Crew: %d berths needed, %d fitted. Add crew bunks or quarters; cargo makes a poor pillow" % [crew_needed, berths])
 		if cargo_capacity <= 0.0:
 			warnings.append("No cargo capacity: add a hold or rack. Without one it's a yacht")
+		if retro_total - retro > 0.01:
+			warnings.append("Some braking thrusters aren't facing the bow: they'll brake sideways, which is called steering, badly")
+		if rcs_sideways > 0:
+			warnings.append("Manoeuvring thrusters turned a quarter round push fore and aft, not sideways. Square them up (R)")
 		if drive_count == 0:
 			warnings.append("No FTL drive: this ship stays inside one system. The stars can wait")
 
@@ -169,6 +187,10 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		"centre": centre,  # middle of the occupied cells' bounding box
 		"lift": lift,      # kN of lift jets (along +Y)
 		"legs": legs,      # lander leg modules fitted
+		"retro": retro,    # kN of braking thrust pushing the ship backward
+		"retro_a": retro / maxf(loaded, 0.001),   # m/s² they slow the loaded ship by
+		"rcs_x": rcs_x,    # kN each way of manoeuvring thrust, sideways
+		"rcs_y": rcs_y,    # and up and down
 		"foot_y": lo.y - ShipGrid.CELL * 0.5 if not ship.modules.is_empty() else 0.0,   # lowest point, ship coordinates
 		"lift_g": lift / maxf(loaded, 0.001),   # m/s² the lift jets can hold up at this load: must beat a world's gravity to land
 		"warnings": warnings,
@@ -191,6 +213,10 @@ static func format(s: Dictionary) -> String:
 	])
 	if float(s.get("lift", 0.0)) > 0.0:
 		lines.append("Lift  %.0f kN   lands where gravity is under %.2f g loaded" % [s.lift, float(s.lift_g) / G])
+	if float(s.get("retro", 0.0)) > 0.0:
+		lines.append("Braking  %.0f kN   slows %.2f m/s² loaded, without turning round" % [s.retro, float(s.retro_a)])
+	if float(s.get("rcs_y", 0.0)) > 0.0:
+		lines.append("Manoeuvring  %.0f kN sideways, %.0f kN up/down   %.2f m/s² loaded" % [s.rcs_x, s.rcs_y, float(s.rcs_y) / maxf(float(s.loaded), 0.001)])
 	if s.cargo_used_slots >= 0:
 		lines.append("Cargo  %.1f t   worth %s cr" % [s.cargo_mass, _commas(roundi(s.cargo_value))])
 	lines.append("Centre of mass  x %+.1f  y %+.1f  z %+.1f m" % [rel.x, rel.y, rel.z])

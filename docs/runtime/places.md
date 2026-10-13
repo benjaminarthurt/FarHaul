@@ -35,7 +35,7 @@ your ship.
 ## Controls
 
 WASD to walk, mouse or arrows to look, Shift to run. E uses the desk in front of you (within 2.4 m).
-T opens the terminal. Esc closes a desk, or frees the mouse. The terminal's STEP AWAY FROM THE TERMINAL
+T opens the terminal. Esc closes a desk, or with none open brings up the pause menu. The terminal's STEP AWAY FROM THE TERMINAL
 button brings you back.
 
 ## The desks

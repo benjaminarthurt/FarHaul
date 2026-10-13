@@ -188,6 +188,11 @@ func map_state() -> Dictionary:
 			"where": "%s at %s" % [where, String(LocalSpace.node(id).get("name", "the station"))]}
 
 
+## Esc closes an open desk before it opens the pause menu.
+func wants_escape() -> bool:
+	return open_desk != ""
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if leaving:
 		return

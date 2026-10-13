@@ -40,6 +40,9 @@ const FACES := [
 @export var berths := 0  ## crew who can sleep aboard
 @export var drive := 0.0  ## jump drive: fraction added to cruising speed (0.3 is +30%)
 @export var lift := 0.0  ## kN of downward-firing lift jets (push the ship along +Y): needed to land
+@export var retro := 0.0  ## kN of forward-firing braking thrusters (push the ship backward, along +Z)
+@export var rcs := 0.0  ## kN each way of manoeuvring thrusters: left, right, up and down, without turning
+@export var hug := false  ## a low-profile part: the ship view slides its "Body" flat against the hull it's bolted to
 @export var cargo_slots := 0  ## standard containers this module can carry
 @export var cargo_capacity := 0.0  ## tonnes of freight when every slot is full
 
@@ -402,6 +405,62 @@ func _build_external(root: Node3D) -> void:
 			root.add_child(jet)
 			EngineParts.bell(jet, 0.0, 0.45, 0.12, 0.3, jet_steel, soot, jet_steel, _glow(Color(1.0, 0.72, 0.42)), 0.03)
 			EngineParts.plume(jet, 0.45, 0.3, 2.4, "lift_flame")
+	elif shape == &"retro":
+		# Braking thrusters: a slim fairing that lies flat on the hull, with two small nozzles recessed in
+		# its nose firing forward to push the ship backward. Everything sits under a "Body" node that the
+		# ship view slides against whichever hull face it's bolted to (ShipView._hug).
+		var body := Node3D.new()
+		body.name = "Body"
+		root.add_child(body)
+		var fairing := CapsuleMesh.new()
+		fairing.radius = 0.5
+		fairing.height = 2.8
+		fairing.radial_segments = 16
+		fairing.rings = 4
+		fairing.material = mat
+		var fi := MeshInstance3D.new()
+		fi.mesh = fairing
+		fi.rotation_degrees.x = 90.0          # lying along Z
+		fi.scale = Vector3(1.0, 1.0, 0.42)    # flattened: thin across the hull, wide along it
+		fi.position = Vector3(0, 0, 0.15)
+		body.add_child(fi)
+		_add_box(body, Vector3(0, -0.12, 0.3), Vector3(0.7, 0.1, 1.8), dark)   # the foot it bolts down by
+		var r_steel := Interiors.flat(Color(0.34, 0.33, 0.34), 0.45, 0.6)
+		var r_soot := Interiors.flat(Color(0.10, 0.09, 0.09), 0.9, 0.2)
+		for sx in [-1.0, 1.0]:
+			var nz := Node3D.new()
+			nz.position = Vector3(sx * 0.2, 0.02, -0.95)
+			nz.rotation_degrees.y = 180.0   # the parts' +Z turns to -Z: out of the nose
+			body.add_child(nz)
+			EngineParts.bell(nz, 0.0, 0.35, 0.06, 0.13, r_steel, r_soot, r_steel, _glow(Color(1.0, 0.72, 0.42)), 0.02)
+			EngineParts.plume(nz, 0.35, 0.13, 3.0, "retro_flame")
+	elif shape == &"rcs":
+		# Manoeuvring thrusters: a low puck that sits flat on the hull (under a "Body" node the ship view
+		# slides against the hull, like the braking thrusters), with small nozzles round its rim and one on
+		# its face. Which way each one pushes is read from where it ends up pointing (ShipView.set_rcs).
+		var body := Node3D.new()
+		body.name = "Body"
+		root.add_child(body)
+		var puck := CylinderMesh.new()
+		puck.top_radius = 0.55
+		puck.bottom_radius = 0.7
+		puck.height = 0.3
+		puck.radial_segments = 20
+		puck.rings = 1
+		puck.material = mat
+		var pi := MeshInstance3D.new()
+		pi.mesh = puck
+		pi.position = Vector3(0, 0.0, 0)
+		body.add_child(pi)
+		var q_steel := Interiors.flat(Color(0.34, 0.33, 0.34), 0.45, 0.6)
+		var q_soot := Interiors.flat(Color(0.10, 0.09, 0.09), 0.9, 0.2)
+		for out in [Vector3.RIGHT, Vector3.LEFT, Vector3.UP]:
+			var nz := Node3D.new()
+			nz.position = out * (0.6 if out.y == 0.0 else 0.15)
+			nz.basis = Basis(Quaternion(Vector3(0, 0, 1), out))   # the parts' +Z turns to `out`
+			body.add_child(nz)
+			EngineParts.bell(nz, 0.0, 0.22, 0.05, 0.12, q_steel, q_soot, q_steel, _glow(Color(1.0, 0.72, 0.42)), 0.02)
+			EngineParts.plume(nz, 0.22, 0.12, 2.6, "rcs_flame")
 	elif shape == &"drive":
 		# A heavy ring on a short spine: the jump coil.
 		var ring := TorusMesh.new()

@@ -104,7 +104,7 @@ func _run() -> void:
 	f._process(0.05)
 	check(f.tow_goes_on() and String(f.prompt.text).contains("tows you on") and String(f.prompt.text).contains("delivered"), "nearer the destination, it says the tug takes you on (%s)" % f.prompt.text)
 	var dest := String(Session.active_contract().get("destination_port_id", ""))
-	_key(f, KEY_ESCAPE)
+	_key(f, KEY_T)
 	check(String(Session.flash).contains("tug"), "the message says a tug towed you in (%s)" % Session.flash)
 	await process_frame
 	check(String(Session.profile.port_id) == dest and String(Session.active_contract().get("status", "")) == "arrived",

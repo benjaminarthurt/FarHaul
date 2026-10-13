@@ -5,7 +5,9 @@ extends Node3D
 ##
 ## Costs: fuel burned and hull repairs are charged and the clock advances when the flight ends.
 ## Controls: W/S throttle up/down, Z cut throttle, arrow keys pitch and yaw, Q/E roll, X braking
-## autopilot, R toggle rotation assist, C camera, F dock when close and slow, Esc back to the dock.
+## autopilot, R toggle rotation assist, C camera, F dock when close and slow, T traffic control (on the
+## approach) or the tug (out of fuel or breached). Esc is the pause menu, which also turns back or ends a
+## free flight (menu_actions()).
 ## G gets up from the helm to walk the ship (see ShipWalk): WASD walk, mouse or arrows look, Shift run,
 ## E uses the helm, a ladder or the airlock. The ship carries on as it was while nobody is at the helm.
 
@@ -63,9 +65,9 @@ var help: Label
 var crosshair: Label
 const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement, times the mouse sensitivity setting
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
-const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   , . time  / x1   M map   G get up   Esc back to the dock   F10 menu"
-const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   M map   Esc frees the mouse   F10 menu"
-const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   Esc autoland   F unload (landed on the pad)   G get up   C camera   M map   F10 menu"
+const FLY_HELP := "W/S throttle   Z cut   B braking thrusters   arrows pitch+yaw   Ctrl+arrows slide   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   T traffic/tug   , . time  / x1   M map   G get up   Esc menu"
+const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   M map   Esc menu"
+const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   T autoland   F unload (landed on the pad)   G get up   C camera   M map   Esc menu"
 const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   F10 menu"
 var ship_data: ShipData
 var moon: MoonScenery          ## the ground and everything on it, once the ship is over a moon
@@ -78,7 +80,7 @@ var suit_hatch := Vector3.ZERO
 var pad_label: Label3D
 var reticle: FlightReticle
 var world_env: Environment
-var auto_ascent := false       ## Esc while lifting off: full lift until clear of the surface
+var auto_ascent := false       ## T while lifting off: full lift until clear of the surface
 var _beacon := true            ## the target pad has a landing beacon (the base does, the mining camp does not)
 var _target_kind := "pad"      ## which surface site the descent is for
 var _dv_space := 0.0           ## the part of a run's delta-v spent in space (the rest is landing or lifting off)
@@ -287,6 +289,8 @@ func _process(delta: float) -> void:
 		return
 	var turn := Vector3.ZERO
 	var thr := 0.0
+	var retro_cmd := 0.0
+	var strafe_cmd := Vector2.ZERO
 	var lift_cmd := _lift_command()
 	if outside:
 		_suit_step(delta)
@@ -296,17 +300,29 @@ func _process(delta: float) -> void:
 		for k in held_from_before.duplicate():
 			if not Input.is_key_pressed(k):
 				held_from_before.erase(k)
-		if _flight_key(KEY_UP): turn.x += 1.0
-		if _flight_key(KEY_DOWN): turn.x -= 1.0
-		if _flight_key(KEY_LEFT): turn.y += 1.0
-		if _flight_key(KEY_RIGHT): turn.y -= 1.0
+		if Input.is_key_pressed(KEY_CTRL):   # Ctrl + arrows: manoeuvring thrusters, sideways and up/down
+			if _flight_key(KEY_UP): strafe_cmd.y += 1.0
+			if _flight_key(KEY_DOWN): strafe_cmd.y -= 1.0
+			if _flight_key(KEY_LEFT): strafe_cmd.x -= 1.0
+			if _flight_key(KEY_RIGHT): strafe_cmd.x += 1.0
+			if strafe_cmd != Vector2.ZERO and model.rcs_y_kn <= 0.0 and notice_s <= 0.0:
+				say("No manoeuvring thrusters fitted. Sideways is a shipyard purchase.")
+		else:
+			if _flight_key(KEY_UP): turn.x += 1.0
+			if _flight_key(KEY_DOWN): turn.x -= 1.0
+			if _flight_key(KEY_LEFT): turn.y += 1.0
+			if _flight_key(KEY_RIGHT): turn.y -= 1.0
 		if _flight_key(KEY_Q): turn.z += 1.0
 		if _flight_key(KEY_E): turn.z -= 1.0
 		if _flight_key(KEY_W): thr += 1.0
 		if _flight_key(KEY_S): thr -= 1.0
 		if _flight_key(KEY_Z):
 			model.throttle = 0.0
-	if turn != Vector3.ZERO or thr != 0.0:
+		if _flight_key(KEY_B) and not _on_surface():
+			retro_cmd = 1.0
+			if model.retro_kn <= 0.0 and notice_s <= 0.0:
+				say("No braking thrusters fitted. The shipyard sells them; physics doesn't give them away.")
+	if turn != Vector3.ZERO or thr != 0.0 or retro_cmd > 0.0 or strafe_cmd != Vector2.ZERO:
 		model.braking = false          # any pilot input takes the controls back
 	if turn != Vector3.ZERO and model.course_hold:
 		model.course_hold = false      # steering by hand: course hold lets go (the throttle stays the pilot's anyway)
@@ -314,12 +330,12 @@ func _process(delta: float) -> void:
 	if model.course_hold and not (phase == "cruise" or phase == "depart"):
 		model.course_hold = false
 	if xfer == null:
-		model.step(minf(delta, 0.05), turn, thr, lift_cmd)
+		model.step(minf(delta, 0.05), turn, thr, lift_cmd, retro_cmd, strafe_cmd)
 	else:
 		var total := minf(delta, 0.05) * float(_warp())
 		var n := maxi(1, ceili(total / 0.05))
 		for i in n:
-			model.step(total / float(n), turn, thr, lift_cmd)
+			model.step(total / float(n), turn, thr, lift_cmd, retro_cmd, strafe_cmd)
 			if phase == "cruise" and xfer.arrived(model):
 				if _can_land():
 					_begin_descent()
@@ -347,6 +363,8 @@ func _process(delta: float) -> void:
 	view.set_flames(model.throttle > 0.02 and model.has_fuel())
 	view.set_throttle(model.throttle)
 	view.set_lift_flames(model.lift > 0.03 and model.has_fuel())
+	view.set_retro_flames(model.retro > 0.02 and model.has_fuel())
+	view.set_rcs(model.strafe if model.has_fuel() else Vector2.ZERO)
 	_mix_audio(delta)
 	for ring in station.get_children():
 		if ring.has_meta("spin"):
@@ -401,13 +419,13 @@ func pilot(action: String, value: float = 0.0) -> Dictionary:
 				_arrived = true   # docked at the destination
 			_return_to_dock()
 			return {"ok": true, "message": "Docking."}
-		"traffic":   # on the approach, station traffic control brings the ship in (Esc at the helm)
+		"traffic":   # on the approach, station traffic control brings the ship in (T at the helm)
 			if phase != "approach":
 				return {"ok": false, "message": "Traffic control only takes ships on the approach."}
 			_arrived = true
 			_return_to_dock()
 			return {"ok": true, "message": "Traffic control has you."}
-		"tug":   # out of fuel, or the hull breached: the tug (Esc at the helm)
+		"tug":   # out of fuel, or the hull breached: the tug (T at the helm)
 			if model.has_fuel() and not model.disabled():
 				return {"ok": false, "message": "There's fuel in the tank and air in the hull. The tug only comes for the helpless."}
 			if tow_goes_on():
@@ -612,7 +630,7 @@ func _check_hull() -> void:
 func hull_warning() -> String:
 	var h := roundi(model.hull() * 100.0)
 	if model.disabled():
-		return "HULL BREACHED. Nothing answers the helm. Esc calls the rescue tug, and the salvage crew sends a bill."
+		return "HULL BREACHED. Nothing answers the helm. T calls the rescue tug, and the salvage crew sends a bill."
 	if model.hull() < 0.1:
 		return "HULL %d%%. One more good knock and she's a hulk. Gently. Very gently." % h
 	if model.hull() < 0.25:
@@ -630,7 +648,7 @@ func rescue_hint() -> String:
 		where = "on to %s (nearer), run delivered" % String(job.destination) if tow_goes_on() else "back to the start"
 	elif String(job.get("kind", "")) == "jump":
 		where = "in to %s" % String(job.destination) if bool(job.get("jumped", false)) else "back to the start"
-	return "HULL BREACHED. Nothing answers the helm.\nEsc: the rescue tug takes you %s. Tow and salvage %s cr. Some of the load goes over the side." % [where, fee]
+	return "HULL BREACHED. Nothing answers the helm.\nT: the rescue tug takes you %s. Tow and salvage %s cr. Some of the load goes over the side." % [where, fee]
 
 
 ## What the tug would cost, for the prompt.
@@ -646,6 +664,8 @@ func brake_status() -> String:
 	var take := "   X or any control: take over"
 	var at_target := model.brake_to != Vector3.INF
 	match model.brake_state:
+		"retro":
+			return "AUTOPILOT: braking thrusters, nose on, %.1f m/s to go%s" % [model.speed(), take]
 		"coasting":
 			return "AUTOPILOT: stopping at the target. Coasting tail-first, burn in %s%s" % [_clock(model.brake_burn_in_s), take]
 		"burning":
@@ -732,7 +752,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if _on_surface() and not leaving and event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
-			KEY_ESCAPE:
+			KEY_T:
 				if model.disabled():
 					_return_to_dock()   # the rescue crawler drags the wreck home
 					return
@@ -786,12 +806,39 @@ func _unhandled_input(event: InputEvent) -> void:
 			pilot("warp_reset")
 		KEY_F:
 			pilot("dock")
-		KEY_ESCAPE:
-			if phase == "approach":
-				_arrived = true   # the station's traffic control brings the ship in
-			elif tow_goes_on():
-				_arrived = true   # out of fuel nearer the destination: the tug takes you on and the run is delivered
-			_return_to_dock()
+		KEY_T:
+			call_for_help()
+
+
+## T at the helm: on the approach, station traffic control brings the ship in; out of fuel or with the
+## hull breached, the tug comes. Otherwise nobody is coming, and the cockpit says so.
+func call_for_help() -> void:
+	if phase == "approach":
+		pilot("traffic")
+	elif not model.has_fuel() or model.disabled():
+		pilot("tug")
+	else:
+		say("Traffic control only takes ships on the approach, and the tug only comes for the helpless. Esc for the menu if you're turning back.", 4.0)
+
+
+## What the pause menu (Esc) offers in flight, above Save: the tug or traffic control when they'd come,
+## and turning back or ending a free flight. [{text, call}]
+func menu_actions() -> Array:
+	var out := []
+	if leaving or _jumping():
+		return out
+	if model.disabled() or (not model.has_fuel() and _stranded()):
+		out.append({"text": "CALL THE RESCUE TUG  %s cr" % ShipStats.commas(tow_fee() + salvage_fee) if model.disabled() else "CALL THE TUG  %s cr" % ShipStats.commas(tow_fee()),
+				"call": func() -> void: call_for_help() if not _on_surface() else _return_to_dock()})
+	elif phase == "approach":
+		out.append({"text": "LET TRAFFIC CONTROL BRING HER IN", "call": func() -> void: pilot("traffic")})
+	elif xfer != null and (phase == "depart" or phase == "cruise"):
+		out.append({"text": "TURN BACK: FLY HOME, LOAD STILL ABOARD", "call": _return_to_dock})
+	elif String(job.get("kind", "")) == "jump" and phase == "depart":
+		out.append({"text": "TURN BACK BEFORE THE JUMP", "call": _return_to_dock})
+	elif job.is_empty() and not _on_surface():
+		out.append({"text": "END THE FLIGHT: BACK TO THE BERTH", "call": _return_to_dock})
+	return out
 
 
 func _return_to_dock() -> void:
@@ -963,7 +1010,7 @@ func _exit_tree() -> void:
 ## breathing outside, and footsteps on deck or in the dust.
 func _mix_audio(_delta: float) -> void:
 	var fuel := model.has_fuel()
-	var thr := absf(model.throttle) if fuel else 0.0
+	var thr := maxf(absf(model.throttle), model.retro * 0.6) if fuel else 0.0   # the braking thrusters are a smaller roar
 	var lift := model.lift if fuel else 0.0
 	sounds.level("engine", 0.0 if outside else thr, 0.8 + 0.4 * thr)
 	sounds.level("lift", 0.0 if outside else lift, 0.9 + 0.3 * lift)
