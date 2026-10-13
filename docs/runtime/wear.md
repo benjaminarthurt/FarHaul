@@ -42,3 +42,10 @@ The HUD and the remote list the parts in trouble ("Engine FAILED, Radiator 18%")
 - **Repair desk**: OVERHAUL THE WORKING PARTS sets everything to new for the parts' cost ×
   `overhaul_fraction_of_part` × wear, at the difficulty's maintenance rate and the site's repair rate.
   Spares kits are sold there (1,500 cr, 4 aboard at most).
+
+## Crew
+
+An engineer aboard cuts all wear and services parts in flight and between trips, by the same rules as
+the wrench; see `docs/runtime/crew.md`. A flown jump's engine and radiator wear is applied by the
+flight (`CrewWork.after_jump`), not `Session.commit_jump`, so it isn't lost when the flight saves its
+own wear.

@@ -5,6 +5,7 @@ extends RefCounted
 ## store and the gate aboard. It fills the scene's panel with notes and action buttons.
 
 var sc: PlaceScene   ## the scene this works on
+var _letting_go := ""  ## crew id asked to be let go once: a second click does it
 
 
 func _init(scene: PlaceScene) -> void:
@@ -173,6 +174,57 @@ func _people_section() -> void:
 			sc._refill(), not busy and not job.has("locked"))
 
 
+## Your crew (Crew), with a button to let each go, and who is looking for a berth here today.
+func _crew_section() -> void:
+	if Session.slot < 0 or Session.sim == null:
+		return
+	var loaded := Session._load_ship(SaveSlots.read(Session.slot))
+	if loaded.is_empty():
+		return
+	var st := Session.ship_stats(loaded.ship)
+	var free := Session.free_berths(st)
+	var mult := float(SimShip.level(String(Session.profile.get("difficulty", "normal"))).get("wage_mult", 1.0))
+	var roster := Session.crew()
+	sc.panel_list.add_child(Brand.heading("YOUR CREW", 15))
+	var need := int(st.get("crew_needed", 1))
+	sc.panel_list.add_child(Brand.note("%d aboard counting you, %d berth%s, %d free. %s" % [Session.crew_aboard(), int(st.get("berths", 0)), "" if int(st.get("berths", 0)) == 1 else "s", maxi(0, free),
+			("This ship needs %d aboard to take freight: hire %d more." % [need, need - Session.crew_aboard()]) if Session.crew_aboard() < need else "Wages are paid daily, in port or out."], 14))
+	if roster.is_empty():
+		sc.panel_list.add_child(Brand.note("Just you. Every repair is yours, every brake point, every crate.", 14))
+	for p in roster:
+		var who: Dictionary = p
+		var sev := roundi(float(who.wage) * float(Crew.cfg().get("severance_days", 2)) * mult)
+		var asked := _letting_go == String(who.id)
+		var txt := "%s  ·  %s, skill %d  ·  %s cr/day\n%s  %s" % [String(who.name), Crew.role_name(String(who.role)), int(who.skill),
+				ShipStats.commas(roundi(float(who.wage) * mult)), String(Crew.role(String(who.role)).get("does", "")),
+				("LET %s GO? Click again: %s cr severance." % [Crew.short(who).to_upper(), ShipStats.commas(sev)]) if asked else "Click to let go (%s cr severance)." % ShipStats.commas(sev)]
+		sc._action(txt, func() -> void:
+			if _letting_go != String(who.id):
+				_letting_go = String(who.id)
+				sc._refill()
+				return
+			_letting_go = ""
+			var r := Session.fire(String(who.id))
+			sc._say(String(r.message))
+			sc._refill())
+	sc.panel_list.add_child(Brand.heading("LOOKING FOR A BERTH", 15))
+	var cands := Session.crew_candidates()
+	if cands.is_empty():
+		sc.panel_list.add_child(Brand.note("Nobody's looking today. Try tomorrow, or a busier port.", 14))
+	if free <= 0 and not cands.is_empty():
+		sc.panel_list.add_child(Brand.note("No free berth to offer. Fit crew bunks or quarters at a shipyard first.", 14))
+	for p in cands:
+		var cand: Dictionary = p
+		var fee := roundi(float(cand.wage) * float(Crew.cfg().get("hire_fee_days", 1)) * mult)
+		var txt := "%s  ·  %s, skill %d  ·  %s, %s cr/day, %s cr to sign\n\"%s\" %s" % [String(cand.name), Crew.role_name(String(cand.role)), int(cand.skill),
+				Worlds.species(String(cand.species)).name, ShipStats.commas(roundi(float(cand.wage) * mult)), ShipStats.commas(fee), String(cand.line),
+				String(Crew.role(String(cand.role)).get("does", ""))]
+		sc._action(txt, func() -> void:
+			var r := Session.hire(String(cand.id))
+			sc._say(String(r.message))
+			sc._refill(), free > 0 and int(Session.profile.get("credits", 0)) >= fee)
+
+
 func _desk_fuel() -> void:
 	var mult := Session.site_fuel_mult()
 	sc._clear_panel("Fuel and repairs", "Fuel here costs %d%% of the system price (%s). You pay for every drop you burn when you leave or land." % [roundi(mult * 100.0),
@@ -247,6 +299,7 @@ static func _hull_words(h: float) -> String:
 
 func _desk_bar() -> void:
 	sc._clear_panel("Bar and bunks", "Captains and crews drift through between jobs. Some have work that never reaches the board, for reasons they'd rather not discuss.")
+	_crew_section()
 	_people_section()
 	sc.panel_list.add_child(Brand.heading("BUNKS", 15))
 	var idle := Session.active_contract().is_empty() and Session.sim != null and not Session.insolvent()

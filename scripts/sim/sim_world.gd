@@ -30,6 +30,7 @@ static func create(profile: Dictionary, ship: ShipData) -> EconomySim:
 	c["company"] = "player"
 	c["home_system_id"] = String(profile.system_id)
 	c["wage_cr_per_day"] = float(c["wage_cr_per_day"]) * SimShip.wage_index(String(profile.system_id))   # crew hired here are paid local rates
+	_crew(c, profile, String(profile.system_id))
 	c["cash"] = float(profile.credits)
 	c["min_margin"] = 0.0
 	c["network"] = sim.net.adj.keys()
@@ -132,6 +133,7 @@ static func sync(sim: EconomySim, profile: Dictionary, ship: ShipData) -> void:
 	c["speed"] = fresh["ly_per_day"]
 	c["fuel_units"] = fresh["fuel_units"]
 	c["burn"] = fresh["burn"]
+	_crew(c, profile, String(c["home"]))
 	c["level"] = SimShip.level(String(profile.get("difficulty", "normal")))
 	var credits := float(profile.credits)
 	if absf(credits - c["cash"]) > 0.5:
@@ -206,6 +208,34 @@ static func nearest_freight(sim: EconomySim) -> String:
 
 
 
+## The player's named crew (Crew) in the sim's terms: everyone aboard, their average pay (each at the
+## rate they signed on for, the captain's draw at `home` rates), and a pilot's quicker, leaner jumps.
+## A profile with no "crew" (an old save before it's migrated) keeps the ship's nominal crew.
+static func _crew(c: Dictionary, profile: Dictionary, home: String) -> void:
+	if not profile.has("crew"):
+		c.erase("roster")
+		return
+	var roster: Array = profile.get("crew", [])
+	var w: Dictionary = SimShip.config().get("wages", {})
+	var draw := float(w.get("owner_draw_cr_per_day", 240.0)) * SimShip.wage_index(home)
+	var lines := [{"role": "Captain (owner's draw)", "pay": draw}]
+	var total := draw
+	for p in roster:
+		total += float(p.get("wage", 0))
+		lines.append({"role": "%s (%s)" % [String(p.get("name", "")), Crew.role_name(String(p.get("role", "")))], "pay": float(p.get("wage", 0))})
+	c["crew"] = 1 + roster.size()
+	if c.has("wage_cr_per_day"):
+		c["wage_cr_per_day"] = total / float(c["crew"])
+	c["wage"] = total / float(c["crew"])
+	c["roster"] = lines
+	var time := Crew.time_mult(roster)
+	if c.has("ly_per_day"):
+		c["ly_per_day"] = float(c["ly_per_day"]) / time
+	if c.has("speed"):
+		c["speed"] = float(c["speed"]) / time
+	c["burn"] = float(c.get("burn", 1.0)) * Crew.fuel_mult(roster)
+
+
 ## What the ship costs every day it exists, crew and ownership after the difficulty level.
 static func daily_cost(sim: EconomySim) -> float:
 	var c := player(sim)
@@ -219,6 +249,10 @@ static func payroll_lines(sim: EconomySim) -> Array[Dictionary]:
 	var c := player(sim)
 	var out: Array[Dictionary] = []
 	if c.is_empty():
+		return out
+	if c.has("roster"):   # named crew, each at the pay they signed on for
+		for r in c["roster"]:
+			out.append({"role": String(r["role"]), "pay": float(r["pay"]) * sim._lv(c, "wage_mult")})
 		return out
 	var k := SimShip.wage_index(String(c["home"])) * sim._lv(c, "wage_mult")
 	for r in SimShip.payroll(int(c["crew"])):

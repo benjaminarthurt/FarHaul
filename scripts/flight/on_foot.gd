@@ -151,8 +151,12 @@ func go_space_walk() -> bool:
 	sc.view.add_child(line)
 	sc.eva.tether_line = line
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	var cut := sc.crew_c != null and sc.crew_c.before_space_walk()   # a pilot aboard cuts the engines first
 	var busy := sc.model.throttle > 0.01 or sc.model.braking or sc.model.course_hold or sc.model.ang.length() > 0.02
-	_eva_say("Outside, clipped on. %s Wrench (1) for loose plating, torch (2) for holes." % ("The ship's still under way and nobody's driving: mind the tether." if busy else "The ship's coasting; nobody's driving."))
+	var helm := "The ship's still under way and nobody's driving: mind the tether." if busy else "The ship's coasting; nobody's driving."
+	if sc.crew_c != null and sc.crew_c.has("pilot"):
+		helm = ("%s cut the engines before you opened the hatch. " % sc.crew_c._name("pilot") if cut else "") + "%s has the helm and won't burn with you outside." % sc.crew_c._name("pilot")
+	_eva_say("Outside, clipped on. %s Wrench (1) for loose plating, torch (2) for holes." % helm)
 	sc._apply_pose()
 	return true
 

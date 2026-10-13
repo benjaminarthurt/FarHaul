@@ -69,6 +69,7 @@ static func begin_new(at_slot: int, name: String, species_id: String, difficulty
 	p["species"] = species_id
 	p["difficulty"] = difficulty
 	p["ftl_rules"] = 1   # FTL is a fitted drive, not a given
+	p["crew"] = []       # hired at a bar (Crew); the captain flies alone until then
 	p["world"] = world_id
 	p["system_id"] = Worlds.yard_system(world_id)
 	p["port_id"] = String(Worlds.primary_port(p.system_id).get("id", ""))
@@ -103,6 +104,12 @@ static func load_slot(from_slot: int) -> bool:
 		profile["ftl_grandfathered"] = true
 		data["profile"] = profile
 		SaveSlots.write(slot, data)
+	if not profile.has("crew"):   # saved before named crew: the hands the ship needed get names
+		var old := ShipData.new(ModuleLibrary.new())
+		if old.from_json(JSON.stringify(data)):
+			_migrate_crew(old)
+			data["profile"] = profile
+			SaveSlots.write(slot, data)
 	sim = SimWorld.restore(String(data["sim"])) if data.has("sim") else null
 	if sim == null:   # older save: the world starts now, around the player's current ship
 		var ship := ShipData.new(ModuleLibrary.new())
@@ -140,7 +147,7 @@ static func local_board() -> Array[Dictionary]:
 
 ## Propellant and berth fee for one local hop with `cargo_t` aboard, in credits.
 static func local_trip_cost(stats: Dictionary, cargo_t: float, dv_kms: float) -> Dictionary:
-	var burn := LocalSpace.burn_t(float(stats["wet"]) + cargo_t, dv_kms)
+	var burn := LocalSpace.burn_t(float(stats["wet"]) + cargo_t, dv_kms) * Crew.fuel_mult(crew())   # a pilot aboard burns less
 	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
 	var units := burn * float(SimShip.config()["fuel"]["units_per_tonne"])
 	var fuel_cost: float = units * float(sim.p["fuel_cr_per_unit"]) * float(sim.fuel_factor.get(system_id(), 1.0)) * float(lv.get("fuel_price_mult", 1.0)) * site_fuel_mult()
@@ -170,6 +177,7 @@ static func ship_stats(ship: ShipData, manifest: CargoManifest = null) -> Dictio
 	var st := ShipStats.compute(ship, 1.0, manifest)
 	if bool(profile.get("ftl_grandfathered", false)):
 		st["ftl"] = true
+	st["crew_aboard"] = crew_aboard() if profile.has("crew") else int(st.get("crew_needed", 1))
 	return st
 
 
@@ -244,6 +252,9 @@ static func restructure() -> Dictionary:
 	profile["bankruptcies"] = int(profile.get("bankruptcies", 0)) + 1
 	profile["ftl_grandfathered"] = false   # the bank's hauler is the plain sublight starter
 	profile["hull_damage"] = 0.0
+	var room := maxi(0, int(ShipStats.compute(fresh).get("berths", 0)) - 1)
+	if crew().size() > room:   # the bank's hauler has fewer bunks: the newest hands are let go, unpaid
+		profile["crew"] = crew().slice(0, room)
 	if LocalSpace.is_surface(String(profile.get("port_id", ""))):
 		profile["port_id"] = system_id() + LocalSpace.SEP + "moon"   # it cannot lift off: the bank's tug brings it up to the base's station
 	profile["credits"] = left
@@ -291,10 +302,11 @@ static func wait_days(days: int) -> Dictionary:
 	_sync_sim(loaded.ship)
 	var before := int(profile.credits)
 	sim.run_hours(days * 24)
+	var work := _crew_between(loaded.ship, days * 24.0).replace("On the way", "In port")
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "%d day%s in port. Running costs: %s cr." % [days, "" if days == 1 else "s", ShipStats.commas(before - int(profile.credits))]}
+	return {"ok": true, "message": "%d day%s in port. Running costs: %s cr.%s" % [days, "" if days == 1 else "s", ShipStats.commas(before - int(profile.credits)), work]}
 
 
 ## Fly empty to another system, the way out of a port with no freight. Time passes and costs money.
@@ -316,12 +328,13 @@ static func travel_empty(dest_system_id: String) -> Dictionary:
 		return r
 	var hours := sim.run_player_until(SimWorld.PLAYER, "done")
 	_autopilot_wear(loaded.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)))
+	var work := _crew_between(loaded.ship, float(hours))
 	profile["system_id"] = dest_system_id
 	profile["port_id"] = sim.net.primary_port(dest_system_id)
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Flew empty to %s in %.1f days. Running costs: %s cr, for hauling air." % [dest_system_id.replace("_", " ").capitalize(), hours / 24.0, ShipStats.commas(before - int(profile.credits))]}
+	return {"ok": true, "message": "Flew empty to %s in %.1f days. Running costs: %s cr, for hauling air.%s" % [dest_system_id.replace("_", " ").capitalize(), hours / 24.0, ShipStats.commas(before - int(profile.credits)), work]}
 
 
 static func accept_contract(contract: Dictionary) -> Dictionary:
@@ -433,14 +446,16 @@ static func local_reposition(dest_id: String) -> Dictionary:
 			return {"ok": false, "message": "Couldn't load the ship from the save."}
 		_sync_sim(loaded.ship)
 		var before := int(profile.credits)
+		var hrs := maxi(1, ceili(float(site["hours"]) * Crew.time_mult(crew())))   # a pilot aboard flies it tighter
 		sim._pay(SimWorld.PLAYER, "world", float(site["cost"]))
-		sim.run_hours(int(site["hours"]))
+		sim.run_hours(hrs)
 		_autopilot_wear(loaded.ship, float(Wear.cfg().get("reposition_engine", 0.01)), 0.0)
+		var work := _crew_between(loaded.ship, float(hrs))
 		profile["port_id"] = dest_id
 		_commit_sim(data, loaded.ship)
 		data["profile"] = profile
 		SaveSlots.write(slot, data)
-		return {"ok": true, "message": "Flew empty to %s in %d hours. Fuel and running costs: %s cr." % [String(site["name"]), int(site["hours"]), ShipStats.commas(before - int(profile.credits))]}
+		return {"ok": true, "message": "Flew empty to %s in %d hours. Fuel and running costs: %s cr.%s" % [String(site["name"]), hrs, ShipStats.commas(before - int(profile.credits)), work]}
 	return {"ok": false, "message": "Your tanks can't reach that site."}
 
 
@@ -808,7 +823,7 @@ static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> 
 		var fish := float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lvd.get("port_fee_mult", 1.0))
 		sim._pay(SimWorld.PLAYER, "world", fish)
 		adrift_note = " A tug fished you out of the dark and towed the ship in: %s cr, and a story nobody believes." % ShipStats.commas(roundi(fish))
-	var hurt := clampf(float(ex.get("cargo_hurt", 0.0)), 0.0, 1.0)
+	var hurt := clampf(float(ex.get("cargo_hurt", 0.0)), 0.0, 1.0) * Crew.cargo_hurt_mult(crew())   # a loadmaster's lashings hold
 	var salvage := salvage_fee(ship_price) if rescue else 0
 	if salvage > 0:
 		sim._pay(SimWorld.PLAYER, "world", float(salvage))
@@ -846,8 +861,9 @@ static func engines_work() -> bool:
 ## Autopilot and sim trips wear the engines and radiators by the fuel they burn (or a flat amount).
 static func _autopilot_wear(ship: ShipData, engine: float, radiator: float) -> void:
 	var w := wear().duplicate()
-	Wear.add(w, ship, "engine", engine)
-	Wear.add(w, ship, "radiator", radiator)
+	var wm := Crew.wear_mult(crew())   # an engineer aboard keeps it all running sweeter
+	Wear.add(w, ship, "engine", engine * wm)
+	Wear.add(w, ship, "radiator", radiator * wm)
 	profile["wear"] = w
 
 
@@ -1043,7 +1059,8 @@ static func commit_jump() -> Dictionary:
 		return {"ok": false, "days": 0.0, "message": "Couldn't load the ship from the save."}
 	_sync_sim(loaded_ship.ship)
 	var hours := sim.run_player_until(SimWorld.PLAYER, "arrival")
-	_autopilot_wear(loaded_ship.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)))
+	# The jump's wear and the crew's work on the way go on the flight's own copies (CrewWork.after_jump):
+	# the flight saves its wear and hull when it ends.
 	profile["system_id"] = String(c.destination_system_id)
 	profile["port_id"] = String(c.destination_port_id)
 	c["status"] = "arrived"
@@ -1052,7 +1069,7 @@ static func commit_jump() -> Dictionary:
 	_commit_sim(data, loaded_ship.ship)
 	SaveSlots.write(slot, data)
 	flight_job["jumped"] = true
-	return {"ok": true, "days": hours / 24.0, "message": "Jumped %.2f ly in %.1f days." % [float(c.distance_ly), hours / 24.0]}
+	return {"ok": true, "days": hours / 24.0, "hours": float(hours), "message": "Jumped %.2f ly in %.1f days." % [float(c.distance_ly), hours / 24.0]}
 
 
 ## Close out a flown jump. Before the jump (`jumped` false) the ship just came home; after it, it has
@@ -1156,12 +1173,12 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 		return {"ok": false, "message": "The ship isn't fit to fly this load yet."}
 	var cargo := float(c.get("accepted_tonnes", c.offer))
 	var cost := local_trip_cost(stats, cargo, float(c.dv_kms))
-	var hours := int(c.hours)
+	var hours := maxi(1, ceili(float(c.hours) * Crew.time_mult(crew())))
 	if hard:
 		var hb := People.hard_burn()
 		cost["burn_t"] = float(cost.burn_t) * float(hb.fuel)
 		cost["total"] = float(cost.fuel_cost) * float(hb.fuel) + float(cost.fee)
-		hours = maxi(1, ceili(float(c.hours) * float(hb.time)))
+		hours = maxi(1, ceili(float(c.hours) * float(hb.time) * Crew.time_mult(crew())))
 	if float(cost.burn_t) > float(stats["fuel"]):
 		return {"ok": false, "message": "The tanks cannot cover that burn."}
 	_sync_sim(loaded_ship.ship)
@@ -1169,13 +1186,14 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 	sim.run_hours(hours)
 	var wc := Wear.cfg()
 	_autopilot_wear(loaded_ship.ship, float(cost.burn_t) * float(wc.get("autopilot_engine_per_t", 0.006)), float(cost.burn_t) * float(wc.get("autopilot_radiator_per_t", 0.003)))
+	var work := _crew_between(loaded_ship.ship, float(hours))
 	profile["port_id"] = String(c.destination_port_id)
 	c["status"] = "arrived"
 	data["active_contract"] = c
 	data["profile"] = profile
 	_commit_sim(data, loaded_ship.ship)
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours%s." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), hours, " on a hard burn" if hard else ""]}
+	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours%s." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), hours, (" on a hard burn" if hard else "") + ("." + work.trim_suffix(".") if work != "" else "")]}
 
 
 static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
@@ -1201,17 +1219,28 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 	if bool(c.get("surface", false)):   # landed straight on the moon base's pad: no lighter up from orbit
 		bonus = roundi(float(payment) * float(SurfaceTerrain.config().get("surface_bonus", 0.25)))
 		payment += bonus
-	var rep_note := _add_rep(int(deal.rep))
+	var rep_note := _add_rep(int(deal.rep) + (1 if passengers and Crew.skill(crew(), "steward") >= 3 else 0))   # a good steward's passengers speak well of you
 	var uc := SurfaceWork.unload_cfg()
+	var roster := crew()
 	var hours := int(LocalSpace.config()["board"]["unload_hours"])
-	var crew := 0
+	var camp_fee := 0
+	var own_crew := ""
 	var at_camp := String(LocalSpace.node(here).get("kind", "")) == "camp" and not passengers
-	if at_camp and not manual:   # no crane at the camp: its crew carry it off, for a fee and most of a day
+	if at_camp and not manual and Crew.skill(roster, "loadmaster") > 0:   # your loadmaster runs the unloading: no camp crew to pay
 		hours = int(uc.get("camp_crew_hours", 8))
-		crew = roundi(float(payment) * float(uc.get("camp_crew_share", 0.15)))
-		payment -= crew
+		own_crew = Crew.short(Crew.who(roster, "loadmaster"))
+	elif at_camp and not manual:   # no crane at the camp: its crew carry it off, for a fee and most of a day
+		hours = int(uc.get("camp_crew_hours", 8))
+		camp_fee = roundi(float(payment) * float(uc.get("camp_crew_share", 0.15)))
+		payment -= camp_fee
 	elif manual or passengers:
 		hours = 0
+	if hours > 0:
+		hours = maxi(1, ceili(float(hours) * Crew.unload_mult(roster)))
+	var tip := 0
+	if passengers and Crew.skill(roster, "steward") > 0:   # looked after: they pay more, and say so
+		tip = roundi(float(payment) * (Crew.fare_mult(roster) - 1.0))
+		payment += tip
 	if hours > 0:
 		sim.run_hours(hours)
 	sim._pay("world", SimWorld.PLAYER, float(payment))
@@ -1224,8 +1253,12 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
 	var note := " (includes %s cr for landing it on the surface)" % ShipStats.commas(bonus) if bonus > 0 else ""
-	if crew > 0:
-		note += ", less %s cr to the camp crew for %d hours' unloading" % [ShipStats.commas(crew), hours]
+	if tip > 0:
+		note += ", %s cr of it for %s's care" % [ShipStats.commas(tip), Crew.short(Crew.who(roster, "steward"))]
+	if own_crew != "":
+		note += ", unloaded by %s and the crew in %d hours, no camp crew to pay" % [own_crew, hours]
+	elif camp_fee > 0:
+		note += ", less %s cr to the camp crew for %d hours' unloading" % [ShipStats.commas(camp_fee), hours]
 	elif manual:
 		note += ", carried off by your own two hands"
 	elif hours > 0:
@@ -1293,6 +1326,7 @@ static func depart_active_contract(hard := false) -> Dictionary:
 		var hours := sim.run_player_until(SimWorld.PLAYER, "arrival")
 		days_text = " The trip took %.1f days." % (hours / 24.0)
 		_autopilot_wear(loaded_ship.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)))
+		days_text += _crew_between(loaded_ship.ship, float(hours))
 	profile["system_id"] = String(c.destination_system_id)
 	profile["port_id"] = String(c.destination_port_id)
 	c["status"] = "arrived"
@@ -1345,6 +1379,127 @@ static func deliver_active_contract(manual := false) -> Dictionary:
 	SaveSlots.write(slot, data)
 	var broke := ", less %s cr for the %d%% that arrived broken" % [ShipStats.commas(spoiled), roundi(hurt * 100.0)] if spoiled > 0 else ""
 	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr%s.%s" % [delivered, ShipStats.commas(payment), broke, rep_note], "payment": payment}
+
+
+## The crew (Crew) -----------------------------------------------------------------------------------
+
+## The hired crew, captain not included: [{id, name, species, role, skill, wage, line, hired_day}].
+static func crew() -> Array:
+	return profile.get("crew", [])
+
+
+## People aboard who work the ship, the captain included.
+static func crew_aboard() -> int:
+	return 1 + crew().size()
+
+
+## Berths not taken by the captain, the crew or passengers aboard right now.
+static func free_berths(stats: Dictionary) -> int:
+	var c := active_contract()
+	var pax := int(c.get("seats", 0)) if String(c.get("person_kind", "")) == "passenger" else 0
+	return int(stats.get("berths", 0)) - crew_aboard() - pax
+
+
+## Who is looking for work in this port today (not anyone already hired or let go here).
+static func crew_candidates() -> Array[Dictionary]:
+	if slot < 0 or sim == null:
+		return []
+	return Crew.candidates(String(profile.get("port_id", "")), day(), SimShip.wage_index(system_id()), profile.get("crew_seen", []))
+
+
+static func _seen(id: String) -> void:
+	var seen: Array = (profile.get("crew_seen", []) as Array).duplicate()
+	if not seen.has(id):
+		seen.append(id)
+	profile["crew_seen"] = seen.slice(maxi(0, seen.size() - 60))
+
+
+## Hire candidate `id` here: a day's pay up front to sign on, and a free berth.
+static func hire(id: String) -> Dictionary:
+	var who := {}
+	for p in crew_candidates():
+		if String(p.id) == id:
+			who = p
+	if who.is_empty():
+		return {"ok": false, "message": "They've already gone. People at bars do that."}
+	var loaded := _load_ship(SaveSlots.read(slot))
+	if loaded.is_empty():
+		return {"ok": false, "message": "Couldn't load the ship from the save."}
+	if free_berths(ship_stats(loaded.ship)) <= 0:
+		return {"ok": false, "message": "No bunk for %s. Fit crew bunks or quarters at a shipyard; nobody signs on to sleep in the hold." % Crew.short(who)}
+	var fee := roundi(float(who.wage) * float(Crew.cfg().get("hire_fee_days", 1)) * float(SimShip.level(String(profile.get("difficulty", "normal"))).get("wage_mult", 1.0)))
+	if not _book(-float(fee)):
+		return {"ok": false, "message": "Signing %s on costs %s cr up front; you have %s cr." % [Crew.short(who), ShipStats.commas(fee), ShipStats.commas(int(profile.get("credits", 0)))]}
+	var p := who.duplicate()
+	p["hired_day"] = day()
+	var roster := crew().duplicate()
+	roster.append(p)
+	profile["crew"] = roster
+	_seen(id)
+	_resync()
+	return {"ok": true, "message": "%s signs on as %s for %s cr a day, and %s cr up front. \"%s\"" % [String(p.name), Crew.role_name(String(p.role)).to_lower(),
+			ShipStats.commas(int(p.wage)), ShipStats.commas(fee), String(p.line)]}
+
+
+## Let crew member `id` go: two days' pay to see them off.
+static func fire(id: String) -> Dictionary:
+	var roster := crew().duplicate()
+	var who := {}
+	for p in roster:
+		if String(p.id) == id:
+			who = p
+	if who.is_empty():
+		return {"ok": false, "message": "Nobody aboard by that name."}
+	var pay := roundi(float(who.wage) * float(Crew.cfg().get("severance_days", 2)) * float(SimShip.level(String(profile.get("difficulty", "normal"))).get("wage_mult", 1.0)))
+	_book(-float(mini(pay, maxi(0, int(profile.get("credits", 0))))))   # what you can pay of it, anyway
+	roster.erase(who)
+	profile["crew"] = roster
+	_seen(id)
+	_resync()
+	return {"ok": true, "message": "%s collects %s cr severance and their kit, and goes. %s" % [String(who.name), ShipStats.commas(pay),
+			"They don't look back." if int(who.skill) < 4 else "The ship already feels a little worse at its job."]}
+
+
+## Put the sim's payroll in step with the roster and save.
+static func _resync() -> void:
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		save_profile()
+		return
+	_sync_sim(loaded.ship)
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+
+
+## A save from before named crew: the hands its ship needed get names and jobs, at the old pay.
+static func _migrate_crew(ship: ShipData, need := -1) -> void:
+	if profile.has("crew"):
+		return
+	if need < 0:
+		need = SimShip.crew_for(float(ShipStats.compute(ship).cargo_capacity)) - 1
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(String(profile.get("name", "")) + "|old crew")
+	var roster := []
+	var order := ["engineer", "deck_tech", "loadmaster", "pilot", "steward"]
+	for k in maxi(0, need):
+		var r: String = order[k % order.size()]
+		var sp := Crew._species(rng)
+		var lines: Array = (Crew.cfg().get("lines", {}) as Dictionary).get(r, [""])
+		roster.append({"id": "old-%d" % k, "name": Crew.make_name(sp, rng), "species": sp, "role": r, "skill": 2,
+				"wage": roundi(Crew.base_wage(r, 2) * SimShip.wage_index(system_id())), "line": String(lines[k % lines.size()]), "hired_day": 0})
+	profile["crew"] = roster
+
+
+## The crew's work while the ship flies itself or sits in port for `hours`. Returns a note.
+static func _crew_between(ship: ShipData, hours: float) -> String:
+	var roster := crew()
+	if roster.is_empty() or hours <= 0.0:
+		return ""
+	var done := Crew.work_between(profile, ship, Crew.jobs_in(roster, "deck_tech", "fixes_per_trip_hour", hours),
+			Crew.jobs_in(roster, "engineer", "services_per_trip_hour", hours))
+	return Crew.work_note(roster, done)
 
 
 static func scene_path() -> String:

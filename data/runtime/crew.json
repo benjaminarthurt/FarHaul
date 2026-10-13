@@ -1,0 +1,314 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "note": "The player's crew (scripts/crew.gd). Roles from data/world/crew_labor.json; wages on the same scale as ship_economy.json's payroll (ASSUMED). Effects are per point of skill (1..5). skill_odds: chance of each skill 1..5 among people looking for work.",
+  "roles": {
+    "engineer": {
+      "name": "Engineer",
+      "wage": 400,
+      "does": "Slows wear on every working part and services worn ones on the way. Brings failed parts back with a spares kit.",
+      "wear_cut_per_skill": 0.08,
+      "service_every_s": 240.0,
+      "services_per_trip_hour": 0.06
+    },
+    "deck_tech": {
+      "name": "Deck tech",
+      "wage": 300,
+      "does": "Goes out on the hull so you don't have to: patches scorch marks, plating free and holes with your patch kits, up to 50%.",
+      "fix_every_s": 180.0,
+      "fixes_per_trip_hour": 0.08
+    },
+    "pilot": {
+      "name": "Pilot",
+      "wage": 380,
+      "does": "Autopilot trips burn less fuel and take less time. Brakes at the brake point when you leave the helm, and cuts the engines when anyone goes outside.",
+      "fuel_cut_per_skill": 0.04,
+      "time_cut_per_skill": 0.04
+    },
+    "loadmaster": {
+      "name": "Loadmaster",
+      "wage": 320,
+      "does": "Stows the load so knocks hurt it less, unloads faster, and does the unloading at the camp instead of hiring theirs.",
+      "cargo_hurt_cut_per_skill": 0.15,
+      "unload_cut_per_skill": 0.15
+    },
+    "steward": {
+      "name": "Steward",
+      "wage": 280,
+      "does": "Looks after passengers: better fares, and they remember you kindly.",
+      "fare_per_skill": 0.05
+    }
+  },
+  "skill_wage": {
+    "base": 0.8,
+    "per_skill": 0.1
+  },
+  "hire_fee_days": 1,
+  "severance_days": 2,
+  "candidates_per_day": 4,
+  "species_weight": {
+    "human": 0.6,
+    "kesh": 0.1,
+    "ilyan": 0.1,
+    "vey": 0.1,
+    "orun": 0.1
+  },
+  "names": {
+    "human": {
+      "given": [
+        "Ines",
+        "Marcus",
+        "Priya",
+        "Tomas",
+        "Adaeze",
+        "Kenji",
+        "Lucia",
+        "Owen",
+        "Farah",
+        "Dmitri",
+        "Nadia",
+        "Samuel",
+        "Mei",
+        "Rafael",
+        "Ayo",
+        "Greta",
+        "Hassan",
+        "Lena",
+        "Carlos",
+        "Yuki",
+        "Bridget",
+        "Arjun",
+        "Sofia",
+        "Desmond",
+        "Hana",
+        "Mateo",
+        "Zainab",
+        "Pieter",
+        "Rosa",
+        "Kwame",
+        "Elif",
+        "Joon",
+        "Maeve",
+        "Tariq",
+        "Ingrid",
+        "Diego",
+        "Amara",
+        "Felix",
+        "Noor",
+        "Callum"
+      ],
+      "family": [
+        "Okafor",
+        "Reyes",
+        "Lindqvist",
+        "Nakamura",
+        "Petrov",
+        "Mensah",
+        "Castellano",
+        "Byrne",
+        "Haddad",
+        "Kowalski",
+        "Osei",
+        "Fischer",
+        "Tanaka",
+        "Morales",
+        "Adeyemi",
+        "Novak",
+        "Sato",
+        "Abbasi",
+        "Quinn",
+        "Varga",
+        "Delacroix",
+        "Mwangi",
+        "Bauer",
+        "Iyer",
+        "Kerr",
+        "Santos",
+        "Halvorsen",
+        "Chen",
+        "Obi",
+        "Moreau",
+        "Aziz",
+        "Duarte",
+        "Larsen",
+        "Kaur",
+        "Brennan",
+        "Ito",
+        "Nyberg",
+        "Owusu",
+        "Rossi",
+        "Vance"
+      ]
+    },
+    "kesh": {
+      "first": [
+        "Dar",
+        "Kor",
+        "Hes",
+        "Mer",
+        "Tav",
+        "Gor",
+        "Vel",
+        "Bra",
+        "Kesh",
+        "Rau"
+      ],
+      "end": [
+        "ak",
+        "a",
+        "h",
+        "ek",
+        "on",
+        "um",
+        "ik",
+        "ra"
+      ],
+      "lineage": [
+        "Venn",
+        "Tem",
+        "Varun",
+        "Tal",
+        "Dorr",
+        "Hask",
+        "Mavren",
+        "Tor"
+      ]
+    },
+    "ilyan": {
+      "first": [
+        "Se",
+        "To",
+        "Na",
+        "I",
+        "Lu",
+        "Ve",
+        "Ca",
+        "Nae",
+        "Mi",
+        "Yo"
+      ],
+      "end": [
+        "li",
+        "van",
+        "e",
+        "ri",
+        "n",
+        "sa",
+        "l",
+        "th"
+      ],
+      "second": [
+        "Ar",
+        "Eri",
+        "Vesh",
+        "Cal",
+        "Ilo",
+        "Sen",
+        "Wey",
+        "Tash"
+      ]
+    },
+    "vey": {
+      "first": [
+        "Sa",
+        "Te",
+        "Ma",
+        "O",
+        "Ne",
+        "Ka",
+        "Lu",
+        "Wa",
+        "Re",
+        "I"
+      ],
+      "end": [
+        "va",
+        "rei",
+        "va",
+        "ru",
+        "shai",
+        "lo",
+        "ma",
+        "nai"
+      ],
+      "waters": [
+        "Kel",
+        "Neshai",
+        "Oro",
+        "Tavai",
+        "Merrin",
+        "Selu",
+        "Ashai",
+        "Teru"
+      ]
+    },
+    "orun": {
+      "first": [
+        "Ruun",
+        "Mara",
+        "Tekk",
+        "Olan",
+        "Boro",
+        "Hesk",
+        "Daan",
+        "Ulla",
+        "Grent",
+        "Pell"
+      ],
+      "junction": [
+        "Keshet",
+        "Deep East",
+        "Var Junction",
+        "Sere",
+        "Low Ring",
+        "Old Shaft",
+        "North Bore",
+        "Fenn"
+      ]
+    }
+  },
+  "lines": {
+    "engineer": [
+      "Talks to the reactor. The reactor seems to listen.",
+      "Brings their own torque wrench. Won't say why.",
+      "Has opinions about coolant that you didn't ask for.",
+      "Fixed a freighter with a spoon once. Allegedly.",
+      "Sleeps better near the engines. Make of that what you will."
+    ],
+    "deck_tech": [
+      "Happier outside than in. Takes the tether as a suggestion.",
+      "Has patched more hulls than you've seen.",
+      "Counts rivets to relax.",
+      "Says vacuum is quieter than people.",
+      "Owns a lucky glove. Only the left one."
+    ],
+    "pilot": [
+      "Lands like setting down a cup of tea.",
+      "Never met a brake point they liked to miss.",
+      "Hums in the cockpit. You'll get used to it.",
+      "Flew couriers on the frontier until the frontier moved.",
+      "Trusts the instruments. Mostly."
+    ],
+    "loadmaster": [
+      "Can stack a hold like a puzzle box.",
+      "Knows what everything weighs by looking at it.",
+      "Takes cargo damage personally.",
+      "Has a strap for every occasion.",
+      "Once balanced a reactor core on a pallet jack. Don't ask."
+    ],
+    "steward": [
+      "Remembers everyone's tea.",
+      "Can calm a passenger with one look.",
+      "Runs a galley like a small, polite army.",
+      "Has never once been surprised by a passenger.",
+      "Keeps a drawer of spare everything."
+    ]
+  },
+  "skill_odds": [
+    0.25,
+    0.35,
+    0.25,
+    0.11,
+    0.04
+  ]
+}

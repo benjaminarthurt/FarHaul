@@ -156,6 +156,8 @@ func _jump_step(delta: float) -> void:
 ## named, and the sun sits somewhere else.
 func _arrive_in_system() -> void:
 	sc._jump_result = Session.commit_jump()
+	if bool(sc._jump_result.get("ok", false)) and sc.crew_c != null:
+		sc.crew_c.after_jump(float(sc._jump_result.get("hours", 0.0)))   # the drive's wear, and the crew's work on the way
 	sc.station.visible = false
 	sc.station_label.text = String(sc.job.destination).to_upper()
 	var h := hash(String(sc.job.get("dest_system", "")))

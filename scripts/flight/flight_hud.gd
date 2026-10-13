@@ -247,6 +247,9 @@ func _hull_line() -> String:
 	var parts := Wear.summary(sc.ship_data, sc.wear) if sc.ship_data != null else ""
 	if parts != "":
 		line += "\nPARTS  " + parts.to_upper()
+	var crew := sc.crew_c.hud_line() if sc.crew_c != null else ""
+	if crew != "":
+		line += "\n" + crew
 	return line
 
 
@@ -350,6 +353,8 @@ func _walk_prompt() -> void:
 			hint = "E: step outside onto the surface" if sc.model.landed else "Outer hatch stays shut until the ship is down. Wise policy."
 		else:
 			hint = "E: leave the ship" if sc._berthed() else ("E: suit up and go out on the tether" if sc.foot_c.space_walk_blocker() == "" else "Outer hatch stays shut. Outside is mostly vacuum.")
+	if hint == "" and sc.crew_c != null:
+		hint = sc.crew_c.near_line()   # a word with whoever's on watch here
 	var warn := ""
 	if sc.model.disabled():
 		warn = "HULL BREACHED: back to the helm and call the tug (T)"
@@ -362,7 +367,7 @@ func _walk_prompt() -> void:
 	elif sc.model.braking:
 		warn = sc.brake_status().get_slice("   ", 0)
 	elif sc.xfer != null and sc.phase == "cruise" and sc.xfer.brake_now(sc.model):
-		warn = "BRAKE NOW: get back to the helm"
+		warn = "BRAKE POINT: %s has it" % sc.crew_c._name("pilot") if sc.crew_c != null and sc.crew_c.has("pilot") else "BRAKE NOW: get back to the helm"
 	var parts := PackedStringArray()
 	for t in [warn, where.to_upper() if where != "" else "", hint]:
 		if t != "":

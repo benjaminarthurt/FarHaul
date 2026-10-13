@@ -96,6 +96,7 @@ var _step_acc := 0.0
 var _last_feet := Vector3.INF
 var jump_c: JumpSequence       ## a flown star jump (scripts/flight/jump_sequence.gd)
 var foot_c: OnFoot             ## walking the ship and the suit outside (scripts/flight/on_foot.gd)
+var crew_c: CrewWork           ## the hired crew at work (scripts/flight/crew_work.gd)
 var land_c: Landing            ## descents, lift-offs and the moon coming and going (scripts/flight/landing.gd)
 var world_c: SpaceScenery      ## sky, sun, motes and the station (scripts/flight/space_scenery.gd)
 var hud_c: FlightHud           ## builds and refreshes the readouts (scripts/flight/flight_hud.gd)
@@ -115,6 +116,7 @@ func _init() -> void:
 	hud_c = FlightHud.new(self)
 	jump_c = JumpSequence.new(self)
 	foot_c = OnFoot.new(self)
+	crew_c = CrewWork.new(self)
 	land_c = Landing.new(self)
 	world_c = SpaceScenery.new(self)
 
@@ -374,6 +376,7 @@ func _process(delta: float) -> void:
 		_impact_shown = model.elapsed_s
 	_check_hull()
 	_wear_step(minf(delta, 0.05) * float(_warp()))
+	crew_c.step(minf(delta, 0.05) * float(_warp()))
 	view.set_damage(model.damage)
 	_apply_pose()
 	_update_hud()
@@ -631,6 +634,7 @@ func _wear_step(dt: float) -> void:
 		return
 	var c := Wear.cfg()
 	var crossed := {}
+	dt *= crew_c.wear_mult if crew_c != null else 1.0   # an engineer aboard: everything wears slower
 	if model.throttle > 0.0 and model.has_fuel() and model.thrust_scale() > 0.0:
 		crossed.merge(Wear.add(wear, ship_data, "engine", float(c.get("engine_per_s_full", 0.00005)) * model.throttle * dt
 				* (float(c.get("engine_hot_mult", 3.0)) if model.heat_fraction() > 0.8 else 1.0)))
@@ -643,10 +647,10 @@ func _wear_step(dt: float) -> void:
 	if model.strafe != Vector2.ZERO:
 		crossed.merge(Wear.add(wear, ship_data, "rcs", float(c.get("thruster_per_s", 0.0006)) * model.strafe.length() * dt))
 	if model.landed and not _was_landed:
-		crossed.merge(Wear.add(wear, ship_data, "legs", float(c.get("legs_per_landing", 0.01))))
+		crossed.merge(Wear.add(wear, ship_data, "legs", float(c.get("legs_per_landing", 0.01)) * (crew_c.wear_mult if crew_c != null else 1.0)))
 	_was_landed = model.landed
 	if model.damage > _wear_damage + 0.0001:   # knocks to the hull shake parts loose
-		crossed.merge(Wear.knock(wear, ship_data, model.damage - _wear_damage, _wear_rng.randf()))
+		crossed.merge(Wear.knock(wear, ship_data, (model.damage - _wear_damage) * (crew_c.wear_mult if crew_c != null else 1.0), _wear_rng.randf()))
 	_wear_damage = model.damage
 	_wear_apply_t -= dt
 	if not crossed.is_empty() or _wear_apply_t <= 0.0:
