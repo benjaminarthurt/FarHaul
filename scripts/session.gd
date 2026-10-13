@@ -207,11 +207,19 @@ static func finish_flight(fuel_burned_t: float, seconds: float, damage: float) -
 	_sync_sim(loaded.ship)
 	var r := SimWorld.settle_flight(sim, fuel_burned_t, seconds, 0.0, float(ship_cost(loaded.ship, loaded.ship.library)), site_fuel_mult())
 	profile["hull_damage"] = clampf(damage, 0.0, 1.0)   # carried until repaired at a fuel and repair desk
+	var rescued := bool(flight_extra.get("rescue", false))
+	var tow := 0.0
+	if rescued:
+		var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+		tow = float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+		sim._pay(SimWorld.PLAYER, "world", tow)
+	var hull_note := _settle_hull(data, active_contract(), float(ship_cost(loaded.ship, loaded.ship.library)))
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	flash = "Flight over (%d min). Fuel %s cr%s." % [roundi(seconds / 60.0), ShipStats.commas(int(r.fuel_cost)),
-			", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else ""]
+	flash = "Flight over (%d min). Fuel %s cr%s.%s%s" % [roundi(seconds / 60.0), ShipStats.commas(int(r.fuel_cost)),
+			", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "",
+			" Hull breached: towed in for %s cr." % ShipStats.commas(roundi(tow)) if rescued else "", hull_note]
 	return flash
 
 
@@ -295,6 +303,8 @@ static func travel_empty(dest_system_id: String) -> Dictionary:
 		return {"ok": false, "message": "No saved game, nowhere to go. Load one first."}
 	if not active_contract().is_empty():
 		return {"ok": false, "message": "Finish the active contract first. The load is waiting."}
+	if hull_block(false) != "":
+		return {"ok": false, "message": hull_block(false)}
 	var data := SaveSlots.read(slot)
 	var loaded := _load_ship(data)
 	if loaded.is_empty():
@@ -411,6 +421,8 @@ static func local_reposition(dest_id: String) -> Dictionary:
 		return {"ok": false, "message": "No saved game, nowhere to go. Load one first."}
 	if not active_contract().is_empty():
 		return {"ok": false, "message": "Finish the active contract first. The load is waiting."}
+	if hull_block(false) != "":
+		return {"ok": false, "message": hull_block(false)}
 	for site in local_sites():
 		if String(site["id"]) != dest_id:
 			continue
@@ -683,17 +695,127 @@ static func site_repair_mult() -> float:
 	return float(LocalSpace.config().get("site_repair_rate", {}).get(kind, 1.0))
 
 
-## What fixing the hull costs here.
-static func repair_cost() -> int:
+## What fixing the hull costs here: all of it, or `amount` of it (a fraction of the whole hull).
+static func repair_cost(amount := -1.0) -> int:
 	var dmg := float(profile.get("hull_damage", 0.0))
-	if dmg <= 0.0 or slot < 0:
+	var fix := dmg if amount < 0.0 else minf(amount, dmg)
+	if fix <= 0.0 or slot < 0:
 		return 0
 	var loaded := _load_ship(SaveSlots.read(slot))
 	if loaded.is_empty():
 		return 0
 	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
 	var frac := float(FlightModel.load_tuning().get("repair_cost_fraction_of_ship", 0.15))
-	return roundi(dmg * float(ship_cost(loaded.ship, loaded.ship.library)) * frac * float(lv.get("maintenance_mult", 1.0)) * site_repair_mult())
+	return roundi(fix * float(ship_cost(loaded.ship, loaded.ship.library)) * frac * float(lv.get("maintenance_mult", 1.0)) * site_repair_mult())
+
+
+static func hull_faults_cfg() -> Dictionary:
+	return FlightModel.load_tuning().get("hull_faults", {})
+
+
+## Hull left, 0..1.
+static func hull() -> float:
+	return clampf(1.0 - float(profile.get("hull_damage", 0.0)), 0.0, 1.0)
+
+
+## Why port control won't let the ship go, or "" when it will. A breached hull (0%) goes nowhere at
+## all; below the unsafe line (25%) it may still fly empty (`with_load` false), at the captain's risk.
+static func hull_block(with_load := true) -> String:
+	var h := hull()
+	if h <= 0.001:
+		return "The hull is breached. Port control won't even open the clamps. The repair desk does patches, on account if it must."
+	var unsafe := float(hull_faults_cfg().get("unsafe_hull", 0.25))
+	if with_load and h < unsafe - 0.0001:
+		return "Port control won't clear a ship at %d%% hull to carry freight. Patch it above %d%% at the repair desk. Flying empty is your own funeral." % [roundi(h * 100.0), roundi(unsafe * 100.0)]
+	return ""
+
+
+## The patches the repair desk offers short of a full repair: {afford: {to, cost}} for as much as the
+## credits buy, in steps, and {account: {to, cost}} for a patch on account to just above the unsafe
+## line when even that is out of reach. Either is {} when it doesn't apply.
+static func patch_options() -> Dictionary:
+	var out := {"afford": {}, "account": {}}
+	var dmg := float(profile.get("hull_damage", 0.0))
+	if dmg <= 0.0 or slot < 0:
+		return out
+	var cfg := hull_faults_cfg()
+	var step := float(cfg.get("patch_step", 0.05))
+	var credits := int(profile.get("credits", 0))
+	var full := repair_cost()
+	if credits < full:
+		var steps := 0
+		while (steps + 1) * step < dmg and repair_cost((steps + 1) * step) <= credits:
+			steps += 1
+		if steps > 0:
+			out.afford = {"to": hull() + steps * step, "cost": repair_cost(steps * step)}
+	var safe := float(cfg.get("unsafe_hull", 0.25)) + step
+	if hull() < safe and repair_cost(safe - hull()) > credits:
+		out.account = {"to": safe, "cost": repair_cost(safe - hull())}
+	return out
+
+
+## Patch the hull up to `to_hull` (0..1). `on_account`: the yard does it even if it puts you in debt,
+## which only it offers for the patch that makes the ship fit to carry freight again.
+static func patch_hull(to_hull: float, on_account := false) -> Dictionary:
+	var fix := clampf(to_hull, 0.0, 1.0) - hull()
+	if fix <= 0.0:
+		return {"ok": false, "message": "The hull is already better than that."}
+	var cost := repair_cost(fix)
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty() or sim == null:
+		return {"ok": false, "message": "Couldn't load the ship from the save."}
+	if not on_account and int(profile.get("credits", 0)) < cost:
+		return {"ok": false, "message": "That patch costs %s cr; you have %s cr." % [ShipStats.commas(cost), ShipStats.commas(int(profile.credits))]}
+	_sync_sim(loaded.ship)
+	sim._pay(SimWorld.PLAYER, "world", float(cost))
+	profile["hull_damage"] = clampf(float(profile.get("hull_damage", 0.0)) - fix, 0.0, 1.0)
+	_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	if on_account:
+		return {"ok": true, "message": "Patched to %d%% on account: %s cr, and you now owe the yard. Plates bolted over plates. It'll fly; don't ask it to enjoy it." % [roundi(hull() * 100.0), ShipStats.commas(cost)]}
+	return {"ok": true, "message": "Patched to %d%% for %s cr. Not pretty, but it holds air." % [roundi(hull() * 100.0), ShipStats.commas(cost)]}
+
+
+## What the rescue tug's salvage crew charges on top of the tow, for a ship that cost `cost` cr.
+static func salvage_fee(cost: float) -> int:
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	return roundi(cost * float(hull_faults_cfg().get("rescue_salvage_fraction_of_ship", 0.08)) * float(lv.get("maintenance_mult", 1.0)))
+
+
+## What the flight scene reports beyond fuel, time and damage, set just before it calls a finish_*:
+## {rescue: the hull was breached and the rescue tug came, cargo_hurt: 0..1 of the load spoiled by knocks}.
+static var flight_extra: Dictionary = {}
+
+
+## Settle the hull's toll on a flight: the salvage fee if the rescue tug came, and the share of the
+## load that's spoiled (knocks, plus what goes over the side in a rescue) kept on the contract for the
+## delivery. Returns a note for the flight's message.
+static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> String:
+	var ex := flight_extra
+	flight_extra = {}
+	var rescue := bool(ex.get("rescue", false))
+	var hurt := clampf(float(ex.get("cargo_hurt", 0.0)), 0.0, 1.0)
+	var salvage := salvage_fee(ship_price) if rescue else 0
+	if salvage > 0:
+		sim._pay(SimWorld.PLAYER, "world", float(salvage))
+	var lost := 0.0
+	var has_load := not c.is_empty() and String(c.get("person_kind", "")) != "passenger"
+	if has_load:
+		if rescue:
+			hurt = 1.0 - (1.0 - hurt) * (1.0 - float(hull_faults_cfg().get("rescue_cargo_loss", 0.3)))
+		if hurt > 0.0:
+			var before := float(c.get("cargo_hurt", 0.0))
+			c["cargo_hurt"] = 1.0 - (1.0 - before) * (1.0 - hurt)
+			data["active_contract"] = c
+			lost = float(c.cargo_hurt) - before
+	var parts := PackedStringArray()
+	if rescue:
+		parts.append(" The salvage crew added %s cr for the privilege." % ShipStats.commas(salvage))
+	if lost > 0.005:
+		parts.append(" About %d%% of the load is %s; the consignee will notice." % [roundi(lost * 100.0), "over the side or in pieces" if rescue else "dented"])
+	return "".join(parts)
 
 
 ## Pay the yard here to make the hull good again (it also restores the thrust damage takes away).
@@ -744,6 +866,8 @@ static func begin_local_flight() -> Dictionary:
 	var stats := ship_stats(loaded_ship.ship, loaded_ship.manifest)
 	if not Contracts.ready(Contracts.check(stats, loaded_ship.manifest, c)):
 		return {"ok": false, "message": "The ship isn't fit to fly this load yet."}
+	if hull_block() != "":
+		return {"ok": false, "message": hull_block()}
 	var dest := LocalSpace.node(String(c.destination_port_id))
 	flight_job = {"kind": "run", "contract_id": String(c.id), "dv_kms": float(c.dv_kms), "hours": int(c.hours),
 			"destination": String(dest.get("name", "the destination")), "key": String(c.id),
@@ -767,6 +891,8 @@ static func begin_jump_flight() -> Dictionary:
 	var stats := ship_stats(loaded_ship.ship, loaded_ship.manifest)
 	if not Contracts.ready(Contracts.check(stats, loaded_ship.manifest, c)):
 		return {"ok": false, "message": "The ship isn't fit to fly this load yet."}
+	if hull_block() != "":
+		return {"ok": false, "message": hull_block()}
 	flight_job = {"kind": "jump", "contract_id": String(c.id), "destination": String(Worlds.port(String(c.destination_port_id)).get("name", "the destination")),
 			"dest_system": String(c.destination_system_id), "ly": float(c.distance_ly), "key": String(c.id), "jumped": false}
 	return {"ok": true, "message": "Take the helm."}
@@ -815,12 +941,14 @@ static func finish_jump_flight(fuel_burned_t: float, seconds: float, damage: flo
 	if stranded:
 		tow = float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
 		sim._pay(SimWorld.PLAYER, "world", tow)
+	var hull_note := _settle_hull(data, c, float(ship_cost(loaded.ship, loaded.ship.library)))
 	var msg := ""
 	if bool(job.get("jumped", false)):
 		msg = "Docked at %s. Manoeuvring fuel %s cr%s.%s" % [job.destination, ShipStats.commas(int(r.fuel_cost)),
 				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", " A tug towed you in (%s cr), smugly." % ShipStats.commas(roundi(tow)) if stranded else ""]
 	else:
 		msg = "Turned back before the jump. Fuel %s cr. The load is still aboard.%s" % [ShipStats.commas(int(r.fuel_cost)), " A tug brought you in (%s cr)." % ShipStats.commas(roundi(tow)) if stranded else ""]
+	msg += hull_note
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
@@ -854,6 +982,9 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	var tow := float(cfg["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) if stranded else 0.0
 	var extra := berth + tow
 	sim._pay(SimWorld.PLAYER, "world", extra)
+	var rescued := bool(flight_extra.get("rescue", false))
+	var hull_note := _settle_hull(data, c, float(ship_cost(loaded.ship, loaded.ship.library)))
+	var dry := "Hull breached" if rescued else "Out of fuel"
 	var msg := ""
 	if arrived:
 		profile["port_id"] = String(c.destination_port_id)
@@ -864,11 +995,12 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 			c["surface"] = true
 		data["active_contract"] = c
 		msg = (("Landed on the pad at %s." if surface else "Docked at %s.") + " Fuel %s cr, berth fee %s cr%s.%s") % [job.destination, ShipStats.commas(int(r.fuel_cost)), ShipStats.commas(roundi(berth)),
-				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", (" Out of fuel: a tug towed you in for %s cr." % ShipStats.commas(roundi(tow))) if stranded else ""]
+				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", (" %s: a tug towed you in for %s cr." % [dry, ShipStats.commas(roundi(tow))]) if stranded else ""]
 	elif stranded:
-		msg = "Out of fuel. A tug brought you back for %s cr plus %s cr of fuel. The load is still aboard." % [ShipStats.commas(roundi(extra)), ShipStats.commas(int(r.fuel_cost))]
+		msg = "%s. A tug brought you back for %s cr plus %s cr of fuel. The load is still aboard." % [dry, ShipStats.commas(roundi(extra)), ShipStats.commas(int(r.fuel_cost))]
 	else:
 		msg = "Turned back to the start. Fuel %s cr. The load is still aboard." % ShipStats.commas(int(r.fuel_cost))
+	msg += hull_note
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
@@ -927,6 +1059,8 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 	_sync_sim(loaded_ship.ship)
 	var deal := People.settle(c, payment, sim.hour, float(profile.get("hull_damage", 0.0)))
 	payment = int(deal.payment)
+	var spoiled := roundi(float(payment) * clampf(float(c.get("cargo_hurt", 0.0)), 0.0, 1.0))
+	payment -= spoiled
 	var bonus := 0
 	if bool(c.get("surface", false)):   # landed straight on the moon base's pad: no lighter up from orbit
 		bonus = roundi(float(payment) * float(SurfaceTerrain.config().get("surface_bonus", 0.25)))
@@ -960,6 +1094,8 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 		note += ", carried off by your own two hands"
 	elif hours > 0:
 		note += ", after %d hours' unloading" % hours
+	if spoiled > 0:
+		note += ", less %s cr for the %d%% that arrived broken" % [ShipStats.commas(spoiled), roundi(float(c.cargo_hurt) * 100.0)]
 	var dn := String(deal.note)
 	var deal_note := (" " + dn.substr(0, 1).to_upper() + dn.substr(1) + ".") if dn != "" else ""
 	if passengers:
@@ -999,6 +1135,8 @@ static func depart_active_contract(hard := false) -> Dictionary:
 	var c := active_contract()
 	if c.is_empty():
 		return {"ok": false, "message": "Accept a freight contract first."}
+	if hull_block() != "":
+		return {"ok": false, "message": hull_block()}
 	if bool(c.get("local", false)):
 		return _depart_local(c, hard)
 	if String(c.origin_system_id) != system_id():
@@ -1043,12 +1181,22 @@ static func deliver_active_contract(manual := false) -> Dictionary:
 	var manifest: CargoManifest = loaded_ship.manifest
 	var delivered := manifest.unload(StringName(c.commodity), float(c.get("accepted_tonnes", c.offer)))
 	var payment := roundi(delivered * float(c.rate))
+	var hurt := clampf(float(c.get("cargo_hurt", 0.0)), 0.0, 1.0)
+	var spoiled := 0
 	if sim != null and c.has("sim_taken"):
 		_sync_sim(loaded_ship.ship)
 		sim.run_player_until(SimWorld.PLAYER, "done")   # unloading takes hours; the consignee pays the moment it is done
 		payment = int(c.get("pay_total", payment))
+		spoiled = roundi(float(payment) * hurt)
+		if spoiled > 0:   # the consignee docks the broken share: paid back out of what the sim paid in
+			sim._pay(SimWorld.PLAYER, "world", float(spoiled))
+			var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
+			pc["revenue"] = float(pc["revenue"]) - float(spoiled)
+			payment -= spoiled
 		_commit_sim(data, loaded_ship.ship)
 	else:
+		spoiled = roundi(float(payment) * hurt)
+		payment -= spoiled
 		profile["credits"] = int(profile.credits) + payment
 		data["earned"] = int(data.get("earned", 0)) + payment
 	data["cargo"] = manifest.to_dict()
@@ -1058,7 +1206,8 @@ static func deliver_active_contract(manual := false) -> Dictionary:
 	var rep_note := _add_rep(int(People.config().get("rep_freight", 1)))
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr.%s" % [delivered, ShipStats.commas(payment), rep_note], "payment": payment}
+	var broke := ", less %s cr for the %d%% that arrived broken" % [ShipStats.commas(spoiled), roundi(hurt * 100.0)] if spoiled > 0 else ""
+	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr%s.%s" % [delivered, ShipStats.commas(payment), broke, rep_note], "payment": payment}
 
 
 static func scene_path() -> String:

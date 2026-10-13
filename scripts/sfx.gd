@@ -25,6 +25,8 @@ static func stream(name: StringName) -> AudioStreamWAV:
 			data = _blip()
 		&"launch":
 			data = _whoosh()
+		&"alarm":
+			data = _alarm()
 		_:
 			data = _blip()
 	var s := _to_stream(data)
@@ -111,4 +113,19 @@ static func _whoosh() -> PackedFloat32Array:
 		var env := minf(t / 0.6, 1.0) * exp(-maxf(t - 1.4, 0.0) * 3.5)
 		lp += (rng.randf_range(-1.0, 1.0) - lp) * (0.03 + 0.2 * minf(t / 1.8, 1.0))
 		out[i] = (lp * 1.6 + sin(TAU * 55.0 * t) * 0.35) * env * 0.5
+	return out
+
+
+## The hull alarm: a two-tone klaxon, three times. Not subtle; neither is a hull breach.
+static func _alarm() -> PackedFloat32Array:
+	var out := _buffer(1.35)
+	var phase := 0.0
+	for i in out.size():
+		var t := float(i) / RATE
+		var beat := fmod(t, 0.45)
+		var f := 620.0 if beat < 0.2 else 465.0
+		phase += TAU * f / RATE
+		var gate := 1.0 if beat < 0.4 else 0.0
+		var edge := minf(minf(beat / 0.01, 1.0), minf((0.4 - beat) / 0.02, 1.0)) if gate > 0.0 else 0.0
+		out[i] = (sin(phase) * 0.7 + (1.0 if sin(phase) > 0.0 else -1.0) * 0.12) * edge * 0.32
 	return out

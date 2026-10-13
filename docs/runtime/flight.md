@@ -20,6 +20,8 @@ acceleration is thrust over current mass, and mass is dry plus fuel plus cargo.
   The starter's radiators keep up at full burn; a design with too little cooling will overheat.
 - The station is solid (spine and ring). A hit above 1.5 m/s bounces the ship and damages the hull, which also
   costs thrust; repairs are charged when the flight ends.
+- A damaged hull develops faults (cracked radiators, a fuel leak, cargo knocks) and at 0% the ship is disabled
+  until the rescue tug comes. See hull.md.
 - Docking needs the nose pointed down the station's axis (within 25 degrees), within 8 m of that axis, within
   18 m of the port, and under 3 m/s. The ship leaves facing away, so the pilot has to turn round.
 - Fuel burned and repairs are charged, and the clock advances, when the flight ends (see economy-sim.md).

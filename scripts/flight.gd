@@ -96,6 +96,10 @@ var land_c: Landing            ## descents, lift-offs and the moon coming and go
 var world_c: SpaceScenery      ## sky, sun, motes and the station (scripts/flight/space_scenery.gd)
 var hud_c: FlightHud           ## builds and refreshes the readouts (scripts/flight/flight_hud.gd)
 var ops: SurfaceOps            ## the suit's air, jets and scanner, mission points and crates (on the moon)
+var alarm: AudioStreamPlayer   ## the hull alarm
+var alerts: Array = []         ## hull warnings so far this flight, newest last: {text, level, t} (the remote shows them)
+var _hull_warned := 0          ## how many hull warning marks have been passed (and said)
+var salvage_fee := 0           ## what the rescue tug's salvage crew would charge, on top of the tow
 
 
 func _init() -> void:
@@ -239,6 +243,12 @@ func _build_ship() -> void:
 	model.land_cfg = SurfaceTerrain.config()
 	if Session.slot >= 0:
 		model.damage = clampf(float(Session.profile.get("hull_damage", 0.0)), 0.0, 1.0)   # dents stay until repaired
+	_hull_warned = _hull_passed()   # old news isn't announced again, just shown
+	salvage_fee = Session.salvage_fee(float(Session.ship_cost(ship, ship.library)))
+	alarm = AudioStreamPlayer.new()
+	alarm.stream = Sfx.stream(&"alarm")
+	alarm.volume_db = -4.0
+	add_child(alarm)
 	model.place_at_dock(Vector3(0.35, 0.15, 1.0))
 	com = stats.com
 	ship_root = Node3D.new()
@@ -330,6 +340,8 @@ func _process(delta: float) -> void:
 	if model.impacts != _impacts_seen:
 		_impacts_seen = model.impacts
 		_impact_shown = model.elapsed_s
+	_check_hull()
+	view.set_damage(model.damage)
 	_apply_pose()
 	_update_hud()
 	view.set_flames(model.throttle > 0.02 and model.has_fuel())
@@ -346,6 +358,8 @@ func _process(delta: float) -> void:
 func pilot(action: String, value: float = 0.0) -> Dictionary:
 	if leaving or _jumping():
 		return {"ok": false, "message": "Hands off: the ship is busy."}
+	if model.disabled() and action in ["throttle", "brake", "course", "assist"]:
+		return {"ok": false, "message": "Nothing answers the helm. Call the tug."}
 	match action:
 		"throttle":   # set the throttle outright (the remote's lever); any pilot input takes the controls back
 			if _on_surface():
@@ -393,13 +407,13 @@ func pilot(action: String, value: float = 0.0) -> Dictionary:
 			_arrived = true
 			_return_to_dock()
 			return {"ok": true, "message": "Traffic control has you."}
-		"tug":   # out of fuel: the tug (Esc at the helm)
-			if model.has_fuel():
-				return {"ok": false, "message": "There's fuel in the tank. The tug only comes for the empty."}
+		"tug":   # out of fuel, or the hull breached: the tug (Esc at the helm)
+			if model.has_fuel() and not model.disabled():
+				return {"ok": false, "message": "There's fuel in the tank and air in the hull. The tug only comes for the helpless."}
 			if tow_goes_on():
 				_arrived = true
 			_return_to_dock()
-			return {"ok": true, "message": "Tug called."}
+			return {"ok": true, "message": "Rescue tug called." if model.disabled() else "Tug called."}
 	return {"ok": false, "message": "Unknown control."}
 
 
@@ -415,6 +429,8 @@ func remote_state() -> Dictionary:
 			"braking": model.braking, "brake_state": model.brake_state, "course_hold": model.course_hold, "assist": model.assist,
 			"warp_choice": int(WARPS[warp_index]), "warp_max": int(lim.max), "warp_why": String(lim.get("why", "")),
 			"can_dock": model.can_dock(), "approach": phase == "approach", "out_of_fuel": not model.has_fuel(),
+			"disabled": model.disabled(), "can_tug": not model.has_fuel() or model.disabled(), "faults": model.faults(),
+			"leak_t_h": model.leak_t_per_h(), "cargo_hurt": model.cargo_hurt, "alerts": alerts,
 			"prompt": prompt.text if prompt != null else "", "help": help.text if help != null else ""}, true)
 	return st
 
@@ -478,6 +494,8 @@ const WARP_REAL_S := 10.0         ## never less than this many real seconds from
 ## target is less than WARP_REAL_S real seconds away.
 func _warp_limit() -> Dictionary:
 	var top: int = WARPS[WARPS.size() - 1]
+	if model.disabled():
+		return {"max": 1, "why": "Breached: nothing to speed up but the wait for the tug"}
 	if xfer == null:
 		return {"max": 1, "why": "Time compression is for runs, not loitering"}
 	if phase == "depart" and model.pos.length() < WARP_FROM_M:
@@ -559,11 +577,60 @@ func course_status() -> String:
 ## Out of fuel on a run, a tug takes you to whichever is nearer: on to the destination (and the run is
 ## delivered) or back to where you started. It can't land you, so a run to the surface goes back.
 func tow_goes_on() -> bool:
-	if xfer == null or model.has_fuel() or not (phase == "cruise" or phase == "depart"):
+	if xfer == null or (model.has_fuel() and not model.disabled()) or not (phase == "cruise" or phase == "depart"):
 		return false
 	if String(job.get("dest_kind", "")) in LocalSpace.SURFACE:
 		return false
 	return xfer.range_to(model) < model.pos.length()
+
+
+## Hull warning marks passed so far (flight_tuning.json hull_faults.warn_at_hull), plus one for a breach.
+func _hull_passed() -> int:
+	var n := 0
+	for m in (model.tune.get("hull_faults", {}) as Dictionary).get("warn_at_hull", [0.75, 0.5, 0.25, 0.1]):
+		if model.hull() < float(m) - 0.0001:
+			n += 1
+	return n + (1 if model.disabled() else 0)
+
+
+## Say so, loudly, when the hull passes a warning mark.
+func _check_hull() -> void:
+	var n := _hull_passed()
+	if n <= _hull_warned:
+		return
+	_hull_warned = n
+	var text := hull_warning()
+	say(text, 8.0)
+	alerts.append({"text": text, "level": "breach" if model.disabled() else ("danger" if model.hull() < 0.25 else "warn"), "t": model.elapsed_s})
+	if alerts.size() > 6:
+		alerts.pop_front()
+	if alarm != null:
+		alarm.play()
+
+
+## What the cockpit says about the hull as it is now.
+func hull_warning() -> String:
+	var h := roundi(model.hull() * 100.0)
+	if model.disabled():
+		return "HULL BREACHED. Nothing answers the helm. Esc calls the rescue tug, and the salvage crew sends a bill."
+	if model.hull() < 0.1:
+		return "HULL %d%%. One more good knock and she's a hulk. Gently. Very gently." % h
+	if model.hull() < 0.25:
+		return "HULL %d%%. Every knock reaches the cargo now, and no port will clear you to carry freight like this." % h
+	if model.hull() < 0.5:
+		return "HULL %d%%. The tanks have started to weep fuel. Fly like you're paying for it, because you are." % h
+	return "HULL %d%%. Cracked radiator panels: she runs hotter from here." % h
+
+
+## The prompt while the hull is breached: where the rescue tug goes and what it costs.
+func rescue_hint() -> String:
+	var fee := ShipStats.commas(tow_fee() + salvage_fee)
+	var where := "back to the station"
+	if xfer != null:
+		where = "on to %s (nearer), run delivered" % String(job.destination) if tow_goes_on() else "back to the start"
+	elif String(job.get("kind", "")) == "jump":
+		where = "in to %s" % String(job.destination) if bool(job.get("jumped", false)) else "back to the start"
+	return "HULL BREACHED. Nothing answers the helm.\nEsc: the rescue tug takes you %s. Tow and salvage %s cr. Some of the load goes over the side." % [where, fee]
 
 
 ## What the tug would cost, for the prompt.
@@ -666,6 +733,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _on_surface() and not leaving and event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			KEY_ESCAPE:
+				if model.disabled():
+					_return_to_dock()   # the rescue crawler drags the wreck home
+					return
 				if phase == "ascent":
 					auto_ascent = not auto_ascent and model.can_hover()
 				else:
@@ -728,8 +798,9 @@ func _return_to_dock() -> void:
 	if leaving:
 		return
 	leaving = true
+	Session.flight_extra = {"rescue": model.disabled(), "cargo_hurt": model.cargo_hurt}
 	if String(job.get("kind", "")) == "jump":
-		Session.finish_jump_flight(model.fuel_burned_t, model.elapsed_s, model.damage, not model.has_fuel() and (phase != "approach" or not model.can_dock()))
+		Session.finish_jump_flight(model.fuel_burned_t, model.elapsed_s, model.damage, (not model.has_fuel() or model.disabled()) and (phase != "approach" or not model.can_dock()))
 	elif xfer != null:
 		Session.finish_local_flight(model.fuel_burned_t, model.elapsed_s, model.damage, _arrived, _stranded(), _surface)
 	else:

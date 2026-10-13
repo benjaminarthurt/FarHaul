@@ -37,5 +37,25 @@
   "jump_spool_s": 5.0,
   "jump_accel_s": 3.5,
   "jump_flash_s": 0.5,
-  "jump_decel_s": 4.5
+  "jump_decel_s": 4.5,
+  "hull_faults": {
+    "note": "What a battered hull does before it's gone. Hull levels are fractions of integrity left. Placeholders.",
+    "cooling_from_hull": 0.75,
+    "cooling_loss_at_zero": 0.5,
+    "leak_from_hull": 0.5,
+    "leak_t_per_h_at_zero": 1.5,
+    "cargo_from_hull": 0.25,
+    "cargo_hurt_per_damage": 2.0,
+    "cargo_hurt_max": 0.6,
+    "warn_at_hull": [
+      0.75,
+      0.5,
+      0.25,
+      0.1
+    ],
+    "unsafe_hull": 0.25,
+    "rescue_salvage_fraction_of_ship": 0.08,
+    "rescue_cargo_loss": 0.3,
+    "patch_step": 0.05
+  }
 }

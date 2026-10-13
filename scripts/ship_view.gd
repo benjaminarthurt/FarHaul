@@ -19,6 +19,8 @@ var _ring_mat: StandardMaterial3D
 var hide_above := false
 var deck := 0
 var skin := false   ## wear the outer hull (ShipSkin): in flight and on the menus, not in the builder
+var _damage: ShipDamage        ## scorches, venting and sparks on the skin (set_damage)
+var _damage_level := 0.0
 
 
 func _ready() -> void:
@@ -72,6 +74,12 @@ func rebuild(ship: ShipData, manifest: CargoManifest = null, pop_index := -1) ->
 	if skin:   # under a hull nobody needs to see in from above, and from inside you'd see the hull
 		add_child(ShipSkin.build(ship))
 		_set_ceilings(self, true)
+		_damage = ShipDamage.new()
+		_damage.setup(ship)
+		add_child(_damage)
+		_damage.set_damage(_damage_level)
+	else:
+		_damage = null
 	set_deck_filter(deck, hide_above)
 	set_flames(_flames_on)
 
@@ -82,6 +90,13 @@ func set_deck_filter(level: int, hide: bool) -> void:
 	for child in get_children():
 		if child.has_meta("deck"):
 			child.visible = not (hide and int(child.get_meta("deck")) > level)
+
+
+## How battered the hull looks, 0 (new) .. 1 (breached). Only a skinned ship shows it.
+func set_damage(d: float) -> void:
+	_damage_level = d
+	if _damage != null:
+		_damage.set_damage(d)
 
 
 func set_flames(on: bool) -> void:

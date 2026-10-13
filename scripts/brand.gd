@@ -14,6 +14,7 @@ const STEEL_LIGHT := Color8(48, 56, 68)
 const OFFWHITE := Color8(230, 226, 214)
 const AMBER := Color8(242, 167, 27)  # hazard markings, the one accent colour
 const MUTED := Color8(140, 146, 156)
+const ALARM := Color8(236, 78, 58)   # hull alarms and nothing else
 
 const LOGO := "res://assets/brand/logo.png"
 const WORDMARK := "res://assets/brand/wordmark.png"

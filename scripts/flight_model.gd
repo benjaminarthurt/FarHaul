@@ -49,6 +49,11 @@ var overheated := false
 # Body and trouble
 var radius_m := 6.0
 var damage := 0.0                # 0..1 of the hull's integrity lost; repaired for money at the dock
+## Hull trouble before it's gone (flight_tuning.json "hull_faults"): radiators lose cooling from 75% hull,
+## the tanks leak from 50%, and below 25% every knock reaches the cargo. At 0% the ship is disabled:
+## no thrust, no lift, no autopilots, nothing but a call to the rescue tug.
+var cargo_hurt := 0.0            # 0..1 of the cargo's value spoiled by knocks
+var leaked_t := 0.0              # fuel lost through the leak, tonnes (also counted in fuel_burned_t)
 var impacts := 0
 var last_impact := 0.0           # speed of the latest hit, m/s
 var fuel_burned_t := 0.0
@@ -109,11 +114,76 @@ func has_fuel() -> bool:
 ## How much of the commanded thrust the ship can actually deliver: 1.0 normally, less when the power
 ## plant cannot feed the engines (brownout), none while overheated, and less with a damaged hull.
 func thrust_scale() -> float:
-	if overheated:
+	if overheated or disabled():
 		return 0.0
 	var demand := power_base_kw + engine_power_kw * throttle
 	var power := 1.0 if demand <= power_gen_kw or demand <= 0.0 else power_gen_kw / demand
 	return power * (1.0 - damage * float(tune.get("damage_thrust_loss", 0.5)))
+
+
+## The hull is gone: 0% integrity. Nothing on board answers the helm.
+func disabled() -> bool:
+	return damage >= 0.999
+
+
+func _fault(key: String, default: float) -> float:
+	return float((tune.get("hull_faults", {}) as Dictionary).get(key, default))
+
+
+## Hull left, 0..1.
+func hull() -> float:
+	return clampf(1.0 - damage, 0.0, 1.0)
+
+
+## How far a fault has got: 0 at the hull level it starts, 1 at 0% hull.
+func _fault_level(starts_at_hull: float) -> float:
+	return clampf((starts_at_hull - hull()) / maxf(starts_at_hull, 0.001), 0.0, 1.0)
+
+
+## The radiators still working: cracked panels shed less heat from 75% hull down.
+func cooling_now_kw() -> float:
+	return cooling_kw * (1.0 - _fault_level(_fault("cooling_from_hull", 0.75)) * _fault("cooling_loss_at_zero", 0.5))
+
+
+## Tonnes an hour leaking from the tanks: nothing above 50% hull, rising to the full rate at 0%.
+func leak_t_per_h() -> float:
+	return _fault_level(_fault("leak_from_hull", 0.5)) * _fault("leak_t_per_h_at_zero", 1.5)
+
+
+## Which faults are live now, for the HUD and the remote.
+func faults() -> Array[String]:
+	var out: Array[String] = []
+	if disabled():
+		out.append("disabled")
+		return out
+	if hull() < _fault("cooling_from_hull", 0.75):
+		out.append("cooling")
+	if hull() < _fault("leak_from_hull", 0.5):
+		out.append("leak")
+	if hull() < _fault("cargo_from_hull", 0.25):
+		out.append("cargo")
+	return out
+
+
+## Take `amount` of hull. Below 25% hull the cargo takes its share; at 0% the ship is disabled.
+func hurt(amount: float) -> void:
+	if amount <= 0.0:
+		return
+	if hull() < _fault("cargo_from_hull", 0.25) and cargo_t > 0.0:
+		cargo_hurt = minf(_fault("cargo_hurt_max", 0.6), cargo_hurt + amount * _fault("cargo_hurt_per_damage", 2.0))
+	damage = minf(1.0, damage + amount)
+	if disabled():
+		_shut_down()
+
+
+func _shut_down() -> void:
+	throttle = 0.0
+	lift = 0.0
+	braking = false
+	brake_state = ""
+	course_hold = false
+	trimming = false
+	autoland = false
 
 
 func heat_capacity_mj() -> float:
@@ -211,6 +281,10 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 	throttle = clampf(throttle + throttle_cmd * float(tune.get("throttle_rate_per_s", 0.8)) * dt, 0.0, 1.0)
 	var cmd := turn
 	lift = clampf(lift_cmd, 0.0, 1.0)
+	if disabled():
+		_shut_down()
+		cmd = Vector3.ZERO
+	_leak(dt)
 	if braking:
 		var auto := _brake(dt)
 		cmd = auto["turn"]
@@ -233,6 +307,7 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 			vel = Vector3.ZERO
 			ang = Vector3.ZERO
 			lift = 0.0
+			_leak(0.0)
 			_heat(dt)
 			elapsed_s += dt
 			return
@@ -241,7 +316,7 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 	var want := cmd * _max_turn()
 	var a := _turn_accel() * dt
 	for i in 3:
-		if cmd[i] != 0.0 or assist or braking or autoland or course_hold:
+		if not disabled() and (cmd[i] != 0.0 or assist or braking or autoland or course_hold):
 			ang[i] = move_toward(ang[i], want[i], a)
 	if ang.length() > 0.0:
 		basis = (basis * Basis(ang.normalized(), ang.length() * dt)).orthonormalized()
@@ -306,7 +381,7 @@ func _ground() -> void:
 		return
 	impacts += 1
 	last_impact = down
-	damage = minf(1.0, damage + maxf(down - ok_v, 0.0) * float(land_cfg.get("hard_landing_damage_per_m_s", 0.04))
+	hurt(maxf(down - ok_v, 0.0) * float(land_cfg.get("hard_landing_damage_per_m_s", 0.04))
 			+ maxf(drift - ok_h, 0.0) * float(land_cfg.get("hard_landing_damage_per_m_s", 0.04)) * 0.5
 			+ maxf(tilt - ok_t, 0.0) * float(land_cfg.get("tilt_damage_per_deg", 0.004)))
 	vel.y = maxf(down, 0.0) * 0.2
@@ -320,7 +395,7 @@ func _rough_ground() -> void:
 	var foot := float(sc.get("ship_footprint_m", 3.0))
 	for r in rocks:
 		if Vector2(pos.x - r.x, pos.z - r.y).length() < r.z + foot:
-			damage = minf(1.0, damage + float(sc.get("boulder_damage", 0.12)))
+			hurt(float(sc.get("boulder_damage", 0.12)))
 			hazard = "Set down on a boulder. The legs took it personally"
 			hazards_seen += 1
 			impacts += 1
@@ -328,7 +403,7 @@ func _rough_ground() -> void:
 	var slope := SurfaceSites.slope_deg(terrain, pos.x, pos.z)
 	var lim := float(sc.get("land_slope_deg", 10.0))
 	if slope > lim:
-		damage = minf(1.0, damage + (slope - lim) * float(sc.get("slope_damage_per_deg", 0.012)))
+		hurt((slope - lim) * float(sc.get("slope_damage_per_deg", 0.012)))
 		hazard = "Landed on a %d° slope: slid and scraped. Pick flatter rock" % roundi(slope)
 		hazards_seen += 1
 		impacts += 1
@@ -477,11 +552,22 @@ func place_at_dock(direction: Vector3 = Vector3(0, 0, 1)) -> void:
 	basis = Basis.looking_at(d, Vector3.UP)    # forward (-Z) points along d, away from the station
 
 
+## Fuel lost through a cracked tank. Counted as burned: it was paid for, and now it's space's.
+func _leak(dt: float) -> void:
+	var rate := leak_t_per_h()
+	if rate <= 0.0 or fuel_t <= 0.0 or dt <= 0.0:
+		return
+	var lost := minf(fuel_t, rate * dt / 3600.0)
+	fuel_t -= lost
+	fuel_burned_t += lost
+	leaked_t += lost
+
+
 ## Heat builds when the ship makes more than its radiators shed. Past the limit the engines shut down
 ## until it has cooled to the restart level.
 func _heat(dt: float) -> void:
 	var made := heat_base_kw + engine_heat_kw * throttle
-	heat_mj = maxf(0.0, heat_mj + (made - cooling_kw) * dt / 1000.0)   # kW x s = kJ -> MJ
+	heat_mj = maxf(0.0, heat_mj + (made - cooling_now_kw()) * dt / 1000.0)   # kW x s = kJ -> MJ
 	var cap := heat_capacity_mj()
 	if heat_mj >= cap:
 		overheated = true
@@ -545,7 +631,7 @@ func _collide() -> void:
 	var soft := float(tune.get("soft_impact_m_s", 1.5))
 	if into > soft:
 		impacts += 1
-		damage = minf(1.0, damage + (into - soft) * float(tune.get("damage_per_m_s", 0.02)))
+		hurt((into - soft) * float(tune.get("damage_per_m_s", 0.02)))
 
 
 ## The mooring point in front of the station's docking collar.

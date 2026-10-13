@@ -177,19 +177,46 @@ func _desk_fuel() -> void:
 	var mult := Session.site_fuel_mult()
 	sc._clear_panel("Fuel and repairs", "Fuel here costs %d%% of the system price (%s). You pay for every drop you burn when you leave or land." % [roundi(mult * 100.0),
 			"cheap: a fuel depot" if mult < 0.95 else ("dear: it has to come up from the surface or down from orbit" if mult > 1.2 else "the usual")])
-	var dmg := float(Session.profile.get("hull_damage", 0.0))
-	sc.panel_list.add_child(Brand.note("Hull: %d%%%s" % [roundi((1.0 - dmg) * 100.0), "" if dmg <= 0.0 else ". A damaged hull loses thrust until it is fixed."], 15))
+	sc.panel_list.add_child(Brand.note("Hull: %d%%. %s" % [roundi(Session.hull() * 100.0), _hull_words(Session.hull())], 15))
 	var cost := Session.repair_cost()
 	sc._action("REPAIR THE HULL  %s cr" % ShipStats.commas(cost) if cost > 0 else "THE HULL NEEDS NO WORK", func() -> void:
 		var r := Session.repair_hull()
 		sc._say(String(r.message))
-		sc._refill(), cost > 0)
+		sc._refill(), cost > 0 and int(Session.profile.get("credits", 0)) >= cost)
+	var po := Session.patch_options()
+	if not (po.afford as Dictionary).is_empty():
+		var to := float(po.afford.to)
+		sc._action("PATCH IT TO %d%%  %s cr, what you can afford" % [roundi(to * 100.0), ShipStats.commas(int(po.afford.cost))], func() -> void:
+			var r := Session.patch_hull(to)
+			sc._say(String(r.message))
+			sc._refill())
+	if not (po.account as Dictionary).is_empty():
+		var to2 := float(po.account.to)
+		sc._action("EMERGENCY PATCH TO %d%% ON ACCOUNT  %s cr you'll owe the yard" % [roundi(to2 * 100.0), ShipStats.commas(int(po.account.cost))], func() -> void:
+			var r := Session.patch_hull(to2, true)
+			sc._say(String(r.message))
+			sc._refill())
 	var f := Session.finds_aboard()
 	if int(f.value) > 0:
 		sc._action("SELL YOUR FINDS  %s cr  (%s)" % [ShipStats.commas(int(f.value)), SurfaceFinds.describe(f)], func() -> void:
 			var r := Session.sell_finds()
 			sc._say(String(r.message))
 			sc._refill())
+
+
+## What the hull's state means, in a sentence.
+static func _hull_words(h: float) -> String:
+	if h <= 0.001:
+		return "Breached. It goes nowhere until it's patched, not even empty."
+	if h < 0.25:
+		return "Below 25%: port control won't clear it to carry freight, every knock reaches the cargo, the tanks leak and the radiators are cracked."
+	if h < 0.5:
+		return "Below 50%: the tanks leak fuel in flight and the radiators are cracked. Thrust is down too."
+	if h < 0.75:
+		return "Cracked radiator panels: it runs hotter. Thrust is down a little."
+	if h < 1.0:
+		return "Dents. A damaged hull loses some thrust until it's fixed."
+	return "Sound."
 
 
 func _desk_bar() -> void:
@@ -276,9 +303,9 @@ func _desk_gate() -> void:
 					sc._go(Session.FLIGHT_SCENE)
 				else:
 					sc._say(String(r.message)))
-	sc._action("TAKE THE HELM", func() -> void:
+	sc._action("TAKE THE HELM" if Session.hull() > 0.001 else "TAKE THE HELM  (the hull is breached: patch it first)", func() -> void:
 		Session.flight_job = {}
-		sc._go(Session.FLIGHT_SCENE), not Session.insolvent())
+		sc._go(Session.FLIGHT_SCENE), not Session.insolvent() and Session.hull() > 0.001)
 	sc._action("GO ABOARD AND WALK THE SHIP", func() -> void:
 		Session.flight_job = {}
 		Session.walk_aboard = true

@@ -96,6 +96,17 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
 
 /* The cockpit's prompt, pinned to the bottom like the helm's own. */
 .prompt { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(13,16,21,.96); border-top: 1px solid var(--amber-dim); color: var(--amber); font-size: 15px; line-height: 1.35; min-height: 52px; }
+/* Hull alarms: the one place the page goes red. */
+.alarm-wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+.alarm { display: flex; gap: 12px; align-items: flex-start; margin: 12px 0 0; padding: 12px 14px; border-radius: var(--r); border: 1px solid var(--warn); background: #2a1210; color: #ffd8cf; font-size: 15px; line-height: 1.4; }
+.alarm b { color: var(--warn); font-weight: 400; display: block; font-size: 13px; letter-spacing: .04em; }
+.alarm button { margin-left: auto; min-width: 44px; min-height: 36px; border: 1px solid #5a2a24; border-radius: 18px; background: transparent; color: #ffd8cf; }
+.alarm.breach { background: repeating-linear-gradient(-45deg, #3a1410 0 14px, #2a1210 14px 28px); }
+.faults { font-size: 13px; color: var(--warn); min-height: 1.2em; margin-top: 2px; }
+.prompt.breach { color: var(--warn); border-top-color: var(--warn); }
+.helm.dead .lever, .helm.dead .key:not(#kTug):not(#kSlow):not(#kFast):not(#kReal) { opacity: .35; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { .alarm.fresh { animation: thump .5s ease-out 2; } }
+@keyframes thump { 0% { transform: scale(1.02); box-shadow: 0 0 0 4px rgba(255,106,74,.45); } 100% { transform: none; box-shadow: none; } }
 .toast { position: fixed; left: 50%; bottom: 76px; transform: translateX(-50%); background: var(--plate-2); border: 1px solid var(--edge); border-radius: 18px; padding: 8px 16px; font-size: 14px; opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 90vw; }
 .toast.show { opacity: 1; }
 .idle { text-align: center; color: var(--dim); padding: 24px 8px; font-size: 15px; }
@@ -136,6 +147,7 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
     </div>
     <div class="link" id="link"><i></i><span id="linkText">Looking for the ship</span></div>
   </header>
+  <div class="alarm-wrap"><div class="alarm" id="alarm" role="alert" hidden><div><b id="alarmHead">Hull alarm</b><span id="alarmText"></span></div><button id="alarmOk" aria-label="Dismiss the alarm">OK</button></div></div>
 
   <main>
     <section class="card trip" aria-live="polite">
@@ -177,7 +189,7 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
         <div class="bars">
           <div class="bar" id="bFuel"><div class="l">Fuel <b id="gFuel">-</b></div><div class="t"><i></i></div></div>
           <div class="bar" id="bHeat"><div class="l">Heat <b id="gHeat">-</b></div><div class="t"><i></i></div></div>
-          <div class="bar" id="bHull"><div class="l">Hull <b id="gHull">-</b></div><div class="t"><i></i></div></div>
+          <div class="bar" id="bHull"><div class="l">Hull <b id="gHull">-</b></div><div class="t"><i></i></div><div class="faults" id="faults"></div></div>
           <div class="bar"><div class="l">Δv left <b id="gDv">-</b></div></div>
         </div>
       </div>
@@ -210,7 +222,7 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
           <button class="key wide" id="kReal">Back to x1<small>/</small></button>
           <button class="key wide go" id="kDock" hidden>Dock<small>in range · F</small></button>
           <button class="key wide go" id="kTraffic" hidden>Let traffic control bring her in<small>on the approach · Esc</small></button>
-          <button class="key wide" id="kTug" hidden>Call the tug<small>out of fuel · Esc</small></button>
+          <button class="key wide" id="kTug" hidden><span id="tugText">Call the tug</span><small id="tugWhy">out of fuel · Esc</small></button>
         </div>
       </div>
     </section>
@@ -324,7 +336,7 @@ function render() {
   $("gHeat").textContent = s.heat != null ? Math.round(s.heat * 100) + "%" + (s.overheated ? " · overheated" : "") : "-";
   bar("bHeat", s.heat || 0, "", (s.heat || 0) > 0.8);
   $("gHull").textContent = s.hull != null ? Math.round(s.hull * 100) + "%" : "-";
-  bar("bHull", s.hull || 0, "", (s.hull || 1) < 0.5);
+  bar("bHull", s.hull || 0, "", s.hull != null && s.hull < 0.5);
   $("gDv").textContent = s.dv != null ? Math.round(s.dv).toLocaleString() + " m/s" : "-";
   // Helm.
   $("helm").hidden = !flying; $("helmIdle").hidden = flying;
@@ -335,12 +347,45 @@ function render() {
     $("rateWhy").textContent = s.warp_why ? s.warp_why : (s.warp_choice > (s.warp || 1) ? "Set to x" + s.warp_choice : "Time compression");
     $("kDock").hidden = !s.can_dock;
     $("kTraffic").hidden = !(s.approach && !s.can_dock);
-    $("kTug").hidden = !s.out_of_fuel;
+    $("kTug").hidden = !(s.can_tug || s.out_of_fuel);
+    $("tugText").textContent = s.disabled ? "Call the rescue tug" : "Call the tug";
+    $("tugWhy").textContent = s.disabled ? "hull breached · Esc" : "out of fuel · Esc";
+    $("helm").classList.toggle("dead", !!s.disabled);
     const surface = !!s.on_surface;
     $("kBrake").disabled = surface; $("lever").style.opacity = surface ? .4 : 1;
   }
   $("prompt").textContent = s.prompt || "";
+  $("prompt").classList.toggle("breach", !!s.disabled);
+  faults(s);
+  alarms(s);
 }
+
+// ---- Hull trouble -------------------------------------------------------------------------
+const FAULT_WORDS = { cooling: "Radiators cracked", leak: "Leaking fuel", cargo: "Knocks reach the cargo", disabled: "Breached: nothing answers the helm" };
+function faults(s) {
+  const f = (s.faults || []).map(k => k === "leak" && s.leak_t_h ? "Leaking " + s.leak_t_h.toFixed(1) + " t/h" : FAULT_WORDS[k] || k);
+  if (s.cargo_hurt > 0.005) f.push(Math.round(s.cargo_hurt * 100) + "% of the load damaged");
+  $("faults").textContent = f.join(" · ");
+}
+let alarmSeen = "", alarmClosed = "";
+function alarms(s) {
+  const list = s.alerts || [];
+  const last = list.length ? list[list.length - 1] : null;
+  const key = last ? list.length + ":" + last.t : "";
+  const el = $("alarm");
+  if (!last || (alarmClosed === key && !s.disabled)) { el.hidden = true; return; }
+  el.hidden = false;
+  el.classList.toggle("breach", last.level === "breach" || !!s.disabled);
+  $("alarmHead").textContent = s.disabled ? "Hull breached" : "Hull alarm";
+  $("alarmText").textContent = last.text;
+  $("alarmOk").hidden = !!s.disabled;
+  if (key !== alarmSeen) {
+    alarmSeen = key;
+    el.classList.remove("fresh"); void el.offsetWidth; el.classList.add("fresh");
+    try { if (navigator.vibrate) navigator.vibrate([220, 120, 220, 120, 220]); } catch (e) {}
+  }
+}
+$("alarmOk").addEventListener("click", () => { alarmClosed = alarmSeen; $("alarm").hidden = true; });
 function press(id, on) { $(id).setAttribute("aria-pressed", on ? "true" : "false"); }
 let toastT = 0;
 function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 2600); }

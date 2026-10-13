@@ -25,6 +25,8 @@ func _build_hud() -> void:
 	sc.prompt.add_theme_color_override("font_color", Brand.AMBER)
 	sc.prompt.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 60)
 	sc.prompt.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	sc.prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sc.prompt.grow_vertical = Control.GROW_DIRECTION_BEGIN   # a second line goes up, not over the key strip
 	layer.add_child(sc.prompt)
 	sc.time_label = Label.new()   # time compression, big enough to notice
 	sc.time_label.add_theme_font_size_override("font_size", 26)
@@ -186,7 +188,7 @@ func _update_transfer_hud() -> void:
 		"THROTTLE  %d%%    THRUST  %d%%    TIME x%d" % [roundi(sc.model.throttle * 100.0), roundi(sc.model.thrust_scale() * 100.0), sc._warp()],
 		"FUEL  %.2f t    ΔV %.0f m/s    PERFECT RUN %.2f t" % [sc.model.fuel_t, sc.model.delta_v(), sc.xfer.ideal_burn_t],
 		"MASS  %.1f t    ACCEL %.2f m/s²" % [sc.model.mass_t(), sc.model.accel() if sc.model.throttle > 0.0 else sc.model.max_accel()],
-		"HEAT  %d%%    HULL  %d%%" % [roundi(sc.model.heat_fraction() * 100.0), roundi((1.0 - sc.model.damage) * 100.0)],
+		_hull_line(),
 		"ASSIST %s   %s" % ["ON" if sc.model.assist else "OFF", "AUTOPILOT BRAKING" if sc.model.braking else ("COURSE HOLD" if sc.model.course_hold else "")]])
 	sc.hud.text = "\n".join(lines)
 	sc.bar.value = sc.model.throttle
@@ -226,7 +228,35 @@ func _update_transfer_hud() -> void:
 	sc.prompt.text = hint
 
 
+## Heat and hull, with whatever the hull's faults are doing.
+func _hull_line() -> String:
+	var m := sc.model
+	var line := "HEAT  %d%%    HULL  %d%%" % [roundi(m.heat_fraction() * 100.0), roundi(m.hull() * 100.0)]
+	for f in m.faults():
+		match f:
+			"disabled":
+				line += "    BREACHED"
+			"cooling":
+				line += "    RADIATORS %d%%" % roundi(m.cooling_now_kw() / maxf(m.cooling_kw, 0.001) * 100.0)
+			"leak":
+				line += "    LEAK %.1f t/h" % m.leak_t_per_h()
+			"cargo":
+				line += "    CARGO AT RISK" if m.cargo_t > 0.0 else ""
+	return line
+
+
 func _update_hud() -> void:
+	_update_hud_body()
+	# A breached hull wins the prompt at the helm: there's only one thing left to do.
+	var at_helm := not sc.walking and not sc.outside and not sc._jumping()
+	if sc.model.disabled() and at_helm:
+		sc.prompt.text = sc.rescue_hint()
+	elif at_helm and sc.notice_s > 0.0 and sc.notice.begins_with("HULL"):
+		sc.prompt.text = sc.notice   # a hull warning wins the prompt everywhere, not just on a run
+	sc.prompt.add_theme_color_override("font_color", Brand.ALARM if sc.model.disabled() or (sc.notice_s > 0.0 and sc.notice.begins_with("HULL")) else Brand.AMBER)
+
+
+func _update_hud_body() -> void:
 	_update_time()
 	sc.notice_s = maxf(0.0, sc.notice_s - sc.get_process_delta_time())
 	if sc._on_surface():
@@ -250,7 +280,7 @@ func _update_hud() -> void:
 		"THROTTLE  %d%%    THRUST  %d%%" % [roundi(sc.model.throttle * 100.0), roundi(sc.model.thrust_scale() * 100.0)],
 		"FUEL  %.2f t    ΔV %.0f m/s" % [sc.model.fuel_t, sc.model.delta_v()],
 		"MASS  %.1f t    ACCEL %.2f m/s²" % [sc.model.mass_t(), sc.model.accel() if sc.model.throttle > 0.0 else sc.model.max_accel()],
-		"HEAT  %d%%    HULL  %d%%" % [roundi(sc.model.heat_fraction() * 100.0), roundi((1.0 - sc.model.damage) * 100.0)],
+		_hull_line(),
 		"ASSIST %s   %s" % ["ON" if sc.model.assist else "OFF", "AUTOPILOT BRAKING" if sc.model.braking else ""]])
 	if sc.phase == "approach":
 		lines.insert(0, "APPROACH  %s    Esc: autopilot dock" % String(sc.job.destination).to_upper())
@@ -300,7 +330,9 @@ func _walk_prompt() -> void:
 		else:
 			hint = "E: leave the ship" if sc._berthed() else "Outer hatch stays shut until you berth. Outside is mostly vacuum."
 	var warn := ""
-	if sc.model.overheated:
+	if sc.model.disabled():
+		warn = "HULL BREACHED: back to the helm and call the tug (Esc)"
+	elif sc.model.overheated:
 		warn = "ENGINES OVERHEATED"
 	elif not sc.model.has_fuel() and sc.model.speed() > 1.0:
 		warn = "OUT OF FUEL"
@@ -335,7 +367,7 @@ func _update_descent_hud() -> void:
 		("CLIMB TO  %.0f m" % float(sc.model.land_cfg.get("ascent_clear_m", 1500.0))) if sc.phase == "ascent" else "%s  %.0f m    TILT  %.0f°" % [target, to_pad, sc.model.tilt_deg()],
 		"LIFT  %d%%    %.2f m/s² available, gravity %.2f" % [roundi(sc.model.lift * 100.0), sc.model.lift_accel(), sc.model.gravity],
 		"THROTTLE  %d%%    FUEL  %.2f t" % [roundi(sc.model.throttle * 100.0), sc.model.fuel_t],
-		"HEAT  %d%%    HULL  %d%%" % [roundi(sc.model.heat_fraction() * 100.0), roundi((1.0 - sc.model.damage) * 100.0)]])
+		_hull_line()])
 	sc.hud.text = "\n".join(lines)
 	sc.bar.value = sc.model.lift
 	if sc.pad_label != null:

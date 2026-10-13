@@ -40,6 +40,8 @@ func _tune(key: String, fallback: float) -> float:
 func _jump_blocker() -> String:
 	if sc.phase != "depart" or String(sc.job.get("kind", "")) != "jump":
 		return "no jump planned"
+	if sc.model.disabled():
+		return "the drive won't spool in a breached hull. Nothing will"
 	var clear := sc._tune("jump_clear_m", 3000.0)
 	if sc.model.pos.length() < clear:
 		return "fly clear of the station: %.0f of %.0f m" % [sc.model.pos.length(), clear]

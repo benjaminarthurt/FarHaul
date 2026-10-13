@@ -47,3 +47,10 @@ system is on; dock, traffic control and the tug only show when the game would le
 
 `tests/test_ship_remote.gd` covers the server; `tests/serve_remote.gd` runs a flight with the remote
 on for looking at the page in a browser.
+
+## Hull alarms
+
+`/api/state` in flight also carries `disabled`, `can_tug`, `faults`, `leak_t_h`, `cargo_hurt` and
+`alerts` (the flight's hull warnings, newest last). The page shows the faults under the hull gauge,
+a red banner for the latest alert (the phone vibrates when one is new; OK dismisses it, except a
+breach, which stays), greys out the dead controls and offers the rescue tug when disabled.

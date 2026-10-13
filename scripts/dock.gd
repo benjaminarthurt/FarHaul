@@ -403,7 +403,7 @@ func _refresh_actions() -> void:
 	if wait_btn != null:
 		var idle := c.is_empty() and Session.sim != null and not Session.insolvent()
 		wait_btn.disabled = not idle
-		helm_btn.disabled = Session.insolvent()
+		helm_btn.disabled = Session.insolvent() or Session.hull() <= 0.001
 		fly_btn.disabled = not idle
 		if _sublight():
 			fly_btn.tooltip_text = "Fly without cargo to another site in this system, to reach better jobs."

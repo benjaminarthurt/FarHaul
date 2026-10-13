@@ -32,9 +32,10 @@ func _can_land() -> bool:
 
 
 func _stranded() -> bool:
+	var helpless := not sc.model.has_fuel() or sc.model.disabled()
 	if sc._on_surface():
-		return not sc.model.has_fuel() and not sc.model.on_pad()
-	return not sc.model.has_fuel() and (sc.phase != "approach" or not sc.model.can_dock())
+		return helpless and not sc.model.on_pad()
+	return helpless and (sc.phase != "approach" or not sc.model.can_dock())
 
 
 ## Gravity, ground and the moon's scenery on; space markers and the station off.
