@@ -49,19 +49,35 @@ func _run() -> void:
 	check(f._jump_blocker() == "", "clear and slow: the drive can engage")
 	f._update_hud()
 	check(f.prompt.text.begins_with("J:"), "the prompt offers the jump: %s" % f.prompt.text)
+	# Point the nose at the planet first: it should not just sit there through the jump.
+	var planet_at: Vector3 = f.planet.position
+	f.model.basis = Basis.looking_at((planet_at - f.model.pos).normalized(), Vector3.UP)
 	f._unhandled_input(_key(KEY_J))
 	check(f.phase == "spool" and f.fx.visible, "J starts the spool and the star field appears")
 	var steps := 0
 	var saw_warp := false
 	var saw_decel := false
+	var off_at_warp := -1.0
+	var gone_by := -1.0
+	var planet_d: float = (planet_at - f.model.pos).length()
+	var kept_d := true
 	while f.phase != "approach" and steps < 400:
 		steps += 1
 		f._process(0.1)
+		var off: float = rad_to_deg(f.model.forward().angle_to(f.planet.position - f.model.pos))
+		if f.phase == "warp" and not saw_warp:
+			off_at_warp = off
+		if f.phase == "warp" and gone_by < 0.0 and off > 150.0:
+			gone_by = f.jump_t
+		if f.phase == "warp" and not f._jump_committed and absf((f.planet.position - f.model.pos).length() - planet_d) > 1.0:
+			kept_d = false
 		if f.phase == "warp":
 			saw_warp = true
 		if f.phase == "decel":
 			saw_decel = true
 	check(saw_warp and saw_decel, "the sequence runs spool, warp, flash, decel (%d steps)" % steps)
+	check(off_at_warp > 30.0, "the planet ahead has slid well off the nose by the end of the spool (%.0f°)" % off_at_warp)
+	check(gone_by > 0.0 and gone_by < 5.0 + 3.5 * 0.7 and kept_d, "and is behind the ship early in the acceleration (%.1f s), at the same distance throughout" % gone_by + (" (distance changed)" if not kept_d else ""))
 	check(f.jump_peak_streak >= 0.99, "the stars stretch into full streaks")
 	check(f.jump_peak_fov >= 110.0, "the view widens to %.0f degrees" % f.jump_peak_fov)
 	check(f.jump_peak_flash >= 0.98, "the screen flashes white")

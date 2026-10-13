@@ -5,6 +5,12 @@ extends RefCounted
 ## (jump_t, the peaks tests read) stays on the scene.
 
 var sc: FlightScene   ## the scene this works on
+var _sky: Array = []  ## what slides past during the jump: {node, base} with each one's resting position
+
+## How far the scenery has slid past by each point of the jump (0 where it was, 1 straight behind):
+## it starts drifting as the drive spools and is gone a little over halfway into the acceleration.
+const SLIDE_SPOOL := 0.35
+const SLIDE_GONE_AT := 0.55
 
 
 func _init(scene: FlightScene) -> void:
@@ -64,6 +70,7 @@ func _start_jump() -> void:
 	sc.prompt.text = "FTL DRIVE SPOOLING"
 	sc.audio.begin()
 	sc.audio.cue("engage")
+	_hold_sky()
 
 
 ## The jump timeline: spool, accelerate into streaks, flash (the trip happens), decelerate out.
@@ -84,6 +91,7 @@ func _jump_step(delta: float) -> void:
 	var duck := 1.0
 	if sc.jump_t < spool:
 		var u := sc.jump_t / spool
+		_slide_sky(SLIDE_SPOOL * u * u, true)
 		streak = 0.12 * u
 		speed = 30.0 + 250.0 * u
 		fov = 70.0 + 4.0 * u
@@ -92,6 +100,8 @@ func _jump_step(delta: float) -> void:
 	elif sc.jump_t < t_flash:
 		sc.phase = "warp"
 		var u := (sc.jump_t - spool) / accel
+		var g := clampf(u / SLIDE_GONE_AT, 0.0, 1.0)
+		_slide_sky(SLIDE_SPOOL + (1.0 - SLIDE_SPOOL) * (1.0 - (1.0 - g) * (1.0 - g)), true)
 		streak = 0.12 + 0.88 * u * u
 		speed = 280.0 + 30000.0 * u * u
 		fov = 74.0 + 44.0 * u * u
@@ -112,6 +122,7 @@ func _jump_step(delta: float) -> void:
 		sc.phase = "decel"
 		var u := (sc.jump_t - t_commit) / decel
 		var inv := 1.0 - u
+		_slide_sky(inv * inv, false)   # the new system's worlds come out of the middle of the view and settle
 		streak = inv * inv
 		speed = 30280.0 * inv * inv * inv + 20.0
 		fov = 70.0 + 48.0 * inv * inv
@@ -128,7 +139,8 @@ func _jump_step(delta: float) -> void:
 		sc.fx.streak = 0.0
 		sc.camera.fov = 70.0
 		sc.flash_rect.color = Color(0.9, 0.95, 1.0, 0.0)
-		sc._begin_approach(3000.0)
+		_slide_sky(0.0, false)
+		sc._begin_approach(ARRIVE_M)
 		return
 	sc.audio.mix(level, streak, duck)
 	sc.fx.streak = streak
@@ -153,3 +165,43 @@ func _arrive_in_system() -> void:
 	sc.world_c.rebuild_for(String(Session.profile.get("port_id", "")))   # the new system's station and worlds
 	sc.station_label.text = String(sc.job.destination).to_upper()
 	sc.model.vel = Vector3.ZERO
+	sc.model.pos = ARRIVE_DIR.normalized() * ARRIVE_M   # where the approach starts, so nothing jumps when the streaks clear
+	_hold_sky()
+
+
+const ARRIVE_M := 3000.0
+const ARRIVE_DIR := Vector3(0.35, 0.15, 1.0)   # the same way _begin_approach places the ship
+
+
+## Note where the planet (and its neighbour) and the station rest, before sliding them.
+func _hold_sky() -> void:
+	_sky.clear()
+	for n in [sc.planet, sc.station]:
+		if n != null and is_instance_valid(n):
+			_sky.append({"node": n, "base": (n as Node3D).position})
+
+
+## Swing the scenery round the ship as if it were rushing past. `k` 0 leaves it where it rests; leaving
+## (`leaving`), 1 puts it straight behind; arriving, 1 puts it dead ahead, so it slides out from the
+## middle. Distances stay the same, so nothing grows, shrinks or passes through the ship.
+func _slide_sky(k: float, leaving: bool) -> void:
+	var eye := sc.model.pos
+	var f := sc.model.forward()
+	for s in _sky:
+		var node := s.node as Node3D
+		if node == null or not is_instance_valid(node):
+			continue
+		var rel: Vector3 = (s.base as Vector3) - eye
+		var d := rel.length()
+		if d < 1.0:
+			continue
+		var ang := f.angle_to(rel)
+		var axis := f.cross(rel)
+		axis = (axis if axis.length() > 0.001 else sc.model.basis.x).normalized()
+		var to := ang + (PI - ang) * k if leaving else ang * (1.0 - k)
+		node.position = eye + f.rotated(axis, to) * d
+		if node == sc.planet:
+			SkyWorlds.settle(node)
+			for c in node.get_children():
+				if c is Node3D and (c as Node3D).get_node_or_null("Rings") != null:
+					SkyWorlds.settle(c)

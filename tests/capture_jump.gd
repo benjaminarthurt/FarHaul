@@ -29,11 +29,12 @@ func _run() -> void:
 	await process_frame
 	f.model.pos = Vector3(0, 0, 4000)
 	f.model.vel = Vector3.ZERO
+	f.model.basis = Basis.looking_at((f.planet.position - f.model.pos).normalized(), Vector3.UP)   # nose on the planet: watch it slide past
 	f._apply_pose()
 	f._update_hud()
 	await _shot(f, out, "00_clear")
 	f._unhandled_input(_key(KEY_J))
-	var marks := {20: "01_spool", 50: "02_accel_start", 70: "03_accel_mid", 83: "04_accel_end", 88: "05_flash_rise", 92: "06_flash_peak", 96: "07_decel_start", 110: "08_decel_mid", 125: "09_decel_late", 140: "10_approach"}
+	var marks := {10: "00b_spool_early", 20: "01_spool", 35: "01b_spool_late", 45: "01c_spool_end", 50: "02_accel_start", 70: "03_accel_mid", 83: "04_accel_end", 88: "05_flash_rise", 92: "06_flash_peak", 96: "07_decel_start", 110: "08_decel_mid", 125: "09_decel_late", 140: "10_approach"}
 	for i in range(1, 150):
 		f._process(0.1)
 		if marks.has(i):

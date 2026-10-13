@@ -73,6 +73,8 @@ func _update_reticle() -> void:
 	sc.reticle.prograde = Vector2.INF
 	sc.reticle.retrograde = Vector2.INF
 	if sc.walking or sc.outside or sc._jumping():
+		sc.reticle.target_edge = Vector2.INF   # no stale arrow to a station that's light years behind
+		sc.reticle.travel_edge = Vector2.INF
 		sc.reticle.queue_redraw()
 		return
 	sc.reticle.nose = sc._screen_dir(sc.model.forward())
