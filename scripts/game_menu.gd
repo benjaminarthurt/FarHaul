@@ -103,6 +103,8 @@ func open() -> void:
 	_mouse_before = Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	note.text = "A save keeps the game as you left port; this flight is not saved. Officially, it never happened." if in_flight else ""
+	if ShipRemote.instance != null:   # where the phone goes, in case it wandered off
+		note.text = (note.text + "\n\n" if note.text != "" else "") + "Ship remote: " + ShipRemote.where()
 	dim.visible = true
 	panel.visible = true
 	get_tree().paused = true

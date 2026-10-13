@@ -36,6 +36,24 @@ func _init() -> void:
 	_row(grid, "Music volume", _slider("music", 0.0, 1.0, 0.05))
 	_row(grid, "Effects volume", _slider("effects", 0.0, 1.0, 0.05))
 	_row(grid, "Mouse sensitivity", _slider("mouse", 0.2, 3.0, 0.1))
+	var remote := _check("remote")
+	remote.toggled.connect(func(_on: bool) -> void:
+		ShipRemote.sync(get_tree())
+		_remote_note())
+	_row(grid, "Ship remote (phone or tablet)", remote)
+	_remote_info = Brand.note("", 13)
+	_remote_info.custom_minimum_size = Vector2(460, 0)
+	_remote_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	col.add_child(_remote_info)
+	_new_code = Button.new()
+	_new_code.text = "NEW CODE"
+	Brand.style_button(_new_code, 14)
+	_new_code.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	_new_code.pressed.connect(func() -> void:
+		ShipRemote.new_code()
+		_remote_note())
+	col.add_child(_new_code)
+	_remote_note()
 	var keys := Brand.note("Keys: WASD and arrows, shown on screen in each mode. Rebinding isn't built yet. The developer has a list.", 13)
 	keys.custom_minimum_size = Vector2(460, 0)
 	keys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -54,6 +72,22 @@ func _init() -> void:
 	b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	b.custom_minimum_size = Vector2(160, 0)
 	col.add_child(b)
+
+
+var _remote_info: Label
+var _new_code: Button
+
+
+## Where to point the phone, and the code, while the remote is on.
+func _remote_note() -> void:
+	var on := bool(GameSettings.get_value("remote"))
+	_new_code.visible = on
+	if not on:
+		_remote_info.text = "The ship remote turns a phone or tablet on your network into a second cockpit screen: gauges, the map and the controls. Off until you want it."
+		return
+	var trouble := ShipRemote.instance.status if ShipRemote.instance != null else ""
+	_remote_info.text = trouble if trouble != "" else \
+			"On the phone, open %s and enter the code. Same Wi-Fi only. Windows may ask to let Far Haul through the firewall: allow it on private networks. NEW CODE unpairs every device." % ShipRemote.where()
 
 
 func _row(grid: GridContainer, label: String, control: Control) -> void:

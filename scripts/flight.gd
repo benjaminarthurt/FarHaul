@@ -341,6 +341,89 @@ func _process(delta: float) -> void:
 			ring.rotate_z(delta * 0.05)
 
 
+## One of the pilot's controls, from the keyboard or the ship remote (ShipRemote): the same rules either
+## way. Returns {ok, message}; the message is what the cockpit says about it.
+func pilot(action: String, value: float = 0.0) -> Dictionary:
+	if leaving or _jumping():
+		return {"ok": false, "message": "Hands off: the ship is busy."}
+	match action:
+		"throttle":   # set the throttle outright (the remote's lever); any pilot input takes the controls back
+			if _on_surface():
+				return {"ok": false, "message": "On the moon, fly from the helm."}
+			model.throttle = clampf(value, 0.0, 1.0)
+			model.braking = false
+			return {"ok": true, "message": ""}
+		"cut":
+			model.throttle = 0.0
+			return {"ok": true, "message": ""}
+		"brake":
+			if _on_surface():
+				return {"ok": false, "message": "The braking autopilot is for space."}
+			model.braking = not model.braking
+			if model.braking:
+				model.course_hold = false   # the braking autopilot takes out drift too
+			# On a run the autopilot stops at the target; anywhere else it stops the ship where it is.
+			model.brake_to = xfer.target if model.braking and xfer != null and phase == "cruise" else Vector3.INF
+			return {"ok": true, "message": "Autopilot braking." if model.braking else "Autopilot off."}
+		"course":
+			toggle_course_hold()
+			return {"ok": model.course_hold, "message": notice}
+		"assist":
+			model.assist = not model.assist
+			return {"ok": true, "message": "Rotation assist on." if model.assist else "Rotation assist off. Brave."}
+		"warp_up":
+			set_warp(warp_index + 1)
+			return {"ok": true, "message": ""}
+		"warp_down":
+			set_warp(warp_index - 1)
+			return {"ok": true, "message": ""}
+		"warp_reset":
+			set_warp(0)
+			return {"ok": true, "message": ""}
+		"dock":
+			if not model.can_dock():
+				return {"ok": false, "message": "Not close enough to dock. Closer, and slower."}
+			if phase == "approach":
+				_arrived = true   # docked at the destination
+			_return_to_dock()
+			return {"ok": true, "message": "Docking."}
+		"traffic":   # on the approach, station traffic control brings the ship in (Esc at the helm)
+			if phase != "approach":
+				return {"ok": false, "message": "Traffic control only takes ships on the approach."}
+			_arrived = true
+			_return_to_dock()
+			return {"ok": true, "message": "Traffic control has you."}
+		"tug":   # out of fuel: the tug (Esc at the helm)
+			if model.has_fuel():
+				return {"ok": false, "message": "There's fuel in the tank. The tug only comes for the empty."}
+			if tow_goes_on():
+				_arrived = true
+			_return_to_dock()
+			return {"ok": true, "message": "Tug called."}
+	return {"ok": false, "message": "Unknown control."}
+
+
+## The ship remote's view of the flight: the map's state plus the gauges, what the autopilots are doing,
+## what each control can do right now, and the cockpit's current prompt.
+func remote_state() -> Dictionary:
+	var st := map_state()
+	var lim := _warp_limit()
+	st.merge({"scene": "flight", "phase": phase, "on_surface": _on_surface(), "walking": walking or outside,
+			"speed": model.speed(), "throttle": model.throttle, "fuel_max": float(stats.get("fuel", model.fuel_t)),
+			"heat": model.heat_fraction(), "overheated": model.overheated, "hull": 1.0 - model.damage,
+			"mass": model.mass_t(), "accel": model.accel(), "dv": model.delta_v(),
+			"braking": model.braking, "brake_state": model.brake_state, "course_hold": model.course_hold, "assist": model.assist,
+			"warp_choice": int(WARPS[warp_index]), "warp_max": int(lim.max), "warp_why": String(lim.get("why", "")),
+			"can_dock": model.can_dock(), "approach": phase == "approach", "out_of_fuel": not model.has_fuel(),
+			"prompt": prompt.text if prompt != null else "", "help": help.text if help != null else ""}, true)
+	return st
+
+
+## A command from the ship remote. The same controls as the keys, by name (see pilot()).
+func remote_command(action: String, value: float) -> Dictionary:
+	return pilot(action, value)
+
+
 ## What the map (StarMap) shows: where the ship is, and on a run how far along the route it is and
 ## which way the nose and the travel point relative to the route (signed degrees, seen from above).
 func map_state() -> Dictionary:
@@ -614,15 +697,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_G:
 			get_up()
 		KEY_V:
-			toggle_course_hold()
+			pilot("course")
 		KEY_X:
-			model.braking = not model.braking
-			if model.braking:
-				model.course_hold = false   # the braking autopilot takes out drift too
-			# On a run the autopilot stops at the target; anywhere else it stops the ship where it is.
-			model.brake_to = xfer.target if model.braking and xfer != null and phase == "cruise" else Vector3.INF
+			pilot("brake")
 		KEY_R:
-			model.assist = not model.assist
+			pilot("assist")
 		KEY_C:
 			chase = not chase
 			_apply_pose()
@@ -630,16 +709,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			if String(job.get("kind", "")) == "jump" and phase == "depart" and _jump_blocker() == "":
 				_start_jump()
 		KEY_PERIOD:
-			set_warp(warp_index + 1)
+			pilot("warp_up")
 		KEY_COMMA:
-			set_warp(warp_index - 1)
+			pilot("warp_down")
 		KEY_SLASH:
-			set_warp(0)
+			pilot("warp_reset")
 		KEY_F:
-			if model.can_dock():
-				if phase == "approach":
-					_arrived = true   # docked at the destination
-				_return_to_dock()
+			pilot("dock")
 		KEY_ESCAPE:
 			if phase == "approach":
 				_arrived = true   # the station's traffic control brings the ship in

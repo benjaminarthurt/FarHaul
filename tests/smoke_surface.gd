@@ -53,11 +53,20 @@ func _run() -> void:
 		for o in jobs:
 			camp_job = o
 	check(not camp_job.is_empty(), "a run to a surface site is posted (%s)" % String(camp_job.get("title", "")))
+	# Pay per tonne-km/s with the cargo's value taken out (LocalSpace.board scales by it, 0.85 to 1.2):
+	# what's left is the surface premium (1.5x) and a +/-10% spread, so the cheapest surface job still
+	# beats the dearest plain one. Comparing raw rates failed whenever a cheap surface cargo met a costly plain one.
+	var per := func(o: Dictionary) -> float:
+		var vf := clampf(float(Worlds.commodity(String(o.commodity)).get("base_value", 500)) / 800.0, 0.85, 1.2)
+		return float(o.rate) / float(o.dv_kms) / vf
 	var plain := 0.0
 	for o in Contracts.offers_from(sys):
 		if bool(o.get("local", false)) and not bool(o.get("surface", false)) and float(o.dv_kms) > 0.0:
-			plain = float(o.rate) / float(o.dv_kms)
-	check(float(camp_job.rate) / float(camp_job.dv_kms) > plain * 1.2, "surface work pays more per tonne-km/s")
+			plain = maxf(plain, per.call(o))
+	var surf := INF
+	for o in jobs:
+		surf = minf(surf, per.call(o))
+	check(plain > 0.0 and surf > plain * 1.2, "surface work pays more per tonne-km/s (%.0f vs %.0f)" % [surf, plain])
 	check(bool(Session.accept_contract(camp_job).ok), "accepted")
 	var dest_kind := String(LocalSpace.node(String(camp_job.destination_port_id)).kind)
 	check(bool(Session.begin_local_flight().ok), "the helm is handed the run")

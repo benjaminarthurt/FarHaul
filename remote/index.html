@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1015">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Far Haul ship remote</title>
+<style>
+:root {
+  --hull: #0d1015; --plate: #161b22; --plate-2: #1c2129; --edge: #303844;
+  --ink: #e6e2d6; --dim: #8c929c; --amber: #f2a71b; --amber-dim: #7a5510;
+  --route: #59d9ff; --go: #66ff8c; --warn: #ff6a4a;
+  --font: Bahnschrift, "DIN Alternate", "DIN Condensed", "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
+  --r: 6px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; background: var(--hull); color: var(--ink); font-family: var(--font); font-variant-numeric: tabular-nums; -webkit-tap-highlight-color: transparent; }
+body { min-height: 100dvh; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+/* The hazard band: the one stripe the ship's logo wears. */
+.band { height: 6px; background: repeating-linear-gradient(-45deg, var(--amber) 0 10px, #111 10px 20px); }
+header { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--edge); }
+header .where { flex: 1; min-width: 0; }
+header .sys { font-size: 13px; color: var(--dim); letter-spacing: .04em; }
+header .site { font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.link { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--dim); }
+.link i { width: 9px; height: 9px; border-radius: 50%; background: var(--warn); }
+.link.ok i { background: var(--go); box-shadow: 0 0 8px var(--go); }
+
+main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns: 1fr; max-width: 1280px; margin: 0 auto; }
+.card { background: var(--plate); border: 1px solid var(--edge); border-radius: var(--r); padding: 12px 14px; }
+.card h2 { margin: 0 0 8px; font-size: 13px; font-weight: 400; color: var(--dim); letter-spacing: .04em; }
+
+/* The trip: where to, how far along, when. */
+.trip .to { font-size: 22px; }
+.trip .sub { color: var(--dim); font-size: 14px; margin-top: 2px; }
+.rail { position: relative; height: 10px; margin: 14px 0 8px; background: var(--plate-2); border-radius: 5px; }
+.rail .done { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--route); border-radius: 5px; transition: width .4s; }
+.rail .ship { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--go); box-shadow: 0 0 10px var(--go); left: 0; transition: left .4s; }
+.nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.num b { display: block; font-size: clamp(17px, 5.2vw, 22px); font-weight: 400; white-space: nowrap; }
+.num span { font-size: 12px; color: var(--dim); }
+
+/* The map. */
+.map { padding: 0; overflow: hidden; position: relative; }
+.map canvas { display: block; width: 100%; aspect-ratio: 1 / 1; touch-action: none; }
+.map .tabs { position: absolute; top: 10px; left: 10px; display: flex; gap: 4px; }
+.map .zoom { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 4px; }
+.chip { min-width: 44px; min-height: 36px; padding: 0 12px; border: 1px solid var(--edge); border-radius: 18px; background: rgba(13,16,21,.85); color: var(--dim); }
+.chip[aria-pressed="true"] { color: var(--hull); background: var(--amber); border-color: var(--amber); }
+
+/* Gauges. */
+.gauges { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dial { text-align: center; }
+.dial svg { width: 100%; max-width: 180px; }
+.dial .v { font-size: 26px; margin-top: -42px; }
+.dial .u { font-size: 12px; color: var(--dim); }
+.bars { display: grid; gap: 10px; align-content: center; }
+.bar .l { display: flex; justify-content: space-between; font-size: 13px; color: var(--dim); }
+.bar .l b { color: var(--ink); font-weight: 400; }
+.bar .t { height: 8px; background: var(--plate-2); border-radius: 4px; margin-top: 4px; overflow: hidden; }
+.bar .t i { display: block; height: 100%; width: 0; background: var(--ink); transition: width .4s; }
+.bar.low .t i, .bar.hot .t i { background: var(--warn); }
+
+/* Controls: the throttle lever and the panel beside it. */
+.helm { display: grid; grid-template-columns: 96px 1fr; gap: 14px; }
+.lever { position: relative; height: 300px; border-radius: var(--r); background: linear-gradient(90deg, #0b0e12, #151a21 50%, #0b0e12); border: 1px solid var(--edge); touch-action: none; user-select: none; }
+.lever .slot { position: absolute; left: 50%; top: 18px; bottom: 18px; width: 10px; margin-left: -5px; background: #05070a; border-radius: 5px; box-shadow: inset 0 0 4px #000; }
+.lever .detent { position: absolute; left: 12px; right: 12px; height: 1px; background: var(--edge); }
+.lever .detent span { position: absolute; right: 0; top: -14px; font-size: 11px; color: var(--dim); }
+.lever .fill { position: absolute; left: 50%; bottom: 18px; width: 10px; margin-left: -5px; height: 0; background: var(--amber); border-radius: 5px; }
+.lever .grip { position: absolute; left: 10px; right: 10px; height: 46px; margin-top: -23px; border-radius: 8px;
+  background: repeating-linear-gradient(0deg, #2a313c 0 4px, #232933 4px 8px); border: 1px solid #3c4552; box-shadow: 0 6px 14px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08); }
+.lever .grip::after { content: ""; position: absolute; left: 8px; right: 8px; top: 50%; height: 3px; margin-top: -1.5px; background: var(--amber); border-radius: 2px; }
+.lever-read { text-align: center; margin-top: 8px; font-size: 20px; }
+.lever-read span { display: block; font-size: 12px; color: var(--dim); }
+.bank { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-content: start; }
+.key { min-height: 56px; border-radius: var(--r); border: 1px solid var(--edge); background: var(--plate-2); text-align: left; padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; }
+.key small { color: var(--dim); font-size: 12px; }
+.key[aria-pressed="true"] { border-color: var(--amber); background: #2a2110; box-shadow: inset 0 0 0 1px var(--amber); }
+.key[aria-pressed="true"] small { color: var(--amber); }
+.key:active { transform: translateY(1px); }
+.key:disabled { opacity: .35; }
+.key.go { border-color: var(--go); color: var(--go); }
+.key.wide { grid-column: span 2; }
+.time { grid-column: span 2; display: grid; grid-template-columns: 56px 1fr 56px; gap: 10px; align-items: center; }
+.time .key { align-items: center; text-align: center; font-size: 24px; }
+.time .rate { text-align: center; }
+.time .rate b { display: block; font-size: 30px; font-weight: 400; }
+.time .rate small { display: block; font-size: 12px; color: var(--dim); min-height: 2.6em; }
+
+/* The cockpit's prompt, pinned to the bottom like the helm's own. */
+.prompt { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(13,16,21,.96); border-top: 1px solid var(--amber-dim); color: var(--amber); font-size: 15px; line-height: 1.35; min-height: 52px; }
+.toast { position: fixed; left: 50%; bottom: 76px; transform: translateX(-50%); background: var(--plate-2); border: 1px solid var(--edge); border-radius: 18px; padding: 8px 16px; font-size: 14px; opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 90vw; }
+.toast.show { opacity: 1; }
+.idle { text-align: center; color: var(--dim); padding: 24px 8px; font-size: 15px; }
+
+/* Pairing. */
+.pair { max-width: 420px; margin: 8vh auto; padding: 0 20px; text-align: center; }
+.pair h1 { font-size: 28px; font-weight: 400; margin: 24px 0 6px; }
+.pair p { color: var(--dim); line-height: 1.45; }
+.pair input { width: 100%; font: inherit; font-size: 40px; letter-spacing: .35em; text-align: center; padding: 12px 0 12px .35em; background: var(--plate); color: var(--ink); border: 1px solid var(--edge); border-radius: var(--r); margin: 18px 0 12px; }
+.pair button { width: 100%; min-height: 56px; border: 0; border-radius: var(--r); background: var(--amber); color: var(--hull); font-size: 18px; }
+.pair .err { color: var(--warn); min-height: 1.4em; }
+
+@media (min-width: 900px) {
+  main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; grid-template-areas: "trip trip" "map gauges" "map helm"; align-items: start; }
+  .lever { height: max(220px, min(300px, calc(100dvh - 560px))); }
+  .map canvas { aspect-ratio: auto; height: min(calc(100dvh - 330px), 760px); min-height: 420px; }
+  .trip { grid-area: trip; } .map { grid-area: map; } .gauges-card { grid-area: gauges; } .helm-card { grid-area: helm; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="band" aria-hidden="true"></div>
+
+<section id="pairing" class="pair" hidden>
+  <h1>Ship remote</h1>
+  <p>Enter the six-digit code from the game: Settings, or the F10 menu. One code per ship. No code, no throttle.</p>
+  <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······" aria-label="Pairing code">
+  <div class="err" id="pairErr" role="alert"></div>
+  <button id="pairBtn">Pair</button>
+</section>
+
+<div id="app" hidden>
+  <header>
+    <div class="where">
+      <div class="sys" id="sys">Far Haul</div>
+      <div class="site" id="site">Connecting</div>
+    </div>
+    <div class="link" id="link"><i></i><span id="linkText">Looking for the ship</span></div>
+  </header>
+
+  <main>
+    <section class="card trip" aria-live="polite">
+      <h2 id="tripHead">Where you are</h2>
+      <div class="to" id="tripTo">Nowhere in particular</div>
+      <div class="sub" id="tripSub"></div>
+      <div class="rail" id="rail" hidden><div class="done" id="railDone"></div><div class="ship" id="railShip"></div></div>
+      <div class="nums" id="tripNums" hidden>
+        <div class="num"><b id="nRange">0</b><span>to go</span></div>
+        <div class="num"><b id="nEta">-</b><span id="nEtaLabel">arriving in</span></div>
+        <div class="num"><b id="nClose">0</b><span>closing</span></div>
+      </div>
+    </section>
+
+    <section class="card map">
+      <canvas id="map" aria-label="Map of the system"></canvas>
+      <div class="tabs" role="group" aria-label="Map view">
+        <button class="chip" id="vSys" aria-pressed="true">System</button>
+        <button class="chip" id="vSpace" aria-pressed="false">Known space</button>
+      </div>
+      <div class="zoom">
+        <button class="chip" id="zOut" aria-label="Zoom out">−</button>
+        <button class="chip" id="zHome" aria-label="Recentre">◎</button>
+        <button class="chip" id="zIn" aria-label="Zoom in">+</button>
+      </div>
+    </section>
+
+    <section class="card gauges-card">
+      <h2>Ship</h2>
+      <div class="gauges">
+        <div class="dial">
+          <svg viewBox="0 0 200 130" aria-hidden="true">
+            <path d="M20 120 A80 80 0 0 1 180 120" fill="none" stroke="#1c2129" stroke-width="14" stroke-linecap="round"/>
+            <path id="dialArc" d="M20 120 A80 80 0 0 1 180 120" fill="none" stroke="#59d9ff" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/>
+          </svg>
+          <div class="v" id="gSpeed">0</div>
+          <div class="u">m/s</div>
+        </div>
+        <div class="bars">
+          <div class="bar" id="bFuel"><div class="l">Fuel <b id="gFuel">-</b></div><div class="t"><i></i></div></div>
+          <div class="bar" id="bHeat"><div class="l">Heat <b id="gHeat">-</b></div><div class="t"><i></i></div></div>
+          <div class="bar" id="bHull"><div class="l">Hull <b id="gHull">-</b></div><div class="t"><i></i></div></div>
+          <div class="bar"><div class="l">Δv left <b id="gDv">-</b></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card helm-card">
+      <h2>Helm</h2>
+      <div id="helmIdle" class="idle" hidden>Berthed. Take the helm and the controls come alive.</div>
+      <div class="helm" id="helm">
+        <div>
+          <div class="lever" id="lever" role="slider" aria-label="Throttle" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            <div class="slot"></div>
+            <div class="detent" style="top:18px"><span>Full</span></div>
+            <div class="detent" style="top:50%"><span>Half</span></div>
+            <div class="fill" id="leverFill"></div>
+            <div class="grip" id="grip"></div>
+          </div>
+          <div class="lever-read"><b id="thr">0%</b><span>throttle</span></div>
+        </div>
+        <div class="bank">
+          <button class="key" id="kCut">Cut throttle<small>Z</small></button>
+          <button class="key" id="kBrake" aria-pressed="false">Brake<small>autopilot · X</small></button>
+          <button class="key" id="kCourse" aria-pressed="false">Course hold<small>within 5° · V</small></button>
+          <button class="key" id="kAssist" aria-pressed="false">Assist<small>rotation · R</small></button>
+          <div class="time">
+            <button class="key" id="kSlow" aria-label="Slower time">−</button>
+            <div class="rate"><b id="rate">x1</b><small id="rateWhy">Time compression</small></div>
+            <button class="key" id="kFast" aria-label="Faster time">+</button>
+          </div>
+          <button class="key wide" id="kReal">Back to x1<small>/</small></button>
+          <button class="key wide go" id="kDock" hidden>Dock<small>in range · F</small></button>
+          <button class="key wide go" id="kTraffic" hidden>Let traffic control bring her in<small>on the approach · Esc</small></button>
+          <button class="key wide" id="kTug" hidden>Call the tug<small>out of fuel · Esc</small></button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="prompt" id="prompt" role="status"></div>
+  <div class="toast" id="toast" role="status"></div>
+</div>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const TOKEN_KEY = "farhaul-remote-token";
+let token = "";
+try { token = localStorage.getItem(TOKEN_KEY) || ""; } catch (e) {}
+let state = {}, chart = null, chartKey = "", view = "system";
+let zoom = { system: 1, space: 1 }, pan = { system: [0, 0], space: [0, 0] };
+let lastOk = 0, dragging = false, leverHeld = false;
+
+// ---- Talking to the ship ------------------------------------------------------------------
+async function api(path, body) {
+  const opt = { method: body ? "POST" : "GET", headers: { "X-Remote-Token": token } };
+  if (body) { opt.body = JSON.stringify(body); opt.headers["Content-Type"] = "application/json"; }
+  const r = await fetch(path, opt);
+  if (r.status === 401) { showPairing(); throw new Error("unpaired"); }
+  return r.json();
+}
+async function cmd(action, value) {
+  if (navigator.vibrate) navigator.vibrate(12);
+  try {
+    const r = await api("/api/cmd", { action, value: value || 0 });
+    if (r.message) toast(r.message);
+    poll();
+  } catch (e) {}
+}
+async function pair() {
+  const code = $("code").value.replace(/\D/g, "");
+  $("pairErr").textContent = "";
+  try {
+    const r = await fetch("/api/pair", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code }) });
+    const j = await r.json();
+    if (!r.ok) { $("pairErr").textContent = j.error || "That didn't work."; return; }
+    token = j.token;
+    try { localStorage.setItem(TOKEN_KEY, token); } catch (e) {}
+    showApp();
+  } catch (e) { $("pairErr").textContent = "Can't reach the ship. Is the game running, and the remote on?"; }
+}
+function showPairing() { $("app").hidden = true; $("pairing").hidden = false; setTimeout(() => $("code").focus(), 50); }
+function showApp() { $("pairing").hidden = true; $("app").hidden = false; poll(); }
+
+async function poll() {
+  try {
+    state = await api("/api/state");
+    lastOk = Date.now();
+    render();
+    const key = view + "|" + (state.system_id || "");
+    if (key !== chartKey) {
+      chart = await api("/api/chart" + (view === "space" ? "?view=space" : ""));
+      chartKey = key;
+    }
+    drawMap();
+  } catch (e) { if (e.message !== "unpaired") link(false); }
+}
+setInterval(poll, 500);
+setInterval(() => link(Date.now() - lastOk < 2500), 1000);
+
+// ---- Readouts -----------------------------------------------------------------------------
+function km(m) { return m >= 100000 ? Math.round(m / 1000).toLocaleString() + " km" : (m / 1000).toFixed(1) + " km"; }
+function clock(s) {
+  if (!(s > 0)) return "-";
+  if (s >= 3600) return Math.floor(s / 3600) + "h " + String(Math.floor(s % 3600 / 60)).padStart(2, "0") + "m";
+  return Math.floor(s / 60) + "m " + String(Math.floor(s % 60)).padStart(2, "0") + "s";
+}
+function bar(id, frac, text, bad) {
+  const el = $(id);
+  el.querySelector("i").style.width = Math.max(0, Math.min(100, frac * 100)) + "%";
+  el.classList.toggle(id === "bHeat" ? "hot" : "low", !!bad);
+}
+function link(ok) { $("link").classList.toggle("ok", ok); $("linkText").textContent = ok ? "Linked" : "Lost the ship"; }
+
+function render() {
+  const s = state;
+  $("sys").textContent = (s.system_name || "Far Haul") + (s.day ? "  ·  day " + s.day : "") + (s.credits != null ? "  ·  " + s.credits.toLocaleString() + " cr" : "");
+  $("site").textContent = s.where || "";
+  const flying = s.scene === "flight";
+  const run = s.run || null;
+  // The trip.
+  $("rail").hidden = !run; $("tripNums").hidden = !run;
+  if (run) {
+    $("tripHead").textContent = "On a run";
+    $("tripTo").textContent = run.dest_name || "The destination";
+    $("tripSub").textContent = "Nose " + Math.round(Math.abs(run.heading_off)) + "° off the route, travel " + Math.round(Math.abs(run.travel_off)) + "° off";
+    const p = Math.max(0, Math.min(1, run.progress)) * 100;
+    $("railDone").style.width = p + "%"; $("railShip").style.left = p + "%";
+    $("nRange").textContent = km(run.range_m);
+    const w = Math.max(1, s.warp || 1);
+    $("nEta").textContent = run.eta_s > 0 ? clock(run.eta_s / w) : "-";
+    $("nEtaLabel").textContent = w > 1 ? "real time at x" + w : "arriving in";
+    $("nClose").textContent = (run.closing < 0 ? "−" : "") + km(Math.abs(run.closing)) + "/s";
+  } else {
+    $("tripHead").textContent = s.jump ? "Star jump" : "Where you are";
+    $("tripTo").textContent = s.jump ? "To " + (s.jump.dest_system || "?").replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) + ", " + (s.jump.ly || 0).toFixed(1) + " ly" : (s.site_name || "Nowhere in particular");
+    $("tripSub").textContent = s.scene === "menu" ? "Start or load a game and the ship turns up here." : "";
+  }
+  // Gauges.
+  const speed = s.speed || 0;
+  $("gSpeed").textContent = speed >= 1000 ? (speed / 1000).toFixed(2) + "k" : Math.round(speed);
+  $("dialArc").setAttribute("stroke-dasharray", Math.min(100, Math.log10(1 + speed) / 4 * 100) + " 100");
+  const fuelFrac = s.fuel_max > 0 ? s.fuel / s.fuel_max : 0;
+  $("gFuel").textContent = s.fuel != null ? s.fuel.toFixed(1) + " t" : "-";
+  bar("bFuel", fuelFrac, "", fuelFrac < 0.15);
+  $("gHeat").textContent = s.heat != null ? Math.round(s.heat * 100) + "%" + (s.overheated ? " · overheated" : "") : "-";
+  bar("bHeat", s.heat || 0, "", (s.heat || 0) > 0.8);
+  $("gHull").textContent = s.hull != null ? Math.round(s.hull * 100) + "%" : "-";
+  bar("bHull", s.hull || 0, "", (s.hull || 1) < 0.5);
+  $("gDv").textContent = s.dv != null ? Math.round(s.dv).toLocaleString() + " m/s" : "-";
+  // Helm.
+  $("helm").hidden = !flying; $("helmIdle").hidden = flying;
+  if (flying) {
+    if (!leverHeld) setLever(s.throttle || 0);
+    press("kBrake", s.braking); press("kCourse", s.course_hold); press("kAssist", s.assist);
+    $("rate").textContent = "x" + (s.warp || 1);
+    $("rateWhy").textContent = s.warp_why ? s.warp_why : (s.warp_choice > (s.warp || 1) ? "Set to x" + s.warp_choice : "Time compression");
+    $("kDock").hidden = !s.can_dock;
+    $("kTraffic").hidden = !(s.approach && !s.can_dock);
+    $("kTug").hidden = !s.out_of_fuel;
+    const surface = !!s.on_surface;
+    $("kBrake").disabled = surface; $("lever").style.opacity = surface ? .4 : 1;
+  }
+  $("prompt").textContent = s.prompt || "";
+}
+function press(id, on) { $(id).setAttribute("aria-pressed", on ? "true" : "false"); }
+let toastT = 0;
+function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 2600); }
+
+// ---- The throttle lever -------------------------------------------------------------------
+function setLever(v) {
+  const lv = $("lever"), h = lv.clientHeight - 36;
+  $("grip").style.top = (18 + (1 - v) * h) + "px";
+  $("leverFill").style.height = (v * h) + "px";
+  $("thr").textContent = Math.round(v * 100) + "%";
+  lv.setAttribute("aria-valuenow", Math.round(v * 100));
+}
+function leverAt(e) {
+  const r = $("lever").getBoundingClientRect();
+  return Math.max(0, Math.min(1, 1 - (e.clientY - r.top - 18) / (r.height - 36)));
+}
+let leverSend = 0;
+function leverMove(e) {
+  if (!leverHeld) return;
+  const v = leverAt(e);
+  setLever(v);
+  const now = Date.now();
+  if (now - leverSend > 120) { leverSend = now; api("/api/cmd", { action: "throttle", value: v }).catch(() => {}); }
+}
+$("lever").addEventListener("pointerdown", (e) => { leverHeld = true; $("lever").setPointerCapture(e.pointerId); leverMove(e); });
+$("lever").addEventListener("pointermove", leverMove);
+$("lever").addEventListener("pointerup", (e) => { const v = leverAt(e); leverHeld = false; cmd("throttle", v); });
+$("lever").addEventListener("keydown", (e) => {
+  const v = state.throttle || 0;
+  if (e.key === "ArrowUp") cmd("throttle", Math.min(1, v + .1));
+  if (e.key === "ArrowDown") cmd("throttle", Math.max(0, v - .1));
+});
+
+// ---- Buttons ------------------------------------------------------------------------------
+const keys = { kCut: "cut", kBrake: "brake", kCourse: "course", kAssist: "assist", kSlow: "warp_down", kFast: "warp_up", kReal: "warp_reset",
+  kDock: "dock", kTraffic: "traffic", kTug: "tug" };
+for (const id in keys) $(id).addEventListener("click", () => cmd(keys[id]));
+$("pairBtn").addEventListener("click", pair);
+$("code").addEventListener("keydown", (e) => { if (e.key === "Enter") pair(); });
+
+// ---- The map ------------------------------------------------------------------------------
+function setView(v) { view = v; $("vSys").setAttribute("aria-pressed", v === "system"); $("vSpace").setAttribute("aria-pressed", v === "space"); chartKey = ""; poll(); }
+$("vSys").addEventListener("click", () => setView("system"));
+$("vSpace").addEventListener("click", () => setView("space"));
+$("zIn").addEventListener("click", () => { zoom[view] = Math.min(6, zoom[view] * 1.3); drawMap(); });
+$("zOut").addEventListener("click", () => { zoom[view] = Math.max(.5, zoom[view] / 1.3); drawMap(); });
+$("zHome").addEventListener("click", () => { zoom[view] = 1; pan[view] = [0, 0]; drawMap(); });
+const cv = $("map");
+const pointers = new Map(); let pinch0 = 0, zoom0 = 1;
+cv.addEventListener("pointerdown", (e) => { cv.setPointerCapture(e.pointerId); pointers.set(e.pointerId, [e.clientX, e.clientY]); if (pointers.size === 2) { const [a, b] = [...pointers.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); zoom0 = zoom[view]; } });
+cv.addEventListener("pointermove", (e) => {
+  if (!pointers.has(e.pointerId)) return;
+  const prev = pointers.get(e.pointerId); pointers.set(e.pointerId, [e.clientX, e.clientY]);
+  if (pointers.size === 2) { const [a, b] = [...pointers.values()]; zoom[view] = Math.max(.5, Math.min(6, zoom0 * Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch0)); }
+  else { pan[view][0] += e.clientX - prev[0]; pan[view][1] += e.clientY - prev[1]; }
+  drawMap();
+});
+const lift = (e) => pointers.delete(e.pointerId);
+cv.addEventListener("pointerup", lift); cv.addEventListener("pointercancel", lift);
+cv.addEventListener("wheel", (e) => { e.preventDefault(); zoom[view] = Math.max(.5, Math.min(6, zoom[view] * (e.deltaY < 0 ? 1.15 : 1 / 1.15))); drawMap(); }, { passive: false });
+
+function drawMap() {
+  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+  if (cv.width !== w * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+  const g = cv.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = "#090c10"; g.fillRect(0, 0, w, h);
+  if (!chart) return;
+  g.font = "13px " + getComputedStyle(document.body).fontFamily;
+  if (chart.view === "space") drawSpace(g, w, h); else drawSystem(g, w, h);
+}
+function diamond(g, x, y, r, c) { g.fillStyle = c; g.beginPath(); g.moveTo(x, y - r); g.lineTo(x + r, y); g.lineTo(x, y + r); g.lineTo(x - r, y); g.fill(); }
+function label(g, taken, x, y, text, c) {
+  const wd = g.measureText(text).width, cw = cv.clientWidth, ch = cv.clientHeight;
+  for (const [dx, dy] of [[8, -6], [8, 14], [8, -20], [-wd - 8, -6], [-wd - 8, 14]]) {
+    const r = [x + dx, y + dy - 12, wd, 14];
+    if (r[0] < 2 || r[0] + wd > cw - 2 || r[1] < 2 || r[1] + 14 > ch - 2) continue;   // keep labels on the chart
+    if (!taken.some(q => r[0] < q[0] + q[2] && q[0] < r[0] + r[2] && r[1] < q[1] + q[3] && q[1] < r[1] + r[3])) { taken.push(r); g.fillStyle = c; g.fillText(text, x + dx, y + dy); return; }
+  }
+}
+function drawSystem(g, w, h) {
+  let reach = .5;
+  for (const b of chart.bodies) reach = Math.max(reach, Math.hypot(b.x, b.y) + .3);
+  const sc = Math.min(w, h) * .45 / reach * zoom.system, cx = w / 2 + pan.system[0], cy = h / 2 + pan.system[1];
+  const at = (x, y) => [cx + x * sc, cy + y * sc];
+  const taken = [];
+  g.fillStyle = "rgba(255,216,128,.18)"; g.beginPath(); g.arc(cx, cy, 13, 0, 7); g.fill();
+  g.fillStyle = "#ffe69a"; g.beginPath(); g.arc(cx, cy, 6, 0, 7); g.fill();
+  label(g, taken, cx, cy, chart.system_name, "#e6e2d6");
+  for (const b of chart.bodies) {
+    if (b.parent) continue;
+    g.strokeStyle = b.ring ? "rgba(180,160,128,.28)" : "rgba(140,153,178,.25)"; g.lineWidth = b.ring ? 6 : 1;
+    g.beginPath(); g.arc(cx, cy, b.orbit * sc, 0, 7); g.stroke();
+  }
+  for (const b of chart.bodies) {
+    const [x, y] = at(b.x, b.y), prim = b.id === chart.primary;
+    const r = b.giant ? 8 : prim ? 7 : b.parent ? 3.5 : 5;
+    g.fillStyle = prim ? "#6aa8e6" : b.giant ? "#d1b385" : b.ring ? "#b39e80" : "#9a9a9e";
+    g.beginPath(); g.arc(x, y, b.ring ? 3 : r, 0, 7); g.fill();
+    label(g, taken, x, y, b.name, "#8c929c");
+  }
+  const run = state.run;
+  const here = state.site_id, sites = {};
+  for (const s of chart.sites) sites[s.id] = s;
+  for (const s of chart.sites) {
+    const [x, y] = at(s.x, s.y), hot = run ? s.id === run.dest_id : s.id === here;
+    diamond(g, x, y, 5, hot ? "#f2a71b" : "rgba(242,204,115,.7)");
+    if (zoom.system > 2.2 || !["port", "depot", "moon", "pad", "camp"].includes(s.kind) || hot) label(g, taken, x, y, s.name, hot ? "#f2a71b" : "rgba(242,204,115,.75)");
+  }
+  let ship = sites[here] ? at(sites[here].x, sites[here].y) : at(0, 0);
+  if (run && sites[run.origin_id] && sites[run.dest_id]) {
+    const a = at(sites[run.origin_id].x, sites[run.origin_id].y), b = at(sites[run.dest_id].x, sites[run.dest_id].y);
+    const p = Math.max(0, Math.min(1, run.progress));
+    ship = [a[0] + (b[0] - a[0]) * p, a[1] + (b[1] - a[1]) * p];
+    g.setLineDash([8, 6]); g.strokeStyle = "rgba(89,217,255,.55)"; g.lineWidth = 2; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); g.setLineDash([]);
+    g.strokeStyle = "#59d9ff"; g.lineWidth = 3; g.beginPath(); g.moveTo(...a); g.lineTo(...ship); g.stroke();
+    const ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+    arrow(g, ship, ang + run.travel_off * Math.PI / 180, 32, "#59d9ff");
+    arrow(g, ship, ang + run.heading_off * Math.PI / 180, 24, "#66ff8c");
+  }
+  g.fillStyle = "#66ff8c"; g.beginPath(); g.arc(ship[0], ship[1], 6, 0, 7); g.fill();
+  g.strokeStyle = "rgba(102,255,140,.6)"; g.lineWidth = 1.5; g.beginPath(); g.arc(ship[0], ship[1], 11, 0, 7); g.stroke();
+}
+function arrow(g, p, ang, len, c) {
+  const tip = [p[0] + Math.cos(ang) * len, p[1] + Math.sin(ang) * len];
+  g.strokeStyle = c; g.fillStyle = c; g.lineWidth = 2;
+  g.beginPath(); g.moveTo(...p); g.lineTo(...tip); g.stroke();
+  g.beginPath(); g.moveTo(...tip);
+  g.lineTo(tip[0] - Math.cos(ang - .45) * 9, tip[1] - Math.sin(ang - .45) * 9);
+  g.lineTo(tip[0] - Math.cos(ang + .45) * 9, tip[1] - Math.sin(ang + .45) * 9); g.fill();
+}
+function drawSpace(g, w, h) {
+  const xs = chart.systems.map(s => s.x), ys = chart.systems.map(s => s.y);
+  const lo = [Math.min(...xs), Math.min(...ys)], hi = [Math.max(...xs), Math.max(...ys)];
+  const span = Math.max(hi[0] - lo[0], hi[1] - lo[1]) + 4, mid = [(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2];
+  const sc = Math.min(w, h) * .86 / span * zoom.space, cx = w / 2 + pan.space[0], cy = h / 2 + pan.space[1];
+  const at = (x, y) => [cx + (x - mid[0]) * sc, cy + (y - mid[1]) * sc];
+  const by = {}; for (const s of chart.systems) by[s.id] = s;
+  for (const r of chart.routes) {
+    const a = at(by[r.a].x, by[r.a].y), b = at(by[r.b].x, by[r.b].y);
+    g.strokeStyle = "rgba(140,166,204,.35)"; g.lineWidth = r.traffic === "heavy" ? 2.5 : 1.2;
+    g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
+  }
+  const here = state.system_id, dest = state.jump ? state.jump.dest_system : "";
+  if (dest && by[dest] && by[state.jump.from_system || here]) {
+    const a = at(by[state.jump.from_system || here].x, by[state.jump.from_system || here].y), b = at(by[dest].x, by[dest].y);
+    g.setLineDash([8, 6]); g.strokeStyle = "#59d9ff"; g.lineWidth = 2.5; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); g.setLineDash([]);
+  }
+  const taken = [];
+  const tint = { core: "#e6e2d6", developed: "#bfccE6", outer: "#b3bf99", frontier: "#e6a666", extreme_frontier: "#e67359" };
+  for (const s of chart.systems) {
+    const [x, y] = at(s.x, s.y);
+    g.fillStyle = tint[s.tier] || "#8c929c"; g.beginPath(); g.arc(x, y, s.id === here ? 6 : 4.5, 0, 7); g.fill();
+    if (s.id === here) { g.strokeStyle = "#66ff8c"; g.lineWidth = 2; g.beginPath(); g.arc(x, y, 12, 0, 7); g.stroke(); }
+    if (s.id === dest) { g.strokeStyle = "#f2a71b"; g.lineWidth = 2; g.beginPath(); g.arc(x, y, 10, 0, 7); g.stroke(); }
+    label(g, taken, x, y, s.name, s.id === dest ? "#f2a71b" : s.id === here ? "#e6e2d6" : "#8c929c");
+  }
+}
+window.addEventListener("resize", drawMap);
+
+if (token) showApp(); else showPairing();
+</script>
+</body>
+</html>

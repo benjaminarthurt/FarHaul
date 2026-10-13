@@ -173,6 +173,13 @@ func desk_in_reach() -> Dictionary:
 	return best
 
 
+## The ship remote's view of the port: berthed, so just where you are (the map comes with it).
+func remote_state() -> Dictionary:
+	var st := map_state()
+	st.merge({"scene": "port", "prompt": "Berthed. Take the helm (the gate, then the ship) and the remote gets its controls."}, true)
+	return st
+
+
 ## What the map shows in port: you're berthed here.
 func map_state() -> Dictionary:
 	var id := String(Session.profile.get("port_id", ""))
