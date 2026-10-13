@@ -135,6 +135,7 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/ship_stats.gd` | Mass, centre of mass, power, heat, thrust, warnings |
 | `scripts/ship_view.gd` | Builds 3D nodes from `ShipData`; with `skin` on (flight, title screen, dock, port windows) it adds the outer hull |
 | `scripts/ship_skin.gd` | `ShipSkin`: the outer hull over the compartments, with rounded edges and corners, open windows, hatches and vents, and the external parts mounted out on it |
+| `scripts/star_map.gd` | `StarMap`: the map (M), the system chart and known space, in flight and in port |
 | `scripts/flight/sky_worlds.gd` | `SkyWorlds`: every system's worlds (Sol's real ones, the rest from canon) with clouds, air, city lights and rings; which world you see from each site (`data/world/sky_worlds.json`) |
 | `tools/make_planet_maps.py` | Regenerates `assets/planets/` (needs numpy, Pillow, scipy, global-land-mask); `python3 tools/make_planet_maps.py keshar` remakes one |
 | `scripts/engine_parts.gd` | `EngineParts`: the engine's open bell nozzle and its shader-drawn exhaust plume |
@@ -146,6 +147,7 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `tools/make_brand_assets.py` | Regenerates the brand images and placeholder video (needs Pillow, numpy, ffmpeg) |
 | `tests/test_ship.gd` | Headless tests for the rules and stats |
 | `tests/test_ship_skin.gd` | Headless tests for the hull skin (including that it is sealed) and the engine plume |
+| `tests/test_star_map.gd` | Headless tests for the map's layout and keys |
 | `tests/test_sky_worlds.gd` | Headless tests for the worlds in the sky and Sol's outer stations |
 
 Run the tests:

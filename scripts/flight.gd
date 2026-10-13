@@ -33,6 +33,7 @@ var sparks: Array[MeshInstance3D] = []
 var xfer: TransferFlight = null   ## set when a local run is being flown; null for free flight at the dock
 var job: Dictionary = {}
 var warp_index := 0
+var star_map: StarMap
 var beacon: Label
 var _arrived := false
 var phase := "free"   ## free flight, or for a flown run: depart (leaving the origin site), cruise, approach (docking at the destination)
@@ -62,9 +63,9 @@ var help: Label
 var crosshair: Label
 const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement, times the mouse sensitivity setting
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
-const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   , . time  / x1   G get up   Esc back to the dock   F10 menu"
-const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   Esc frees the mouse   F10 menu"
-const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   Esc autoland   F unload (landed on the pad)   G get up   C camera   F10 menu"
+const FLY_HELP := "W/S throttle   Z cut   arrows pitch+yaw   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   , . time  / x1   M map   G get up   Esc back to the dock   F10 menu"
+const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   M map   Esc frees the mouse   F10 menu"
+const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   Esc autoland   F unload (landed on the pad)   G get up   C camera   M map   F10 menu"
 const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   F10 menu"
 var ship_data: ShipData
 var moon: MoonScenery          ## the ground and everything on it, once the ship is over a moon
@@ -112,10 +113,16 @@ func _ready() -> void:
 	_build_hud()
 	sounds = WorldAudio.new()
 	add_child(sounds)
+	star_map = StarMap.new()   # M: the system chart and known space
+	star_map.name = "StarMap"
+	star_map.source = map_state
+	add_child(star_map)
 	GameSettings.apply_scene(self, 150.0)
 	if not Session.flight_job.is_empty():
 		job = Session.flight_job
 		if String(job.get("kind", "run")) == "jump":
+			if not job.has("from_system"):
+				job["from_system"] = Session.system_id()   # for the map's jump line, once the system changes
 			_setup_jump()
 		else:
 			_setup_transfer()
@@ -332,6 +339,40 @@ func _process(delta: float) -> void:
 	for ring in station.get_children():
 		if ring.has_meta("spin"):
 			ring.rotate_z(delta * 0.05)
+
+
+## What the map (StarMap) shows: where the ship is, and on a run how far along the route it is and
+## which way the nose and the travel point relative to the route (signed degrees, seen from above).
+func map_state() -> Dictionary:
+	var st := {"system_id": Session.system_id(), "site_id": String(Session.profile.get("port_id", "")),
+			"warp": _warp(), "fuel": model.fuel_t}
+	var here := String(LocalSpace.node(st.site_id).get("name", "the station"))
+	if _on_surface():
+		st.where = "On the surface, near %s" % here
+	elif walking or outside:
+		st.where = "On foot aboard, near %s" % here
+	elif job.is_empty():
+		st.where = "Flying near %s" % here
+	if String(job.get("kind", "")) == "run" and xfer != null:
+		var to := xfer.target - model.pos
+		var flat := Vector2(to.x, to.z)
+		var nose := model.forward()
+		var heading := rad_to_deg(flat.angle_to(Vector2(nose.x, nose.z))) if flat.length() > 1.0 else 0.0
+		var v := Vector2(model.vel.x, model.vel.z)
+		var travel := rad_to_deg(flat.angle_to(v)) if v.length() > 0.5 and flat.length() > 1.0 else heading
+		var progress := 1.0 if phase == "approach" else clampf(1.0 - xfer.range_to(model) / maxf(xfer.distance_m, 1.0), 0.0, 1.0)
+		st.run = {"origin_id": String(job.get("origin_id", "")), "dest_id": String(job.get("dest_id", "")),
+				"dest_name": String(job.get("destination", "")), "progress": progress,
+				"range_m": 0.0 if phase == "approach" else xfer.range_to(model), "closing": xfer.closing(model),
+				"eta_s": xfer.eta_s(model), "heading_off": heading, "travel_off": travel}
+		st.site_id = String(job.get("origin_id", st.site_id))
+		st.where = "On a run, %s" % ("docking" if phase == "approach" else ("leaving" if phase == "depart" else "cruising"))
+	elif String(job.get("kind", "")) == "jump":
+		var jumped := bool(job.get("jumped", false))
+		st.jump = {"dest_system": String(job.get("dest_system", "")), "from_system": String(job.get("from_system", Session.system_id())),
+				"ly": float(job.get("ly", 0.0)), "progress": 1.0 if jumped else 0.0}
+		st.where = "Arrived by jump" if jumped else "Clearing the station for the jump"
+	return st
 
 
 ## Time compression actually in use: the rate chosen with , and . brought down to the limit here.

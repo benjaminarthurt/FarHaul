@@ -43,8 +43,8 @@
       </div>
       <p class="note">One portable file for 64-bit Windows, about 42 MB zipped. Unzip it anywhere and run FarHaul.exe; nothing is installed. Needs a mouse and keyboard.</p>
       <dl class="slip">
-        <div><dt>Version</dt><dd>0.3.0, prototype</dd></div>
-        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, walk your ship and ports that look like the people who built them, take work from people at the bar, land on moons and work outside in a suit, and fly all the way out to Saturn's rings, if your tanks are up to it</dd></div>
+        <div><dt>Version</dt><dd>0.4.0, prototype</dd></div>
+        <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, walk your ship and ports that look like the people who built them, take work from people at the bar, land on moons and work outside in a suit, fly all the way out to Saturn's rings if your tanks are up to it, and check the map to see how far you've got to go</dd></div>
         <div><dt>Not yet</dt><dd>Planets with air, space walks, crew, combat. Patience is required and, sadly, not sold anywhere</dd></div>
       </dl>
     </div>
@@ -207,6 +207,14 @@
         <figcaption><strong>Down the hold.</strong> The aisle runs aft to engineering, where the reactor glows behind the far door. It's supposed to.</figcaption>
       </figure>
       <figure>
+        <button class="shot" data-full="img/map-system.jpg" data-cap="The system chart." aria-label="Open the system map screenshot full size"><img src="img/map-system.jpg" width="1280" height="720" loading="lazy" alt="The map of Sol: the Sun, the planets' orbits, the main belt and the stations, with a run from Earth to the Saturn ring yards drawn as a route and the ship 40 percent of the way along, plus a close-up of Earth and Luna."></button>
+        <figcaption><strong>The map.</strong> Press M: where you are, the route, how far to go and when you'll get there, and which way the nose points versus which way you're actually going.</figcaption>
+      </figure>
+      <figure>
+        <button class="shot" data-full="img/map-space.jpg" data-cap="Known space." aria-label="Open the known space map screenshot full size"><img src="img/map-space.jpg" width="1280" height="720" loading="lazy" alt="Known space seen from above: every system joined by its trade routes, with a jump line from New Houston to Concord."></button>
+        <figcaption><strong>Known space.</strong> Tab or zoom out and the system becomes a dot among eighteen, with the routes between them and the jump you're about to make.</figcaption>
+      </figure>
+      <figure>
         <button class="shot" data-full="img/hull-burn.jpg" data-cap="Under way." aria-label="Open the hull and engine screenshot full size"><img src="img/hull-burn.jpg" width="1280" height="720" loading="lazy" alt="The starter ship side-on under thrust: a plated hull with rounded edges and a lit airlock hatch, and a blue-white plume from an open, copper-rimmed engine bell."></button>
         <figcaption><strong>Under way.</strong> The hull finally covers the compartments. The plume grows with the throttle, and so does the bill.</figcaption>
       </figure>
@@ -344,6 +352,7 @@
             <tr><th scope="row">Dock</th><td><kbd>F</kbd>, or <kbd>Esc</kbd> to autopilot in</td></tr>
             <tr><th scope="row">Engage the FTL drive</th><td><kbd>J</kbd>, when clear of the station and cool</td></tr>
             <tr><th scope="row">Get up from the helm</th><td><kbd>G</kbd></td></tr>
+            <tr><th scope="row">Map: this system, Tab for known space</th><td><kbd>M</kbd></td></tr>
             <tr><th scope="row">Lift jets, hover hold (on a moon)</th><td><kbd>Space</kbd>, <kbd>H</kbd></td></tr>
             <tr><th scope="row">Autoland on a beacon pad, or lift off on auto</th><td><kbd>Esc</kbd></td></tr>
             <tr><th scope="row">Shut down on the pad</th><td><kbd>F</kbd></td></tr>
@@ -356,6 +365,7 @@
             <tr><th scope="row">Look</th><td>Mouse, or arrow keys</td></tr>
             <tr><th scope="row">Take the helm, climb a ladder, leave by the airlock, use a desk</th><td><kbd>E</kbd></td></tr>
             <tr><th scope="row">Station terminal (in a port)</th><td><kbd>T</kbd></td></tr>
+            <tr><th scope="row">Map</th><td><kbd>M</kbd></td></tr>
             <tr><th scope="row">Free the mouse</th><td><kbd>Esc</kbd>, click to look again</td></tr>
             <tr><th scope="row">Pause: save, settings, quit</th><td><kbd>F10</kbd> anywhere, or <kbd>Esc</kbd> in a port</td></tr>
             <tr><th scope="row">Frame rate readout</th><td><kbd>F3</kbd></td></tr>
@@ -437,7 +447,7 @@
 
     <h3>The prototype</h3>
     <dl class="facts">
-      <dt>Version</dt><dd>0.3.0, prototype</dd>
+      <dt>Version</dt><dd>0.4.0, prototype</dd>
       <dt>Built with</dt><dd>Godot 4.4, written in GDScript, using the Forward+ renderer (Vulkan) on Windows.</dd>
       <dt>Art and sound</dt><dd>The textures, sky, logo and every sound effect (engines, footsteps, room tone, the suit, the jump) are generated in code. Earth's coastlines come from NOAA's public-domain GLOBE elevation data. The theme song is a custom track. The intro video is a placeholder, and knows it.</dd>
       <dt>Placeholders</dt><dd>Prices, part stats and the intro video will all change, usually at the worst possible moment.</dd>
@@ -452,7 +462,7 @@
 <footer>
   <div class="wrap">
     <span class="code">FHCU 000001-0</span>
-    <span>Far Haul prototype 0.3.0</span>
+    <span>Far Haul prototype 0.4.0</span>
     <span><a href="https://github.com/benjaminarthurt/FarHaul/releases/latest">Download for Windows</a> &nbsp; <a href="https://github.com/benjaminarthurt/FarHaul">Source on GitHub</a></span>
     <a class="studio-badge" href="https://signalfoundry.games/" target="_blank" rel="noopener" aria-label="Built at Signal Foundry Games"><span class="studio-badge-kicker">BUILT AT</span><strong>SIGNAL FOUNDRY</strong><span class="studio-badge-sub">GAMES</span></a>
   </div>

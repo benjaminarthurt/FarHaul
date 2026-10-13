@@ -5,7 +5,7 @@ extends Node3D
 ## foreman's hut. Desks along the walls do what the station terminal's buttons do (that menu is still
 ## there, at the terminal kiosk or with T). The gate leads back aboard your ship.
 
-const HELP := "WASD walk   mouse or arrows look   Shift run   E use a desk   T station terminal   Esc menu"
+const HELP := "WASD walk   mouse or arrows look   Shift run   E use a desk   T station terminal   M map   Esc menu"
 const MOUSE_TURN := 0.0025
 const KEY_TURN := 1.8
 const REACH := 2.4
@@ -73,6 +73,11 @@ func _ready() -> void:
 	add_child(audio)
 	audio.level("port_hum" if kind == "concourse" else "hab_hum", 1.0 if kind != "hut" else 0.7)
 	GameSettings.apply_scene(self, 60.0)
+	var sm := StarMap.new()   # M: the system chart and known space
+	sm.name = "StarMap"
+	sm.blocks_keys = true     # no wandering off while reading the chart
+	sm.source = map_state
+	add_child(sm)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_apply_camera()
 	_refresh_info()
@@ -166,6 +171,14 @@ func desk_in_reach() -> Dictionary:
 			best_d = dist
 			best = d
 	return best
+
+
+## What the map shows in port: you're berthed here.
+func map_state() -> Dictionary:
+	var id := String(Session.profile.get("port_id", ""))
+	var where: String = {"concourse": "On foot in the concourse", "hab": "On foot in the moon base hab", "hut": "On foot in the camp hut"}.get(kind, "Docked")
+	return {"system_id": Session.system_id(), "site_id": id,
+			"where": "%s at %s" % [where, String(LocalSpace.node(id).get("name", "the station"))]}
 
 
 func _unhandled_input(event: InputEvent) -> void:

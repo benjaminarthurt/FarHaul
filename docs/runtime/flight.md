@@ -94,6 +94,32 @@ When a run reaches its destination (or a jump reaches the new system), the scene
 the place you're arriving at (`SpaceScenery.rebuild_for`): its station and its worlds, not the ones
 you left.
 
+## The map (`scripts/star_map.gd`)
+
+M opens the map in flight (sitting, walking or in a suit) and in ports, the moon hab and the camp hut.
+Tab switches between the system chart and known space; the wheel or +/- zooms (out past the system
+steps to known space, well in on known space steps back); drag pans; Home recentres; M or Esc closes.
+The ship keeps flying while it's open. In a port the walking keys are held while it's open, and the
+mouse is freed and given back when it closes.
+
+- **System chart.** The star, orbits and belts, and every body in `data/world/system_bodies.json`
+  (stubs skipped). Orbits are squashed (radius = square root of the orbit in AU; Sol uses the real AU,
+  others a guess by body type) so inner worlds and giants fit together. Moons, habitats and stations
+  sit round the system's main world. Sites are placed by kind: the port and depot by the main world,
+  the moon base, pad and camp at its moon, the belt works on the belt, Sol's outer stations at their
+  planets. A close-up, bottom left, names the crowded sites round the main world.
+- **On a run** the route is drawn origin to destination, flown part solid, with the ship placed by
+  progress (1 - range / run distance), a blue arrow for where it's going and a green one for where the
+  nose points (signed angles off the route, seen from above). The panel gives distance, closing speed,
+  arrival time (and the real time at the current compression), time compression and fuel.
+- **Known space.** Every system at its `coordinates.json` position seen from above, the routes from
+  `routes.json` (heavier traffic, thicker line), coloured by tier, your system ringed green and a jump's
+  destination ringed amber with the jump line.
+
+The scene hands the map its state through `StarMap.source` (`FlightScene.map_state()`,
+`PlaceScene.map_state()`). `tests/test_star_map.gd` covers the layout and the keys;
+`tests/capture_map.gd` renders it.
+
 ## Flying a local run (`scripts/transfer_flight.gd`)
 
 An active local contract can be flown instead of autopiloted: the dock's FLY THE RUN opens the flight scene with
