@@ -49,3 +49,17 @@ An engineer aboard cuts all wear and services parts in flight and between trips,
 the wrench; see `docs/runtime/crew.md`. A flown jump's engine and radiator wear is applied by the
 flight (`CrewWork.after_jump`), not `Session.commit_jump`, so it isn't lost when the flight saves its
 own wear.
+
+## The FTL drive
+
+The jump drive is a working part too (kind "drive"). It wears `jump_drive` per jump (autopilot jumps
+in Session, and flown jumps through CrewWork.after_jump). Partial wear changes nothing; a failed drive
+(wear 1) doesn't jump: `Wear.drive_ok` is false, `Session.ship_stats` drops `ftl` and warns, and
+`SimWorld.sync` takes the player off interstellar work. It's serviced, revived with a spares kit and
+overhauled like the others.
+
+## In the shipyard
+
+The builder keeps each part's wear on its module while the ship is rebuilt, so removing or adding
+other parts doesn't move wear onto the wrong part (wear is keyed by module index in the profile), and
+writes it back to `profile.wear` when it saves.

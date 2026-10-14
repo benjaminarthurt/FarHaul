@@ -273,6 +273,7 @@ func after_jump(hours: float) -> void:
 	var wc := Wear.cfg()
 	Wear.add(sc.wear, sc.ship_data, "engine", float(wc.get("jump_engine", 0.03)) * wear_mult)
 	Wear.add(sc.wear, sc.ship_data, "radiator", float(wc.get("jump_radiator", 0.02)) * wear_mult)
+	Wear.add(sc.wear, sc.ship_data, "drive", float(wc.get("jump_drive", 0.02)) * wear_mult)
 	var done := {"fixed": 0, "kits_used": 0, "serviced": 0, "revived": 0}
 	for k in Crew.jobs_in(roster, "deck_tech", "fixes_per_trip_hour", hours):
 		var kits := Session.patch_kits()

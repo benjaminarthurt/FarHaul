@@ -44,3 +44,17 @@ the contents, stows them and sells them; tuning is `hold` in data/runtime/traffi
 - Parts: at the shipyard desk. Module cost x condition x `part_rate`.
 - `Salvage.sell("cargo" | "parts")` unloads it, clears the ledger, books the revenue and adds to
   `profile.salvage_sold_cr`.
+
+## Fitting salvaged parts
+
+- In the shipyard, salvaged parts in the hold are listed first in the palette, under FROM YOUR HOLD,
+  with their condition and fitting fee (`hold.fit_rate` of the price new, at least `hold.fit_min_cr`;
+  `Salvage.fit_fee`). Pick one and place it like any part.
+- Fitting takes it out of the hold (the HARDWARE tonnes and the ledger entry), charges the fee and
+  starts it at its wear (`Salvage.wear_of`: 1 - condition, or failed). The module records the fee as
+  `paid` (saved in the ship's JSON): the ship's value (`ShipData.paid`, `Session.ship_cost`,
+  `ShipStats.cost`) counts the fee, not the price, so removing it refunds only the fee.
+- Removing a fitted salvaged part (Shift+click) puts it back in the hold at its current condition,
+  if there's room for its mass; otherwise it stays on. Undo and redo cover the hold and the ledger.
+- A failed part fits but doesn't work until it's fixed. A failed jump drive (common on wrecks
+  stranded out on routes) means no jumping until a spares kit or an overhaul brings it back.

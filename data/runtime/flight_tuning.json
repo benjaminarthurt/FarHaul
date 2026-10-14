@@ -75,13 +75,14 @@
     "adrift_lost_m": 150.0
   },
   "wear": {
-    "note": "Wear and tear on working parts (scripts/wear.gd). Wear runs 0 new .. 1 failed. Placeholders.",
+    "note": "Wear and tear on working parts (scripts/wear.gd). Wear runs 0 new .. 1 failed. Placeholders. jump_drive: wear on the FTL drive per jump; a failed drive (wear 1) can't jump, partial wear changes nothing.",
     "loss": {
       "engine": 0.4,
       "radiator": 0.6,
       "retro": 0.5,
       "rcs": 0.5,
-      "legs": 0.5
+      "legs": 0.5,
+      "drive": 0.0
     },
     "engine_per_s_full": 5e-05,
     "engine_hot_mult": 3.0,
@@ -103,6 +104,7 @@
     "eva_replace_s": 10.0,
     "overhaul_fraction_of_part": 0.45,
     "spares_kit_cr": 1500,
-    "spares_kit_max": 4
+    "spares_kit_max": 4,
+    "jump_drive": 0.02
   }
 }

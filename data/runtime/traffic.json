@@ -145,7 +145,7 @@
     "stop_m": 60.0
   },
   "hold": {
-    "note": "A derelict's cargo hatch: torch it open (cut_s), then haul out what's inside one item at a time (grab_s). Crates and parts need room in your hold; parts sell at the shipyard for cost x condition x part_rate; cargo sells to a buyer at the port at its quote x buyer_rate, or scrap_rate of base value if nobody here takes it.",
+    "note": "A derelict's cargo hatch: torch it open (cut_s), then haul out what's inside one item at a time (grab_s). Crates and parts need room in your hold; parts sell at the shipyard for cost x condition x part_rate; cargo sells to a buyer at the port at its quote x buyer_rate, or scrap_rate of base value if nobody here takes it. A salvaged part can be fitted in the shipyard instead: fit_rate of its new price (at least fit_min_cr), keeping its wear (1 - condition).",
     "cut_s": 14.0,
     "grab_s": 1.5,
     "crates": [
@@ -198,6 +198,8 @@
     ],
     "part_rate": 0.5,
     "buyer_rate": 0.85,
-    "scrap_rate": 0.35
+    "scrap_rate": 0.35,
+    "fit_rate": 0.15,
+    "fit_min_cr": 250
   }
 }

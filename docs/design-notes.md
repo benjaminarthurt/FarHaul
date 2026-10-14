@@ -28,13 +28,12 @@ Not all at once. In the order requested:
 6. Crew: hire, fire and put to work (**built** in 0.9.0, rough)
 7. Other ships and derelicts, with salvage panels and cargo holds (**built** in 0.10.0 to 0.10.2)
 8. The trade report: the economy simulation made visible (**built** in 0.11.0)
+9. Fitting salvaged parts, at their condition, for a fitting fee (**built** in 0.12.0)
 
 The ship builder came first because everything else reads from the ship it produces.
 
 ### Next, in roughly this order (planned)
 
-9. **Fitting salvaged parts**: a part stripped off a wreck can be fitted in the shipyard instead of sold,
-   cheaply, at the condition it came in (its wear carries over).
 10. **Boarding derelicts**: cut in through a wreck's airlock and walk it in the suit, dark and
     unpowered: loose cargo, a log entry saying what happened, sometimes a survivor to bring home as a
     passenger.

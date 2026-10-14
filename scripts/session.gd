@@ -57,7 +57,7 @@ static func ship_label_for(p: Dictionary) -> String:
 static func ship_cost(ship: ShipData, library: ModuleLibrary) -> int:
 	var total := 0
 	for m in ship.modules:
-		total += library.get_def(m.id).cost
+		total += ShipData.paid(m, library)
 	return total
 
 
@@ -177,6 +177,9 @@ static func ship_stats(ship: ShipData, manifest: CargoManifest = null) -> Dictio
 	var st := ShipStats.compute(ship, 1.0, manifest)
 	if bool(profile.get("ftl_grandfathered", false)):
 		st["ftl"] = true
+	elif bool(st.get("ftl", false)) and not Wear.drive_ok(ship, wear()):
+		st["ftl"] = false   # a drive that has failed doesn't jump, however much it cost
+		(st["warnings"] as Array).append("FTL drive failed: a spares kit on a space walk, or an overhaul at a yard")
 	st["crew_aboard"] = crew_aboard() if profile.has("crew") else int(st.get("crew_needed", 1))
 	return st
 
@@ -327,7 +330,7 @@ static func travel_empty(dest_system_id: String) -> Dictionary:
 	if not bool(r.ok):
 		return r
 	var hours := sim.run_player_until(SimWorld.PLAYER, "done")
-	_autopilot_wear(loaded.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)))
+	_autopilot_wear(loaded.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)), float(Wear.cfg().get("jump_drive", 0.02)))
 	var work := _crew_between(loaded.ship, float(hours))
 	profile["system_id"] = dest_system_id
 	profile["port_id"] = sim.net.primary_port(dest_system_id)
@@ -863,11 +866,13 @@ static func engines_work() -> bool:
 
 
 ## Autopilot and sim trips wear the engines and radiators by the fuel they burn (or a flat amount).
-static func _autopilot_wear(ship: ShipData, engine: float, radiator: float) -> void:
+static func _autopilot_wear(ship: ShipData, engine: float, radiator: float, drive := 0.0) -> void:
 	var w := wear().duplicate()
 	var wm := Crew.wear_mult(crew())   # an engineer aboard keeps it all running sweeter
 	Wear.add(w, ship, "engine", engine * wm)
 	Wear.add(w, ship, "radiator", radiator * wm)
+	if drive > 0.0:
+		Wear.add(w, ship, "drive", drive * wm)
 	profile["wear"] = w
 
 
@@ -1333,7 +1338,7 @@ static func depart_active_contract(hard := false) -> Dictionary:
 		_sync_sim(loaded_ship.ship)
 		var hours := sim.run_player_until(SimWorld.PLAYER, "arrival")
 		days_text = " The trip took %.1f days." % (hours / 24.0)
-		_autopilot_wear(loaded_ship.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)))
+		_autopilot_wear(loaded_ship.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)), float(Wear.cfg().get("jump_drive", 0.02)))
 		days_text += _crew_between(loaded_ship.ship, float(hours))
 	profile["system_id"] = String(c.destination_system_id)
 	profile["port_id"] = String(c.destination_port_id)

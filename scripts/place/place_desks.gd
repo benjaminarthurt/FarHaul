@@ -324,6 +324,8 @@ func _salvage_section(what: String) -> void:
 			var v := Salvage.part_value(l)
 			total += v
 			sc.panel_list.add_child(Brand.note("%s: %s cr." % [Salvage.sentence(Salvage.describe(l)), ShipStats.commas(v)], 14))
+	if what == "parts":
+		sc.panel_list.add_child(Brand.note("Or keep them: in the shipyard they're under FROM YOUR HOLD, and fitting one costs %d%% of its price new. It comes as worn as you found it." % roundi(float(Salvage.cfg().get("fit_rate", 0.15)) * 100.0), 13))
 	sc._action("SELL THE SALVAGED %s  %s cr" % ["CARGO" if what == "cargo" else "PARTS", ShipStats.commas(total)], func() -> void:
 		var r := Salvage.sell(what)
 		sc._say(String(r.message))

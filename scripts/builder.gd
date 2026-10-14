@@ -27,6 +27,9 @@ var last_stats: Dictionary = {}
 
 # Building
 var selected := 0  # index into library.order
+var salvage_pick := -1  # index into the salvaged parts in the hold (Salvage.parts_aboard), or -1: fitting from the palette
+var salvage_box: VBoxContainer   ## the FROM YOUR HOLD palette section, rebuilt as the hold changes
+var salvage_buttons: Array[Button] = []
 var rot := 0  # quarter-turns around Y
 var level := 0  # which deck (Y layer) we're building on
 var hide_decks_above := false
@@ -289,6 +292,8 @@ func _build_palette(ui: Control) -> void:
 		&"external": "EXTERNAL (bolt-on)",
 		&"caps": "DOOR CAPS (seal a doorway)",
 	}
+	salvage_box = VBoxContainer.new()   # salvaged parts in the hold, first: they're the bargain
+	box.add_child(salvage_box)
 	var last_group: StringName = &""
 	for i in library.order.size():
 		var def := library.get_def(library.order[i])
@@ -304,6 +309,7 @@ func _build_palette(ui: Control) -> void:
 		b.pressed.connect(_select.bind(i))
 		box.add_child(b)
 		buttons.append(b)
+
 
 	var row := HBoxContainer.new()
 	box.add_child(row)
@@ -670,6 +676,20 @@ func _frame_ship(immediate := false) -> void:
 
 func _select(i: int) -> void:
 	selected = i
+	salvage_pick = -1
+	_make_ghost(library.order[i])
+
+
+## Pick salvaged part `k` from the hold to fit.
+func _select_salvage(k: int) -> void:
+	var parts := _salvage_parts()
+	if k < 0 or k >= parts.size():
+		return
+	salvage_pick = k
+	_make_ghost(StringName(String(parts[k].module)))
+
+
+func _make_ghost(id: StringName) -> void:
 	if ghost != null:
 		remove_child(ghost)
 		ghost.queue_free()
@@ -679,7 +699,7 @@ func _select(i: int) -> void:
 	ghost_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	ghost_mat.albedo_color = GOOD
 
-	ghost = library.get_def(library.order[i]).build_visual()
+	ghost = library.get_def(id).build_visual()
 	_override_materials(ghost, ghost_mat)
 	add_child(ghost)
 
@@ -692,9 +712,17 @@ func _select(i: int) -> void:
 
 func _style_buttons() -> void:
 	var credits := _credits()
+	var parts := _salvage_parts()
+	for k in salvage_buttons.size():
+		if k == salvage_pick:
+			salvage_buttons[k].modulate = Color(1.0, 0.95, 0.5)
+		elif k < parts.size() and Salvage.fit_fee(parts[k]) > credits:
+			salvage_buttons[k].modulate = Color(1.0, 0.55, 0.55, 0.75)
+		else:
+			salvage_buttons[k].modulate = Color.WHITE
 	for j in buttons.size():
 		var cost := library.get_def(library.order[j]).cost
-		if j == selected:
+		if j == selected and salvage_pick < 0:
 			buttons[j].modulate = Color(1.0, 0.95, 0.5)
 		elif cost > credits:
 			buttons[j].modulate = Color(1.0, 0.55, 0.55, 0.75)
@@ -760,7 +788,9 @@ func _update_ghost() -> void:
 		ghost.visible = false
 		tip_panel.visible = false
 		return
-	var def := library.get_def(library.order[selected])
+	var part := _picked_part()
+	var def := library.get_def(StringName(String(part.module))) if not part.is_empty() else library.get_def(library.order[selected])
+	var price := Salvage.fit_fee(part) if not part.is_empty() else def.cost
 	var removing := Input.is_key_pressed(KEY_SHIFT)
 	hover_active = true
 	hover_cell = cell
@@ -770,8 +800,8 @@ func _update_ghost() -> void:
 	if hover_error == "":
 		if hover_rot != rot:
 			note = "  (turned to fit)"
-		if def.cost > _credits():
-			hover_error = "Can't afford: %s cr short. Bank says no" % ShipStats.commas(def.cost - _credits())
+		if price > _credits():
+			hover_error = "Can't afford: %s cr short. Bank says no" % ShipStats.commas(price - _credits())
 	ghost_mat.albedo_color = GOOD if hover_error == "" else BAD
 	ghost.position = ShipGrid.cell_to_world(hover_cell)
 	ghost.rotation.y = hover_rot * PI / 2.0
@@ -781,13 +811,19 @@ func _update_ghost() -> void:
 		if ship.module_at(cell) >= 0:
 			var m: Dictionary = ship.modules[ship.module_at(cell)]
 			var gone := library.get_def(m.id)
-			_show_tip("Remove %s  (+%s cr)" % [gone.display_name, ShipStats.commas(gone.cost)], WARN_COLOR)
+			if m.has("paid"):
+				_show_tip("Unbolt the salvaged %s: back in the hold  (+%s cr fitting)" % [Salvage.lower(gone.display_name), ShipStats.commas(int(m.paid))], WARN_COLOR)
+			else:
+				_show_tip("Remove %s  (+%s cr)" % [gone.display_name, ShipStats.commas(gone.cost)], WARN_COLOR)
 		else:
 			tip_panel.visible = false
 	elif hover_error != "":
 		_show_tip(hover_error, BAD_COLOR)
 	else:
-		_show_tip("%s  (-%s cr)%s" % [def.display_name, ShipStats.commas(def.cost), note], OK_COLOR)
+		if not part.is_empty():
+			_show_tip("Fit the salvaged %s, %s  (-%s cr fitting)%s" % [Salvage.lower(def.display_name), Salvage.condition_text(part), ShipStats.commas(price), note], OK_COLOR)
+		else:
+			_show_tip("%s  (-%s cr)%s" % [def.display_name, ShipStats.commas(def.cost), note], OK_COLOR)
 
 
 func _show_tip(text: String, col: Color) -> void:
@@ -805,17 +841,26 @@ func _on_click() -> void:
 	var before := _snapshot()
 	if Input.is_key_pressed(KEY_SHIFT):
 		var err := manifest.blocks_removal(hover_cell)
+		var idx := ship.module_at(hover_cell)
+		var back: Dictionary = ship.modules[idx] if idx >= 0 and ship.modules[idx].has("paid") else {}
+		if err == "" and not back.is_empty():
+			err = _room_to_unbolt(back)
 		if err == "":
 			err = ship.remove_at(hover_cell)
 		message = err
+		if err == "" and not back.is_empty():
+			_unbolt(back)
 		_sfx(&"remove" if err == "" else &"error")
 	else:
 		var err := hover_error
+		var part := _picked_part()
 		if err == "":
-			err = ship.add(library.order[selected], hover_cell, hover_rot)
+			err = ship.add(StringName(String(part.module)) if not part.is_empty() else library.order[selected], hover_cell, hover_rot)
 		message = err
 		if err == "":
 			pop_index = ship.modules.size() - 1
+			if not part.is_empty():
+				_fit_salvaged(ship.modules[pop_index], part)
 			_sfx(&"place")
 		else:
 			_sfx(&"error")
@@ -849,19 +894,120 @@ func _credits() -> int:
 func _ship_cost() -> int:
 	var total := 0
 	for m in ship.modules:
-		total += library.get_def(m.id).cost
+		total += ShipData.paid(m, library)
 	return total
+
+
+# --- Salvaged parts ----------------------------------------------------------------------------
+
+## The salvaged parts in the hold, as the builder's own manifest has them.
+func _salvage_parts() -> Array:
+	return Salvage.parts_aboard(manifest) if Session.slot >= 0 else []
+
+
+func _picked_part() -> Dictionary:
+	var parts := _salvage_parts()
+	return parts[salvage_pick] if salvage_pick >= 0 and salvage_pick < parts.size() else {}
+
+
+## A salvaged part just went on the ship as module `m`: it cost the fitting fee, keeps its wear, and
+## comes out of the hold.
+func _fit_salvaged(m: Dictionary, part: Dictionary) -> void:
+	m["paid"] = Salvage.fit_fee(part)
+	m["wear"] = Salvage.wear_of(part)
+	manifest.unload(Salvage.HARDWARE, float(part.tonnes))
+	var parts: Array = (Session.profile.get("salvage_parts", []) as Array).duplicate(true)
+	for i in parts.size():
+		if String(parts[i].module) == String(part.module) and is_equal_approx(float(parts[i].condition), float(part.condition)):
+			parts.remove_at(i)
+			break
+	Session.profile["salvage_parts"] = parts
+	message = "Fitted the salvaged %s for %s cr. %s" % [Salvage.lower(library.get_def(m.id).display_name), ShipStats.commas(int(m.paid)),
+			"It doesn't work yet: a spares kit on a space walk, or an overhaul at a yard." if float(m.wear) >= 1.0 else "Second-hand, and it shows: %s." % Salvage.condition_text(part)]
+	salvage_pick = -1
+	_make_ghost(library.order[selected])
+
+
+## "" if salvaged module `m` can go back in the hold, otherwise why not.
+func _room_to_unbolt(m: Dictionary) -> String:
+	var t := library.get_def(m.id).mass
+	if manifest.free_space_for(Salvage.HARDWARE) + 0.001 < t:
+		return "No room in the hold to put it back: it's %.1f t. Sell it at the yard desk instead, or make room" % t
+	return ""
+
+
+## Salvaged module `m` came off: back in the hold as salvage, at the condition it's in now.
+func _unbolt(m: Dictionary) -> void:
+	var d := library.get_def(m.id)
+	manifest.load(Salvage.HARDWARE, d.mass)
+	var w := float(m.get("wear", 0.0))
+	var parts: Array = (Session.profile.get("salvage_parts", []) as Array).duplicate(true)
+	parts.append({"kind": "part", "module": String(m.id), "tonnes": d.mass, "condition": snappedf(clampf(1.0 - w, 0.0, 1.0), 0.01), "failed": w >= 1.0})
+	Session.profile["salvage_parts"] = parts
+	message = "Unbolted the salvaged %s. It's back in the hold" % Salvage.lower(d.display_name)
+
+
+## The FROM YOUR HOLD palette section: one button per salvaged part, with its fitting fee.
+func _refresh_salvage() -> void:
+	if salvage_box == null:
+		return
+	for c in salvage_box.get_children():
+		c.queue_free()
+	salvage_buttons.clear()
+	var parts := _salvage_parts()
+	if salvage_pick >= parts.size():
+		salvage_pick = -1
+	if parts.is_empty():
+		return
+	salvage_box.add_child(_header("FROM YOUR HOLD (salvage)"))
+	for k in parts.size():
+		var p: Dictionary = parts[k]
+		var b := Button.new()
+		b.text = "%s, %s   fit %s" % [Salvage.part_name(p), Salvage.condition_text(p), ShipStats.commas(Salvage.fit_fee(p))]
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.focus_mode = Control.FOCUS_NONE
+		b.tooltip_text = "Off a derelict. Fitting it costs %s cr instead of %s cr new, and it keeps its wear.%s" % [ShipStats.commas(Salvage.fit_fee(p)),
+				ShipStats.commas(library.get_def(StringName(String(p.module))).cost), "\nIt has failed: it needs a spares kit or an overhaul before it works." if bool(p.get("failed", false)) else ""]
+		b.pressed.connect(_select_salvage.bind(k))
+		salvage_box.add_child(b)
+		salvage_buttons.append(b)
+
+
+## Wear lives on the modules while the ship is being rebuilt (so it follows a part when others come
+## and go), and goes back into the profile, by Wear.key, when the ship is saved.
+func _attach_wear() -> void:
+	var w: Dictionary = Session.profile.get("wear", {})
+	for i in ship.modules.size():
+		var k := Wear.key(i, ship.modules[i].id)
+		if w.has(k):
+			ship.modules[i]["wear"] = float(w[k])
+
+
+func _wear_to_profile() -> void:
+	var w := {}
+	for i in ship.modules.size():
+		var v := float(ship.modules[i].get("wear", 0.0))
+		if v > 0.0:
+			w[Wear.key(i, ship.modules[i].id)] = v
+	Session.profile["wear"] = w
 
 
 # --- Undo / redo -----------------------------------------------------------------------------
 
 func _snapshot() -> Dictionary:
-	return {"ship": ship.to_json(), "cargo": manifest.to_dict()}
+	return {"ship": ship.to_json(), "cargo": manifest.to_dict(), "wear": ship.modules.map(func(m: Dictionary) -> float: return float(m.get("wear", 0.0))),
+			"parts": (Session.profile.get("salvage_parts", []) as Array).duplicate(true)}
 
 
 func _restore(snap: Dictionary) -> void:
 	ship.from_json(snap.ship)
 	manifest.from_dict(snap.cargo)
+	var w: Array = snap.get("wear", [])
+	for i in mini(w.size(), ship.modules.size()):
+		if float(w[i]) > 0.0:
+			ship.modules[i]["wear"] = float(w[i])
+	Session.profile["salvage_parts"] = (snap.get("parts", []) as Array).duplicate(true)
+	salvage_pick = -1
 
 
 ## Record `before` for undo if anything actually changed since.
@@ -910,6 +1056,7 @@ func _refresh_ship() -> void:
 	_set_meter(meters.cargo, c_ratio, "%.1f / %.0f t" % [st.cargo_mass, st.cargo_capacity], false)
 
 	_refresh_cargo_label()
+	_refresh_salvage()
 	_refresh_top()
 	_style_buttons()
 	undo_button.disabled = not history.can_undo()
@@ -1010,6 +1157,8 @@ func _save_dict() -> Dictionary:
 	data["cargo"] = manifest.to_dict()
 	data["earned"] = earned
 	Session.profile["credits"] = _credits()
+	if Session.slot >= 0:
+		_wear_to_profile()
 	data["profile"] = Session.profile
 	# The builder only knows about the ship; keep what other screens saved in the same slot.
 	if Session.slot >= 0:
@@ -1039,6 +1188,8 @@ func _load_from(path: String) -> bool:
 	var parsed: Variant = JSON.parse_string(text)
 	manifest.from_dict(parsed.get("cargo", {}))
 	earned = int(parsed.get("earned", 0))
+	if Session.slot >= 0:
+		_attach_wear()
 	return true
 
 

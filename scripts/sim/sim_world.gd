@@ -123,6 +123,9 @@ static func sync(sim: EconomySim, profile: Dictionary, ship: ShipData) -> void:
 	if c.is_empty():
 		return
 	var fresh := SimShip.profile(ship, {}, bool(profile.get("ftl_grandfathered", false)))
+	if bool(fresh["ftl"]) and not bool(profile.get("ftl_grandfathered", false)) and not Wear.drive_ok(ship, profile.get("wear", {})):
+		fresh["ftl"] = false   # the drive is fitted but has failed
+		fresh["ly_per_day"] = 0.0
 	c["ftl"] = fresh["ftl"]
 	c["capacity_scu"] = fresh["capacity_scu"]
 	c["capacity_kg"] = fresh["capacity_kg"]

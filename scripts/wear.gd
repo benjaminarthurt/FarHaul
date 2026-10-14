@@ -13,8 +13,8 @@ extends RefCounted
 ##   one comes back with a spares kit. The repair desk overhauls everything to new, for money.
 ## Tuning: data/runtime/flight_tuning.json "wear".
 
-const KINDS := ["engine", "radiator", "retro", "rcs", "legs"]
-const NAMES := {"engine": "Engine", "radiator": "Radiator", "retro": "Braking thrusters", "rcs": "Manoeuvring thrusters", "legs": "Lander legs"}
+const KINDS := ["engine", "radiator", "retro", "rcs", "legs", "drive"]
+const NAMES := {"engine": "Engine", "radiator": "Radiator", "retro": "Braking thrusters", "rcs": "Manoeuvring thrusters", "legs": "Lander legs", "drive": "FTL drive"}
 
 
 static func cfg() -> Dictionary:
@@ -33,11 +33,25 @@ static func kind_of(def: ModuleDef) -> String:
 		return "rcs"
 	if def.lift > 0.0:
 		return "legs"
+	if def.drive > 0.0:
+		return "drive"
 	return ""
 
 
 static func key(i: int, id: StringName) -> String:
 	return "%d:%s" % [i, String(id)]
+
+
+## Whether the ship can still jump: it has an FTL drive that hasn't failed (or no drive at all, which
+## is a different problem). A drive only works or doesn't; wear just brings failure closer.
+static func drive_ok(ship: ShipData, wear: Dictionary) -> bool:
+	var any := false
+	for p in parts(ship, wear):
+		if String(p.kind) == "drive":
+			any = true
+			if float(p.wear) < 1.0:
+				return true
+	return not any
 
 
 ## How much of its output a part of `kind` still gives at wear `w`.

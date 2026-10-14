@@ -60,7 +60,7 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 
 		dry += d.mass
 		fuel += d.fuel
-		cost += d.cost
+		cost += ShipData.paid(m, ship.library)
 		cargo_slots += d.cargo_slots
 		berths += d.berths
 		drive += d.drive

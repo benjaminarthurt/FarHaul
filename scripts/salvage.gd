@@ -84,7 +84,7 @@ static func describe(item: Dictionary) -> String:
 				bits.append("%d spares kit%s" % [int(item.spares_kits), "" if int(item.spares_kits) == 1 else "s"])
 			return "a supplies locker: %s" % " and ".join(bits)
 		"part":
-			return "%s (%s), %.1f t" % [part_name(item), "failed" if bool(item.get("failed", false)) else "%d%%" % roundi(float(item.condition) * 100.0), float(item.tonnes)]
+			return "%s (%s), %.1f t" % [part_name(item), condition_text(item), float(item.tonnes)]
 	return "something"
 
 
@@ -95,6 +95,12 @@ static func sentence(text: String) -> String:
 
 static func _kits(n: int, what: String) -> String:
 	return "%d %s%s" % [n, what, "" if n == 1 else "s"]
+
+
+## `name` in a sentence: lower case, except an acronym (FTL drive) stays as it is.
+static func lower(name: String) -> String:
+	var w := name.get_slice(" ", 0)
+	return name if w.length() > 1 and w == w.to_upper() else name.to_lower()
 
 
 static func part_name(item: Dictionary) -> String:
@@ -169,7 +175,7 @@ static func stow(item: Dictionary) -> Dictionary:
 	if not data.is_empty():
 		data["profile"] = p
 		SaveSlots.write(Session.slot, data)
-	var what := "%.1f t of %s" % [t, clib().label(_com(item)).to_lower()] if kind == "crate" else part_name(item).to_lower()
+	var what := "%.1f t of %s" % [t, clib().label(_com(item)).to_lower()] if kind == "crate" else lower(part_name(item))
 	return {"ok": true, "tonnes": t, "message": "Stowed %s in the hold. Sell it at a port: %s." % [what, "the freight office finds a buyer" if kind == "crate" else "the shipyard takes parts"]}
 
 
@@ -224,6 +230,26 @@ static func cargo_offer(com: String, tonnes: float) -> Dictionary:
 		if v > int(best.value):
 			best = {"buyer": String(fid), "name": String(f.get("name", fid)).replace(" (assumed)", ""), "value": v}
 	return best
+
+
+## What fitting salvaged part `pt` costs at the shipyard: a share of its price new, for the fitter's time.
+static func fit_fee(pt: Dictionary) -> int:
+	var d := ModuleLibrary.new().get_def(StringName(String(pt.get("module", ""))))
+	if d == null:
+		return 0
+	return maxi(int(cfg().get("fit_min_cr", 250)), roundi(float(d.cost) * float(cfg().get("fit_rate", 0.15))))
+
+
+## The wear a salvaged part starts with once fitted (Wear: 0 new, 1 failed).
+static func wear_of(pt: Dictionary) -> float:
+	if bool(pt.get("failed", false)):
+		return 1.0
+	return clampf(1.0 - float(pt.get("condition", 1.0)), 0.0, 1.0)
+
+
+## "62%" or "failed".
+static func condition_text(pt: Dictionary) -> String:
+	return "failed" if bool(pt.get("failed", false)) or float(pt.get("condition", 1.0)) <= 0.0 else "%d%%" % roundi(float(pt.condition) * 100.0)
 
 
 ## What the shipyard pays for a salvaged part.
@@ -288,7 +314,7 @@ static func sell(what: String) -> Dictionary:
 			SimStats.on_salvage(sim, float(v))
 			m.unload(HARDWARE, float(pt.tonnes))
 			total += v
-			lines.append(part_name(pt).to_lower())
+			lines.append(lower(part_name(pt)))
 		Session.profile["salvage_parts"] = []
 	if lines.is_empty():
 		return {"ok": false, "message": "No salvage aboard to sell."}
