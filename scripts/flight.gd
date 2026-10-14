@@ -524,6 +524,25 @@ func remote_state() -> Dictionary:
 const REMOTE_HOLD_S := 0.45   ## how long one "hold" from the remote lasts; the page repeats it while the button is down
 
 
+## A debug cheat from the pause menu (Cheats): money goes through the save as anywhere else; repairs
+## also put this flight right: hull, parts, tanks and heat.
+func cheat(kind: String) -> String:
+	if kind != "fix":
+		return ""
+	var r := Cheats.fix()
+	model.damage = 0.0
+	model.fuel_t = float(stats.get("fuel", model.fuel_t))
+	model.heat_mj = 0.0
+	model.overheated = false
+	wear.clear()
+	Wear.apply(model, ship_data, wear)
+	_wear_damage = 0.0
+	view.set_patched([])
+	view.set_damage(0.0)
+	_hull_warned = 0
+	return String(r.message) + " Tanks full."
+
+
 ## A command from the ship remote. The same controls as the keys, by name (see pilot()).
 func remote_command(action: String, value: float) -> Dictionary:
 	return pilot(action, value)

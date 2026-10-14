@@ -825,6 +825,19 @@ func _on_click() -> void:
 
 # --- Money -----------------------------------------------------------------------------------
 
+## A debug cheat from the pause menu (Cheats). Money goes on the builder's books, which it saves with
+## the ship; repairs go through the save as anywhere else.
+func cheat(kind: String) -> String:
+	if kind != "credits":
+		return ""
+	earned += Cheats.MONEY
+	Session.profile["cheated"] = true
+	_refresh_top()
+	if Session.slot >= 0:
+		_write_save(_save_path())
+	return "+%s cr. Build something ridiculous." % ShipStats.commas(Cheats.MONEY)
+
+
 func _start_funds() -> int:
 	return Session.start_funds()
 

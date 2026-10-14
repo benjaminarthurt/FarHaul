@@ -41,6 +41,7 @@ func _init() -> void:
 		ShipRemote.sync(get_tree())
 		_remote_note())
 	_row(grid, "Ship remote (phone or tablet)", remote)
+	_row(grid, "Debug cheats (pause menu)", _check("cheats"))
 	_remote_info = Brand.note("", 13)
 	_remote_info.custom_minimum_size = Vector2(460, 0)
 	_remote_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

@@ -125,6 +125,20 @@ func open() -> void:
 				close()
 				cb.call())
 			extra.add_child(b)
+	if bool(GameSettings.get_value("cheats")) and Session.slot >= 0:   # debug: Settings > Debug cheats
+		extra.add_child(Brand.heading("CHEATS", 15))
+		for c in Cheats.actions(scene):
+			var act: Dictionary = c
+			var b := Button.new()
+			b.text = String(act.text)
+			Brand.style_button(b, 15)
+			var kind: String = act.kind
+			b.pressed.connect(func() -> void:
+				var msg := Cheats.run(scene, kind)
+				note.text = msg)
+			extra.add_child(b)
+		if bool(Session.profile.get("cheated", false)):
+			note.text = (note.text + "\n\n" if note.text != "" else "") + "Cheats have been used on this save."
 	dim.visible = true
 	panel.visible = true
 	get_tree().paused = true
