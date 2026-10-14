@@ -321,8 +321,8 @@ static func port_state() -> Dictionary:
 		var pax := String(c.get("person_kind", "")) == "passenger"
 		out["active"] = {"title": String(c.get("title", "")), "passengers": pax, "seats": int(c.get("seats", 0)),
 				"tonnes": float(c.get("accepted_tonnes", c.get("offer", 0.0))), "pay": int(c.get("pay_total", 0)),
-				"to": _dest_name(c), "arrived": arrived, "can_depart": at_start and not arrived and Session.hull_block() == "",
-				"depart_why": Session.hull_block() if at_start and not arrived else "", "hard_burn": at_start and not arrived and c.has("due_hour"),
+				"to": _dest_name(c), "arrived": arrived, "can_depart": at_start and not arrived and Session.depart_block() == "",
+				"depart_why": Session.depart_block() if at_start and not arrived else "", "hard_burn": at_start and not arrived and c.has("due_hour"),
 				"can_deliver": arrived and at_end, "camp": arrived and at_end and Session.surface_site() == "camp" and not pax,
 				"can_cancel": Session.cancel_block() == "", "cancel_fee": Session.cancel_fee(),
 				"due_in_h": int(c.due_hour) - int(Session.sim.hour) if c.has("due_hour") and Session.sim != null else -9999}

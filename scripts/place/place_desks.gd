@@ -79,6 +79,12 @@ func _desk_freight(id: String) -> void:
 				sc._say(String(r.message))
 				sc._refill())
 		elif at_start and not arrived:
+			var unfit := Session.depart_block()
+			if unfit != "":   # say what's wrong before offering buttons that won't work
+				var warn := Brand.note(unfit, 14)
+				warn.add_theme_color_override("font_color", Color(0.95, 0.55, 0.4))
+				warn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				sc.panel_list.add_child(warn)
 			sc._action("FLY THE RUN YOURSELF" if local else "FLY THE JUMP YOURSELF", func() -> void:
 				var r := Session.begin_local_flight() if local else Session.begin_jump_flight()
 				if bool(r.ok):

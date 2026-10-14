@@ -84,7 +84,7 @@ func _run() -> void:
 	var kid := String(Session.active_contract().get("sim_taken", ""))
 	_ship(ShipPresets.STARTER)   # sold the drive in the shipyard
 	r = Session.depart_active_contract()
-	check(not bool(r.ok), "no drive: it can't leave (%s)" % r.message)
+	check(not bool(r.ok) and String(r.message).contains("FTL drive") and Session.depart_block().contains("FTL drive"), "no drive: it can't leave, and it says why (%s)" % r.message)
 	var origin := String(SimWorld.player(Session.sim).sys)
 	for h in 48:   # time passes in port until the freight is aboard in the economy's books, but not gone
 		if String(Session.sim.contracts[kid].status) == "in_transit":

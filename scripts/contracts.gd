@@ -134,5 +134,16 @@ static func ready(rows: Array[Dictionary]) -> bool:
 	return true
 
 
+## Why the ship can't fly this load, in one line naming every check it fails, or "" when it's fit.
+static func why_not(rows: Array[Dictionary]) -> String:
+	var bad := PackedStringArray()
+	for r in rows:
+		if not r.ok:
+			bad.append("%s (%s)" % [String(r.label), String(r.detail)] if String(r.detail) != "" else String(r.label))
+	if bad.is_empty():
+		return ""
+	return "Not fit to fly this load: %s. The shipyard fixes most of that; the bar fixes crew." % "; ".join(bad)
+
+
 static func _row(label: String, ok: bool, detail: String) -> Dictionary:
 	return {"label": label, "ok": ok, "detail": detail}

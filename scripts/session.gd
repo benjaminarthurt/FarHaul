@@ -739,6 +739,9 @@ static func hull() -> float:
 ## all; below the unsafe line (25%) it may still fly empty (`with_load` false), at the captain's risk.
 static func hull_block(with_load := true) -> String:
 	if slot >= 0 and not engines_work():
+		var loaded := _load_ship(SaveSlots.read(slot))
+		if not loaded.is_empty() and float(ShipStats.compute(loaded.ship).thrust_fwd) <= 0.0:
+			return "No engine pushing aft. The clamps stay shut until something can push: fit one at the shipyard, nozzle to the stern."
 		return "Every engine has failed. The clamps stay shut until something can push: a space walk with a spares kit, or the yard's overhaul."
 	var h := hull()
 	if h <= 0.001:
@@ -1013,8 +1016,9 @@ static func begin_local_flight() -> Dictionary:
 	if loaded_ship.is_empty():
 		return {"ok": false, "message": "Couldn't load the ship from the save."}
 	var stats := ship_stats(loaded_ship.ship, loaded_ship.manifest)
-	if not Contracts.ready(Contracts.check(stats, loaded_ship.manifest, c)):
-		return {"ok": false, "message": "The ship isn't fit to fly this load yet."}
+	var unfit := Contracts.why_not(Contracts.check(stats, loaded_ship.manifest, c))
+	if unfit != "":
+		return {"ok": false, "message": unfit}
 	if hull_block() != "":
 		return {"ok": false, "message": hull_block()}
 	var dest := LocalSpace.node(String(c.destination_port_id))
@@ -1038,8 +1042,9 @@ static func begin_jump_flight() -> Dictionary:
 	if loaded_ship.is_empty():
 		return {"ok": false, "message": "Couldn't load the ship from the save."}
 	var stats := ship_stats(loaded_ship.ship, loaded_ship.manifest)
-	if not Contracts.ready(Contracts.check(stats, loaded_ship.manifest, c)):
-		return {"ok": false, "message": "The ship isn't fit to fly this load yet."}
+	var unfit := Contracts.why_not(Contracts.check(stats, loaded_ship.manifest, c))
+	if unfit != "":
+		return {"ok": false, "message": unfit}
 	if hull_block() != "":
 		return {"ok": false, "message": hull_block()}
 	flight_job = {"kind": "jump", "contract_id": String(c.id), "destination": String(Worlds.port(String(c.destination_port_id)).get("name", "the destination")),
@@ -1169,8 +1174,9 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 		return {"ok": false, "message": "Couldn't load the ship from the save."}
 	var manifest: CargoManifest = loaded_ship.manifest
 	var stats := ship_stats(loaded_ship.ship, manifest)
-	if not Contracts.ready(Contracts.check(stats, manifest, c)):
-		return {"ok": false, "message": "The ship isn't fit to fly this load yet."}
+	var unfit := Contracts.why_not(Contracts.check(stats, manifest, c))
+	if unfit != "":
+		return {"ok": false, "message": unfit}
 	var cargo := float(c.get("accepted_tonnes", c.offer))
 	var cost := local_trip_cost(stats, cargo, float(c.dv_kms))
 	var hours := maxi(1, ceili(float(c.hours) * Crew.time_mult(crew())))
@@ -1316,9 +1322,9 @@ static func depart_active_contract(hard := false) -> Dictionary:
 		return {"ok": false, "message": "Couldn't load the ship from the save."}
 	var manifest: CargoManifest = loaded_ship.manifest
 	var stats := ship_stats(loaded_ship.ship, manifest)
-	var checks := Contracts.check(stats, manifest, c)
-	if not Contracts.ready(checks):
-		return {"ok": false, "message": "The ship isn't fit to fly this load yet."}
+	var unfit := Contracts.why_not(Contracts.check(stats, manifest, c))
+	if unfit != "":
+		return {"ok": false, "message": unfit}
 	var days_text := ""
 	var live := sim != null and c.has("sim_taken")
 	if live:
@@ -1336,6 +1342,20 @@ static func depart_active_contract(hard := false) -> Dictionary:
 		_commit_sim(data, loaded_ship.ship)
 	SaveSlots.write(slot, data)
 	return {"ok": true, "message": "Arrived at %s after %.2f ly.%s" % [Worlds.port(profile.port_id).name, float(c.distance_ly), days_text]}
+
+
+## Why the active contract can't set off from here right now, or "" when it can: the hull, then every
+## fitness check the ship fails for this load (Contracts.why_not).
+static func depart_block() -> String:
+	var c := active_contract()
+	if c.is_empty():
+		return "No contract to fly."
+	if hull_block() != "":
+		return hull_block()
+	var loaded := _load_ship(SaveSlots.read(slot))
+	if loaded.is_empty():
+		return "Couldn't load the ship from the save."
+	return Contracts.why_not(Contracts.check(ship_stats(loaded.ship, loaded.manifest), loaded.manifest, c))
 
 
 ## Whether the active contract can be cancelled here, and why not: "" when it can. Only before
