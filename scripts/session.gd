@@ -1338,6 +1338,68 @@ static func depart_active_contract(hard := false) -> Dictionary:
 	return {"ok": true, "message": "Arrived at %s after %.2f ly.%s" % [Worlds.port(profile.port_id).name, float(c.distance_ly), days_text]}
 
 
+## Whether the active contract can be cancelled here, and why not: "" when it can. Only before
+## setting off: at the origin, not yet arrived.
+static func cancel_block() -> String:
+	var c := active_contract()
+	if c.is_empty():
+		return "No contract to cancel."
+	if String(c.get("status", "")) == "arrived":
+		return "You're already there. Deliver it; it's less paperwork."
+	var at_start := String(c.get("origin_port_id", "")) == String(profile.get("port_id", "")) if bool(c.get("local", false)) \
+			else String(c.get("origin_system_id", "")) == system_id()
+	if not at_start:
+		return "The load comes off where it came on. Go back to %s first." % (String(LocalSpace.node(String(c.get("origin_port_id", ""))).get("name", "the origin"))
+				if bool(c.get("local", false)) else String(Worlds.system(String(c.get("origin_system_id", ""))).get("name", "the origin")))
+	return ""
+
+
+## What backing out costs: a share of the pay (People config "cancel_fee_share", 10%), no more than
+## the captain has.
+static func cancel_fee() -> int:
+	var c := active_contract()
+	var pay := float(c.get("pay_total", roundi(float(c.get("accepted_tonnes", c.get("offer", 0.0))) * float(c.get("rate", 0.0)))))
+	return mini(roundi(pay * float(People.config().get("cancel_fee_share", 0.1))), maxi(0, int(profile.get("credits", 0))))
+
+
+## Back out of the active contract before setting off: the load goes back to the shipper's dock (the
+## economy puts the freight back on the board), a fee for the trouble, and people you let down remember.
+static func cancel_contract() -> Dictionary:
+	var why := cancel_block()
+	if why != "":
+		return {"ok": false, "message": why}
+	var c := active_contract()
+	var data := SaveSlots.read(slot)
+	var loaded := _load_ship(data)
+	if loaded.is_empty():
+		return {"ok": false, "message": "Couldn't load the ship from the save."}
+	var fee := cancel_fee()
+	var manifest: CargoManifest = loaded.manifest
+	var pax := String(c.get("person_kind", "")) == "passenger"
+	if not pax and c.has("commodity"):
+		manifest.unload(StringName(c.commodity), float(c.get("accepted_tonnes", c.get("offer", 0.0))))
+	if sim != null:
+		_sync_sim(loaded.ship)
+		if c.has("sim_taken"):
+			var r := sim.player_cancel(SimWorld.PLAYER)
+			if not bool(r.ok):
+				return r
+		if fee > 0:
+			sim._pay(SimWorld.PLAYER, "world", float(fee))
+	var rep := ""
+	if String(c.get("person_kind", "")) != "":
+		rep = _add_rep(-int(People.config().get("cancel_rep", 2)))
+	flight_job = {}
+	data.erase("active_contract")
+	data["cargo"] = manifest.to_dict()
+	if sim != null:
+		_commit_sim(data, loaded.ship)
+	data["profile"] = profile
+	SaveSlots.write(slot, data)
+	var what := ("%s stays ashore" % String(c.get("person", "Your passenger"))) if pax else "The load goes back on the dock"
+	return {"ok": true, "message": "Contract cancelled. %s%s.%s" % [what, (", and the shipper keeps %s cr for the trouble" % ShipStats.commas(fee)) if fee > 0 else "", rep]}
+
+
 ## `manual`: at the camp, carried off by hand instead of paying the camp crew.
 static func deliver_active_contract(manual := false) -> Dictionary:
 	var c := active_contract()

@@ -16,6 +16,8 @@ var wait_btn: Button
 var helm_btn: Button
 var fly_btn: Button
 var run_btn: Button
+var cancel_btn: Button
+var _cancel_asked := false
 var fly_panel: PanelContainer
 var fly_list: VBoxContainer
 var side: PanelContainer      ## right-hand panel that shows the freight board or the fly-empty list
@@ -189,6 +191,7 @@ func _build_ui() -> void:
 	_button(menu, "CONTRACT BOARD", _show_contracts)
 	depart_btn = _button(menu, "DEPART", _depart)
 	deliver_btn = _button(menu, "DELIVER FREIGHT", _deliver)
+	cancel_btn = _button(menu, "CANCEL THE CONTRACT", _cancel)
 	helm_btn = _button(menu, "TAKE THE HELM", _take_helm)
 	helm_btn.tooltip_text = "Fly the ship in free flight around the dock. No time passes and nothing is lost: it's practice until star jumps arrive, whenever that is."
 	wait_btn = _button(menu, "WAIT A DAY", _wait_day)
@@ -407,6 +410,10 @@ func _refresh_actions() -> void:
 		fly_btn.disabled = not idle
 		if _sublight():
 			fly_btn.tooltip_text = "Fly without cargo to another site in this system, to reach better jobs."
+	if cancel_btn != null:
+		cancel_btn.visible = not c.is_empty()
+		cancel_btn.disabled = Session.cancel_block() != ""
+		cancel_btn.text = ("SURE? CANCEL FOR %s CR" % ShipStats.commas(Session.cancel_fee())) if _cancel_asked else "CANCEL THE CONTRACT"
 	var site := String(Session.profile.get("port_id", ""))
 	if run_btn != null:
 		var local := bool(c.get("local", false))
@@ -421,6 +428,21 @@ func _refresh_actions() -> void:
 		return
 	depart_btn.disabled = c.is_empty() or String(c.get("origin_system_id", "")) != Session.system_id()
 	deliver_btn.disabled = c.is_empty() or String(c.get("destination_system_id", "")) != Session.system_id()
+
+
+## Back out of the contract before setting off: one press to ask, a second to mean it.
+func _cancel() -> void:
+	if not _cancel_asked:
+		_cancel_asked = true
+		status.text = "Cancelling hands the load back and costs %s cr. Press again to cancel." % ShipStats.commas(Session.cancel_fee())
+		_refresh_actions()
+		return
+	_cancel_asked = false
+	var result := Session.cancel_contract()
+	Session.flash = String(result.message)
+	status.text = result.message
+	if bool(result.ok):
+		get_tree().reload_current_scene()
 
 
 func _restructure() -> void:

@@ -356,6 +356,7 @@ func _process(delta: float) -> void:
 		say("Course hold off.")
 	if model.course_hold and not (phase == "cruise" or phase == "depart"):
 		model.course_hold = false
+	model.bodies = solid_bodies()
 	if xfer == null:
 		model.step(minf(delta, 0.05), turn, thr, lift_cmd, retro_cmd, strafe_cmd)
 	else:
@@ -383,8 +384,12 @@ func _process(delta: float) -> void:
 	if model.impacts != _impacts_seen:
 		_impacts_seen = model.impacts
 		_impact_shown = model.elapsed_s
+	var hit_world := model.crashed_into
+	model.crashed_into = ""
 	_check_hull()
 	_wear_step(minf(delta, 0.05) * float(_warp()))
+	if hit_world != "":   # said last, so the hull's own warnings don't drown it out (they're on the HUD and the alerts)
+		say("You flew into %s at %s m/s. It didn't move. Planets are solid; the brochure was clear." % [hit_world, ShipStats.commas(roundi(model.last_impact))], 6.0)
 	crew_c.step(minf(delta, 0.05) * float(_warp()))
 	view.set_damage(model.damage)
 	_apply_pose()
@@ -522,6 +527,18 @@ func remote_state() -> Dictionary:
 
 
 const REMOTE_HOLD_S := 0.45   ## how long one "hold" from the remote lasts; the page repeats it while the button is down
+
+
+## The worlds in view that the ship can hit (the system's planet and its small neighbour), in the flight
+## model's frame: none while jumping or down on a moon, when the planet isn't where it looks.
+func solid_bodies() -> Array:
+	var out := []
+	if planet == null or not planet.visible or not planet.is_inside_tree() or _jumping() or _on_surface():
+		return out
+	for n in [planet] + planet.get_children():
+		if n is Node3D and (n as Node3D).has_meta("radius"):
+			out.append({"centre": (n as Node3D).global_position, "radius": float(n.get_meta("radius")), "name": String(n.get_meta("world_name", "the planet"))})
+	return out
 
 
 ## A debug cheat from the pause menu (Cheats): money goes through the save as anywhere else; repairs

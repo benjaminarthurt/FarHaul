@@ -55,6 +55,8 @@ var damage := 0.0                # 0..1 of the hull's integrity lost; repaired f
 var cargo_hurt := 0.0            # 0..1 of the cargo's value spoiled by knocks
 var leaked_t := 0.0              # fuel lost through the leak, tonnes (also counted in fuel_burned_t)
 var impacts := 0
+var bodies: Array = []           # worlds in this frame that the ship can't fly through: [{centre: Vector3, radius: float}]
+var crashed_into := ""           # name of the last world the ship hit, for the cockpit
 var last_impact := 0.0           # speed of the latest hit, m/s
 var fuel_burned_t := 0.0
 var elapsed_s := 0.0
@@ -378,6 +380,8 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 	pos += vel * dt
 	if station_solid:
 		_collide()
+	if not bodies.is_empty():
+		_collide_bodies()
 	if terrain != null:
 		_ground()
 	elapsed_s += dt
@@ -676,6 +680,30 @@ func _collide() -> void:
 	if into > soft:
 		impacts += 1
 		hurt((into - soft) * float(tune.get("damage_per_m_s", 0.02)))
+
+
+## Worlds are solid: a ship that reaches one's surface is pushed back out, bounces off it the way it
+## would off the station, and takes the same damage for the speed it hit at. At orbital speeds that's
+## the hull, all of it.
+func _collide_bodies() -> void:
+	var body := radius_m * float(tune.get("collision_radius_fraction", 0.5))
+	for b in bodies:
+		var off: Vector3 = pos - (b.centre as Vector3)
+		var r := float(b.radius) + body
+		if off.length() >= r or off.length() < 0.001:
+			continue
+		var n := off.normalized()
+		pos = (b.centre as Vector3) + n * r
+		var into := -vel.dot(n)
+		if into <= 0.0:
+			continue
+		vel += n * into * (1.0 + float(tune.get("restitution", 0.25)))
+		last_impact = into
+		crashed_into = String(b.get("name", "the planet"))
+		var soft := float(tune.get("soft_impact_m_s", 1.5))
+		if into > soft:
+			impacts += 1
+			hurt((into - soft) * float(tune.get("damage_per_m_s", 0.02)))
 
 
 ## The mooring point in front of the station's docking collar.

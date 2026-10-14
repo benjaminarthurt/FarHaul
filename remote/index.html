@@ -556,6 +556,7 @@ function renderPort(p) {
     if (a.can_depart) acts += act("Depart on autopilot", "depart", "", { go: true });
     if (a.hard_burn && a.can_depart) acts += act("Hard burn", "hard_burn", "");
     if (a.can_deliver) acts += act(a.camp ? "Pay the camp crew to unload" : a.passengers ? "Set the passengers down" : "Deliver the load", "deliver", "", { go: true });
+    if (a.can_cancel) acts += act("Cancel it", "cancel", "", { confirm: "Sure? " + cr(a.cancel_fee) + " fee" });
     const due = a.due_in_h > -9999 && !a.arrived ? (a.due_in_h >= 0 ? " · due in " + a.due_in_h + " h" : " · late") : "";
     f += '<div class="active"><b>' + esc(a.title) + "</b><small>" + (a.passengers ? a.seats + " passenger" + (a.seats === 1 ? "" : "s") : a.tonnes.toFixed(1) + " t") + " to " + esc(a.to) +
       (a.pay ? " · " + cr(a.pay) : "") + due + (a.arrived ? " · arrived" : "") + "</small>" + (acts ? '<div class="acts">' + acts + "</div>" : "") +

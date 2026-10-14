@@ -914,6 +914,7 @@ func _pickup(c: Dictionary) -> void:
 			continue
 		ledger.receive("hold:" + c["id"], lot["com"], lot["units"])
 		ledger.reserve("hold:" + c["id"], lot["com"], lot["units"])   # committed to its consignee
+		lot["picked_from"] = holder   # where it goes back to if the carrier backs out (player_cancel)
 		lot["holder"] = "hold:" + c["id"]
 		lot["status"] = "in_transit"
 		k["status"] = "in_transit"
@@ -1127,6 +1128,36 @@ func player_accept(carrier_id: String, contract_id: String) -> Dictionary:
 	var ev := {"bundle": [taken], "margin_frac": 0.0, "repo": [c["sys"]]}
 	_accept(c, ev)
 	return {"ok": true, "message": "Contract accepted.", "contract": taken, "hours": _queue_hours(c)}
+
+## The manual carrier backs out of its contract before leaving the origin: any freight already aboard
+## goes back where it was picked up (still reserved for its consignee), and the contract goes back on
+## the board. Refused once the ship has left the origin system. Returns {ok, message}.
+func player_cancel(carrier_id: String) -> Dictionary:
+	var c: Dictionary = carriers.get(carrier_id, {})
+	if c.is_empty() or c["state"] == "idle" or c["job"].is_empty():
+		return {"ok": true, "message": "Nothing to cancel."}
+	for kid in c["job"]:
+		if c["sys"] != contracts[kid]["origin_sys"]:
+			return {"ok": false, "message": "The ship has already left with the load."}
+	for kid in c["job"]:
+		var k: Dictionary = contracts[kid]
+		var lot: Dictionary = lots[k["lot"]]
+		if k["status"] == "in_transit":
+			var back: String = lot.get("picked_from", orders[lot["order"]]["seller"])
+			if ledger.ship_out(lot["holder"], lot["com"], lot["units"]):
+				ledger.receive(back, lot["com"], lot["units"])
+				ledger.reserve(back, lot["com"], lot["units"])
+			lot["holder"] = back
+		k["status"] = "offered"
+		k["carrier"] = ""
+		k["accepted"] = -1
+		k["offered"] = hour
+		lot["status"] = "awaiting_carrier"
+		_log("contract_cancelled", {"contract": kid, "carrier": carrier_id})
+	c["job"] = []
+	c["queue"] = []
+	c["state"] = "idle"
+	return {"ok": true, "message": "Contract cancelled."}
 
 ## Fly the manual carrier empty to another system (to reach freight, or to leave a dead-end port).
 func player_reposition(carrier_id: String, dest_sys: String) -> Dictionary:

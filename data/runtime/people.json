@@ -61,5 +61,7 @@
     "rep_ok": 4,
     "rep_broken": -6,
     "pays_trip_cost_x": 1.7
-  }
+  },
+  "cancel_fee_share": 0.1,
+  "cancel_rep": 2
 }

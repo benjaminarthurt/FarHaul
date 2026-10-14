@@ -219,3 +219,15 @@ charged, the load stays aboard). `tests/smoke_jump.gd` runs the whole sequence h
 
 Atmosphere and landing, and collision with anything but the station. Walking inside the ship is in walking.md.
 All tuning numbers are placeholders.
+
+## Solid worlds
+
+The system's planet beside the station (and its small neighbour, where there is one) is solid.
+`SpaceScenery._build_planet` tags each with `radius` and `world_name` meta; every frame
+`FlightScene.solid_bodies()` hands them to the flight model as `bodies` ({centre, radius, name}, in the
+model's frame), empty while jumping or on a moon's surface, or when the planet is hidden.
+`FlightModel._collide_bodies()` runs after each position step, whether or not the station is solid: a
+ship inside a world's radius plus its collision body is pushed back to the surface, bounces with the
+station's restitution and takes the station's damage per m/s over the soft-impact speed. At orbital
+speeds that's the whole hull. The cockpit names the world it hit (said after the hull warnings).
+Tests: `tests/test_solid_planets.gd`.

@@ -56,3 +56,14 @@ is done right.
 - +1 standing for ordinary freight.
 
 `tests/smoke_place.gd` checks that the bar lists the people.
+
+## Cancelling a contract
+
+`Session.cancel_contract()` backs out of the active contract before setting off (`cancel_block()`:
+not arrived, and at the origin site or system). The load comes off the manifest; a contract taken from
+the live economy is released with `EconomySim.player_cancel()`, which puts the freight back where it
+was picked up (still reserved for its consignee, `lot.picked_from`), puts the contract back on offer
+and frees the player's carrier; refused once the ship has left the origin system. The fee is
+`cancel_fee_share` (10%) of the pay, never more than the captain has; jobs from people also cost
+`cancel_rep` (2) standing. The freight desk, the station terminal and the ship remote offer it, each
+asking for a second press. Tests: `tests/test_cancel_contract.gd`.

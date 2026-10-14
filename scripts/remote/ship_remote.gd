@@ -301,7 +301,7 @@ static func _crew_in_port() -> Array:
 
 # --- In port: the desks from the phone ------------------------------------------------------------
 
-const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "repair", "overhaul"]
+const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "cancel", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "repair", "overhaul"]
 
 
 ## What the desks offer right now: the active contract and what can be done with it, the freight board
@@ -324,6 +324,7 @@ static func port_state() -> Dictionary:
 				"to": _dest_name(c), "arrived": arrived, "can_depart": at_start and not arrived and Session.hull_block() == "",
 				"depart_why": Session.hull_block() if at_start and not arrived else "", "hard_burn": at_start and not arrived and c.has("due_hour"),
 				"can_deliver": arrived and at_end, "camp": arrived and at_end and Session.surface_site() == "camp" and not pax,
+				"can_cancel": Session.cancel_block() == "", "cancel_fee": Session.cancel_fee(),
 				"due_in_h": int(c.due_hour) - int(Session.sim.hour) if c.has("due_hour") and Session.sim != null else -9999}
 	var board := []
 	if c.is_empty() and not Session.insolvent():
@@ -389,6 +390,8 @@ static func port_command(action: String, id: String) -> Dictionary:
 			return Session.depart_active_contract(true)
 		"deliver":
 			return Session.deliver_active_contract()
+		"cancel":
+			return Session.cancel_contract()
 		"wait":
 			return Session.wait_days(1)
 		"hire":
@@ -411,7 +414,7 @@ static func port_command(action: String, id: String) -> Dictionary:
 static func _after_port(scene: Node, action: String, r: Dictionary) -> void:
 	if scene == null or not bool(r.get("ok", false)):
 		return
-	if action in ["depart", "hard_burn", "wait", "deliver"] and scene.is_inside_tree():
+	if action in ["depart", "hard_burn", "wait", "deliver", "cancel"] and scene.is_inside_tree():
 		Session.flash = String(r.get("message", ""))
 		scene.get_tree().reload_current_scene.call_deferred()
 	elif scene.has_method("_refill"):

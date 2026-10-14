@@ -523,6 +523,11 @@ func _build_planet() -> void:
 		planet.mesh = sph
 		planet.position = dir * 3600.0 + Vector3(0, -1400.0, 0)
 	planet.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	planet.set_meta("radius", radius)   # solid: FlightScene.solid_bodies() hands it to the flight model
+	planet.set_meta("world_name", String(real[0]).capitalize() if not real.is_empty() else "the planet")
+	if far != null:
+		far.set_meta("radius", 260.0 * SkyWorlds.size(String(real[1])))
+		far.set_meta("world_name", String(real[1]).capitalize())
 	sc.add_child(planet)
 	sc.planet = planet
 	SkyWorlds.settle(planet)

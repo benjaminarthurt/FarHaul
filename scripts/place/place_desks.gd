@@ -6,6 +6,7 @@ extends RefCounted
 
 var sc: PlaceScene   ## the scene this works on
 var _letting_go := ""  ## crew id asked to be let go once: a second click does it
+var _cancel_asked := false   ## cancelling the contract asked once: a second click does it
 
 
 func _init(scene: PlaceScene) -> void:
@@ -86,6 +87,16 @@ func _desk_freight(id: String) -> void:
 					sc._say(String(r.message)))
 			sc._action("DEPART ON AUTOPILOT", func() -> void:
 				var r := Session.depart_active_contract()
+				sc._say(String(r.message))
+				sc._refill())
+			sc._action(("SURE? CANCEL IT: the load goes back, %s cr fee%s" % [ShipStats.commas(Session.cancel_fee()), ", and they'll remember" if String(c.get("person_kind", "")) != "" else ""]) if _cancel_asked
+					else "CANCEL THIS CONTRACT  (%s cr fee)" % ShipStats.commas(Session.cancel_fee()), func() -> void:
+				if not _cancel_asked:
+					_cancel_asked = true
+					sc._refill()
+					return
+				_cancel_asked = false
+				var r := Session.cancel_contract()
 				sc._say(String(r.message))
 				sc._refill())
 			if c.has("due_hour"):
