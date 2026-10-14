@@ -73,6 +73,10 @@ var tip_label: Label
 var welcome_panel: PanelContainer
 var name_edit: LineEdit
 var yard_label: Label
+var compare_panel: PanelContainer   ## the comparison card (PartCompare), I to hide
+var compare_label: RichTextLabel
+var compare_hidden := false
+var right_column: Control
 var sfx_players: Array[AudioStreamPlayer] = []
 var sfx_next := 0
 
@@ -247,9 +251,10 @@ func _setup_ui() -> void:
 	_build_palette(ui)
 	_build_top_bar(ui)
 	_build_right_column(ui)
+	_build_compare(ui)
 
 	help_label = Label.new()
-	help_label.text = "Click place  ·  Shift+click remove\nR rotate  ·  Q/E deck  ·  Ctrl+Z undo  ·  F frame\nRight-drag orbit  ·  wheel zoom  ·  middle-drag pan\nH hide upper decks  ·  M mute  ·  F1 help  ·  F10 menu"
+	help_label.text = "Click place  ·  Shift+click remove\nR rotate  ·  Q/E deck  ·  Ctrl+Z undo  ·  F frame\nRight-drag orbit  ·  wheel zoom  ·  middle-drag pan\nH hide upper decks  ·  I compare  ·  M mute  ·  F1 help  ·  F10 menu"
 	help_label.modulate = Color(0.75, 0.8, 0.9, 0.7)
 	help_label.add_theme_font_size_override("font_size", 12)
 	help_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -302,8 +307,9 @@ func _build_palette(ui: Control) -> void:
 			box.add_child(_header(group_titles.get(def.group, String(def.group).to_upper())))
 		var key := "%d" % ((i + 1) % 10) if i < 10 else " "
 		var b := Button.new()
-		if def.base != &"":   # a maker's version, indented under the part
-			b.text = "       %s   %s" % [PartMakers.short(String(def.maker)), ShipStats.commas(_price(def))]
+		if def.base != &"":   # a maker's version, indented under the part, with how it differs
+			b.text = "       %s   %s\n       %s" % [PartMakers.short(String(def.maker)), ShipStats.commas(_price(def)), PartMakers.tags(library, def)]
+			b.add_theme_font_size_override("font_size", 13)
 		else:
 			b.text = "%s  %s   %s" % [key, def.display_name, ShipStats.commas(_price(def))]
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -359,6 +365,7 @@ func _build_top_bar(ui: Control) -> void:
 
 func _build_right_column(ui: Control) -> void:
 	var right := VBoxContainer.new()
+	right_column = right
 	right.add_theme_constant_override("separation", 8)
 	ui.add_child(right)
 
@@ -423,6 +430,48 @@ func _build_right_column(ui: Control) -> void:
 
 	right.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 12)
 	right.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+
+
+## The comparison card: under the top bar, between the palette and the right column.
+func _build_compare(ui: Control) -> void:
+	compare_panel = PanelContainer.new()
+	compare_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui.add_child(compare_panel)
+	compare_panel.position = Vector2(342, 84)
+	compare_label = RichTextLabel.new()
+	compare_label.bbcode_enabled = true
+	compare_label.fit_content = true
+	compare_label.scroll_active = false
+	compare_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	compare_label.add_theme_font_size_override("normal_font_size", 12)
+	compare_label.add_theme_font_size_override("bold_font_size", 12)
+	compare_panel.add_child(compare_label)
+	compare_panel.resized.connect(_place_compare)
+	get_viewport().size_changed.connect(_place_compare)
+
+
+## Fit the card into the gap between the side panels.
+func _place_compare() -> void:
+	if compare_panel == null:
+		return
+	var vp := get_viewport().get_visible_rect().size
+	var w := maxf((right_column.position.x if right_column != null else vp.x - 450.0) - 342.0 - 10.0, 300.0)
+	compare_label.custom_minimum_size.x = w - 20.0
+	compare_panel.size = Vector2(w, 0)
+	compare_panel.position = Vector2(342, 84)
+
+
+func _refresh_compare() -> void:
+	if compare_panel == null or library == null:
+		return
+	var id := library.order[selected] if salvage_pick < 0 else StringName(String(_picked_part().get("module", "")))
+	var def := library.get_def(id)
+	if def == null or compare_hidden:
+		compare_panel.visible = false
+		return
+	compare_label.text = PartCompare.card(library, def, last_stats, _price) + "\n[color=%s]I hides this card[/color]" % PartCompare.DIM
+	compare_panel.visible = true
+	_place_compare()
 
 
 func _build_welcome(ui: Control) -> void:
@@ -611,6 +660,9 @@ func _on_key(key: Key) -> void:
 			_refresh_info()
 		KEY_F1:
 			welcome_panel.visible = not welcome_panel.visible
+		KEY_I:
+			compare_hidden = not compare_hidden
+			_refresh_compare()
 		KEY_BRACKETRIGHT:
 			_select((selected + 1) % library.order.size())
 		KEY_BRACKETLEFT:
@@ -1102,6 +1154,7 @@ func _refresh_top() -> void:
 
 func _refresh_info() -> void:
 	info_label.text = "Deck %d   Rotation %d°\n%s" % [level, rot * 90, message]
+	_refresh_compare()
 
 
 ## One line per cargo module showing each container: commodity and tonnes, or empty.

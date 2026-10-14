@@ -20,8 +20,21 @@ data/runtime/part_makers.json, makers' canon in data/world/manufacturers.json.
   40% of the standard rate and a Vector Works engine at 140%.
 - Wrecks: the parts in a derelict's hold are sometimes another maker's (`PartMakers.on_a_wreck`, 60% of
   the time when the part has versions).
-- The palette lists each maker's version indented under its part, with the local price; the tooltip
-  says who makes it and where, their line, list price against here, and how fast it wears.
+- The palette lists each maker's version indented under its part, with the local price and a line of
+  tags (`PartMakers.tags`): the headline number's change against the standard part (thrust, cooling,
+  fuel, lift, braking, push, or jump speed in points), mass if it moves 5% or more, "hot" (heat over
+  1.15× the part's), "wears fast" (wear ×1.25 or more) or "tough" (×0.6 or less), "cheap" (list price
+  0.8× or less). The tooltip says who makes it and where, their line, list price against here, and how
+  fast it wears.
+- The comparison card (`PartCompare`, scripts/part_compare.gd; I hides it) sits under the top bar for
+  the selected part or salvaged part. For a part with makers' versions (`PartMakers.family`) it is a
+  table, one row per make: headline number (`PartMakers.headline`), mass, heat made (not for
+  radiators), power (if any differ), wear multiplier, price at this yard and home system, the best in
+  each column in green (`PartCompare.best`; ties all green, nothing when all equal). Every part gets a
+  "Fit one" line (`PartCompare.effect`) projected from the ship's current ShipStats: T/W (wet), heat
+  made against cooling, power used against made (red with "over!" if it tips over), fuel, lift and
+  braking at the loaded mass, push, jump speed and hold size. Lines that don't change are left out.
+  It assumes engines face aft and braking thrusters face forward.
 
 | Maker | Home | Parts | Trade-off |
 |---|---|---|---|

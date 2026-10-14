@@ -110,6 +110,62 @@ static func home_name(def: ModuleDef) -> String:
 	return String(Worlds.system(home).get("name", home)) if home != "" else ""
 
 
+## The family `def` belongs to: its part, then every maker's version of it. [] for a part nobody else makes.
+static func family(lib: ModuleLibrary, def: ModuleDef) -> Array:
+	var part := def.base if def.base != &"" else def.id
+	var vs := versions(lib, part)
+	if vs.is_empty():
+		return []
+	return [part] + vs
+
+
+## What a part does: its main number, by what kind of part it is. {label, value, unit}.
+static func headline(def: ModuleDef) -> Dictionary:
+	if def.thrust > 0.0:
+		return {"label": "Thrust", "value": def.thrust, "unit": "kN"}
+	if def.heat < 0.0:
+		return {"label": "Cooling", "value": -def.heat, "unit": "kW"}
+	if def.fuel > 0.0:
+		return {"label": "Fuel", "value": def.fuel, "unit": "t"}
+	if def.lift > 0.0:
+		return {"label": "Lift", "value": def.lift, "unit": "kN"}
+	if def.retro > 0.0:
+		return {"label": "Braking", "value": def.retro, "unit": "kN"}
+	if def.rcs > 0.0:
+		return {"label": "Push", "value": def.rcs, "unit": "kN"}
+	if def.drive > 0.0:
+		return {"label": "Jump speed", "value": def.drive * 100.0, "unit": "%"}
+	return {"label": "", "value": 0.0, "unit": ""}
+
+
+## A few words on how a maker's version differs from the standard part: "+20% thrust · −20% mass · hot".
+static func tags(lib: ModuleLibrary, def: ModuleDef) -> String:
+	if def.base == &"":
+		return ""
+	var b := lib.get_def(def.base)
+	var out := PackedStringArray()
+	var pct := func(now: float, was: float) -> int: return roundi((now / was - 1.0) * 100.0) if absf(was) > 0.0001 else 0
+	var h := headline(def)
+	var hb := headline(b)
+	if String(h.label) != "" and absf(float(h.value) - float(hb.value)) > 0.001:
+		if String(h.label) == "Jump speed":
+			out.append("+%d%% jump speed" % roundi(float(h.value) - float(hb.value)))
+		else:
+			out.append("%+d%% %s" % [pct.call(float(h.value), float(hb.value)), String(h.label).to_lower()])
+	var dm: int = pct.call(def.mass, b.mass)
+	if absf(dm) >= 5:
+		out.append("%+d%% mass" % dm)
+	if def.heat > 0.0 and b.heat > 0.0 and def.heat > b.heat * 1.15:
+		out.append("hot")
+	if def.wear_mult >= 1.25:
+		out.append("wears fast")
+	elif def.wear_mult <= 0.6:
+		out.append("tough")
+	if def.cost <= b.cost * 0.8:
+		out.append("cheap")
+	return "  ·  ".join(out).replace("-", "−")   # only the signs: none of these words has a hyphen
+
+
 ## A wreck's part, sometimes somebody else's make: `part` or one of its versions, picked with `r`.
 static func on_a_wreck(lib: ModuleLibrary, part: String, r: RandomNumberGenerator) -> String:
 	var vs := versions(lib, StringName(part))

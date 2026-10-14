@@ -49,4 +49,12 @@ func _run() -> void:
 	b.ghost.visible = false
 	b.tip_panel.visible = false
 	await _shot(out, "a_makers")
+	b._select(b.library.order.find(&"radiator__aerial_massworks"))
+	b.ghost.visible = false
+	b.tip_panel.visible = false
+	await _shot(out, "b_radiators")
+	b._select(b.library.order.find(&"corridor"))
+	b.ghost.visible = false
+	b.tip_panel.visible = false
+	await _shot(out, "c_one_make")
 	quit(0)

@@ -30,7 +30,8 @@ Not all at once. In the order requested:
 8. The trade report: the economy simulation made visible (**built** in 0.11.0)
 9. Fitting salvaged parts, at their condition, for a fitting fee (**built** in 0.12.0)
 10. Boarding derelicts: the log, the flight recorder, the crew and the odd survivor (**built** in 0.13.0)
-11. Manufacturers: makers' versions of the external parts, cheaper at home (**built** in 0.14.0)
+11. Manufacturers: makers' versions of the external parts, cheaper at home (**built** in 0.14.0; the
+    shipyard compares them side by side in 0.14.1)
 
 The ship builder came first because everything else reads from the ship it produces.
 
