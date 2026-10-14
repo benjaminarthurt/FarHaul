@@ -8,6 +8,11 @@ extends RefCounted
 ## - derelicts: dead ships drifting a few kilometres from a station, different each day. Fly alongside,
 ##   go out on the tether and cut salvage panels off with the torch (OnFoot, SALVAGE), then haul them
 ##   back to the hatch. Each panel can be taken once (profile.salvage_taken).
+## - pods: station pods ferrying between the station and the parked ships.
+## - survey craft: other people's exploration ships, coming and going with the movers.
+## - orbiters: tugs, patrols and tenders circling the planet and its neighbour.
+## - deep derelicts: on a run, sometimes a dead ship out along the route, one whose FTL failed partway:
+##   braking with X stops you at it when it's ahead and nearer than the destination (brake_target()).
 ## Everything sits in the flight scene's frame; the ships are solid (bodies()).
 
 const PATH := "res://data/runtime/traffic.json"
@@ -21,7 +26,10 @@ var movers: Array = []        ## {ship, state: rest|out|in, t, dur, a, b, rest}
 var passer: NpcShip = null
 var passer_vel := Vector3.ZERO
 var passer_wait := 0.0
-var derelicts: Array = []     ## {ship, name, points: [{id, pos (body frame), normal, parts, taken, marker}]}
+var derelicts: Array = []     ## {ship, name, deep, points: [{id, pos (body frame), normal, parts, taken, marker}]}
+var pods: Array = []          ## {ship, state, t, dur, a, b, rest, home}
+var orbiters: Array = []      ## {ship, world: Node3D it circles, radius, speed, angle, tilt: Basis}
+var deep_key := ""            ## the run the deep derelict (if any) was placed for
 var site := ""
 var rng := RandomNumberGenerator.new()
 
@@ -65,6 +73,9 @@ func clear() -> void:
 	parked.clear()
 	movers.clear()
 	derelicts.clear()
+	pods.clear()
+	orbiters.clear()
+	deep_key = ""
 	passer = null
 
 
@@ -96,7 +107,43 @@ func rebuild(port_id: String) -> void:
 		s.visible = false
 		root.add_child(s)
 		movers.append({"ship": s, "state": "rest", "t": 0.0, "rest": rng.randf_range(2.0, 25.0), "out": k % 2 == 0})
+	if busy:   # someone else's exploration ship, coming or going
+		var sv: Dictionary = cfg.get("survey", {})
+		var sn: Array = sv.get("names", ["Far Look"])
+		var s := NpcShip.make(ShipPresets.NPC_SURVEYOR, "%s  %s" % [String(sv.get("label", "SURVEY")), String(sn[rng.randi() % sn.size()])])
+		s.visible = false
+		root.add_child(s)
+		movers.append({"ship": s, "state": "rest", "t": 0.0, "rest": rng.randf_range(10.0, 60.0), "out": rng.randf() < 0.5})
+	var pc: Dictionary = cfg.get("pods", {})
+	for k in (int(pc.get("count", 2)) if busy and not parked.is_empty() else 0):
+		var s := NpcShip.make(ShipPresets.NPC_POD, "%s  %d" % [String(pc.get("label", "POD")), rng.randi_range(2, 39)])
+		s.visible = false
+		root.add_child(s)
+		pods.append({"ship": s, "state": "rest", "t": 0.0, "rest": rng.randf_range(1.0, 12.0), "home": k % parked.size(), "out": true})
+	_build_orbiters()
 	_build_derelicts(port_id)
+
+
+## Ships working round the planet (and its small neighbour): in circular orbits a few hundred metres up.
+func _build_orbiters() -> void:
+	var oc: Dictionary = cfg.get("orbiters", {})
+	if sc.planet == null or not sc.planet.has_meta("radius"):
+		return
+	var worlds: Array = [sc.planet]
+	for c in sc.planet.get_children():
+		if c is Node3D and (c as Node3D).has_meta("radius"):
+			worlds.append(c)
+	var roles: Array = oc.get("roles", ["TENDER"])
+	for k in int(oc.get("count", 3)):
+		var w: Node3D = worlds[0] if k < int(oc.get("count", 3)) - 1 or worlds.size() < 2 else worlds[1]
+		var alt: Array = oc.get("altitude_m", [250.0, 900.0])
+		var spd: Array = oc.get("speed_m_s", [60.0, 160.0])
+		var layout: Array = [ShipPresets.NPC_POD, ShipPresets.NPC_SURVEYOR, ShipPresets.STARTER][k % 3]
+		var s := NpcShip.make(layout, "%s  %s" % [String(roles[rng.randi() % roles.size()]), _ship_name(rng)])
+		root.add_child(s)
+		var tilt := Basis(Vector3.RIGHT, rng.randf_range(-0.5, 0.5)) * Basis(Vector3.FORWARD, rng.randf_range(-0.4, 0.4))
+		orbiters.append({"ship": s, "world": w, "radius": float(w.get_meta("radius")) + rng.randf_range(float(alt[0]), float(alt[1])),
+				"speed": rng.randf_range(float(spd[0]), float(spd[1])), "angle": rng.randf() * TAU, "tilt": tilt})
 
 
 func _build_derelicts(port_id: String) -> void:
@@ -109,32 +156,93 @@ func _build_derelicts(port_id: String) -> void:
 			continue
 		var names: Array = dc.get("names", ["a wreck"])
 		var nm := String(names[r.randi() % names.size()])
-		var s := NpcShip.make(LAYOUTS[r.randi() % LAYOUTS.size()], "DERELICT  %s" % nm.trim_prefix("the ").trim_prefix("an ").to_upper(), true)
 		var dist: Array = dc.get("distance_m", [1800.0, 5200.0])
 		var dir := Vector3(r.randf_range(-1, 1), r.randf_range(-0.3, 0.3), r.randf_range(-1, 1)).normalized()
-		s.position = dir * r.randf_range(float(dist[0]), float(dist[1]))
+		var at := dir * r.randf_range(float(dist[0]), float(dist[1]))
 		if sc.planet != null and sc.planet.has_meta("radius"):   # not inside the planet
 			var pc := sc.planet.position
 			var pr := float(sc.planet.get_meta("radius")) + 400.0
-			if s.position.distance_to(pc) < pr:
-				s.position = pc + (s.position - pc).normalized() * pr if (s.position - pc).length() > 1.0 else -s.position
-		s.rotation = Vector3(r.randf_range(-0.5, 0.5), r.randf() * TAU, r.randf_range(-0.6, 0.6))
-		root.add_child(s)
-		var sites := ShipDamage.skin_sites(s.ship)
-		var pts: Array = dc.get("points", [4, 7])
-		var ppp: Array = dc.get("parts_per_point", [2, 5])
-		var points := []
-		var usable := range(mini(ShipDamage.MAX_SCORCH, sites.size()), maxi(0, sites.size() - 3))   # clear of the scorch marks and the venting plates
-		if usable.size() < int(pts[0]):
-			usable = range(0, maxi(0, sites.size() - 3))
-		for k in mini(usable.size(), r.randi_range(int(pts[0]), int(pts[1]))):
-			var site_k: Dictionary = sites[usable[k]]
-			var id := "%s|%d|%d|%d" % [port_id, Session.day(), w, k]
-			var p := {"id": id, "pos": site_k.pos, "normal": site_k.normal, "parts": r.randi_range(int(ppp[0]), int(ppp[1])), "taken": id in taken}
-			p["marker"] = _marker(s, site_k.pos, site_k.normal)
-			(p.marker as Node3D).visible = not bool(p.taken)
-			points.append(p)
-		derelicts.append({"ship": s, "name": nm, "points": points})
+			if at.distance_to(pc) < pr:
+				at = pc + (at - pc).normalized() * pr if (at - pc).length() > 1.0 else -at
+		_add_derelict(LAYOUTS[r.randi() % LAYOUTS.size()], nm, "DERELICT", at, "%s|%d|%d" % [port_id, Session.day(), w], r, taken, false)
+
+
+## One dead ship at `at` with its salvage panels; panel ids are `id_base`|k.
+func _add_derelict(layout: Array, nm: String, tag: String, at: Vector3, id_base: String, r: RandomNumberGenerator, taken: Array, deep: bool) -> Dictionary:
+	var dc: Dictionary = cfg.get("derelicts", {})
+	var s := NpcShip.make(layout, "%s  %s" % [tag, nm.trim_prefix("the ").trim_prefix("an ").trim_prefix("a ").to_upper()], true)
+	s.position = at
+	s.rotation = Vector3(r.randf_range(-0.5, 0.5), r.randf() * TAU, r.randf_range(-0.6, 0.6))
+	root.add_child(s)
+	var sites := ShipDamage.skin_sites(s.ship)
+	var pts: Array = dc.get("points", [4, 7])
+	var ppp: Array = dc.get("parts_per_point", [2, 5])
+	var points := []
+	var usable := range(mini(ShipDamage.MAX_SCORCH, sites.size()), maxi(0, sites.size() - 3))   # clear of the scorch marks and the venting plates
+	if usable.size() < int(pts[0]):
+		usable = range(0, maxi(0, sites.size() - 3))
+	for k in mini(usable.size(), r.randi_range(int(pts[0]), int(pts[1]))):
+		var site_k: Dictionary = sites[usable[k]]
+		var id := "%s|%d" % [id_base, k]
+		var p := {"id": id, "pos": site_k.pos, "normal": site_k.normal, "parts": r.randi_range(int(ppp[0]), int(ppp[1])), "taken": id in taken}
+		p["marker"] = _marker(s, site_k.pos, site_k.normal)
+		(p.marker as Node3D).visible = not bool(p.taken)
+		points.append(p)
+	var d := {"ship": s, "name": nm, "points": points, "deep": deep}
+	derelicts.append(d)
+	return d
+
+
+## On a run: sometimes a ship that dropped out of a failed jump, dead, out along the route.
+func _deep_derelict() -> void:
+	var key := String(sc.job.get("key", ""))
+	if key == "" or key == deep_key or sc.xfer == null:
+		return
+	deep_key = key
+	var dp: Dictionary = cfg.get("deep", {})
+	var r := RandomNumberGenerator.new()
+	r.seed = hash("deep|" + key)
+	if r.randf() > float(dp.get("chance", 0.55)):
+		return
+	var along: Array = dp.get("along", [0.3, 0.7])
+	var side_m: Array = dp.get("side_m", [1500.0, 6000.0])
+	var route := sc.xfer.target.normalized()
+	var side := route.cross(Vector3.UP)
+	side = (side if side.length() > 0.1 else route.cross(Vector3.RIGHT)).normalized().rotated(route, r.randf() * TAU)
+	var at := sc.xfer.target * r.randf_range(float(along[0]), float(along[1])) + side * r.randf_range(float(side_m[0]), float(side_m[1]))
+	var names: Array = dp.get("names", ["a ship"])
+	var taken: Array = Session.profile.get("salvage_taken", []) if Session.slot >= 0 else []
+	var d := _add_derelict([ShipPresets.STARTER_FTL, ShipPresets.NPC_HAULER, ShipPresets.NPC_SURVEYOR][r.randi() % 3], String(names[r.randi() % names.size()]),
+			"DERELICT · FTL FAILED", at, "deep|%s" % key, r, taken, true)
+	(d.ship as NpcShip).label.modulate = Color(1.0, 0.5, 0.3)
+	sc.say("Sensors: a dead ship out on the route, %s. No transponder, no drive signature. Brake (X) to stop by it." % String(d.name), 8.0)
+
+
+## Metres to the nearest dead ship out on a route, INF if none.
+func deep_range(pos: Vector3) -> float:
+	var best := INF
+	for d in derelicts:
+		if bool(d.deep):
+			best = minf(best, (d.ship as NpcShip).global_position.distance_to(pos))
+	return best
+
+
+## Where the braking autopilot should stop: at a derelict out on the route when it's ahead of you and
+## nearer than `fallback` (the destination), a little short of it; otherwise `fallback`.
+func brake_target(fallback: Vector3) -> Vector3:
+	var best := fallback
+	var best_d := sc.model.pos.distance_to(fallback)
+	var stop := float((cfg.get("deep", {}) as Dictionary).get("stop_m", 60.0))
+	for d in derelicts:
+		var p: Vector3 = (d.ship as NpcShip).global_position
+		var to := p - sc.model.pos
+		if to.length() < stop * 2.0 or to.length() >= best_d:
+			continue
+		if sc.model.vel.length() > 1.0 and sc.model.vel.normalized().dot(to.normalized()) < 0.5:
+			continue   # not ahead
+		best = p - to.normalized() * stop
+		best_d = to.length()
+	return best
 
 
 ## A salvageable panel: an orange frame of cut lines on the hull, glowing faintly so you can find it.
@@ -203,6 +311,11 @@ func bodies() -> Array:
 		out.append({"centre": (d.ship as NpcShip).global_position, "radius": (d.ship as NpcShip).radius * 0.6, "name": "the wreck of " + String(d.name), "ship": true, "wreck": true})
 	if passer != null:
 		out.append({"centre": passer.global_position, "radius": passer.radius * 0.6, "name": "the " + passer.title.get_slice("  ", 1), "ship": true})
+	for m in pods:
+		if (m.ship as NpcShip).visible:
+			out.append({"centre": (m.ship as NpcShip).global_position, "radius": (m.ship as NpcShip).radius * 0.6, "name": "a station pod", "ship": true})
+	for o in orbiters:
+		out.append({"centre": (o.ship as NpcShip).global_position, "radius": (o.ship as NpcShip).radius * 0.6, "name": "the " + (o.ship as NpcShip).title.get_slice("  ", 1), "ship": true})
 	return out
 
 
@@ -215,6 +328,12 @@ func step(dt: float) -> void:
 		return
 	for m in movers:
 		_move(m, dt)
+	for m in pods:
+		_pod(m, dt)
+	for o in orbiters:
+		_orbit(o, dt)
+	if sc.xfer != null and (sc.phase == "cruise" or sc.phase == "depart"):
+		_deep_derelict()
 	_pass(dt)
 	var eye: Vector3 = sc.model.pos
 	var rng_m := float(cfg.get("label_range_m", 4000.0))
@@ -222,6 +341,10 @@ func step(dt: float) -> void:
 		s.show_tag(eye, rng_m)
 	for m in movers:
 		(m.ship as NpcShip).show_tag(eye, rng_m)
+	for m in pods:
+		(m.ship as NpcShip).show_tag(eye, rng_m * 0.25)
+	for o in orbiters:
+		(o.ship as NpcShip).show_tag(eye, rng_m)
 	for d in derelicts:
 		(d.ship as NpcShip).show_tag(eye, 1.0e9)   # wrecks are worth finding: always tagged
 	if passer != null:
@@ -263,6 +386,57 @@ func _move(m: Dictionary, dt: float) -> void:
 		m.out = not bool(m.out)
 		s.visible = false
 		s.set_flames(false)
+
+
+## A pod's errand: from the station out to one of the parked ships, a pause, and back.
+func _pod(m: Dictionary, dt: float) -> void:
+	var s: NpcShip = m.ship
+	m.t = float(m.t) + dt
+	if m.state == "rest":
+		s.visible = false
+		if float(m.t) < float(m.rest) or parked.is_empty():
+			return
+		var dock := Vector3(rng.randf_range(-6.0, 6.0), rng.randf_range(-6.0, 6.0), -48.0)   # the rear module
+		var ship_p: Vector3 = parked[int(m.home) % parked.size()].position
+		var by := ship_p + (dock - ship_p).normalized() * (parked[int(m.home) % parked.size()].radius + 6.0)
+		m.a = dock if bool(m.out) else by
+		m.b = by if bool(m.out) else dock
+		m.dur = (m.a as Vector3).distance_to(m.b) / float((cfg.get("pods", {}) as Dictionary).get("speed_m_s", 25.0))
+		m.state = "fly"
+		m.t = 0.0
+		s.visible = true
+	var u := clampf(float(m.t) / maxf(float(m.dur), 0.1), 0.0, 1.0)
+	var e := u * u * (3.0 - 2.0 * u)
+	var p0: Vector3 = m.a
+	var p1: Vector3 = m.b
+	s.position = p0.lerp(p1, e)
+	if (p1 - p0).length() > 0.5:
+		s.basis = Basis.looking_at((p1 - p0).normalized(), Vector3.UP)
+	s.set_flames(u < 0.3)
+	if u >= 1.0:
+		m.state = "rest"
+		m.t = 0.0
+		var pr: Array = (cfg.get("pods", {}) as Dictionary).get("rest_s", [8.0, 30.0])
+		m.rest = rng.randf_range(float(pr[0]), float(pr[1]))
+		m.out = not bool(m.out)
+		if bool(m.out):
+			m.home = rng.randi() % maxi(1, parked.size())
+		s.visible = false
+		s.set_flames(false)
+
+
+## Round and round the world it works.
+func _orbit(o: Dictionary, dt: float) -> void:
+	var w: Node3D = o.world
+	if not is_instance_valid(w):
+		return
+	o.angle = float(o.angle) + float(o.speed) / float(o.radius) * dt
+	var a := float(o.angle)
+	var tilt: Basis = o.tilt
+	var s: NpcShip = o.ship
+	s.global_position = w.global_position + tilt * Vector3(cos(a), 0, sin(a)) * float(o.radius)
+	var along := tilt * Vector3(-sin(a), 0, cos(a))
+	s.global_basis = Basis.looking_at(along, tilt * Vector3.UP)
 
 
 ## On a run, now and then a ship comes the other way along the route, a kilometre or two off.

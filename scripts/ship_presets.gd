@@ -91,6 +91,33 @@ const NPC_HAULER := [
 ]
 
 
+## A station pod: a cockpit with an engine bolted over its capped back door. Ferries people and small
+## parcels between the station and the ships parked near it (Traffic).
+const NPC_POD := [
+	[&"cockpit", Vector3i(0, 0, 0), 0],
+	[&"door_cap", Vector3i(0, 0, 1), 0],
+	[&"engine", Vector3i(0, 0, 1), 0],
+]
+
+## A survey ship: a bunk, legs to land with, an FTL drive and manoeuvring thrusters. Other people's
+## exploration craft (Traffic).
+const NPC_SURVEYOR := [
+	[&"cockpit", Vector3i(0, 0, 0), 0],
+	[&"bunk", Vector3i(0, 0, 1), 0],
+	[&"tee", Vector3i(0, 0, 2), 0],
+	[&"airlock", Vector3i(1, 0, 2), 0],
+	[&"engineering", Vector3i(0, 0, 3), 0],
+	[&"engine", Vector3i(0, 0, 4), 0],
+	[&"radiator", Vector3i(1, 0, 3), 0],
+	[&"radiator", Vector3i(-1, 0, 3), 2],
+	[&"jump_drive", Vector3i(1, 0, 1), 0],
+	[&"lander_legs", Vector3i(0, -1, 1), 0],
+	[&"lander_legs", Vector3i(0, -1, 3), 0],
+	[&"tank", Vector3i(-1, 0, 1), 0],
+	[&"rcs_thrusters", Vector3i(0, 1, 1), 0],
+]
+
+
 ## Replaces whatever is on `ship`. Returns the first error, or "" if everything placed.
 static func build(ship: ShipData, steps: Array = STARTER) -> String:
 	ship.clear()

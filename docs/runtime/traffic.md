@@ -30,6 +30,14 @@ hidden while jumping, on a moon, or when the planet is hidden. Stepped with game
 - **Passers**: on a run in cruise, every `passer_every_s` (game time) a ship appears `passer_ahead_m`
   along the route, `passer_side_m` off it, coming the other way at `passer_speed_m_s`; gone once well
   behind. Not near the end of a run.
+- **Survey ship**: at ports, one extra mover built from `ShipPresets.NPC_SURVEYOR`, named
+  "<survey.label>  <survey.names>", resting 10 to 60 s before its first trip.
+- **Pods**: at ports with parked ships, `pods.count` station pods (`ShipPresets.NPC_POD`): each rests
+  `pods.rest_s`, then flies at `pods.speed_m_s` from the station's rear module to just beside a parked
+  ship and back, with a new parked ship each outbound trip. Tags show within a quarter of `label_range_m`.
+- **Orbiters**: `orbiters.count` ships in circular orbit `orbiters.altitude_m` above the planet's surface
+  (the last one around its child world, if it has one with a `radius` meta) at `orbiters.speed_m_s`, on
+  a tilted plane, nose along the orbit. Named "<role>  <name>" from `orbiters.roles`. Solid like the rest.
 - **Solid**: `bodies()` gives each as a sphere (60% of its radius) to `FlightScene.solid_bodies()`, so the
   flight model bounces off them like the planet (`crashed_ship`; the cockpit names the ship).
 
@@ -49,3 +57,15 @@ hidden while jumping, on a moon, or when the planet is hidden. Stepped with game
   Sold at any exchange like other salvage.
 - The wreck's compartments are solid to the suit (`SpaceWalk.spheres`, refreshed each step from
   `Traffic.wreck_spheres`).
+
+## Stranded derelicts on the route
+
+- Once per run (`job.key`, seeded "deep|<key>"), with `deep.chance`, while cruising or departing: a
+  derelict placed `deep.along` of the way to the target and `deep.side_m` off the line, built from the
+  FTL starter, the hauler or the surveyor layout. Tagged "DERELICT · FTL FAILED <NAME>" in orange;
+  the cockpit says so once. Panel ids are "deep|<key>|<panel>". Same wreck, same place, if the scene
+  is rebuilt on the same run.
+- `Traffic.brake_target(target)`: the braking autopilot (X) stops `deep.stop_m` short of a derelict
+  that is ahead (within 60 degrees of the velocity) and nearer than the target; brake off and on beside
+  it to carry on to the target.
+- `Traffic.deep_range(pos)`: time compression is held to x5 within 25 km and x2 within 5 km of it.

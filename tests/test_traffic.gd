@@ -142,5 +142,83 @@ func _run() -> void:
 	check(closest < 4000.0 and closest > 800.0 and f.traffic_c.passer == null, "it passes a kilometre or two off and goes on its way (closest %.0f m)" % closest)
 	f.queue_free()
 	await process_frame
+	print("other traffic by the port")
+	Session.flight_job = {}
+	Session.profile["system_id"] = "sol"
+	Session.profile["port_id"] = String(Worlds.primary_port("sol").id)
+	f = _flight()
+	await process_frame
+	f.set_process(false)
+	t = f.traffic_c
+	var surveys := t.movers.filter(func(m): return (m.ship as NpcShip).title.begins_with("SURVEY"))
+	check(surveys.size() == 1, "an exploration ship among the comings and goings: %s" % (surveys[0].ship.title if not surveys.is_empty() else "none"))
+	check(t.pods.size() >= 1, "station pods (%d)" % t.pods.size())
+	if not t.pods.is_empty():
+		var pm: Dictionary = t.pods[0]
+		pm.rest = 0.0
+		t.step(0.1)
+		var pp0: Vector3 = (pm.ship as NpcShip).position
+		t.step(1.2)
+		var home: NpcShip = t.parked[int(pm.home) % t.parked.size()]
+		check((pm.ship as NpcShip).visible and (pm.ship as NpcShip).position.distance_to(pp0) > 5.0, "a pod pootles off on an errand")
+		for i in 400:
+			t.step(0.25)
+			if pm.state == "rest":
+				break
+		check(pm.state == "rest", "and arrives by %s" % home.title)
+	check(t.orbiters.size() >= 1, "ships in orbit (%d)" % t.orbiters.size())
+	if not t.orbiters.is_empty():
+		var o: Dictionary = t.orbiters[0]
+		t.step(0.1)
+		var ow: Node3D = o.world
+		var r0 := (o.ship as NpcShip).global_position.distance_to(ow.global_position)
+		var q0 := (o.ship as NpcShip).global_position
+		for i in 20:
+			t.step(1.0)
+		var r1 := (o.ship as NpcShip).global_position.distance_to(ow.global_position)
+		check(absf(r0 - float(o.radius)) < 1.0 and absf(r1 - float(o.radius)) < 1.0 and r0 > float(ow.get_meta("radius")), "circling %.0f m above the surface" % (r0 - float(ow.get_meta("radius"))))
+		check((o.ship as NpcShip).global_position.distance_to(q0) > 500.0, "and getting on with it")
+	f.queue_free()
+	await process_frame
+
+	print("a dead ship out on the route")
+	Session.flight_job = {"kind": "run", "contract_id": "x", "dv_kms": 8.0, "hours": 96, "destination": String(dest.name), "key": "deep-test",
+			"dest_kind": "saturn", "dest_id": "sol__saturn", "origin_kind": "port", "origin_id": String(Session.profile.port_id), "system_id": "sol"}
+	f = _flight()
+	await process_frame
+	f.set_process(false)
+	(f.traffic_c.cfg.deep as Dictionary)["chance"] = 1.0
+	f.phase = "cruise"
+	f.station.visible = false
+	f.model.station_solid = false
+	f.model.pos = f.xfer.target * 0.05
+	f.model.vel = (f.xfer.target - f.model.pos).normalized() * 200.0
+	f.traffic_c.passer_wait = 1.0e9
+	f.traffic_c.step(0.05)
+	var deep: Array = f.traffic_c.derelicts.filter(func(d): return bool(d.deep))
+	check(deep.size() == 1, "an FTL failure out between here and there")
+	if deep.size() == 1:
+		var dd: Dictionary = deep[0]
+		var ds: NpcShip = dd.ship
+		check(ds.title.contains("FTL FAILED"), "tagged: %s" % ds.title)
+		check(f.notice.contains("dead ship"), "and the sensors say so: %s" % f.notice)
+		check(String(dd.points[0].id).begins_with("deep|deep-test|"), "its panels are its own: %s" % dd.points[0].id)
+		var off: float = (ds.global_position - f.xfer.target * (ds.global_position.dot(f.xfer.target) / f.xfer.target.length_squared())).length()
+		check(off > 1000.0 and off < 7000.0, "off the line by %.1f km" % (off / 1000.0))
+		var res: Dictionary = f.pilot("brake")
+		check(f.model.braking and f.model.brake_to.distance_to(ds.global_position) < 100.0, "braking stops by the wreck, not the port: %s" % res.get("message", ""))
+		f.model.pos = ds.global_position + (f.model.pos - ds.global_position).normalized() * 3000.0
+		check(int(f._warp_limit().max) <= 5, "time compression held near it: %s" % f._warp_limit().why)
+		f.model.pos = ds.global_position - (f.xfer.target - ds.global_position).normalized() * 60.0
+		f.model.vel = Vector3.ZERO
+		f.pilot("brake")
+		f.pilot("brake")
+		check(f.model.brake_to.distance_to(f.xfer.target) < 1.0, "brake off and on beside it: on to the target")
+		f.traffic_c.rebuild(String(Session.profile.port_id))
+		f.traffic_c.step(0.05)
+		var again: Array = f.traffic_c.derelicts.filter(func(d): return bool(d.deep))
+		check(again.size() == 1 and (again[0].ship as NpcShip).global_position.distance_to(ds.global_position) < 1.0, "the same wreck in the same place on the same run")
+	f.queue_free()
+	await process_frame
 	print("DONE fails=", fails)
 	quit(1 if fails > 0 else 0)

@@ -439,7 +439,9 @@ func pilot(action: String, value: float = 0.0) -> Dictionary:
 			if model.braking:
 				model.course_hold = false   # the braking autopilot takes out drift too
 			# On a run the autopilot stops at the target; anywhere else it stops the ship where it is.
-			model.brake_to = xfer.target if model.braking and xfer != null and phase == "cruise" else Vector3.INF
+			model.brake_to = traffic_c.brake_target(xfer.target) if model.braking and xfer != null and phase == "cruise" else Vector3.INF
+			if model.braking and xfer != null and model.brake_to != xfer.target and model.brake_to != Vector3.INF:
+				return {"ok": true, "message": "Autopilot braking to stop by the wreck ahead. Brake off and on again to carry on to the target."}
 			return {"ok": true, "message": "Autopilot braking." if model.braking else "Autopilot off."}
 		"course":
 			toggle_course_hold()
@@ -656,6 +658,13 @@ func _warp_limit() -> Dictionary:
 	elif rng < 25000.0:
 		cap = 5
 		why = "Max x5 within 25 km of the target"
+	var wreck := traffic_c.deep_range(model.pos)
+	if wreck < 5000.0 and cap > 2:
+		cap = 2
+		why = "Max x2 within 5 km of the wreck"
+	elif wreck < 25000.0 and cap > 5:
+		cap = 5
+		why = "Max x5 within 25 km of the wreck"
 	var eta := xfer.eta_s(model)
 	if eta > 0.0:
 		var by_eta := 1
