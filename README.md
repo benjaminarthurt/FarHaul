@@ -139,6 +139,9 @@ The numbers are placeholders to get the loop working. Edit them in `scripts/modu
 | `scripts/star_map.gd` | `StarMap`: the map (M), the system chart and known space, in flight and in port |
 | `scripts/flight/sky_worlds.gd` | `SkyWorlds`: every system's worlds (Sol's real ones, the rest from canon) with clouds, air, city lights and rings; which world you see from each site (`data/world/sky_worlds.json`) |
 | `tools/make_planet_maps.py` | Regenerates `assets/planets/` (needs numpy, Pillow, scipy, global-land-mask); `python3 tools/make_planet_maps.py keshar` remakes one |
+| `scripts/flight/traffic.gd`, `scripts/npc_ship.gd` | `Traffic`: other ships (parked, coming and going, pods, survey ships, orbiters, passers) and derelicts, near ports and stranded on routes (docs/runtime/traffic.md) |
+| `scripts/salvage.gd` | `Salvage`: what's in a derelict's hold, stowing it, and selling it in port (docs/runtime/derelict_hold.md) |
+| `scripts/crew.gd`, `scripts/flight/crew_work.gd` | Crew for hire, and what they do aboard (docs/runtime/crew.md) |
 | `scripts/engine_parts.gd` | `EngineParts`: the engine's open bell nozzle and its shader-drawn exhaust plume |
 | `scripts/builder.gd` | Camera, ghost, input, UI |
 | `scripts/boot.gd` | Start-up flow: splash, intro video, title screen, hand-off to the builder |
