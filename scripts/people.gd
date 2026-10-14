@@ -72,7 +72,7 @@ static func rep_bonus(rep: int) -> float:
 
 ## Spare berths: what passengers can use.
 static func seats(stats: Dictionary) -> int:
-	return maxi(0, int(stats.get("berths", 0)) - maxi(int(stats.get("crew_needed", 0)), int(stats.get("crew_aboard", 0))))
+	return maxi(0, int(stats.get("berths", 0)) - maxi(int(stats.get("crew_needed", 0)), int(stats.get("crew_aboard", 0))) - int(stats.get("rescued", 0)))
 
 
 ## Who is asking at `node_id` today. Each job is a local run with `person` (their name), `person_kind`,

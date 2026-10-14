@@ -18,6 +18,7 @@ func _fill(id: String) -> void:
 		"freight", "dispatch", "foreman":
 			_desk_freight(id)
 			if id == "freight":
+				_authority_section()
 				_salvage_section("cargo")
 				sc._action("READ THE TRADE REPORT  (N anywhere)", func() -> void:
 					var r := TradeReport.find(sc.get_tree())
@@ -304,6 +305,52 @@ func _desk_fuel() -> void:
 			var r := Session.sell_finds()
 			sc._say(String(r.message))
 			sc._refill())
+
+
+## What came back from going aboard a derelict: flight recorders for the insurer, the remains of the
+## crew for the port authority, and survivors (PortAuthority).
+func _authority_section() -> void:
+	if not PortAuthority.any():
+		return
+	sc.panel_list.add_child(Brand.heading("PORT AUTHORITY", 15))
+	var recs := PortAuthority.recorders()
+	if not recs.is_empty():
+		sc._action("HAND IN %s  %s cr from the insurer" % ["THE FLIGHT RECORDER" if recs.size() == 1 else "%d FLIGHT RECORDERS" % recs.size(), ShipStats.commas(PortAuthority.recorder_total())], func() -> void:
+			var r := PortAuthority.hand_in_recorders()
+			sc._say(String(r.message))
+			sc._refill())
+	var dead := PortAuthority.remains()
+	if not dead.is_empty():
+		sc.panel_list.add_child(Brand.note("In the hold: %s. They'll be seen home to their families from here." % ", ".join(PackedStringArray(dead.map(func(d: Dictionary) -> String: return "%s of the %s" % [String(d.name), String(d.ship)]))), 14))
+		sc._action("HAND OVER THE REMAINS  %s cr recovery fee" % ShipStats.commas(PortAuthority.recovery_total()), func() -> void:
+			var r := PortAuthority.hand_over_remains()
+			sc._say(String(r.message))
+			sc._refill())
+	var rep := PortAuthority.reported()
+	if not rep.is_empty():
+		sc._action("COLLECT THE FINDER'S FEE  %s cr for %d reported" % [ShipStats.commas(PortAuthority.finder_fee() * rep.size()), rep.size()], func() -> void:
+			var r := PortAuthority.collect_finders()
+			sc._say(String(r.message))
+			sc._refill())
+	var res := PortAuthority.rescued()
+	for i in res.size():
+		var who: Dictionary = res[i]
+		var k := i
+		if not bool(who.get("handed", false)):
+			sc._action("HAND OVER %s, RESCUED  %s cr bounty" % [String(who.name).to_upper(), ShipStats.commas(int(PortAuthority.cfg().get("rescue_bounty", 6000)))], func() -> void:
+				var r := PortAuthority.hand_over(k)
+				sc._say(String(r.message))
+				sc._refill())
+		else:
+			sc.panel_list.add_child(Brand.note("%s, off the %s: %s, skill %d, would work for %s cr a day." % [String(who.name), String(who.ship), Crew.role_name(String(who.role)).to_lower(), int(who.skill), ShipStats.commas(roundi(float(who.wage) * SimShip.wage_index(Session.system_id())))], 14))
+			sc._action("SIGN %s ON  no fee" % String(who.name).get_slice(" ", 0).to_upper(), func() -> void:
+				var r := PortAuthority.sign_on(k)
+				sc._say(String(r.message))
+				sc._refill())
+			sc._action("SEE %s OFF" % String(who.name).get_slice(" ", 0).to_upper(), func() -> void:
+				var r := PortAuthority.see_off(k)
+				sc._say(String(r.message))
+				sc._refill())
 
 
 ## Salvage in the hold off derelicts: freight ("cargo", at the freight office, to whoever here deals

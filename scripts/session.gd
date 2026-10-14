@@ -181,6 +181,7 @@ static func ship_stats(ship: ShipData, manifest: CargoManifest = null) -> Dictio
 		st["ftl"] = false   # a drive that has failed doesn't jump, however much it cost
 		(st["warnings"] as Array).append("FTL drive failed: a spares kit on a space walk, or an overhaul at a yard")
 	st["crew_aboard"] = crew_aboard() if profile.has("crew") else int(st.get("crew_needed", 1))
+	st["rescued"] = (profile.get("rescued", []) as Array).size()   # survivors off wrecks, in bunks (or the jump seat)
 	return st
 
 
@@ -1482,11 +1483,12 @@ static func crew_aboard() -> int:
 	return 1 + crew().size()
 
 
-## Berths not taken by the captain, the crew or passengers aboard right now.
+## Berths not taken by the captain, the crew, passengers or rescued survivors aboard right now. It goes to
+## -1 when a survivor has the jump seat (Salvage.room_for): nobody's hired into that.
 static func free_berths(stats: Dictionary) -> int:
 	var c := active_contract()
 	var pax := int(c.get("seats", 0)) if String(c.get("person_kind", "")) == "passenger" else 0
-	return int(stats.get("berths", 0)) - crew_aboard() - pax
+	return int(stats.get("berths", 0)) - crew_aboard() - pax - (profile.get("rescued", []) as Array).size()   # survivors off a wreck sleep somewhere too
 
 
 ## Who is looking for work in this port today (not anyone already hired or let go here).

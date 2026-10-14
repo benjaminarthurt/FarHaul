@@ -211,7 +211,19 @@ func _add_derelict(layout: Array, nm: String, tag: String, at: Vector3, id_base:
 			it["marker"] = _item_marker(s, at_k, items[k], r)
 			(it.marker as Node3D).visible = bool(hatch.taken) and not bool(it.taken)
 			points.append(it)
-	var d := {"ship": s, "name": nm, "points": points, "deep": deep}
+	# The airlock's outer door: torch it open and you can go aboard (Boarding).
+	var wk := ShipWalk.build(s.ship)
+	if wk.airlock != Vector3.INF:
+		var out := -wk.airlock_face
+		var dpos := wk.airlock + Vector3(0, 1.1, 0) + out * (ShipGrid.CELL * 0.5 + ShipSkin.GAP + ShipSkin.T)
+		var did := "%s|door" % id_base
+		var door := {"id": did, "kind": "door", "pos": dpos, "normal": out, "parts": 0, "taken": did in taken}
+		door["marker"] = _door_marker(s, dpos, out, false)
+		door["open_mark"] = _door_marker(s, dpos, out, true)
+		(door.marker as Node3D).visible = not bool(door.taken)
+		(door.open_mark as Node3D).visible = bool(door.taken)
+		points.append(door)
+	var d := {"ship": s, "name": nm, "points": points, "deep": deep, "id_base": id_base}
 	derelicts.append(d)
 	return d
 
@@ -300,12 +312,15 @@ func salvage_points() -> Array:
 			continue
 		for k in (d.points as Array).size():
 			var p: Dictionary = d.points[k]
-			if bool(p.taken) or (p.has("hatch") and not bool(p.hatch.taken)):
+			var kind := String(p.get("kind", "panel"))
+			if kind == "door" and bool(p.taken):
+				kind = "enter"   # cut open: the way in
+			elif bool(p.taken) or (p.has("hatch") and not bool(p.hatch.taken)):
 				continue
 			var world: Vector3 = s.body.global_transform * (p.pos as Vector3)
 			if p.has("marker") and is_instance_valid(p.marker) and String(p.get("kind", "")) == "item":
 				world = (p.marker as Node3D).global_position   # drifting a little
-			out.append({"id": String(p.id), "kind": String(p.get("kind", "panel")), "world": world, "parts": int(p.parts), "item": p.get("item", {}), "point": p})
+			out.append({"id": String(p.id), "kind": kind, "world": world, "parts": int(p.parts), "item": p.get("item", {}), "point": p, "derelict": d})
 	return out
 
 
@@ -314,6 +329,10 @@ func take(point: Dictionary) -> void:
 	point["taken"] = true
 	if point.has("marker") and is_instance_valid(point.marker):
 		(point.marker as Node3D).visible = false
+	if String(point.get("kind", "")) == "door":
+		if point.has("open_mark") and is_instance_valid(point.open_mark):
+			(point.open_mark as Node3D).visible = true
+		return
 	if String(point.get("kind", "")) != "hatch":
 		return
 	if point.has("open_mark") and is_instance_valid(point.open_mark):
@@ -340,6 +359,53 @@ func _hatch_marker(s: NpcShip, pos: Vector3, normal: Vector3) -> Node3D:
 		mi.mesh = bm
 		mi.position = e[0]
 		m.add_child(mi)
+	s.body.add_child(m)
+	return m
+
+
+## A derelict's airlock door, standing upright on the hull: sealed, a white frame with amber corner
+## marks; cut open, a dark doorway with a glowing rim.
+func _door_marker(s: NpcShip, pos: Vector3, normal: Vector3, open: bool) -> Node3D:
+	var m := Node3D.new()
+	m.position = pos + normal * 0.04
+	m.basis = ShipDamage._facing(normal)   # local x runs up the hull, z across it
+	if open:
+		var hole := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = Vector3(2.0, 0.03, 1.2)
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.02, 0.02, 0.025)
+		mat.roughness = 1.0
+		bm.material = mat
+		hole.mesh = bm
+		m.add_child(hole)
+		var rim := MeshInstance3D.new()
+		var rm := BoxMesh.new()
+		rm.size = Vector3(2.16, 0.02, 1.36)
+		rm.material = Interiors.glow(Color(0.9, 0.35, 0.1), 0.25)
+		rim.mesh = rm
+		rim.position = Vector3(0, -0.01, 0)
+		m.add_child(rim)
+	else:
+		var mat := Interiors.glow(Color(0.9, 0.92, 0.95), 0.5)
+		for e in [[Vector3(1.0, 0, 0), Vector3(0.08, 0.04, 1.2)], [Vector3(-1.0, 0, 0), Vector3(0.08, 0.04, 1.2)],
+				[Vector3(0, 0, 0.6), Vector3(2.0, 0.04, 0.08)], [Vector3(0, 0, -0.6), Vector3(2.0, 0.04, 0.08)]]:
+			var mi := MeshInstance3D.new()
+			var bm := BoxMesh.new()
+			bm.size = e[1]
+			bm.material = mat
+			mi.mesh = bm
+			mi.position = e[0]
+			m.add_child(mi)
+		var amber := Interiors.glow(Color(1.0, 0.7, 0.2), 0.6)
+		for c in [Vector3(0.9, 0, 0.5), Vector3(0.9, 0, -0.5), Vector3(-0.9, 0, 0.5), Vector3(-0.9, 0, -0.5)]:
+			var mi := MeshInstance3D.new()
+			var bm := BoxMesh.new()
+			bm.size = Vector3(0.22, 0.05, 0.22)
+			bm.material = amber
+			mi.mesh = bm
+			mi.position = c
+			m.add_child(mi)
 	s.body.add_child(m)
 	return m
 

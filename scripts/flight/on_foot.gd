@@ -7,8 +7,13 @@ extends RefCounted
 var sc: FlightScene   ## the scene this works on
 
 
+var _stow_refused := ""   ## what the hatch wouldn't take (no room): not retried until you've moved off
+var boarding: Boarding   ## inside a derelict, from a space walk (scripts/flight/boarding.gd)
+
+
 func _init(scene: FlightScene) -> void:
 	sc = scene
+	boarding = Boarding.new(scene)
 
 
 ## Leave the pilot's seat. Whatever the ship was doing it keeps doing: throttle, braking autopilot, assist.
@@ -165,6 +170,8 @@ func go_space_walk() -> bool:
 func end_space_walk(why := "") -> void:
 	if sc.eva == null:
 		return
+	if boarding.active:
+		boarding.leave()
 	if sc.eva.tether_line != null:
 		sc.eva.tether_line.queue_free()
 	_free_eva_ui()
@@ -232,6 +239,14 @@ func _eva_cut(i: int) -> void:
 	if sc.sounds != null:
 		sc.sounds.play("done")
 	match String(p.kind):
+		"door":
+			_mark_taken(String(p.id))
+			Session.save_profile()
+			_eva_say("Their airlock door's open. Inside it's dark, and it's been dark a while. Hold E to go in.")
+		"enter":
+			var why := boarding.enter(p.derelict)
+			if why != "":
+				_eva_say(why)
 		"hatch":
 			_mark_taken(String(p.id))
 			Session.save_profile()
@@ -270,6 +285,12 @@ func _eva_stow() -> void:
 		var r := Salvage.stow(e.carry)
 		if bool(r.ok):
 			sc.model.cargo_t += float(r.tonnes)   # she's heavier now
+		elif String(e.carry.get("kind", "")) in ["body", "survivor"]:   # not someone you let drift
+			var taken2: Array = Session.profile.get("salvage_taken", [])
+			taken2.erase(e.carrying_id)
+			_stow_refused = e.carrying_id
+			_eva_say(String(r.message) + " They stay with you until there's room.")
+			return
 		else:
 			var taken: Array = Session.profile.get("salvage_taken", [])
 			taken.erase(e.carrying_id)
@@ -331,6 +352,11 @@ func _salvage_blocked(i: int, in_hand: String) -> String:
 		return "Your hands are full. Haul this lot back to the hatch first."
 	var p: Dictionary = _salvage[i - SALVAGE] if i - SALVAGE < _salvage.size() else {}
 	match String(p.get("kind", "panel")):
+		"door":
+			if in_hand != "torch":
+				return "Their airlock door's sealed shut with nobody to open it. The torch (2) will ask nicely."
+		"enter":
+			return ""
 		"item":
 			var id := String(p.id)
 			if not _room.has(id):
@@ -369,6 +395,11 @@ func _eva_marks() -> Dictionary:
 
 
 func _eva_step(delta: float) -> void:
+	if boarding.active:
+		boarding.step(delta)
+		if sc.eva != null:
+			_update_eva_ui()
+		return
 	var e := sc.eva
 	var mv := Vector3.ZERO
 	if Input.is_key_pressed(KEY_W): mv.z += 1.0
@@ -396,7 +427,9 @@ func _eva_step(delta: float) -> void:
 		tether_snapped()
 	_eva_wreck_hulls()
 	eva_work(dt, Input.is_key_pressed(KEY_E) or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT))
-	if e.carrying > 0 and e.at_hatch():
+	if not e.at_hatch():
+		_stow_refused = ""
+	if e.carrying > 0 and e.at_hatch() and e.carrying_id != _stow_refused:
 		_eva_stow()
 	_eva_tether()
 	_eva_tools(dt)
@@ -466,6 +499,10 @@ func _work_s(i: int) -> float:
 		var kind := String(_salvage[i - SALVAGE].kind) if i - SALVAGE < _salvage.size() else "panel"
 		if kind == "hatch":
 			return float(Salvage.cfg().get("cut_s", 14.0))
+		if kind == "door":
+			return float(Boarding.cfg().get("door_cut_s", 10.0))
+		if kind == "enter":
+			return 0.3
 		if kind == "item":
 			return float(Salvage.cfg().get("grab_s", 1.5))
 		return float((Traffic.config().get("derelicts", {}) as Dictionary).get("cut_s", 7.0))
@@ -524,6 +561,9 @@ func _eva_tether() -> void:
 
 
 func _eva_input(event: InputEvent) -> void:
+	if boarding.active:
+		boarding.input(event)
+		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		sc.eva.look(-event.relative.x * sc.MOUSE_TURN * GameSettings.mouse_sensitivity(), -event.relative.y * sc.MOUSE_TURN * GameSettings.mouse_sensitivity())
 		return
@@ -547,6 +587,9 @@ func _eva_input(event: InputEvent) -> void:
 
 ## The HUD on a space walk: air, tether, kits, hull; the prompt says what's in reach.
 func _eva_hud() -> void:
+	if boarding.active:
+		boarding.hud()
+		return
 	var e := sc.eva
 	var low := e.o2 < e.o2_max * 0.2
 	var cap := float(e.cfg.get("repair_cap_hull", 0.5))
@@ -568,7 +611,11 @@ func _eva_hud() -> void:
 		if why != "":
 			hint = why
 		elif e.work_on == i:
-			hint = "%s  %d%%" % [{"hatch": "CUTTING THE HATCH OPEN", "item": "GETTING A GRIP"}.get(kind, "CUTTING THE PANEL FREE"), roundi(e.work_t / _work_s(i) * 100.0)]
+			hint = "%s  %d%%" % [{"hatch": "CUTTING THE HATCH OPEN", "item": "GETTING A GRIP", "door": "CUTTING THEIR DOOR OPEN", "enter": "IN YOU GO"}.get(kind, "CUTTING THE PANEL FREE"), roundi(e.work_t / _work_s(i) * 100.0)]
+		elif kind == "door":
+			hint = "Their airlock door, sealed. Hold E (or click): torch it open and go aboard"
+		elif kind == "enter":
+			hint = "Their airlock, cut open. Hold E (or click): go in"
 		elif kind == "hatch":
 			hint = "The cargo hatch, sealed. Hold E (or click): torch it open and see what they were carrying"
 		elif kind == "item":

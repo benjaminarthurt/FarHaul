@@ -896,6 +896,8 @@ func _apply_pose() -> void:
 	if outside:
 		camera.global_position = suit.eye()
 		camera.global_basis = suit.look_basis()
+	elif eva != null and foot_c.boarding.active:
+		camera.global_transform = foot_c.boarding.eye_transform()
 	elif eva != null:
 		camera.global_position = model.pos + model.basis * (view.position + eva.pos)
 		camera.global_basis = model.basis * eva.look_basis()

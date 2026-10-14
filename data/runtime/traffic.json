@@ -201,5 +201,75 @@
     "scrap_rate": 0.35,
     "fit_rate": 0.15,
     "fit_min_cr": 250
+  },
+  "boarding": {
+    "note": "Going inside a derelict (scripts/flight/boarding.gd, scripts/wreckage.gd): its airlock's outer door is cut with the torch (door_cut_s), then you walk it on mag boots and suit air. What's aboard is rolled per wreck: crew, each a survivor (rare), dead or long gone in the pod; crates in the holds, a locker or two, the flight recorder at the helm and the log. Handed in at a port's freight office: recorders to the insurer for recorder_bounty, remains to the port authority for recovery_fee each (remains_t of hold space each), survivors for rescue_bounty and rescue_rep standing, after which they'll sign on with no fee. Every ship has a jump seat for one rescued person beyond its bunks; past that, a survivor is reported instead (the port sends its own boat) for finder_share of the bounty and finder_rep standing.",
+    "door_cut_s": 10.0,
+    "grab_s": 1.2,
+    "reach_m": 1.7,
+    "crew": [
+      1,
+      3
+    ],
+    "survivor_chance": 0.025,
+    "deep_survivor_chance": 0.1,
+    "dead_chance": 0.5,
+    "crates": [
+      1,
+      3
+    ],
+    "crate_t": [
+      0.4,
+      1.2
+    ],
+    "lockers": [
+      1,
+      2
+    ],
+    "recorder_bounty": [
+      3000,
+      8000
+    ],
+    "deep_recorder_mult": 1.5,
+    "recovery_fee": 2500,
+    "remains_t": 0.2,
+    "rescue_bounty": 6000,
+    "rescue_rep": 2,
+    "causes": {
+      "jump": [
+        "Jump drive tripped out halfway across. We're nowhere. The nav computer agrees, at length.",
+        "Spooled the drive twice more. It just hums now. Beacon's on.",
+        "Nobody's answered the beacon. The lanes are quiet out here. That's why we took them."
+      ],
+      "reactor": [
+        "Reactor scrammed coming off the burn. Batteries say twelve hours if we're careful.",
+        "We weren't careful. Heaters off in the holds.",
+        "Beacon's on. If anyone's listening, the coffee's in the galley locker. It's terrible."
+      ],
+      "breach": [
+        "Debris strike aft. Lost pressure in the back half before the doors closed.",
+        "Patched what we could reach. Couldn't reach enough.",
+        "Beacon's on. Whoever finds this: the hull plates by the hold are the good ones."
+      ],
+      "dry": [
+        "Tanks dry. Somebody did the fuel sums on the back of a ration pack. Somebody was me.",
+        "Drifting. The station's lights are right there. Right there.",
+        "Beacon's on. Tell the company the cargo's fine. They'll ask."
+      ]
+    },
+    "deep_causes": [
+      "jump"
+    ],
+    "near_causes": [
+      "reactor",
+      "breach",
+      "dry"
+    ],
+    "evacuated_line": "{names} took the pod. Said they'd send someone. I'm sure they meant it.",
+    "dead_line": "{names} didn't make it. We've laid them out in the {room}. Somebody should take them home.",
+    "survivor_line": "{name} is in the cold bunk. If you're reading this, so might they be.",
+    "last_line": "Last entry. Leaving the log running for whoever comes.",
+    "finder_share": 0.4,
+    "finder_rep": 1
   }
 }

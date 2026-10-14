@@ -10,6 +10,7 @@ extends RefCounted
 ## salvage_parts: [part items]) so contract freight and salvage never get mixed up.
 
 const HARDWARE := &"salvage_hardware"
+const REMAINS := &"recovered_remains"   ## the crew of a wreck, carried home (Wreckage body, PortAuthority)
 const EPS := 0.001
 
 
@@ -85,6 +86,12 @@ static func describe(item: Dictionary) -> String:
 			return "a supplies locker: %s" % " and ".join(bits)
 		"part":
 			return "%s (%s), %.1f t" % [part_name(item), condition_text(item), float(item.tonnes)]
+		"recorder":
+			return "the %s's flight recorder" % String(item.ship)
+		"body":
+			return "%s, of the %s" % [String(item.name), String(item.ship)]
+		"survivor":
+			return "%s, alive" % String(item.name)
 	return "something"
 
 
@@ -110,15 +117,25 @@ static func part_name(item: Dictionary) -> String:
 
 ## Whether it needs room in the hold (crates and parts do).
 static func needs_hold(item: Dictionary) -> bool:
-	return String(item.get("kind", "")) in ["crate", "part"]
+	return String(item.get("kind", "")) in ["crate", "part", "body"]
 
 
 static func _com(item: Dictionary) -> StringName:
-	return HARDWARE if String(item.kind) == "part" else StringName(String(item.commodity))
+	match String(item.kind):
+		"part":
+			return HARDWARE
+		"body":
+			return REMAINS
+	return StringName(String(item.commodity))
 
 
 ## "" if the ship can take it aboard now, otherwise why not.
 static func room_for(item: Dictionary) -> String:
+	if String(item.get("kind", "")) == "survivor" and Session.slot >= 0:
+		var ld := Session._load_ship(SaveSlots.read(Session.slot))
+		if not ld.is_empty() and Session.free_berths(Session.ship_stats(ld.ship)) < 0:
+			return "No bunk and the jump seat's taken. Report them: the port will send its own boat."
+		return ""
 	if not needs_hold(item) or Session.slot < 0:
 		return ""
 	var loaded := Session._load_ship(SaveSlots.read(Session.slot))
@@ -149,6 +166,28 @@ static func stow(item: Dictionary) -> Dictionary:
 		var left := int(item.patch_kits) - pk + int(item.spares_kits) - sk
 		return {"ok": true, "tonnes": 0.0, "message": "Supplies stowed. Aboard now: %s and %s.%s" % [_kits(Session.patch_kits(), "patch kit"), _kits(Session.spares_kits(), "spares kit"),
 				" The lockers were full, so %d kit%s went back out the hatch." % [left, "" if left == 1 else "s"] if left > 0 else ""]}
+	if kind == "recorder":
+		var recs: Array = (p.get("recorders", []) as Array).duplicate()
+		recs.append({"ship": String(item.ship), "bounty": int(item.bounty)})
+		p["recorders"] = recs
+		Session.save_profile()
+		return {"ok": true, "tonnes": 0.0, "message": "The %s's flight recorder is aboard. Any port's freight office will pass it to the insurer, who pays about %s cr to know what happened." % [String(item.ship), ShipStats.commas(int(item.bounty))]}
+	if kind == "survivor":
+		var why_s := room_for(item)
+		if why_s != "":
+			return {"ok": false, "tonnes": 0.0, "message": why_s}
+		var res: Array = (p.get("rescued", []) as Array).duplicate()
+		var who := item.duplicate()
+		for k in ["at", "slot", "kind"]:
+			who.erase(k)
+		who["handed"] = false
+		res.append(who)
+		p["rescued"] = res
+		Session.save_profile()
+		var ld2 := Session._load_ship(SaveSlots.read(Session.slot)) if Session.slot >= 0 else {}
+		var seat := not ld2.is_empty() and Session.free_berths(Session.ship_stats(ld2.ship)) < 0
+		var how := "No bunk free, so it's the jump seat, a blanket and a hot drink. Cramped, and nobody's complaining." if seat else "A bunk, a blanket and a hot drink, still shaking."
+		return {"ok": true, "tonnes": 0.0, "message": "%s is aboard. %s The freight office at the next port will take it from there." % [String(item.name), how]}
 	if not needs_hold(item):
 		return {"ok": false, "tonnes": 0.0, "message": "Nothing to stow."}
 	var why := room_for(item)
@@ -168,6 +207,10 @@ static func stow(item: Dictionary) -> Dictionary:
 		var led: Dictionary = (p.get("salvage_cargo", {}) as Dictionary).duplicate()
 		led[String(item.commodity)] = snappedf(float(led.get(String(item.commodity), 0.0)) + t, 0.001)
 		p["salvage_cargo"] = led
+	elif kind == "body":
+		var dead: Array = (p.get("remains", []) as Array).duplicate()
+		dead.append({"name": String(item.name), "ship": String(item.ship), "tonnes": t})
+		p["remains"] = dead
 	else:
 		var parts: Array = (p.get("salvage_parts", []) as Array).duplicate()
 		parts.append({"kind": "part", "module": String(item.module), "tonnes": t, "condition": float(item.condition), "failed": bool(item.get("failed", false))})
@@ -175,6 +218,8 @@ static func stow(item: Dictionary) -> Dictionary:
 	if not data.is_empty():
 		data["profile"] = p
 		SaveSlots.write(Session.slot, data)
+	if kind == "body":
+		return {"ok": true, "tonnes": t, "message": "%s is in the hold, wrapped and secured. The port authority at the next port will see them home." % String(item.name)}
 	var what := "%.1f t of %s" % [t, clib().label(_com(item)).to_lower()] if kind == "crate" else lower(part_name(item))
 	return {"ok": true, "tonnes": t, "message": "Stowed %s in the hold. Sell it at a port: %s." % [what, "the freight office finds a buyer" if kind == "crate" else "the shipyard takes parts"]}
 

@@ -29,14 +29,12 @@ Not all at once. In the order requested:
 7. Other ships and derelicts, with salvage panels and cargo holds (**built** in 0.10.0 to 0.10.2)
 8. The trade report: the economy simulation made visible (**built** in 0.11.0)
 9. Fitting salvaged parts, at their condition, for a fitting fee (**built** in 0.12.0)
+10. Boarding derelicts: the log, the flight recorder, the crew and the odd survivor (**built** in 0.13.0)
 
 The ship builder came first because everything else reads from the ship it produces.
 
 ### Next, in roughly this order (planned)
 
-10. **Boarding derelicts**: cut in through a wreck's airlock and walk it in the suit, dark and
-    unpowered: loose cargo, a log entry saying what happened, sometimes a survivor to bring home as a
-    passenger.
 11. **Manufacturers**: each part type from two or three companies with recognisable habits (cheap and
     wears fast, heavy and tough, efficient but runs hot), sold where they're made and found on
     wrecks.

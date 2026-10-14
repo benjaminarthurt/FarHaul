@@ -590,6 +590,14 @@ function renderPort(p) {
   const stt = state.status || {};
   r += row("<b>Patch kit</b><small>For holes in the hull: yours or the deck tech's. " + (stt.patch_kits || 0) + " of " + (stt.patch_kit_max || 8) + " aboard.</small>", act(cr(sh.patch_kit), "buy_patch_kit", "", { off: (stt.patch_kits || 0) >= (stt.patch_kit_max || 8) || credits < sh.patch_kit }));
   r += row("<b>Spares kit</b><small>Brings a failed part back. " + (stt.spares_kits || 0) + " of " + (stt.spares_kit_max || 4) + " aboard.</small>", act(cr(sh.spares_kit), "buy_spares_kit", "", { off: (stt.spares_kits || 0) >= (stt.spares_kit_max || 4) || credits < sh.spares_kit }));
+  const au = p.authority || {};
+  if (au.recorders) r += row("<b>Flight recorders</b><small>" + au.recorders + " aboard. The insurer pays to know what happened.</small>", act(cr(au.recorder_cr), "hand_in_recorders", ""));
+  if ((au.remains || []).length) r += row("<b>Remains in the hold</b><small>" + esc(au.remains.join(", ")) + ". The port authority sees them home.</small>", act(cr(au.recovery_cr), "hand_over_remains", ""));
+  if (au.reported) r += row("<b>Survivors you reported</b><small>" + au.reported + " brought in by the port's boat.</small>", act(cr(au.finder_cr), "collect_finders", ""));
+  (au.rescued || []).forEach((w, i) => {
+    if (!w.handed) r += row("<b>" + esc(w.name) + "</b><small>Rescued off a wreck. Hand them over for the bounty.</small>", act(cr(au.bounty), "hand_over", String(i)));
+    else r += row("<b>" + esc(w.name) + "</b><small>" + esc(w.role) + ", wants a berth and a job.</small>", act("Sign on", "sign_on", String(i)) + act("See off", "see_off", String(i)));
+  });
   const sv = p.salvage || {};
   if ((sv.cargo || []).length) r += row("<b>Salvaged cargo</b><small>" + esc(sv.cargo.join(", ")) + ". Sold to whoever here deals in it.</small>", act(cr(sv.cargo_value), "sell_cargo", ""));
   if ((sv.parts || []).length) r += row("<b>Salvaged parts</b><small>" + esc(sv.parts.join(", ")) + ". The yard takes them.</small>", act(cr(sv.parts_value), "sell_parts", ""));

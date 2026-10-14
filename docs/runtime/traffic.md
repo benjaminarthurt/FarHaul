@@ -73,3 +73,5 @@ hidden while jumping, on a moon, or when the planet is hidden. Stepped with game
 Each derelict also has a cargo hatch with a hold behind it: see derelict_hold.md. Deep derelicts are
 not placed on runs down to a moon or a surface site, and the sensors' line waits until the cockpit
 isn't already saying something.
+
+Derelicts also have an airlock door to cut open and go aboard: see boarding.md.

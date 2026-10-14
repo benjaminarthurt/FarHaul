@@ -301,7 +301,7 @@ static func _crew_in_port() -> Array:
 
 # --- In port: the desks from the phone ------------------------------------------------------------
 
-const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "cancel", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "repair", "overhaul", "sell_cargo", "sell_parts"]
+const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "cancel", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "repair", "overhaul", "sell_cargo", "sell_parts", "hand_in_recorders", "hand_over_remains", "hand_over", "sign_on", "see_off", "collect_finders"]
 
 
 ## What the desks offer right now: the active contract and what can be done with it, the freight board
@@ -358,6 +358,11 @@ static func port_state() -> Dictionary:
 	var sp_lines := []
 	for pt in Salvage.parts_aboard(loaded.get("manifest", null)):
 		sp_lines.append(Salvage.describe(pt))
+	out["authority"] = {"recorders": PortAuthority.recorders().size(), "recorder_cr": PortAuthority.recorder_total(),
+			"remains": PortAuthority.remains().map(func(d: Dictionary) -> String: return String(d.name)), "recovery_cr": PortAuthority.recovery_total(),
+			"rescued": PortAuthority.rescued().map(func(w: Dictionary) -> Dictionary: return {"name": String(w.name), "handed": bool(w.get("handed", false)), "role": Crew.role_name(String(w.role))}),
+			"bounty": int(PortAuthority.cfg().get("rescue_bounty", 6000)), "reported": PortAuthority.reported().size(),
+			"finder_cr": PortAuthority.finder_fee() * PortAuthority.reported().size()}
 	out["salvage"] = {"cargo": sc_lines, "cargo_value": Salvage.cargo_value() if not sc_lines.is_empty() else 0,
 			"parts": sp_lines, "parts_value": Salvage.parts_value() if not sp_lines.is_empty() else 0}
 	out["can_wait"] = c.is_empty() and not Session.insolvent()
@@ -418,6 +423,18 @@ static func port_command(action: String, id: String) -> Dictionary:
 			return Salvage.sell("cargo")
 		"sell_parts":
 			return Salvage.sell("parts")
+		"hand_in_recorders":
+			return PortAuthority.hand_in_recorders()
+		"hand_over_remains":
+			return PortAuthority.hand_over_remains()
+		"hand_over":
+			return PortAuthority.hand_over(int(id))
+		"sign_on":
+			return PortAuthority.sign_on(int(id))
+		"see_off":
+			return PortAuthority.see_off(int(id))
+		"collect_finders":
+			return PortAuthority.collect_finders()
 	return {"ok": false, "message": "The desks don't do that."}
 
 
