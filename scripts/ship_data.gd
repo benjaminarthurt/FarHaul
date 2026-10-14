@@ -14,8 +14,12 @@ func _init(lib: ModuleLibrary) -> void:
 
 # --- Queries ------------------------------------------------------------------------------
 
+## The cells a module fills. A fitting (a door or hatch cap, `seal`) fills none: it's a plate on the face
+## of the doorway it covers, and the cell beyond stays free for an engine, a tank or a radiator.
 func world_cells(id: StringName, origin: Vector3i, rot: int) -> Array[Vector3i]:
 	var out: Array[Vector3i] = []
+	if library.get_def(id).seal:
+		return out
 	for c in library.get_def(id).get_cells():
 		out.append(origin + ShipGrid.rotate_cell(c, rot))
 	return out
@@ -37,6 +41,10 @@ func check_place(id: StringName, origin: Vector3i, rot: int) -> String:
 	for c in world_cells(id, origin, rot):
 		if occupied.has(c):
 			return "Overlaps another module"
+	if library.get_def(id).seal:   # a cap: one to a doorway
+		for s in world_sockets(id, origin, rot):
+			if capped(modules, s.cell + s.dir, -s.dir) >= 0:
+				return "That doorway's already capped"
 	if modules.is_empty():
 		return ""  # first module can go anywhere
 
@@ -65,11 +73,12 @@ func add(id: StringName, origin: Vector3i, rot: int) -> String:
 	return ""
 
 
-## Removes the module occupying `cell`, unless that would split the ship into pieces.
+## Removes the module occupying `cell` (or, with nothing in it, a cap fitted from it), unless that would
+## split the ship into pieces.
 func remove_at(cell: Vector3i) -> String:
-	if not occupied.has(cell):
+	var idx := module_at(cell)
+	if idx < 0:
 		return "Nothing there to remove"
-	var idx: int = occupied[cell]
 	var rest: Array[Dictionary] = []
 	for i in modules.size():
 		if i != idx:
@@ -79,6 +88,28 @@ func remove_at(cell: Vector3i) -> String:
 	modules = rest
 	occupied = _build_occupied(modules)
 	return ""
+
+
+## The module at `cell` for picking and removing: whatever fills it, else a cap fitted from it, else -1.
+func module_at(cell: Vector3i) -> int:
+	if occupied.has(cell):
+		return occupied[cell]
+	for i in range(modules.size() - 1, -1, -1):
+		if library.get_def(modules[i].id).seal and modules[i].cell == cell:
+			return i
+	return -1
+
+
+## Index of the cap (a `seal` fitting) in `list` covering the doorway on cell `c`'s face `d`, or -1.
+func capped(list: Array[Dictionary], c: Vector3i, d: Vector3i) -> int:
+	for i in list.size():
+		var m: Dictionary = list[i]
+		if not library.get_def(m.id).seal:
+			continue
+		for t in world_sockets(m.id, m.cell, m.rot):
+			if t.cell + t.dir == c and t.dir == -d:
+				return i
+	return -1
 
 
 ## Whether module `m` has a door socket on cell `c` facing `d`.
@@ -101,9 +132,9 @@ func open_doors() -> Array[Dictionary]:
 			var nb: Vector3i = s.cell + s.dir
 			var open := not occupied.has(nb)
 			if not open:
-				var other: Dictionary = modules[occupied[nb]]
-				var odef := library.get_def(other.id)
-				open = not odef.pressurized and not (odef.seal and _faces(other, nb, -s.dir))   # a door cap bolted over it closes it
+				open = not library.get_def(modules[occupied[nb]].id).pressurized
+			if open and capped(modules, s.cell, s.dir) >= 0:
+				open = false   # a door cap bolted over it closes it
 			if open:
 				out.append({"module": mi, "cell": s.cell, "dir": s.dir})
 	return out
@@ -183,7 +214,8 @@ func _mate_of(s: Dictionary, list: Array[Dictionary], occ: Dictionary) -> int:
 		if t.cell == nb and t.dir == facing:
 			if t.kind == s.kind:
 				return j
-			blocked = true  # that face has a doorway, so nothing can bolt over it
+			if not (s.kind == ModuleSocket.MOUNT and capped(list, nb, facing) >= 0):
+				blocked = true  # that face has a doorway, so nothing can bolt over it (unless it's capped)
 	if s.kind == ModuleSocket.MOUNT and not blocked and library.get_def(other.id).pressurized:
 		return j
 	return -1

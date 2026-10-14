@@ -512,6 +512,16 @@ func _build_external(root: Node3D) -> void:
 ## its rim, with a square porthole for the window kind. Only the plate: the rest of the cell stays empty.
 func _build_cap(root: Node3D, mat: Material, dark: Material, window: bool) -> void:
 	var h := ShipGrid.CELL * 0.5
+	var face := sockets[0].dir if not sockets.is_empty() else Vector3i(0, 0, -1)
+	if face.y != 0:   # a hatch cap: a square plate over the deck hatch, on the floor or ceiling of the cell
+		var y := float(face.y) * (h - 0.05)
+		var side := DOOR_HALF_W * 2.0 + 0.5
+		_add_box(root, Vector3(0, y, 0), Vector3(side, 0.08, side), mat)
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				_add_box(root, Vector3(sx * (side * 0.5 - 0.12), y - float(face.y) * 0.055, sz * (side * 0.5 - 0.12)), Vector3(0.08, 0.03, 0.08), dark)
+		_add_box(root, Vector3(0, y - float(face.y) * 0.05, 0), Vector3(side - 0.4, 0.02, 0.08), SurfaceTextures.hazard_material())
+		return
 	var z := -h + 0.05   # just outside the room's wall, over the doorway in it
 	var plate := Rect2(-DOOR_HALF_W - 0.25, -h + WALL_T, (DOOR_HALF_W + 0.25) * 2.0, DOOR_TOP + h + 0.2 - WALL_T)
 	var pieces: Array[Rect2] = [plate]

@@ -10,6 +10,7 @@ const CAPS_SHIP := [
 	[&"porthole_cap", Vector3i(-1, 0, 2), 3],
 	[&"tee", Vector3i(0, 0, 3), 0],
 	[&"door_cap", Vector3i(1, 0, 3), 1],
+	[&"radiator", Vector3i(1, 0, 3), 0],   # bolted on over the capped doorway
 	[&"cargo_hold", Vector3i(0, 0, 4), 0],
 	[&"engineering", Vector3i(0, 0, 6), 0],
 	[&"engine", Vector3i(0, 0, 7), 0],

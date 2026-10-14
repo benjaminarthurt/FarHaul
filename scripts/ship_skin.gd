@@ -229,12 +229,9 @@ static func _holes(ship: ShipData, c: Vector3i, d: Vector3i, info: Dictionary) -
 			out.append(Rect2(-0.95, -1.4, 1.9, 2.5))
 	if def.power > 50.0 and local_d.x != 0:   # reactor vents glowing on both sides
 		out.append(Rect2(-1.0, -0.7, 2.0, 1.4))
-	var nb := c + d   # a porthole cap over a doorway here: its window shows through the hull
-	if d.y == 0 and ship.occupied.has(nb):
-		var cap: Dictionary = ship.modules[ship.occupied[nb]]
-		var cdef: ModuleDef = ship.library.get_def(cap.id)
-		if cdef.seal and cdef.shape == &"cap_window" and ship._faces(cap, nb, -d):
-			out.append(Rect2(ModuleDef.PORTHOLE.position - Vector2(0.07, 0.07), ModuleDef.PORTHOLE.size + Vector2(0.14, 0.14)))
+	var ci := ship.capped(ship.modules, c, d) if d.y == 0 else -1   # a porthole cap over a doorway here: its window shows through the hull
+	if ci >= 0 and ship.library.get_def(ship.modules[ci].id).shape == &"cap_window":
+		out.append(Rect2(ModuleDef.PORTHOLE.position - Vector2(0.07, 0.07), ModuleDef.PORTHOLE.size + Vector2(0.14, 0.14)))
 	return out
 
 

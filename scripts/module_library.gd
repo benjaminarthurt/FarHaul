@@ -159,11 +159,20 @@ func _add_defaults() -> void:
 			"drive": 0.30, "power": -40.0, "heat": 50.0})
 
 	# --- Door caps: a plate bolted over a doorway nobody needs, so the hull stays sealed. Cheap, because
-	# a ship has a lot of them. It sits on the doorway's face of its cell; the cell itself stays clear
-	# to look at, though nothing else can go there while it's fitted. Fit it facing the doorway.
+	# a ship has a lot of them. A fitting, not a module: it fills no cell (ShipData.world_cells), so an
+	# engine, tank or radiator can still go in the cell beyond and bolt onto the capped face. Placed from
+	# the cell outside the doorway, facing it.
 	_def(&"door_cap", "Door cap", one, Color(0.50, 0.53, 0.58),
 		[_door(o, DIR_N)],
 		{"group": &"caps", "pressurized": false, "shape": &"cap", "seal": true, "mass": 0.1, "cost": 250})
 	_def(&"porthole_cap", "Door cap, porthole", one, Color(0.50, 0.53, 0.58),
 		[_door(o, DIR_N)],
 		{"group": &"caps", "pressurized": false, "shape": &"cap_window", "seal": true, "mass": 0.15, "cost": 600})
+	# Hatch caps: the same for the deck hatch in a ladder shaft's top or bottom. Placed from the cell
+	# above (top) or below (underside).
+	_def(&"hatch_cap_top", "Hatch cap, shaft top", one, Color(0.50, 0.53, 0.58),
+		[_door(o, DIR_D)],
+		{"group": &"caps", "pressurized": false, "shape": &"cap", "seal": true, "mass": 0.1, "cost": 250})
+	_def(&"hatch_cap_bottom", "Hatch cap, shaft bottom", one, Color(0.50, 0.53, 0.58),
+		[_door(o, DIR_U)],
+		{"group": &"caps", "pressurized": false, "shape": &"cap", "seal": true, "mass": 0.1, "cost": 250})

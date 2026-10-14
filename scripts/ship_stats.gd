@@ -48,11 +48,14 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		var d := lib.get_def(m.id)
 		var cells := ship.world_cells(m.id, m.cell, m.rot)
 		var centroid := Vector3.ZERO
+		if cells.is_empty():   # a cap: a plate on the doorway it covers, as near as matters at its cell
+			cells = [m.cell]
 		for c in cells:
 			var p := ShipGrid.cell_to_world(c)
 			centroid += p
-			lo = Vector3(minf(lo.x, p.x), minf(lo.y, p.y), minf(lo.z, p.z))
-			hi = Vector3(maxf(hi.x, p.x), maxf(hi.y, p.y), maxf(hi.z, p.z))
+			if not d.seal:   # a cap doesn't make the ship any bigger
+				lo = Vector3(minf(lo.x, p.x), minf(lo.y, p.y), minf(lo.z, p.z))
+				hi = Vector3(maxf(hi.x, p.x), maxf(hi.y, p.y), maxf(hi.z, p.z))
 		centroid /= float(cells.size())
 
 		dry += d.mass

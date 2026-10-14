@@ -778,8 +778,8 @@ func _update_ghost() -> void:
 	ghost.visible = not removing  # hide while removing
 
 	if removing:
-		if ship.occupied.has(cell):
-			var m: Dictionary = ship.modules[ship.occupied[cell]]
+		if ship.module_at(cell) >= 0:
+			var m: Dictionary = ship.modules[ship.module_at(cell)]
 			var gone := library.get_def(m.id)
 			_show_tip("Remove %s  (+%s cr)" % [gone.display_name, ShipStats.commas(gone.cost)], WARN_COLOR)
 		else:
