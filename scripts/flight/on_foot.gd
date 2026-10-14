@@ -168,6 +168,8 @@ func end_space_walk(why := "") -> void:
 	if sc.eva.tether_line != null:
 		sc.eva.tether_line.queue_free()
 	_free_eva_ui()
+	if sc.eva.carrying > 0 and not bool(Session.flight_extra.get("adrift", false)):
+		_eva_stow()   # reeled in with it: it comes too
 	var fixed := sc.eva.repairs
 	sc.eva = null
 	sc.walking = true
@@ -189,6 +191,64 @@ func _eva_say(text: String) -> void:
 
 
 const PART := 1000   ## space-walk targets at or above this are working parts (PART + module index); below, hull marks
+const SALVAGE := 100000   ## and at or above this, salvage panels on a derelict (SALVAGE + index into _salvage)
+
+var _salvage: Array = []   ## the salvage points in reach this step (Traffic.salvage_points), indexed by target - SALVAGE
+
+
+## Salvage panels on derelicts near the suit, {SALVAGE + k: where, in the ship view's frame}.
+func _eva_salvage() -> Dictionary:
+	var out := {}
+	_salvage.clear()
+	if sc.traffic_c == null or sc.eva == null:
+		return out
+	var to_view := sc.view.global_transform.affine_inverse()
+	var suit_world := sc.view.global_transform * sc.eva.pos
+	for p in sc.traffic_c.salvage_points():
+		if (p.world as Vector3).distance_to(suit_world) > 60.0:
+			continue
+		out[SALVAGE + _salvage.size()] = to_view * (p.world as Vector3)
+		_salvage.append(p)
+	return out
+
+
+## A derelict's hull near the suit is solid too: spheres per compartment, in the ship view's frame.
+func _eva_wreck_hulls() -> void:
+	var e := sc.eva
+	if sc.traffic_c == null:
+		e.spheres = []
+		return
+	var to_view := sc.view.global_transform.affine_inverse()
+	var out := []
+	for sp in sc.traffic_c.wreck_spheres(sc.view.global_transform * e.pos):
+		out.append({"centre": to_view * (sp.centre as Vector3), "radius": float(sp.radius)})
+	e.spheres = out
+
+
+## The cut panel is cut free and in your hands.
+func _eva_cut(i: int) -> void:
+	var p: Dictionary = _salvage[i - SALVAGE]
+	sc.traffic_c.take(p.point)
+	sc.eva.carrying = int(p.parts)
+	sc.eva.carrying_id = String(p.id)
+	if sc.sounds != null:
+		sc.sounds.play("done")
+	_eva_say("Panel cut free: %d salvage parts. Haul it back to the hatch; the hold won't come to you." % int(p.parts))
+
+
+## Back at the hatch with salvage: into the locker it goes.
+func _eva_stow() -> void:
+	var e := sc.eva
+	if e == null or e.carrying <= 0:
+		return
+	var key: String = SurfaceFinds.KINDS.get("salvage", "salvage")
+	Session.profile[key] = int(Session.profile.get(key, 0)) + e.carrying
+	var taken: Array = (Session.profile.get("salvage_taken", []) as Array).duplicate()
+	taken.append(e.carrying_id)
+	Session.profile["salvage_taken"] = taken.slice(maxi(0, taken.size() - 300))
+	_eva_say("Stowed %d salvage parts. %d in the locker: any dock's exchange will buy them." % [e.carrying, int(Session.profile[key])])
+	e.carrying = 0
+	e.carrying_id = ""
 
 
 ## Worn or failed working parts a space walk can do something about: {PART + module index: where}.
@@ -217,11 +277,21 @@ func _part(i: int) -> Dictionary:
 	return {}
 
 
-## Everything there is to fix: hull marks and working parts.
+## Everything there is to work on: hull marks, working parts and salvage panels on a derelict nearby.
 func _eva_targets() -> Dictionary:
 	var out := _eva_marks()
 	out.merge(_eva_parts())
+	out.merge(_eva_salvage())
 	return out
+
+
+## Why salvage panel `i` can't be cut right now, or "".
+func _salvage_blocked(in_hand: String) -> String:
+	if sc.eva != null and sc.eva.carrying > 0:
+		return "Your hands are full. Haul this lot back to the hatch first."
+	if in_hand != "torch":
+		return "Cutting a panel free wants the torch (2). A wrench would only knock politely."
+	return ""
 
 
 ## Why part target `i` can't be worked on right now, or "".
@@ -273,7 +343,10 @@ func _eva_step(delta: float) -> void:
 	e.message_t = maxf(0.0, e.message_t - dt)
 	if e.snapped and not was_snapped:
 		tether_snapped()
+	_eva_wreck_hulls()
 	eva_work(dt, Input.is_key_pressed(KEY_E) or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT))
+	if e.carrying > 0 and e.at_hatch():
+		_eva_stow()
 	_eva_tether()
 	_eva_tools(dt)
 	_update_eva_ui()
@@ -315,7 +388,7 @@ func eva_work(dt: float, holding: bool, tool := "") -> String:
 		e.work_t = 0.0
 		e.work_on = -1
 		return ""
-	var why := _part_blocked(i, e.tool) if i >= PART else SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool)
+	var why := _salvage_blocked(e.tool) if i >= SALVAGE else (_part_blocked(i, e.tool) if i >= PART else SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool))
 	if why != "":
 		e.work_t = 0.0
 		_eva_say(why)
@@ -326,7 +399,9 @@ func eva_work(dt: float, holding: bool, tool := "") -> String:
 	e.work_t += dt
 	if e.work_t < _work_s(i):
 		return "working"
-	if i >= PART:
+	if i >= SALVAGE:
+		_eva_cut(i)
+	elif i >= PART:
 		_eva_service(i)
 	else:
 		_eva_repair(i)
@@ -336,6 +411,8 @@ func eva_work(dt: float, holding: bool, tool := "") -> String:
 
 
 func _work_s(i: int) -> float:
+	if i >= SALVAGE:
+		return float((Traffic.config().get("derelicts", {}) as Dictionary).get("cut_s", 7.0))
 	if i >= PART:
 		var p := _part(i)
 		return float(Wear.cfg().get("eva_replace_s", 10.0)) if not p.is_empty() and float(p.wear) >= 1.0 else float(Wear.cfg().get("eva_service_s", 6.0))
@@ -420,13 +497,22 @@ func _eva_hud() -> void:
 	sc.hud.text = "\n".join(PackedStringArray([
 		"SPACE WALK    %s" % ("ADRIFT  %.0f m from the hatch" % e.distance() if e.snapped else "TETHER  %.0f m left" % e.tether_left()),
 		"AIR  %s%s" % [SurfaceWork.clock(e.o2), "   LOW: HEAD BACK" if low else ""],
-		"IN HAND  %s    PATCH KITS  %d    SPARES  %d" % ["WRENCH (1)" if e.tool == "wrench" else "TORCH (2)", Session.patch_kits(), Session.spares_kits()],
+		"IN HAND  %s    PATCH KITS  %d    SPARES  %d%s" % ["WRENCH (1)" if e.tool == "wrench" else "TORCH (2)", Session.patch_kits(), Session.spares_kits(),
+				"    CARRYING  %d SALVAGE PARTS: TO THE HATCH" % e.carrying if e.carrying > 0 else ""],
 		"HULL  %d%%%s    JOBS  %d" % [roundi(sc.model.hull() * 100.0), "  (space-walk limit)" if sc.model.hull() >= cap - 0.001 else "", _eva_targets().size()],
 	]))
 	var i := e.mark_in_reach(_eva_targets())
 	var hint := ""
 	if e.message_t > 0.0:
 		hint = e.message
+	elif i >= SALVAGE:
+		var why := _salvage_blocked(e.tool)
+		if why != "":
+			hint = why
+		elif e.work_on == i:
+			hint = "CUTTING THE PANEL FREE  %d%%" % roundi(e.work_t / _work_s(i) * 100.0)
+		else:
+			hint = "A salvage panel (%d parts). Hold E (or click): torch it free" % int(_salvage[i - SALVAGE].parts)
 	elif i >= PART:
 		var p := _part(i)
 		var why := _part_blocked(i, e.tool)
@@ -814,7 +900,12 @@ func _eva_tools(dt: float) -> void:
 	_flame.scale = Vector3.ONE * (0.8 + 0.4 * randf()) if lit else Vector3.ONE
 	_torch_light.light_energy = (2.5 + randf() * 1.5) if lit else 0.0
 	_sparks.emitting = working
-	if working and e.work_on >= PART:
+	if working and e.work_on >= SALVAGE:   # cutting a derelict's panel
+		var sv := _eva_salvage()
+		if sv.has(e.work_on):
+			_sparks.position = sv[e.work_on]
+			_sparks.direction = (e.pos - (sv[e.work_on] as Vector3)).normalized()
+	elif working and e.work_on >= PART:
 		_sparks.position = _part_pos(e.work_on - PART)
 		_sparks.direction = Vector3.UP
 	elif working:

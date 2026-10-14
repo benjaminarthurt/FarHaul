@@ -147,6 +147,8 @@ func rebuild_for(port_id: String) -> void:
 	sc.station.visible = shown
 	sc.station_label.text = String(LocalSpace.node(port_id).get("name", sc.station_label.text)).to_upper()
 	_build_planet()
+	if sc.traffic_c != null:
+		sc.traffic_c.rebuild(port_id)   # this place's own ships and wrecks
 
 
 ## How many of a thing a station of this tier has: `by_tier` lists core..extreme frontier.

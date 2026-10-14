@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "note": "Other ships you can see (scripts/flight/traffic.gd) and derelicts to salvage. Counts follow the economy's carriers in the system, capped. Distances in metres, speeds in m/s.",
+  "parked_max": 4,
+  "parked_ring_m": [75.0, 120.0],
+  "movers_max": 2,
+  "mover_far_m": 5000.0,
+  "mover_speed_m_s": 90.0,
+  "mover_rest_s": [20.0, 70.0],
+  "passer_every_s": [50.0, 140.0],
+  "passer_ahead_m": 40000.0,
+  "passer_side_m": [1200.0, 3000.0],
+  "passer_speed_m_s": 600.0,
+  "label_range_m": 4000.0,
+  "names": ["Hesper's Wake", "Long Patience", "Quiet Margin", "Second Thoughts", "Tallyman", "Cold Comfort", "Mostly Harmless Cargo", "Slow Coach", "Marigold", "Ninth Life", "Overdue", "Sundry", "Fair Weather", "Ballast", "Kettle", "Odd Lot", "Cheerful Debt", "Low Bid", "Ember", "Weight of Water", "Corvid", "Sixpence", "Iron Lullaby", "Grey Goose", "Ledger Line", "Pennywise", "Hollow Bell", "Patient Mule", "Small Mercy", "Tin Saint"],
+  "derelicts": {
+    "chance": 0.75,
+    "max": 2,
+    "distance_m": [1800.0, 5200.0],
+    "points": [4, 7],
+    "parts_per_point": [2, 5],
+    "cut_s": 7.0,
+    "names": ["the Ruth Ellery", "the Cantor", "the Little Easy", "an unnamed hauler", "the Fourth Estate", "the Marguerite", "the Last Word", "the Patience Two"]
+  }
+}

@@ -503,7 +503,7 @@ function renderEva(s) {
   $("adrift").hidden = !e.snapped;
   $("adrift").textContent = e.snapped ? "Tether snapped. You're " + Math.round(e.distance) + " m from the hatch and the winch has nothing to wind. Jet back, or wait for the tug." : "";
   $("kReel").disabled = !!e.snapped;
-  $("evaNote").textContent = (e.at_hatch ? "At the hatch: Q at the keyboard climbs back in. " : "") + "In hand: " + (e.tool === "torch" ? "the torch" : "the wrench") + (e.repairs ? " · " + e.repairs + " fixed this walk" : "");
+  $("evaNote").textContent = (e.at_hatch ? "At the hatch: Q at the keyboard climbs back in. " : "") + "In hand: " + (e.tool === "torch" ? "the torch" : "the wrench") + (e.repairs ? " · " + e.repairs + " fixed this walk" : "") + (e.carrying ? " · carrying " + e.carrying + " salvage parts: back to the hatch" : "");
 }
 
 // ---- Ship and crew ------------------------------------------------------------------------

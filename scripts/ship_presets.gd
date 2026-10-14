@@ -71,6 +71,26 @@ const STARTER_CABIN := [
 ]
 
 
+## A longer hauler for other people's ships (Traffic): two holds, two tanks, four radiators. The player
+## never starts with one.
+const NPC_HAULER := [
+	[&"cockpit", Vector3i(0, 0, 0), 0],
+	[&"tee", Vector3i(0, 0, 1), 0],
+	[&"airlock", Vector3i(1, 0, 1), 0],
+	[&"cargo_hold", Vector3i(0, 0, 2), 0],
+	[&"cargo_hold", Vector3i(0, 0, 4), 0],
+	[&"engineering", Vector3i(0, 0, 6), 0],
+	[&"engine", Vector3i(0, 0, 7), 0],
+	[&"radiator", Vector3i(1, 0, 6), 0],
+	[&"radiator", Vector3i(-1, 0, 6), 2],
+	[&"radiator", Vector3i(1, 0, 5), 0],
+	[&"radiator", Vector3i(1, 0, 4), 0],
+	[&"tank", Vector3i(-1, 0, 2), 0],
+	[&"tank", Vector3i(-1, 0, 4), 0],
+	[&"jump_drive", Vector3i(1, 0, 2), 0],
+]
+
+
 ## Replaces whatever is on `ship`. Returns the first error, or "" if everything placed.
 static func build(ship: ShipData, steps: Array = STARTER) -> String:
 	ship.clear()

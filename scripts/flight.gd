@@ -97,6 +97,7 @@ var _last_feet := Vector3.INF
 var jump_c: JumpSequence       ## a flown star jump (scripts/flight/jump_sequence.gd)
 var foot_c: OnFoot             ## walking the ship and the suit outside (scripts/flight/on_foot.gd)
 var crew_c: CrewWork           ## the hired crew at work (scripts/flight/crew_work.gd)
+var traffic_c: Traffic         ## other ships and derelicts (scripts/flight/traffic.gd)
 var land_c: Landing            ## descents, lift-offs and the moon coming and going (scripts/flight/landing.gd)
 var world_c: SpaceScenery      ## sky, sun, motes and the station (scripts/flight/space_scenery.gd)
 var hud_c: FlightHud           ## builds and refreshes the readouts (scripts/flight/flight_hud.gd)
@@ -122,10 +123,12 @@ func _init() -> void:
 	crew_c = CrewWork.new(self)
 	land_c = Landing.new(self)
 	world_c = SpaceScenery.new(self)
+	traffic_c = Traffic.new(self)
 
 
 func _ready() -> void:
 	_build_world()
+	traffic_c.rebuild(String(Session.profile.get("port_id", "")))
 	_build_ship()
 	model.station_boxes = world_c.boxes   # the station's modules are solid too
 	_build_hud()
@@ -302,6 +305,8 @@ func _process(delta: float) -> void:
 		fx.global_position = model.pos
 		fx.global_basis = model.basis
 	if _jumping():
+		if traffic_c.root != null:
+			traffic_c.root.visible = false   # everyone else stays behind
 		_jump_step(delta)
 		_apply_pose()
 		_update_hud()
@@ -389,8 +394,13 @@ func _process(delta: float) -> void:
 	_check_hull()
 	_wear_step(minf(delta, 0.05) * float(_warp()))
 	if hit_world != "":   # said last, so the hull's own warnings don't drown it out (they're on the HUD and the alerts)
-		say("You flew into %s at %s m/s. It didn't move. Planets are solid; the brochure was clear." % [hit_world, ShipStats.commas(roundi(model.last_impact))], 6.0)
+		if model.crashed_ship:
+			say("You flew into %s at %s m/s.%s" % [hit_world, ShipStats.commas(roundi(model.last_impact)),
+					" Nobody aboard to complain." if hit_world.contains("wreck") else " Their insurer will be in touch."], 6.0)
+		else:
+			say("You flew into %s at %s m/s. It didn't move. Planets are solid; the brochure was clear." % [hit_world, ShipStats.commas(roundi(model.last_impact))], 6.0)
 	crew_c.step(minf(delta, 0.05) * float(_warp()))
+	traffic_c.step(minf(delta, 0.05) * float(_warp()))
 	view.set_damage(model.damage)
 	_apply_pose()
 	_update_hud()
@@ -519,7 +529,7 @@ func remote_state() -> Dictionary:
 		st["jump_why"] = why
 	if eva != null:
 		st["eva"] = {"air": eva.o2, "air_max": eva.o2_max, "tether_m": eva.tether_m, "tether_left": eva.tether_left(), "distance": eva.distance(),
-				"strain": eva.strain, "snapped": eva.snapped, "tool": eva.tool, "at_hatch": eva.at_hatch(), "repairs": eva.repairs}
+				"strain": eva.strain, "snapped": eva.snapped, "tool": eva.tool, "at_hatch": eva.at_hatch(), "repairs": eva.repairs, "carrying": eva.carrying}
 	if ship_data != null:
 		st["status"] = ShipRemote.status_block(ship_data, wear, model.hull(), crew_c.status() if crew_c != null else [],
 				{"cargo_t": model.cargo_t, "fuel": model.fuel_t, "fuel_max": float(stats.get("fuel", model.fuel_t))})
@@ -538,6 +548,8 @@ func solid_bodies() -> Array:
 	for n in [planet] + planet.get_children():
 		if n is Node3D and (n as Node3D).has_meta("radius"):
 			out.append({"centre": (n as Node3D).global_position, "radius": float(n.get_meta("radius")), "name": String(n.get_meta("world_name", "the planet"))})
+	if traffic_c != null:
+		out.append_array(traffic_c.bodies())   # other ships are solid too
 	return out
 
 

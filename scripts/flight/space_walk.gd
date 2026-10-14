@@ -40,6 +40,9 @@ var tension_n := 0.0           ## the load on the tether this step, newtons
 var snapped := false           ## the tether broke: adrift
 var com := Vector3.ZERO        ## the ship's centre of mass, ship view frame (what it spins about)
 var last_ship_vel := Vector3.INF   ## for working out the ship's acceleration between steps (flight scene)
+var spheres: Array = []        ## other hulls nearby (a derelict's), in this frame: {centre, radius}; set each step
+var carrying := 0              ## salvage parts in hand, cut off a derelict and not yet stowed
+var carrying_id := ""          ## which panel they came from
 
 
 static func tuning() -> Dictionary:
@@ -128,8 +131,16 @@ func step(dt: float, move: Vector3, fast := false, ship_accel := Vector3.ZERO, s
 	o2 = maxf(0.0, o2 - dt * (1.4 if fast and move.length() > 0.01 else 1.0))
 
 
-## Out of any box the suit has drifted into, by the shortest way, and stop moving into it.
+## Out of any box (or other hull) the suit has drifted into, by the shortest way, and stop moving into it.
 func _keep_out() -> void:
+	for sp in spheres:
+		var off: Vector3 = pos - (sp.centre as Vector3)
+		var r := float(sp.radius) + RADIUS
+		if off.length() < r and off.length() > 0.001:
+			var n := off.normalized()
+			pos = (sp.centre as Vector3) + n * r
+			if vel.dot(n) < 0.0:
+				vel -= n * vel.dot(n)
 	for b in boxes:
 		if not b.has_point(pos):
 			continue

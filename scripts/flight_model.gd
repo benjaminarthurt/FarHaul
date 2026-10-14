@@ -56,7 +56,8 @@ var cargo_hurt := 0.0            # 0..1 of the cargo's value spoiled by knocks
 var leaked_t := 0.0              # fuel lost through the leak, tonnes (also counted in fuel_burned_t)
 var impacts := 0
 var bodies: Array = []           # worlds in this frame that the ship can't fly through: [{centre: Vector3, radius: float}]
-var crashed_into := ""           # name of the last world the ship hit, for the cockpit
+var crashed_into := ""           # name of the last world (or ship) the ship hit, for the cockpit
+var crashed_ship := false        # and whether it was a ship
 var last_impact := 0.0           # speed of the latest hit, m/s
 var fuel_burned_t := 0.0
 var elapsed_s := 0.0
@@ -700,6 +701,7 @@ func _collide_bodies() -> void:
 		vel += n * into * (1.0 + float(tune.get("restitution", 0.25)))
 		last_impact = into
 		crashed_into = String(b.get("name", "the planet"))
+		crashed_ship = bool(b.get("ship", false))
 		var soft := float(tune.get("soft_impact_m_s", 1.5))
 		if into > soft:
 			impacts += 1
