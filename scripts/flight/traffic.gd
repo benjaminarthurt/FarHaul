@@ -30,6 +30,7 @@ var derelicts: Array = []     ## {ship, name, deep, points: [{id, pos (body fram
 var pods: Array = []          ## {ship, state, t, dur, a, b, rest, home}
 var orbiters: Array = []      ## {ship, world: Node3D it circles, radius, speed, angle, tilt: Basis}
 var deep_key := ""            ## the run the deep derelict (if any) was placed for
+var _announce := ""           ## the sensors' line about it, said once the cockpit isn't saying something else
 var site := ""
 var rng := RandomNumberGenerator.new()
 
@@ -76,6 +77,7 @@ func clear() -> void:
 	pods.clear()
 	orbiters.clear()
 	deep_key = ""
+	_announce = ""
 	passer = null
 
 
@@ -184,10 +186,31 @@ func _add_derelict(layout: Array, nm: String, tag: String, at: Vector3, id_base:
 	for k in mini(usable.size(), r.randi_range(int(pts[0]), int(pts[1]))):
 		var site_k: Dictionary = sites[usable[k]]
 		var id := "%s|%d" % [id_base, k]
-		var p := {"id": id, "pos": site_k.pos, "normal": site_k.normal, "parts": r.randi_range(int(ppp[0]), int(ppp[1])), "taken": id in taken}
+		var p := {"id": id, "kind": "panel", "pos": site_k.pos, "normal": site_k.normal, "parts": r.randi_range(int(ppp[0]), int(ppp[1])), "taken": id in taken}
 		p["marker"] = _marker(s, site_k.pos, site_k.normal)
 		(p.marker as Node3D).visible = not bool(p.taken)
 		points.append(p)
+	# The cargo hatch: torch it open and the hold's contents drift out to be hauled home (Salvage).
+	var hk: int = usable[mini(usable.size() - 1, points.size())] if not usable.is_empty() else 0
+	if not sites.is_empty():
+		var hs: Dictionary = sites[hk]
+		var hid := "%s|h" % id_base
+		var hatch := {"id": hid, "kind": "hatch", "pos": hs.pos, "normal": hs.normal, "parts": 0, "taken": hid in taken}
+		hatch["marker"] = _hatch_marker(s, hs.pos, hs.normal)
+		hatch["open_mark"] = _hatch_hole(s, hs.pos, hs.normal)
+		(hatch.marker as Node3D).visible = not bool(hatch.taken)
+		(hatch.open_mark as Node3D).visible = bool(hatch.taken)
+		points.append(hatch)
+		var items := Salvage.roll(layout, r, deep)
+		var face := ShipDamage._facing(hs.normal)
+		for k in items.size():
+			var iid := "%s|h|%d" % [id_base, k]
+			var side := face * Vector3((k % 3 - 1) * 1.6, 0.0, ((k / 3) % 2) * 1.4 - 0.7)
+			var at_k: Vector3 = (hs.pos as Vector3) + (hs.normal as Vector3) * (2.2 + 1.1 * (k % 2)) + side
+			var it := {"id": iid, "kind": "item", "item": items[k], "pos": at_k, "normal": hs.normal, "parts": 0, "taken": iid in taken, "hatch": hatch}
+			it["marker"] = _item_marker(s, at_k, items[k], r)
+			(it.marker as Node3D).visible = bool(hatch.taken) and not bool(it.taken)
+			points.append(it)
 	var d := {"ship": s, "name": nm, "points": points, "deep": deep}
 	derelicts.append(d)
 	return d
@@ -199,6 +222,9 @@ func _deep_derelict() -> void:
 	if key == "" or key == deep_key or sc.xfer == null:
 		return
 	deep_key = key
+	var dest := String(sc.job.get("dest_id", ""))
+	if String(sc.job.get("dest_kind", "")) == "moon" or LocalSpace.is_surface(dest):
+		return   # a run down to the ground: the dead stay out in the deep
 	var dp: Dictionary = cfg.get("deep", {})
 	var r := RandomNumberGenerator.new()
 	r.seed = hash("deep|" + key)
@@ -215,7 +241,7 @@ func _deep_derelict() -> void:
 	var d := _add_derelict([ShipPresets.STARTER_FTL, ShipPresets.NPC_HAULER, ShipPresets.NPC_SURVEYOR][r.randi() % 3], String(names[r.randi() % names.size()]),
 			"DERELICT · FTL FAILED", at, "deep|%s" % key, r, taken, true)
 	(d.ship as NpcShip).label.modulate = Color(1.0, 0.5, 0.3)
-	sc.say("Sensors: a dead ship out on the route, %s. No transponder, no drive signature. Brake (X) to stop by it." % String(d.name), 8.0)
+	_announce = "Sensors: a dead ship out on the route, %s. No transponder, no drive signature. Brake (X) to stop by it." % String(d.name)
 
 
 ## Metres to the nearest dead ship out on a route, INF if none.
@@ -264,7 +290,8 @@ func _marker(s: NpcShip, pos: Vector3, normal: Vector3) -> Node3D:
 	return m
 
 
-## Every salvage point still there: [{id, world (position), parts, derelict, k}].
+## Every salvage point still there: [{id, kind (panel, hatch, item), world (position), parts, item, point}].
+## A hold's items only once its hatch is open.
 func salvage_points() -> Array:
 	var out := []
 	for d in derelicts:
@@ -273,16 +300,119 @@ func salvage_points() -> Array:
 			continue
 		for k in (d.points as Array).size():
 			var p: Dictionary = d.points[k]
-			if not bool(p.taken):
-				out.append({"id": String(p.id), "world": s.body.global_transform * (p.pos as Vector3), "parts": int(p.parts), "point": p})
+			if bool(p.taken) or (p.has("hatch") and not bool(p.hatch.taken)):
+				continue
+			var world: Vector3 = s.body.global_transform * (p.pos as Vector3)
+			if p.has("marker") and is_instance_valid(p.marker) and String(p.get("kind", "")) == "item":
+				world = (p.marker as Node3D).global_position   # drifting a little
+			out.append({"id": String(p.id), "kind": String(p.get("kind", "panel")), "world": world, "parts": int(p.parts), "item": p.get("item", {}), "point": p})
 	return out
 
 
-## Mark a point cut free.
+## Mark a point cut free (a panel), cut open (a hatch: the hold's items come into view) or taken (an item).
 func take(point: Dictionary) -> void:
 	point["taken"] = true
 	if point.has("marker") and is_instance_valid(point.marker):
 		(point.marker as Node3D).visible = false
+	if String(point.get("kind", "")) != "hatch":
+		return
+	if point.has("open_mark") and is_instance_valid(point.open_mark):
+		(point.open_mark as Node3D).visible = true
+	for d in derelicts:
+		for p in d.points:
+			if p.has("hatch") and p.hatch == point and not bool(p.taken) and is_instance_valid(p.marker):
+				(p.marker as Node3D).visible = true
+
+
+## The cargo hatch, sealed: a broad yellow frame with a bar across, so it reads as a door, not a panel.
+func _hatch_marker(s: NpcShip, pos: Vector3, normal: Vector3) -> Node3D:
+	var m := Node3D.new()
+	m.position = pos + normal * 0.05
+	m.basis = ShipDamage._facing(normal)
+	var mat := Interiors.glow(Color(1.0, 0.85, 0.3), 0.6)
+	for e in [[Vector3(0, 0, 0.8), Vector3(2.0, 0.04, 0.08)], [Vector3(0, 0, -0.8), Vector3(2.0, 0.04, 0.08)],
+			[Vector3(0.96, 0, 0), Vector3(0.08, 0.04, 1.6)], [Vector3(-0.96, 0, 0), Vector3(0.08, 0.04, 1.6)],
+			[Vector3(0, 0, 0), Vector3(1.9, 0.04, 0.06)]]:
+		var mi := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = e[1]
+		bm.material = mat
+		mi.mesh = bm
+		mi.position = e[0]
+		m.add_child(mi)
+	s.body.add_child(m)
+	return m
+
+
+## The hatch once it's been cut away: a dark hole with a scorched rim.
+func _hatch_hole(s: NpcShip, pos: Vector3, normal: Vector3) -> Node3D:
+	var m := Node3D.new()
+	m.position = pos + normal * 0.03
+	m.basis = ShipDamage._facing(normal)
+	var hole := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(1.85, 0.03, 1.5)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.02, 0.02, 0.025)
+	mat.roughness = 1.0
+	bm.material = mat
+	hole.mesh = bm
+	m.add_child(hole)
+	var rim := MeshInstance3D.new()
+	var rm := BoxMesh.new()
+	rm.size = Vector3(2.05, 0.02, 1.7)
+	rm.material = Interiors.glow(Color(0.9, 0.35, 0.1), 0.25)
+	rim.mesh = rm
+	rim.position = Vector3(0, -0.01, 0)
+	m.add_child(rim)
+	s.body.add_child(m)
+	return m
+
+
+## Something out of the hold, drifting by the hatch: a crate in its goods' colour, a green supplies case,
+## or a grey machine part with a hazard band. A faint glow so it can be found in shadow.
+func _item_marker(s: NpcShip, pos: Vector3, item: Dictionary, r: RandomNumberGenerator) -> Node3D:
+	var m := Node3D.new()
+	m.position = pos
+	m.rotation = Vector3(r.randf_range(-0.6, 0.6), r.randf() * TAU, r.randf_range(-0.6, 0.6))
+	var mi := MeshInstance3D.new()
+	var mat := StandardMaterial3D.new()
+	mat.roughness = 0.7
+	match String(item.get("kind", "")):
+		"crate":
+			var bm := BoxMesh.new()
+			bm.size = Vector3(1.3, 0.9, 0.9)
+			mi.mesh = bm
+			mat.albedo_color = Salvage.clib().color(StringName(String(item.commodity))).darkened(0.1)
+		"supplies":
+			var bm := BoxMesh.new()
+			bm.size = Vector3(0.8, 0.5, 0.5)
+			mi.mesh = bm
+			mat.albedo_color = Color(0.3, 0.6, 0.35)
+		_:
+			var cm := CylinderMesh.new()
+			cm.top_radius = 0.45
+			cm.bottom_radius = 0.55
+			cm.height = 1.3
+			mi.mesh = cm
+			mat.albedo_color = Color(0.5, 0.52, 0.56)
+			mat.metallic = 0.6
+	mat.emission_enabled = true
+	mat.emission = mat.albedo_color
+	mat.emission_energy_multiplier = 0.15
+	mi.material_override = mat
+	m.add_child(mi)
+	var band := MeshInstance3D.new()
+	var bb := BoxMesh.new()
+	bb.size = Vector3(0.12, 1.0, 1.0) if String(item.get("kind", "")) != "part" else Vector3(1.15, 0.14, 1.15)
+	bb.material = Interiors.glow(Color(1.0, 0.75, 0.2), 0.35)
+	band.mesh = bb
+	m.add_child(band)
+	m.set_meta("spin", Vector3(r.randf_range(-0.15, 0.15), r.randf_range(-0.2, 0.2), r.randf_range(-0.1, 0.1)))
+	m.set_meta("home", pos)
+	m.set_meta("phase", r.randf() * TAU)
+	s.body.add_child(m)
+	return m
 
 
 ## The wrecks' hulls near `world`, as spheres in the world frame: {centre, radius} per compartment.
@@ -334,6 +464,9 @@ func step(dt: float) -> void:
 		_orbit(o, dt)
 	if sc.xfer != null and (sc.phase == "cruise" or sc.phase == "depart"):
 		_deep_derelict()
+	if _announce != "" and sc.notice_s <= 0.0:
+		sc.say(_announce, 8.0)
+		_announce = ""
 	_pass(dt)
 	var eye: Vector3 = sc.model.pos
 	var rng_m := float(cfg.get("label_range_m", 4000.0))
@@ -347,6 +480,9 @@ func step(dt: float) -> void:
 		(o.ship as NpcShip).show_tag(eye, rng_m)
 	for d in derelicts:
 		(d.ship as NpcShip).show_tag(eye, 1.0e9)   # wrecks are worth finding: always tagged
+		for p in d.points:
+			if String(p.get("kind", "")) == "item" and is_instance_valid(p.marker) and (p.marker as Node3D).visible:
+				(p.marker as Node3D).rotation += (p.marker as Node3D).get_meta("spin", Vector3.ZERO) * dt   # tumbling slowly
 	if passer != null:
 		passer.show_tag(eye, rng_m * 2.0)
 

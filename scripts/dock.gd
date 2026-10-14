@@ -201,6 +201,9 @@ func _build_ui() -> void:
 	var finds := Session.finds_aboard() if Session.slot >= 0 else {}
 	if int(finds.get("value", 0)) > 0:
 		_button(menu, "SELL FINDS  %s cr" % ShipStats.commas(int(finds.value)), _sell_finds).tooltip_text = "%s from the moon, sold here." % SurfaceFinds.describe(finds).capitalize()
+	var sv := (Salvage.cargo_value() + Salvage.parts_value()) if Session.slot >= 0 else 0
+	if sv > 0:
+		_button(menu, "SELL SALVAGE  %s cr" % ShipStats.commas(sv), _sell_salvage).tooltip_text = "Cargo and parts off derelicts, out of the hold and sold here."
 	_button(menu, "SAVE GAME", _save)
 	_button(menu, "NEW GAME" if Session.insolvent() else "MAIN MENU", _main_menu)
 	status = Label.new()
@@ -553,6 +556,16 @@ func _sell_finds() -> void:
 	status.text = r.message
 	if bool(r.ok):
 		Session.flash = String(r.message)
+		get_tree().reload_current_scene()
+
+
+func _sell_salvage() -> void:
+	var a := Salvage.sell("cargo")
+	var b := Salvage.sell("parts")
+	var msg := " ".join(PackedStringArray([String(a.message) if bool(a.ok) else "", String(b.message) if bool(b.ok) else ""])).strip_edges()
+	status.text = msg
+	if bool(a.ok) or bool(b.ok):
+		Session.flash = msg
 		get_tree().reload_current_scene()
 
 

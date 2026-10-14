@@ -503,7 +503,7 @@ function renderEva(s) {
   $("adrift").hidden = !e.snapped;
   $("adrift").textContent = e.snapped ? "Tether snapped. You're " + Math.round(e.distance) + " m from the hatch and the winch has nothing to wind. Jet back, or wait for the tug." : "";
   $("kReel").disabled = !!e.snapped;
-  $("evaNote").textContent = (e.at_hatch ? "At the hatch: Q at the keyboard climbs back in. " : "") + "In hand: " + (e.tool === "torch" ? "the torch" : "the wrench") + (e.repairs ? " · " + e.repairs + " fixed this walk" : "") + (e.carrying ? " · carrying " + e.carrying + " salvage parts: back to the hatch" : "");
+  $("evaNote").textContent = (e.at_hatch ? "At the hatch: Q at the keyboard climbs back in. " : "") + "In hand: " + (e.tool === "torch" ? "the torch" : "the wrench") + (e.repairs ? " · " + e.repairs + " fixed this walk" : "") + (e.carrying ? " · carrying " + (e.carry_what ? e.carry_what : e.carrying + " salvage parts") + ": back to the hatch" : "");
 }
 
 // ---- Ship and crew ------------------------------------------------------------------------
@@ -590,6 +590,9 @@ function renderPort(p) {
   const stt = state.status || {};
   r += row("<b>Patch kit</b><small>For holes in the hull: yours or the deck tech's. " + (stt.patch_kits || 0) + " of " + (stt.patch_kit_max || 8) + " aboard.</small>", act(cr(sh.patch_kit), "buy_patch_kit", "", { off: (stt.patch_kits || 0) >= (stt.patch_kit_max || 8) || credits < sh.patch_kit }));
   r += row("<b>Spares kit</b><small>Brings a failed part back. " + (stt.spares_kits || 0) + " of " + (stt.spares_kit_max || 4) + " aboard.</small>", act(cr(sh.spares_kit), "buy_spares_kit", "", { off: (stt.spares_kits || 0) >= (stt.spares_kit_max || 4) || credits < sh.spares_kit }));
+  const sv = p.salvage || {};
+  if ((sv.cargo || []).length) r += row("<b>Salvaged cargo</b><small>" + esc(sv.cargo.join(", ")) + ". Sold to whoever here deals in it.</small>", act(cr(sv.cargo_value), "sell_cargo", ""));
+  if ((sv.parts || []).length) r += row("<b>Salvaged parts</b><small>" + esc(sv.parts.join(", ")) + ". The yard takes them.</small>", act(cr(sv.parts_value), "sell_parts", ""));
   $("tabShop").innerHTML = r;
 }
 $("portCard").addEventListener("click", (e) => {

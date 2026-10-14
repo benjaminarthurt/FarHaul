@@ -225,27 +225,65 @@ func _eva_wreck_hulls() -> void:
 	e.spheres = out
 
 
-## The cut panel is cut free and in your hands.
+## The torch is through: a panel cut free and in your hands, a hatch cut open, or a hold item grabbed.
 func _eva_cut(i: int) -> void:
 	var p: Dictionary = _salvage[i - SALVAGE]
 	sc.traffic_c.take(p.point)
-	sc.eva.carrying = int(p.parts)
-	sc.eva.carrying_id = String(p.id)
 	if sc.sounds != null:
 		sc.sounds.play("done")
-	_eva_say("Panel cut free: %d salvage parts. Haul it back to the hatch; the hold won't come to you." % int(p.parts))
+	match String(p.kind):
+		"hatch":
+			_mark_taken(String(p.id))
+			Session.save_profile()
+			var n := 0
+			for d in sc.traffic_c.derelicts:
+				for q in d.points:
+					if q.has("hatch") and q.hatch == p.point and not bool(q.taken):
+						n += 1
+			_eva_say("Hatch cut open. %s out of the hold. One armful at a time, back to your hatch." % ("Nothing drifts" if n == 0 else ("One thing drifts" if n == 1 else "%d things drift" % n)))
+		"item":
+			sc.eva.carry = (p.item as Dictionary).duplicate()
+			sc.eva.carrying = 1
+			sc.eva.carrying_id = String(p.id)
+			_room.clear()
+			_eva_say("Got %s. Back to the hatch with it." % Salvage.describe(p.item))
+		_:
+			sc.eva.carry = {}
+			sc.eva.carrying = int(p.parts)
+			sc.eva.carrying_id = String(p.id)
+			_eva_say("Panel cut free: %d salvage parts. Haul it back to the hatch; the hold won't come to you." % int(p.parts))
 
 
-## Back at the hatch with salvage: into the locker it goes.
+func _mark_taken(id: String) -> void:
+	var taken: Array = (Session.profile.get("salvage_taken", []) as Array).duplicate()
+	taken.append(id)
+	Session.profile["salvage_taken"] = taken.slice(maxi(0, taken.size() - 300))
+
+
+## Back at the hatch with salvage: panels into the locker, hold items into the hold or the lockers.
 func _eva_stow() -> void:
 	var e := sc.eva
 	if e == null or e.carrying <= 0:
 		return
+	if not e.carry.is_empty():
+		_mark_taken(e.carrying_id)
+		var r := Salvage.stow(e.carry)
+		if bool(r.ok):
+			sc.model.cargo_t += float(r.tonnes)   # she's heavier now
+		else:
+			var taken: Array = Session.profile.get("salvage_taken", [])
+			taken.erase(e.carrying_id)
+			Session.save_profile()
+			r.message = String(r.message) + " You let it go by the hatch."
+		_eva_say(String(r.message))
+		_room.clear()
+		e.carry = {}
+		e.carrying = 0
+		e.carrying_id = ""
+		return
 	var key: String = SurfaceFinds.KINDS.get("salvage", "salvage")
 	Session.profile[key] = int(Session.profile.get(key, 0)) + e.carrying
-	var taken: Array = (Session.profile.get("salvage_taken", []) as Array).duplicate()
-	taken.append(e.carrying_id)
-	Session.profile["salvage_taken"] = taken.slice(maxi(0, taken.size() - 300))
+	_mark_taken(e.carrying_id)
 	_eva_say("Stowed %d salvage parts. %d in the locker: any dock's exchange will buy them." % [e.carrying, int(Session.profile[key])])
 	e.carrying = 0
 	e.carrying_id = ""
@@ -285,12 +323,25 @@ func _eva_targets() -> Dictionary:
 	return out
 
 
-## Why salvage panel `i` can't be cut right now, or "".
-func _salvage_blocked(in_hand: String) -> String:
+var _room := {}   ## hold item id -> why it won't fit ("" if it will), so the save isn't read every frame
+
+## Why salvage target `i` (a panel, a hatch or a hold item) can't be worked right now, or "".
+func _salvage_blocked(i: int, in_hand: String) -> String:
 	if sc.eva != null and sc.eva.carrying > 0:
 		return "Your hands are full. Haul this lot back to the hatch first."
-	if in_hand != "torch":
-		return "Cutting a panel free wants the torch (2). A wrench would only knock politely."
+	var p: Dictionary = _salvage[i - SALVAGE] if i - SALVAGE < _salvage.size() else {}
+	match String(p.get("kind", "panel")):
+		"item":
+			var id := String(p.id)
+			if not _room.has(id):
+				_room[id] = Salvage.room_for(p.item)
+			return String(_room[id])
+		"hatch":
+			if in_hand != "torch":
+				return "The hatch is welded shut, or near enough. That's a job for the torch (2)."
+		_:
+			if in_hand != "torch":
+				return "Cutting a panel free wants the torch (2). A wrench would only knock politely."
 	return ""
 
 
@@ -388,7 +439,7 @@ func eva_work(dt: float, holding: bool, tool := "") -> String:
 		e.work_t = 0.0
 		e.work_on = -1
 		return ""
-	var why := _salvage_blocked(e.tool) if i >= SALVAGE else (_part_blocked(i, e.tool) if i >= PART else SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool))
+	var why := _salvage_blocked(i, e.tool) if i >= SALVAGE else (_part_blocked(i, e.tool) if i >= PART else SpaceWalk.blocked(i, sc.model.hull(), Session.patch_kits(), e.tool))
 	if why != "":
 		e.work_t = 0.0
 		_eva_say(why)
@@ -412,6 +463,11 @@ func eva_work(dt: float, holding: bool, tool := "") -> String:
 
 func _work_s(i: int) -> float:
 	if i >= SALVAGE:
+		var kind := String(_salvage[i - SALVAGE].kind) if i - SALVAGE < _salvage.size() else "panel"
+		if kind == "hatch":
+			return float(Salvage.cfg().get("cut_s", 14.0))
+		if kind == "item":
+			return float(Salvage.cfg().get("grab_s", 1.5))
 		return float((Traffic.config().get("derelicts", {}) as Dictionary).get("cut_s", 7.0))
 	if i >= PART:
 		var p := _part(i)
@@ -498,7 +554,7 @@ func _eva_hud() -> void:
 		"SPACE WALK    %s" % ("ADRIFT  %.0f m from the hatch" % e.distance() if e.snapped else "TETHER  %.0f m left" % e.tether_left()),
 		"AIR  %s%s" % [SurfaceWork.clock(e.o2), "   LOW: HEAD BACK" if low else ""],
 		"IN HAND  %s    PATCH KITS  %d    SPARES  %d%s" % ["WRENCH (1)" if e.tool == "wrench" else "TORCH (2)", Session.patch_kits(), Session.spares_kits(),
-				"    CARRYING  %d SALVAGE PARTS: TO THE HATCH" % e.carrying if e.carrying > 0 else ""],
+				("    CARRYING  %s: TO THE HATCH" % (Salvage.describe(e.carry).to_upper() if not e.carry.is_empty() else "%d SALVAGE PARTS" % e.carrying)) if e.carrying > 0 else ""],
 		"HULL  %d%%%s    JOBS  %d" % [roundi(sc.model.hull() * 100.0), "  (space-walk limit)" if sc.model.hull() >= cap - 0.001 else "", _eva_targets().size()],
 	]))
 	var i := e.mark_in_reach(_eva_targets())
@@ -506,13 +562,19 @@ func _eva_hud() -> void:
 	if e.message_t > 0.0:
 		hint = e.message
 	elif i >= SALVAGE:
-		var why := _salvage_blocked(e.tool)
+		var why := _salvage_blocked(i, e.tool)
+		var sp: Dictionary = _salvage[i - SALVAGE]
+		var kind := String(sp.kind)
 		if why != "":
 			hint = why
 		elif e.work_on == i:
-			hint = "CUTTING THE PANEL FREE  %d%%" % roundi(e.work_t / _work_s(i) * 100.0)
+			hint = "%s  %d%%" % [{"hatch": "CUTTING THE HATCH OPEN", "item": "GETTING A GRIP"}.get(kind, "CUTTING THE PANEL FREE"), roundi(e.work_t / _work_s(i) * 100.0)]
+		elif kind == "hatch":
+			hint = "The cargo hatch, sealed. Hold E (or click): torch it open and see what they were carrying"
+		elif kind == "item":
+			hint = "%s. Hold E (or click): take it%s" % [Salvage.sentence(Salvage.describe(sp.item)), " (it goes in the hold)" if Salvage.needs_hold(sp.item) else ""]
 		else:
-			hint = "A salvage panel (%d parts). Hold E (or click): torch it free" % int(_salvage[i - SALVAGE].parts)
+			hint = "A salvage panel (%d parts). Hold E (or click): torch it free" % int(sp.parts)
 	elif i >= PART:
 		var p := _part(i)
 		var why := _part_blocked(i, e.tool)
@@ -895,11 +957,12 @@ func _eva_tools(dt: float) -> void:
 	_swing += dt * (9.0 if working else 0.0)
 	_wrench.rotation_degrees = Vector3(-35 + (sin(_swing) * 25.0 if working and e.tool == "wrench" else 0.0), 0, -15)
 	_tools.position = Vector3(0.3, -0.26, -0.6) + (Vector3.ZERO if not working else Vector3(-0.05, 0.03, -0.05))
-	var lit := working and e.tool == "torch"
+	var grabbing := working and e.work_on >= SALVAGE and e.work_on - SALVAGE < _salvage.size() and String(_salvage[e.work_on - SALVAGE].kind) == "item"
+	var lit := working and e.tool == "torch" and not grabbing
 	_flame.visible = lit
 	_flame.scale = Vector3.ONE * (0.8 + 0.4 * randf()) if lit else Vector3.ONE
 	_torch_light.light_energy = (2.5 + randf() * 1.5) if lit else 0.0
-	_sparks.emitting = working
+	_sparks.emitting = working and not grabbing
 	if working and e.work_on >= SALVAGE:   # cutting a derelict's panel
 		var sv := _eva_salvage()
 		if sv.has(e.work_on):

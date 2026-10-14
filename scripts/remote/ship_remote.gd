@@ -301,7 +301,7 @@ static func _crew_in_port() -> Array:
 
 # --- In port: the desks from the phone ------------------------------------------------------------
 
-const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "cancel", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "repair", "overhaul"]
+const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "cancel", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "repair", "overhaul", "sell_cargo", "sell_parts"]
 
 
 ## What the desks offer right now: the active contract and what can be done with it, the freight board
@@ -352,6 +352,14 @@ static func port_state() -> Dictionary:
 	out["crew_needed"] = int(stats.get("crew_needed", 1))
 	out["shop"] = {"repair": Session.repair_cost(), "overhaul": Session.overhaul_cost(), "patch_kit": Session.patch_kit_price(),
 			"spares_kit": Session.spares_kit_price(), "hull": Session.hull(), "parts": Wear.summary(loaded.ship, Session.wear()) if not loaded.is_empty() else ""}
+	var sc_lines := []
+	for l in Salvage.cargo_aboard(loaded.get("manifest", null)):
+		sc_lines.append("%.1f t of %s" % [float(l.tonnes), Salvage.clib().label(StringName(String(l.commodity))).to_lower()])
+	var sp_lines := []
+	for pt in Salvage.parts_aboard(loaded.get("manifest", null)):
+		sp_lines.append(Salvage.describe(pt))
+	out["salvage"] = {"cargo": sc_lines, "cargo_value": Salvage.cargo_value() if not sc_lines.is_empty() else 0,
+			"parts": sp_lines, "parts_value": Salvage.parts_value() if not sp_lines.is_empty() else 0}
 	out["can_wait"] = c.is_empty() and not Session.insolvent()
 	return out
 
@@ -406,6 +414,10 @@ static func port_command(action: String, id: String) -> Dictionary:
 			return Session.repair_hull()
 		"overhaul":
 			return Session.overhaul_parts()
+		"sell_cargo":
+			return Salvage.sell("cargo")
+		"sell_parts":
+			return Salvage.sell("parts")
 	return {"ok": false, "message": "The desks don't do that."}
 
 

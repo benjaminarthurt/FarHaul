@@ -531,7 +531,8 @@ func remote_state() -> Dictionary:
 		st["jump_why"] = why
 	if eva != null:
 		st["eva"] = {"air": eva.o2, "air_max": eva.o2_max, "tether_m": eva.tether_m, "tether_left": eva.tether_left(), "distance": eva.distance(),
-				"strain": eva.strain, "snapped": eva.snapped, "tool": eva.tool, "at_hatch": eva.at_hatch(), "repairs": eva.repairs, "carrying": eva.carrying}
+				"strain": eva.strain, "snapped": eva.snapped, "tool": eva.tool, "at_hatch": eva.at_hatch(), "repairs": eva.repairs, "carrying": eva.carrying,
+				"carry_what": Salvage.describe(eva.carry) if not eva.carry.is_empty() else ""}
 	if ship_data != null:
 		st["status"] = ShipRemote.status_block(ship_data, wear, model.hull(), crew_c.status() if crew_c != null else [],
 				{"cargo_t": model.cargo_t, "fuel": model.fuel_t, "fuel_max": float(stats.get("fuel", model.fuel_t))})

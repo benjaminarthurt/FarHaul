@@ -25,6 +25,10 @@ func _init() -> void:
 		d["color"] = _category_color(String(raw.get("category", "")))
 		defs[id] = d
 		order.append(id)
+	# Parts cut off derelicts ride in the hold as this: not traded, not in `order` (Salvage).
+	if not defs.has(&"salvage_hardware"):
+		defs[&"salvage_hardware"] = {"id": "salvage_hardware", "name": "Salvaged ship parts", "category": "ship_industrial",
+				"base_value": 0, "mass_kg_per_unit": 1000, "price": 0.0, "color": Color(0.5, 0.52, 0.56)}
 
 
 func _category_color(category: String) -> Color:

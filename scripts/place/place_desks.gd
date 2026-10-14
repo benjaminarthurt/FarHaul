@@ -17,6 +17,8 @@ func _fill(id: String) -> void:
 	match id:
 		"freight", "dispatch", "foreman":
 			_desk_freight(id)
+			if id == "freight":
+				_salvage_section("cargo")
 		"fuel":
 			_desk_fuel()
 		"yard":
@@ -25,6 +27,7 @@ func _fill(id: String) -> void:
 				Session.profile["location"] = "shipyard"
 				Session.save_profile()
 				sc._go(Session.YARD_SCENE), not Session.insolvent())
+			_salvage_section("parts")
 		"bar":
 			_desk_bar()
 		"lab":
@@ -297,6 +300,30 @@ func _desk_fuel() -> void:
 			var r := Session.sell_finds()
 			sc._say(String(r.message))
 			sc._refill())
+
+
+## Salvage in the hold off derelicts: freight ("cargo", at the freight office, to whoever here deals
+## in it) or working parts ("parts", at the shipyard). Nothing shows when there's none aboard.
+func _salvage_section(what: String) -> void:
+	var lines := Salvage.cargo_aboard() if what == "cargo" else Salvage.parts_aboard()
+	if lines.is_empty():
+		return
+	sc.panel_list.add_child(Brand.heading("SALVAGE IN THE HOLD", 15))
+	var total := 0
+	for l in lines:
+		if what == "cargo":
+			var o := Salvage.cargo_offer(String(l.commodity), float(l.tonnes))
+			total += int(o.value)
+			sc.panel_list.add_child(Brand.note("%.1f t of %s: %s cr from %s." % [float(l.tonnes), Salvage.clib().label(StringName(String(l.commodity))).to_lower(),
+					ShipStats.commas(int(o.value)), String(o.name)], 14))
+		else:
+			var v := Salvage.part_value(l)
+			total += v
+			sc.panel_list.add_child(Brand.note("%s: %s cr." % [Salvage.sentence(Salvage.describe(l)), ShipStats.commas(v)], 14))
+	sc._action("SELL THE SALVAGED %s  %s cr" % ["CARGO" if what == "cargo" else "PARTS", ShipStats.commas(total)], func() -> void:
+		var r := Salvage.sell(what)
+		sc._say(String(r.message))
+		sc._refill(), total > 0)
 
 
 ## What the hull's state means, in a sentence.

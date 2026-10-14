@@ -69,3 +69,7 @@ hidden while jumping, on a moon, or when the planet is hidden. Stepped with game
   that is ahead (within 60 degrees of the velocity) and nearer than the target; brake off and on beside
   it to carry on to the target.
 - `Traffic.deep_range(pos)`: time compression is held to x5 within 25 km and x2 within 5 km of it.
+
+Each derelict also has a cargo hatch with a hold behind it: see derelict_hold.md. Deep derelicts are
+not placed on runs down to a moon or a surface site, and the sensors' line waits until the cockpit
+isn't already saying something.

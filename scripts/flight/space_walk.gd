@@ -42,7 +42,8 @@ var com := Vector3.ZERO        ## the ship's centre of mass, ship view frame (wh
 var last_ship_vel := Vector3.INF   ## for working out the ship's acceleration between steps (flight scene)
 var spheres: Array = []        ## other hulls nearby (a derelict's), in this frame: {centre, radius}; set each step
 var carrying := 0              ## salvage parts in hand, cut off a derelict and not yet stowed
-var carrying_id := ""          ## which panel they came from
+var carrying_id := ""          ## which panel (or hold item) they came from
+var carry := {}                ## a hold item in hand (Salvage: crate, supplies or part), or {} for a panel
 
 
 static func tuning() -> Dictionary:
