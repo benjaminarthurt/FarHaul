@@ -65,8 +65,9 @@ static func roll(layout: Array, r: RandomNumberGenerator, deep: bool) -> Array:
 		var id: String = cands[r.randi() % cands.size()]
 		if not picked.has(id):
 			picked.append(id)
-	for id in picked:
-		var failed: bool = deep and id == "jump_drive"
+	for base_id in picked:
+		var id := PartMakers.on_a_wreck(lib, String(base_id), r)   # whoever made the part they fitted
+		var failed: bool = deep and lib.get_def(StringName(id)).drive > 0.0
 		var cond := _rf(c, "failed_drive_condition" if failed else "part_condition", [0.05, 0.15] if failed else [0.3, 0.85], r)
 		out.append({"kind": "part", "module": id, "tonnes": lib.get_def(StringName(id)).mass, "condition": snappedf(cond, 0.01), "failed": failed})
 	return out
@@ -85,7 +86,7 @@ static func describe(item: Dictionary) -> String:
 				bits.append("%d spares kit%s" % [int(item.spares_kits), "" if int(item.spares_kits) == 1 else "s"])
 			return "a supplies locker: %s" % " and ".join(bits)
 		"part":
-			return "%s (%s), %.1f t" % [part_name(item), condition_text(item), float(item.tonnes)]
+			return "%s, %s, %.1f t" % [part_name(item), condition_text(item), float(item.tonnes)]
 		"recorder":
 			return "the %s's flight recorder" % String(item.ship)
 		"body":

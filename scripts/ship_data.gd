@@ -147,7 +147,8 @@ func clear() -> void:
 
 # --- Save / load -----------------------------------------------------------------------------
 
-## What module `m` cost: its price, or, if it was fitted from salvage, the fitting fee paid for it.
+## What module `m` cost: what was paid for it at the yard (a maker's part costs more or less away from
+## home), the fitting fee if it came from salvage (src "salvage"), or its list price.
 ## A ship's value and the refund for removing a part both go by this.
 static func paid(m: Dictionary, lib: ModuleLibrary) -> int:
 	return int(m["paid"]) if m.has("paid") else lib.get_def(m.id).cost
@@ -158,7 +159,8 @@ func to_json() -> String:
 	for m in modules:
 		var e := {"id": String(m.id), "cell": [m.cell.x, m.cell.y, m.cell.z], "rot": m.rot}
 		if m.has("paid"):
-			e["paid"] = int(m.paid)   # fitted from salvage: what it cost to fit, not to buy
+			e["paid"] = int(m.paid)   # what it cost here: a yard's price for a maker's part, or a salvage fitting fee
+			e["src"] = String(m.get("src", "salvage"))
 		arr.append(e)
 	return JSON.stringify({"version": 1, "modules": arr}, "\t")
 
@@ -192,6 +194,7 @@ func from_json(text: String) -> bool:
 		var m := {"id": id, "cell": origin, "rot": rot}
 		if e.has("paid"):
 			m["paid"] = int(e["paid"])
+			m["src"] = String(e.get("src", "salvage"))   # 0.12 saves only paid for salvage
 		fresh.append(m)
 	if not _is_one_piece(fresh):
 		return false

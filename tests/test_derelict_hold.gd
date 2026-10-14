@@ -71,7 +71,7 @@ func _run() -> void:
 	var r := RandomNumberGenerator.new()
 	r.seed = 7
 	var deep := Salvage.roll(ShipPresets.STARTER_FTL, r, true)
-	var drive := deep.filter(func(i): return String(i.kind) == "part" and String(i.module) == "jump_drive")
+	var drive := deep.filter(func(i): return String(i.kind) == "part" and String(i.module).begins_with("jump_drive"))
 	check(drive.size() == 1 and bool(drive[0].failed) and float(drive[0].condition) < 0.2, "a ship lost between systems: its jump drive is what failed (%s)" % (Salvage.describe(drive[0]) if not drive.is_empty() else "none"))
 	check(deep.any(func(i): return String(i.kind) == "crate"), "and it was carrying something: %s" % ", ".join(deep.map(func(i): return Salvage.describe(i))))
 	check(lib.has(Salvage.HARDWARE) and not lib.order.has(Salvage.HARDWARE), "salvaged parts ride in the hold, but aren't freight anyone posts")

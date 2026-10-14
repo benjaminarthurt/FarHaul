@@ -46,6 +46,11 @@ const FACES := [
 @export var seal := false  ## a door cap: the doorway its door socket faces counts as closed (ShipData.open_doors)
 @export var cargo_slots := 0  ## standard containers this module can carry
 @export var cargo_capacity := 0.0  ## tonnes of freight when every slot is full
+@export_group("Maker")
+@export var maker: StringName = &""   ## who makes it (PartMakers); "" for hull parts nobody brands
+@export var base: StringName = &""    ## a maker's version of this part ("" for the part itself)
+@export var wear_mult := 1.0          ## how fast it wears against the standard part (Wear)
+@export var pitch := ""               ## the maker's line about it, for the shipyard
 
 
 func get_cells() -> Array[Vector3i]:

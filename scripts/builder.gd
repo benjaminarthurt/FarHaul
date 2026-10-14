@@ -302,7 +302,10 @@ func _build_palette(ui: Control) -> void:
 			box.add_child(_header(group_titles.get(def.group, String(def.group).to_upper())))
 		var key := "%d" % ((i + 1) % 10) if i < 10 else " "
 		var b := Button.new()
-		b.text = "%s  %s   %s" % [key, def.display_name, ShipStats.commas(def.cost)]
+		if def.base != &"":   # a maker's version, indented under the part
+			b.text = "       %s   %s" % [PartMakers.short(String(def.maker)), ShipStats.commas(_price(def))]
+		else:
+			b.text = "%s  %s   %s" % [key, def.display_name, ShipStats.commas(_price(def))]
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.focus_mode = Control.FOCUS_NONE  # keep keyboard shortcuts working after a click
 		b.tooltip_text = _module_tooltip(def)
@@ -507,7 +510,19 @@ func _set_meter(m: Dictionary, ratio: float, text: String, colour_by_load := tru
 
 
 func _module_tooltip(def: ModuleDef) -> String:
-	var lines := PackedStringArray([def.display_name, "Cost %s cr   Mass %.1f t" % [ShipStats.commas(def.cost), def.mass]])
+	var lines := PackedStringArray([def.display_name, "Cost %s cr   Mass %.1f t" % [ShipStats.commas(_price(def)), def.mass]])
+	if def.maker != &"":
+		var mk := PartMakers.maker(String(def.maker))
+		lines.append("Made by %s, %s.%s" % [String(mk.get("name", def.maker)), PartMakers.home_name(def),
+				"" if def.base != &"" else " Sold everywhere at list price."])
+		if def.pitch != "":
+			lines.append(def.pitch)
+		if def.base != &"":
+			var list := def.cost
+			var here := _price(def)
+			lines.append("List %s cr: %s" % [ShipStats.commas(list), "made here, so cheaper" if here < list else ("import duty here" if here > list else "")])
+		if not is_equal_approx(def.wear_mult, 1.0):
+			lines.append("Wears %s" % ("%.1f times as fast" % def.wear_mult if def.wear_mult > 1.0 else "at %d%% of the usual rate" % roundi(def.wear_mult * 100.0)))
 	if def.power != 0.0:
 		lines.append("Power %+.0f kW" % def.power)
 	if def.heat != 0.0:
@@ -721,7 +736,7 @@ func _style_buttons() -> void:
 		else:
 			salvage_buttons[k].modulate = Color.WHITE
 	for j in buttons.size():
-		var cost := library.get_def(library.order[j]).cost
+		var cost := _price(library.get_def(library.order[j]))
 		if j == selected and salvage_pick < 0:
 			buttons[j].modulate = Color(1.0, 0.95, 0.5)
 		elif cost > credits:
@@ -790,7 +805,7 @@ func _update_ghost() -> void:
 		return
 	var part := _picked_part()
 	var def := library.get_def(StringName(String(part.module))) if not part.is_empty() else library.get_def(library.order[selected])
-	var price := Salvage.fit_fee(part) if not part.is_empty() else def.cost
+	var price := Salvage.fit_fee(part) if not part.is_empty() else _price(def)
 	var removing := Input.is_key_pressed(KEY_SHIFT)
 	hover_active = true
 	hover_cell = cell
@@ -811,10 +826,10 @@ func _update_ghost() -> void:
 		if ship.module_at(cell) >= 0:
 			var m: Dictionary = ship.modules[ship.module_at(cell)]
 			var gone := library.get_def(m.id)
-			if m.has("paid"):
+			if String(m.get("src", "")) == "salvage":
 				_show_tip("Unbolt the salvaged %s: back in the hold  (+%s cr fitting)" % [Salvage.lower(gone.display_name), ShipStats.commas(int(m.paid))], WARN_COLOR)
 			else:
-				_show_tip("Remove %s  (+%s cr)" % [gone.display_name, ShipStats.commas(gone.cost)], WARN_COLOR)
+				_show_tip("Remove %s  (+%s cr)" % [gone.display_name, ShipStats.commas(ShipData.paid(m, library))], WARN_COLOR)
 		else:
 			tip_panel.visible = false
 	elif hover_error != "":
@@ -823,7 +838,7 @@ func _update_ghost() -> void:
 		if not part.is_empty():
 			_show_tip("Fit the salvaged %s, %s  (-%s cr fitting)%s" % [Salvage.lower(def.display_name), Salvage.condition_text(part), ShipStats.commas(price), note], OK_COLOR)
 		else:
-			_show_tip("%s  (-%s cr)%s" % [def.display_name, ShipStats.commas(def.cost), note], OK_COLOR)
+			_show_tip("%s  (-%s cr)%s" % [def.display_name, ShipStats.commas(price), note], OK_COLOR)
 
 
 func _show_tip(text: String, col: Color) -> void:
@@ -842,7 +857,7 @@ func _on_click() -> void:
 	if Input.is_key_pressed(KEY_SHIFT):
 		var err := manifest.blocks_removal(hover_cell)
 		var idx := ship.module_at(hover_cell)
-		var back: Dictionary = ship.modules[idx] if idx >= 0 and ship.modules[idx].has("paid") else {}
+		var back: Dictionary = ship.modules[idx] if idx >= 0 and String(ship.modules[idx].get("src", "")) == "salvage" else {}
 		if err == "" and not back.is_empty():
 			err = _room_to_unbolt(back)
 		if err == "":
@@ -861,6 +876,12 @@ func _on_click() -> void:
 			pop_index = ship.modules.size() - 1
 			if not part.is_empty():
 				_fit_salvaged(ship.modules[pop_index], part)
+			else:
+				var bought := ship.modules[pop_index]
+				var p := _price(library.get_def(bought.id))
+				if p != library.get_def(bought.id).cost:   # a maker's part: what it cost at this yard
+					bought["paid"] = p
+					bought["src"] = "yard"
 			_sfx(&"place")
 		else:
 			_sfx(&"error")
@@ -891,6 +912,11 @@ func _credits() -> int:
 	return _start_funds() + earned - _ship_cost()
 
 
+## What `def` costs at this yard (PartMakers.price: makers' parts are cheaper at home, dearer abroad).
+func _price(def: ModuleDef) -> int:
+	return PartMakers.price(def, Session.system_id()) if Session.slot >= 0 else def.cost
+
+
 func _ship_cost() -> int:
 	var total := 0
 	for m in ship.modules:
@@ -914,6 +940,7 @@ func _picked_part() -> Dictionary:
 ## comes out of the hold.
 func _fit_salvaged(m: Dictionary, part: Dictionary) -> void:
 	m["paid"] = Salvage.fit_fee(part)
+	m["src"] = "salvage"
 	m["wear"] = Salvage.wear_of(part)
 	manifest.unload(Salvage.HARDWARE, float(part.tonnes))
 	var parts: Array = (Session.profile.get("salvage_parts", []) as Array).duplicate(true)

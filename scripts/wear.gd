@@ -71,7 +71,8 @@ static func parts(ship: ShipData, wear: Dictionary) -> Array:
 		if k == "":
 			continue
 		var kk := key(i, m.id)
-		out.append({"i": i, "key": kk, "kind": k, "name": String(NAMES[k]), "wear": clampf(float(wear.get(kk, 0.0)), 0.0, 1.0)})
+		out.append({"i": i, "key": kk, "kind": k, "name": String(NAMES[k]), "wear": clampf(float(wear.get(kk, 0.0)), 0.0, 1.0),
+				"wear_mult": ship.library.get_def(m.id).wear_mult})
 	return out
 
 
@@ -118,7 +119,7 @@ static func add(wear: Dictionary, ship: ShipData, kind: String, amount: float) -
 	for p in parts(ship, wear):
 		if String(p.kind) != kind:
 			continue
-		crossed.merge(_bump(wear, String(p.key), amount))
+		crossed.merge(_bump(wear, String(p.key), amount * float(p.wear_mult)))   # some makers' parts wear faster than others
 	return crossed
 
 
@@ -141,7 +142,7 @@ static func knock(wear: Dictionary, ship: ShipData, amount: float, pick: float) 
 	if ps.is_empty() or amount <= 0.0:
 		return {}
 	var p: Dictionary = ps[mini(int(pick * ps.size()), ps.size() - 1)]
-	return _bump(wear, String(p.key), amount * float(cfg().get("knock_per_damage", 1.5)))
+	return _bump(wear, String(p.key), amount * float(cfg().get("knock_per_damage", 1.5)) * float(p.wear_mult))
 
 
 ## Condition for people: 100% new, 0% failed.

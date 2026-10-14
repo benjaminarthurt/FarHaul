@@ -30,19 +30,20 @@ Not all at once. In the order requested:
 8. The trade report: the economy simulation made visible (**built** in 0.11.0)
 9. Fitting salvaged parts, at their condition, for a fitting fee (**built** in 0.12.0)
 10. Boarding derelicts: the log, the flight recorder, the crew and the odd survivor (**built** in 0.13.0)
+11. Manufacturers: makers' versions of the external parts, cheaper at home (**built** in 0.14.0)
 
 The ship builder came first because everything else reads from the ship it produces.
 
 ### Next, in roughly this order (planned)
 
-11. **Manufacturers**: each part type from two or three companies with recognisable habits (cheap and
-    wears fast, heavy and tough, efficient but runs hot), sold where they're made and found on
-    wrecks.
-12. **Talking to other ships**: hail traffic for a fuel sale or a tow, distress calls from stranded
+12. **Bigger holds and passenger accommodation** (planned for 0.15.0): larger internal cargo holds,
+    and passenger cabins in several sizes apart from crew bunks, paying better fares; spare crew bunks
+    still take passengers at the basic fare.
+13. **Talking to other ships**: hail traffic for a fuel sale or a tow, distress calls from stranded
     crews, and other haulers racing you to the same wreck.
-13. **Frontier growth**: outposts that grow when they're kept supplied (more demand, better services)
+14. **Frontier growth**: outposts that grow when they're kept supplied (more demand, better services)
     and shrink when they aren't. The economy sim's facilities are the starting point.
-14. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
+15. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
     claim-jumpers at derelicts. Risks to plan around rather than fights.
 
 ## Built: ship builder architecture

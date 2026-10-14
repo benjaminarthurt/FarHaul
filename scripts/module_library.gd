@@ -18,6 +18,7 @@ var order: Array[StringName] = []  # display order for the palette
 
 func _init() -> void:
 	_add_defaults()
+	PartMakers.add_to(self)   # each maker's versions of the external parts
 
 
 func register(def: ModuleDef) -> void:
