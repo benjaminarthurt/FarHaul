@@ -157,3 +157,13 @@ func _add_defaults() -> void:
 		[_mount(o, DIR_W)],
 		{"group": &"external", "pressurized": false, "shape": &"drive", "mass": 4.0, "cost": 45000,
 			"drive": 0.30, "power": -40.0, "heat": 50.0})
+
+	# --- Door caps: a plate bolted over a doorway nobody needs, so the hull stays sealed. Cheap, because
+	# a ship has a lot of them. It sits on the doorway's face of its cell; the cell itself stays clear
+	# to look at, though nothing else can go there while it's fitted. Fit it facing the doorway.
+	_def(&"door_cap", "Door cap", one, Color(0.50, 0.53, 0.58),
+		[_door(o, DIR_N)],
+		{"group": &"caps", "pressurized": false, "shape": &"cap", "seal": true, "mass": 0.1, "cost": 250})
+	_def(&"porthole_cap", "Door cap, porthole", one, Color(0.50, 0.53, 0.58),
+		[_door(o, DIR_N)],
+		{"group": &"caps", "pressurized": false, "shape": &"cap_window", "seal": true, "mass": 0.15, "cost": 600})

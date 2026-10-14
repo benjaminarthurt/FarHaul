@@ -43,6 +43,7 @@ const FACES := [
 @export var retro := 0.0  ## kN of forward-firing braking thrusters (push the ship backward, along +Z)
 @export var rcs := 0.0  ## kN each way of manoeuvring thrusters: left, right, up and down, without turning
 @export var hug := false  ## a low-profile part: the ship view slides its "Body" flat against the hull it's bolted to
+@export var seal := false  ## a door cap: the doorway its door socket faces counts as closed (ShipData.open_doors)
 @export var cargo_slots := 0  ## standard containers this module can carry
 @export var cargo_capacity := 0.0  ## tonnes of freight when every slot is full
 
@@ -334,7 +335,9 @@ func _build_external(root: Node3D) -> void:
 	var dark := _mat(color.darkened(0.4), 1.0)
 	var h := ShipGrid.CELL * 0.5
 
-	if shape == &"frame":
+	if shape == &"cap" or shape == &"cap_window":
+		_build_cap(root, mat, dark, shape == &"cap_window")
+	elif shape == &"frame":
 		_add_frame_struts(root, Vector3.ZERO, 0.22, mat)
 		for sx in [-1.0, 1.0]:  # bolted corner plates
 			for sy in [-1.0, 1.0]:
@@ -505,6 +508,42 @@ func _build_external(root: Node3D) -> void:
 
 
 ## Twelve edge struts of one cell, centred on `centre`.
+## A door cap: a plate over the doorway on the cell's -Z face (where its door socket is), bolted round
+## its rim, with a square porthole for the window kind. Only the plate: the rest of the cell stays empty.
+func _build_cap(root: Node3D, mat: Material, dark: Material, window: bool) -> void:
+	var h := ShipGrid.CELL * 0.5
+	var z := -h + 0.05   # just outside the room's wall, over the doorway in it
+	var plate := Rect2(-DOOR_HALF_W - 0.25, -h + WALL_T, (DOOR_HALF_W + 0.25) * 2.0, DOOR_TOP + h + 0.2 - WALL_T)
+	var pieces: Array[Rect2] = [plate]
+	if window:
+		var hole := PORTHOLE
+		pieces = [
+			Rect2(plate.position.x, plate.position.y, hole.position.x - plate.position.x, plate.size.y),
+			Rect2(hole.end.x, plate.position.y, plate.end.x - hole.end.x, plate.size.y),
+			Rect2(hole.position.x, plate.position.y, hole.size.x, hole.position.y - plate.position.y),
+			Rect2(hole.position.x, hole.end.y, hole.size.x, plate.end.y - hole.end.y),
+		]
+		_add_box(root, Vector3(hole.get_center().x, hole.get_center().y, z), Vector3(hole.size.x, hole.size.y, 0.03), Interiors.glass(Color(0.25, 0.4, 0.55), 0.16))
+		var ring := 0.07   # a heavy frame round the glass, both sides
+		for side in [-1.0, 1.0]:
+			var fz: float = z + side * 0.06
+			_add_box(root, Vector3(hole.get_center().x, hole.position.y - ring * 0.5, fz), Vector3(hole.size.x + ring * 2.0, ring, 0.05), dark)
+			_add_box(root, Vector3(hole.get_center().x, hole.end.y + ring * 0.5, fz), Vector3(hole.size.x + ring * 2.0, ring, 0.05), dark)
+			_add_box(root, Vector3(hole.position.x - ring * 0.5, hole.get_center().y, fz), Vector3(ring, hole.size.y, 0.05), dark)
+			_add_box(root, Vector3(hole.end.x + ring * 0.5, hole.get_center().y, fz), Vector3(ring, hole.size.y, 0.05), dark)
+	for r in pieces:
+		if r.size.x > 0.001 and r.size.y > 0.001:
+			_add_box(root, Vector3(r.get_center().x, r.get_center().y, z), Vector3(r.size.x, r.size.y, 0.08), mat)
+	for sx in [-1.0, 1.0]:   # bolt heads down both sides
+		for k in 5:
+			var y: float = plate.position.y + 0.15 + k * (plate.size.y - 0.3) / 4.0
+			_add_box(root, Vector3(sx * (plate.size.x * 0.5 - 0.1), y, z + 0.055), Vector3(0.07, 0.07, 0.03), dark)
+	_add_box(root, Vector3(0, plate.end.y - 0.12, z + 0.05), Vector3(plate.size.x - 0.3, 0.06, 0.02), SurfaceTextures.hazard_material())
+
+
+const PORTHOLE := Rect2(-0.45, -0.25, 0.9, 0.9)   ## the window in a porthole cap, in its face's (u, v) frame: eye height
+
+
 func _add_frame_struts(root: Node3D, centre: Vector3, t: float, mat: Material, proud := 0.0) -> void:
 	var h := ShipGrid.CELL * 0.5
 	for a in 3:

@@ -287,6 +287,7 @@ func _build_palette(ui: Control) -> void:
 		&"hull": "HULL (walkable)",
 		&"cargo": "CARGO",
 		&"external": "EXTERNAL (bolt-on)",
+		&"caps": "DOOR CAPS (seal a doorway)",
 	}
 	var last_group: StringName = &""
 	for i in library.order.size():

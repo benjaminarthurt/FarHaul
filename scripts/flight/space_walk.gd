@@ -52,6 +52,8 @@ static func ship_boxes(ship: ShipData) -> Array[AABB]:
 	var out: Array[AABB] = []
 	for m in ship.modules:
 		var def: ModuleDef = ship.library.get_def(m.id)
+		if def.seal:
+			continue   # a door cap is a plate under the hull, not a box in the way
 		var grow := ShipSkin._outer() - ShipGrid.CELL * 0.5 if def.pressurized else -0.2
 		for c in ship.world_cells(m.id, m.cell, m.rot):
 			var h := ShipGrid.CELL * 0.5 + grow + RADIUS

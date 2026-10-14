@@ -43,7 +43,7 @@
       </div>
       <p class="note">One portable file for 64-bit Windows, about 42 MB zipped. Unzip it anywhere and run FarHaul.exe; nothing is installed. Needs a mouse and keyboard.</p>
       <dl class="slip">
-        <div><dt>Version</dt><dd>0.9.1, prototype</dd></div>
+        <div><dt>Version</dt><dd>0.9.2, prototype</dd></div>
         <div><dt>You can</dt><dd>Build and name a ship, take freight from a living economy, fly local runs and dock, fit an FTL drive and jump between stars, walk your ship and ports that look like the people who built them, take work from people at the bar, land on moons and work outside in a suit, fly all the way out to Saturn's rings if your tanks are up to it, check the map to see how far you've got to go, and fly the long hauls from a phone on the sofa</dd></div>
         <div><dt>Not yet</dt><dd>Planets with air, combat. Patience is required and, sadly, not sold anywhere</dd></div>
       </dl>
@@ -81,7 +81,7 @@
       <table class="ledger">
         <thead><tr><th scope="col">Area</th><th scope="col">What the game will be</th><th scope="col">Today</th><th scope="col">Status</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Ship building</th><td>Ships assembled from physical modules: cockpit, hull, cargo holds, tanks, engines, radiators. Every compartment exists in the world. Balance, power, heat and thrust all matter.</td><td>A 3 m grid builder. Parts snap together at doors and mounts. Live checks for sealed hull, airlock, power, cooling, thrust-to-weight, centre of mass and an FTL drive. Undo, redo, autosave. Away from the yard the ship wears an outer hull with rounded edges, so the rooms are no longer open to space. Windows, the airlock hatch and vents stay open; the engine, radiators, tanks and cargo racks are mounted outside, where engineers prefer them.</td><td><span class="chip playable">Playable</span></td></tr>
+          <tr><th scope="row">Ship building</th><td>Ships assembled from physical modules: cockpit, hull, cargo holds, tanks, engines, radiators. Every compartment exists in the world. Balance, power, heat and thrust all matter.</td><td>A 3 m grid builder. Parts snap together at doors and mounts, and cheap door caps (plain or with a porthole) close the doorways you don't need. Live checks for sealed hull, airlock, power, cooling, thrust-to-weight, centre of mass and an FTL drive. Undo, redo, autosave. Away from the yard the ship wears an outer hull with rounded edges, so the rooms are no longer open to space. Windows, the airlock hatch and vents stay open; the engine, radiators, tanks and cargo racks are mounted outside, where engineers prefer them.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Menus, saves and ports</th><td>A proper start: pick who you are and where you begin, keep several games, and always return to the last place you stood.</td><td>New game with name, species, difficulty and starting system. Five save slots. You arrive on foot in a port's concourse, with desks for freight, fuel and repairs, the shipyard and a bar; a moon base pad has a domed hab with a survey lab and suit store, and a mining camp has the foreman's hut. The old station menu is still there at the terminal, for captains who don't like walking. Esc (or F10) pauses anywhere, with save, settings and quit, and in flight the ways home: turning back, the tug, ending a practice flight. Settings cover graphics quality, display, volume and mouse. Species gives no bonuses, only a different accent at the bar.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Known space</th><td>Eighteen systems from the five home worlds out to the last settlement at Lastlight, joined by trade routes and named corridors. Every place needs something from somewhere else.</td><td>Written as data and now running: five species, eighteen systems, nineteen routes. The economy simulation uses all of it, and the new game screen reads it for species and starting systems. Every system now looks like its builders and its work: Kesh steel, Ilyan light, Vey water, Orun stone, patchwork hubs, and human colonies in the livery of what they do. Ports grow from cramped frontier halls to grand core terminals, and each system's fuel depot, belt works and moon station is its own kind of place. Every system's world is drawn from its canon, and Sol's look like themselves: Earth, Luna, Mars, Venus, Jupiter and Saturn, because people would notice. Sol also has stations at Venus, Jupiter and Saturn, a long, thirsty way out.</td><td><span class="chip playable">Playable</span></td></tr>
           <tr><th scope="row">Interiors</th><td>Cramped, practical, lived-in. Cabins, galleys, engine rooms and cockpits that look like they were built to do a job.</td><td>Each part has its own fitted interior: cockpit seats and controls, a reactor room, crew quarters with bunks and a galley, an airlock with suit lockers. You can see them from the builder camera, and walk them once the yard lets you go.</td><td><span class="chip rough">Rough</span></td></tr>
@@ -237,6 +237,10 @@
         <figcaption><strong>Crew aboard.</strong> The deck tech, by the airlock as always, in case the hull needs a word.</figcaption>
       </figure>
       <figure>
+        <button class="shot" data-full="img/door-caps.jpg" data-cap="Door caps." aria-label="Open the door caps screenshot full size"><img src="img/door-caps.jpg" width="1280" height="720" loading="lazy" alt="Left, the ship in the builder with a porthole cap bolted over a spare doorway on a T-junction, a plate with a square window and a hazard strip. Right, the same doorway from inside: a square porthole full of stars."></button>
+        <figcaption><strong>Door caps.</strong> A doorway you don't need, closed for 250 cr. Pay 600 and it comes with a view.</figcaption>
+      </figure>
+      <figure>
         <button class="shot" data-full="img/retro.jpg" data-cap="Braking thrusters." aria-label="Open the braking thrusters screenshot full size"><img src="img/retro.jpg" width="1280" height="720" loading="lazy" alt="The side of the starter ship close up: a slim braking thruster fairing lying along the hull beside the cockpit, its two small nozzles firing blue-white plumes toward the bow."></button>
         <figcaption><strong>Braking thrusters.</strong> A slim fairing with two little nozzles facing the wrong way on purpose. Hold B and the ship slows without turning round.</figcaption>
       </figure>
@@ -342,7 +346,7 @@
         <ul class="checks">
           <li>A cockpit to fly from.</li>
           <li>At least one engine pointing aft.</li>
-          <li>A sealed hull. Cyan rings mark doorways that open onto space; cap them with a module.</li>
+          <li>A sealed hull. Cyan rings mark doorways that open onto space. Join another room to one, or bolt a <strong>door cap</strong> over it: 250 cr plain, 600 cr with a porthole. Turn the cap to face the doorway.</li>
           <li>An airlock, so the crew can get in and out.</li>
           <li>Enough power for everything that draws it.</li>
           <li>Enough cooling for the heat you make.</li>
@@ -498,7 +502,7 @@
 
     <h3>The prototype</h3>
     <dl class="facts">
-      <dt>Version</dt><dd>0.9.1, prototype</dd>
+      <dt>Version</dt><dd>0.9.2, prototype</dd>
       <dt>Built with</dt><dd>Godot 4.4, written in GDScript, using the Forward+ renderer (Vulkan) on Windows.</dd>
       <dt>Art and sound</dt><dd>The textures, sky, logo and every sound effect (engines, footsteps, room tone, the suit, the jump) are generated in code. Earth's coastlines come from NOAA's public-domain GLOBE elevation data. The theme song is a custom track. The intro video is a placeholder, and knows it.</dd>
       <dt>Placeholders</dt><dd>Prices, part stats and the intro video will all change, usually at the worst possible moment.</dd>
@@ -513,7 +517,7 @@
 <footer>
   <div class="wrap">
     <span class="code">FHCU 000001-0</span>
-    <span>Far Haul prototype 0.9.1</span>
+    <span>Far Haul prototype 0.9.2</span>
     <span><a href="https://github.com/benjaminarthurt/FarHaul/releases/latest">Download for Windows</a> &nbsp; <a href="https://github.com/benjaminarthurt/FarHaul">Source on GitHub</a></span>
     <a class="studio-badge" href="https://signalfoundry.games/" target="_blank" rel="noopener" aria-label="Built at Signal Foundry Games"><span class="studio-badge-kicker">BUILT AT</span><strong>SIGNAL FOUNDRY</strong><span class="studio-badge-sub">GAMES</span></a>
   </div>

@@ -40,7 +40,7 @@ static func pressurised_cells(ship: ShipData) -> Dictionary:
 ## stay where they are, so their feet still meet the ground where the flight model expects.
 static func mount_offset(ship: ShipData, m: Dictionary, press: Dictionary) -> Vector3:
 	var def: ModuleDef = ship.library.get_def(m.id)
-	if def.pressurized:
+	if def.pressurized or def.seal:   # door caps stay on the pressure wall, under the hull (a porthole's hole is lined)
 		return Vector3.ZERO
 	var push := Vector3i.ZERO
 	for c in ship.world_cells(m.id, m.cell, m.rot):
@@ -229,6 +229,12 @@ static func _holes(ship: ShipData, c: Vector3i, d: Vector3i, info: Dictionary) -
 			out.append(Rect2(-0.95, -1.4, 1.9, 2.5))
 	if def.power > 50.0 and local_d.x != 0:   # reactor vents glowing on both sides
 		out.append(Rect2(-1.0, -0.7, 2.0, 1.4))
+	var nb := c + d   # a porthole cap over a doorway here: its window shows through the hull
+	if d.y == 0 and ship.occupied.has(nb):
+		var cap: Dictionary = ship.modules[ship.occupied[nb]]
+		var cdef: ModuleDef = ship.library.get_def(cap.id)
+		if cdef.seal and cdef.shape == &"cap_window" and ship._faces(cap, nb, -d):
+			out.append(Rect2(ModuleDef.PORTHOLE.position - Vector2(0.07, 0.07), ModuleDef.PORTHOLE.size + Vector2(0.14, 0.14)))
 	return out
 
 

@@ -81,6 +81,14 @@ func remove_at(cell: Vector3i) -> String:
 	return ""
 
 
+## Whether module `m` has a door socket on cell `c` facing `d`.
+func _faces(m: Dictionary, c: Vector3i, d: Vector3i) -> bool:
+	for t in world_sockets(m.id, m.cell, m.rot):
+		if t.cell == c and t.dir == d and t.kind == ModuleSocket.DOOR:
+			return true
+	return false
+
+
 ## Doorways that open onto space: a door socket whose neighbouring cell is empty or holds an
 ## external part. (A door facing another room's blank wall is sealed by that wall.)
 func open_doors() -> Array[Dictionary]:
@@ -94,7 +102,8 @@ func open_doors() -> Array[Dictionary]:
 			var open := not occupied.has(nb)
 			if not open:
 				var other: Dictionary = modules[occupied[nb]]
-				open = not library.get_def(other.id).pressurized
+				var odef := library.get_def(other.id)
+				open = not odef.pressurized and not (odef.seal and _faces(other, nb, -s.dir))   # a door cap bolted over it closes it
 			if open:
 				out.append({"module": mi, "cell": s.cell, "dir": s.dir})
 	return out

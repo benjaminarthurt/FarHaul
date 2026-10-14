@@ -128,7 +128,7 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		if not has_helm:
 			warnings.append("No cockpit: nothing to fly it from but hope")
 		if open_doors > 0:
-			warnings.append("Hull open: %d doorway%s onto space. Cap with a module" % [open_doors, "" if open_doors == 1 else "s"])
+			warnings.append("Hull open: %d doorway%s onto space. Join a room to it or fit a door cap" % [open_doors, "" if open_doors == 1 else "s"])
 		if airlocks == 0:
 			warnings.append("No airlock: no way in or out, captain included")
 		if power_use > power_gen:
