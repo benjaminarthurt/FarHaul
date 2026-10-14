@@ -36,3 +36,8 @@ normal frame-to-frame noise.
   the scene's names: `go_outside()`, `use_desk()` and so on.
 - New tests can build a piece directly. `tests/test_components.gd` builds a `MoonScenery` and walks
   `Strollers` with no scene at all.
+
+- `scripts/sim/sim_stats.gd` (SimStats), `scripts/trade_data.gd` (TradeData), `scripts/trade_report.gd`
+  (TradeReport): the economy's history, what the trade report shows, and the report itself (N).
+  See trade_report.md.
+- `scripts/salvage.gd` (Salvage): derelict holds, stowing and selling salvage. See derelict_hold.md.

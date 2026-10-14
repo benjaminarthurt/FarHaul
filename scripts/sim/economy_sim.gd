@@ -26,6 +26,7 @@ var lots: Dictionary = {}
 var orders: Dictionary = {}
 var contracts: Dictionary = {}
 var events: Array = []
+var stats: Dictionary = {}           # the trade report's history (SimStats): what moved, prices, the player's impact
 var violations: Array = []
 var verbose := false
 var world_cash := 0.0                # the rest of the economy (fuel, fees, wages, household income)
@@ -400,6 +401,7 @@ func step_hour() -> void:
 	if hour % 24 == 0:
 		_generate_procurement()                 # generate_procurement + allocate_shipments
 		_update_markets()                       # update_markets
+		SimStats.day_turned(self)               # (reporting) prices and shortages for the trade report
 		_company_decisions()                    # run_company_decisions
 		_escalate_open_contracts()              # generate_contract_offers (rate pressure)
 	_dispatch_carriers()                        # dispatch_npc_carriers
@@ -940,7 +942,9 @@ func _deliver(c: Dictionary) -> void:
 		c["revenue"] += paid
 		c["delivered_scu"] += lot["scu"]
 		_log("carrier_paid", {"contract": kid, "carrier": c["id"], "payer": buyer["id"], "amount": paid})
+		SimStats.on_leg(self, k, lot, c, paid)
 		if lot["seg_i"] >= lot["segs"].size() - 1:
+			var before := String(buyer["items"][lot["com"]]["state"])
 			ledger.receive(buyer["id"], lot["com"], lot["units"])
 			lot["holder"] = buyer["id"]
 			lot["status"] = "delivered"
@@ -954,6 +958,7 @@ func _deliver(c: Dictionary) -> void:
 			var pay: float = lot["units"] * order["unit_price"]
 			_pay(buyer["id"], order["seller"], pay)
 			buyer["goods_paid"] += pay
+			SimStats.on_received(self, buyer, lot["com"], float(lot["mass_kg"]) / 1000.0, pay, before, c["id"])
 			_log("received", {"facility": buyer["id"], "commodity": lot["com"], "lot": lot["id"], "units": lot["units"],
 					"on_hand": ledger.on_hand(buyer["id"], lot["com"]), "order": order["id"]})
 			_log("supplier_paid", {"order": order["id"], "supplier": order["seller"], "amount": pay})
@@ -1209,7 +1214,7 @@ func to_state(keep_days: int = 20) -> Dictionary:
 			"contracts": contracts, "violations": violations,
 			"ledger": {"entries": ledger.entries, "produced": ledger.produced_total,
 					"consumed": ledger.consumed_total, "initial": ledger.initial_total},
-			"events": events.slice(maxi(0, events.size() - 200))}
+			"events": events.slice(maxi(0, events.size() - 200)), "stats": stats}
 
 func load_state(st: Dictionary) -> void:
 	hour = int(st["hour"])
@@ -1227,6 +1232,7 @@ func load_state(st: Dictionary) -> void:
 	ledger.consumed_total = st["ledger"]["consumed"]
 	ledger.initial_total = st["ledger"]["initial"]
 	events = st.get("events", [])
+	stats = st.get("stats", {})
 	_rebuild_open_idx()
 
 ## Drop orders that finished more than `keep_days` ago, with their lots and contracts, so a long

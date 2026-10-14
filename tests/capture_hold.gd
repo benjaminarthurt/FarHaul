@@ -18,7 +18,7 @@ func _run() -> void:
 	var out := "/tmp/hold_frames" if args.is_empty() else String(args[0])
 	DirAccess.make_dir_recursive_absolute(out)
 	Session.begin_new(2, "Pilot", "human", "normal", "roosevelt_independent_yards")
-	Session.profile["hints_seen"] = ["welcome", "money", "crew", "holding", "arrived", "hab", "hut"]
+	Session.profile["hints_seen"] = ["welcome", "money", "crew", "holding", "arrived", "hab", "hut", "trade"]
 	Session.save_profile()
 	Session.flight_job = {}
 	var f: Node = load(Session.FLIGHT_SCENE).instantiate()

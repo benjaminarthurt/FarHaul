@@ -59,6 +59,11 @@ func _ready() -> void:
 	panel.add_child(list)
 	list.add_child(Brand.heading("PAUSED", 20))
 	_button("RESUME", close)
+	_button("TRADE REPORT  (N)", func() -> void:
+		close()
+		var r := TradeReport.find(get_tree())
+		if r != null:
+			r.open())
 	extra = VBoxContainer.new()
 	extra.add_theme_constant_override("separation", 8)
 	list.add_child(extra)

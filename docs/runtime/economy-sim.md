@@ -237,3 +237,9 @@ Local pay per level was solved with `tests/solve_local.gd`: a stand-in captain w
 Affordability: after the 92,600 cr starter the captain holds about 127k / 57k / 17k, and a drive plus radiator costs about 48k. Easy and Normal can fit one on day one (Normal is left with about 9k, roughly a month of running costs); Hard has to earn about 31k first, roughly eight months at the local rate.
 
 Local runs can be flown (see flight.md): the dock's DEPART is the autopilot and charges the rocket-equation fuel; FLY THE RUN charges what the pilot actually burned. Towing after running dry costs `tow_fee_cr` (900) times the level's port-fee multiplier. The pay solver and the sublight stand-in assume the autopilot.
+
+## Reporting
+
+`EconomySim.stats` keeps a 30-day history and the player's lifetime totals for the trade report
+(scripts/sim/sim_stats.gd, docs/runtime/trade_report.md). It's written from `_deliver` and once a
+day in `step_hour`, is saved in `to_state`, and moves no goods or money: cash conservation holds.

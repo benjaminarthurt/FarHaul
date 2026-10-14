@@ -1,6 +1,6 @@
 # Design notes
 
-Decisions and reasoning from planning the game, as of 2026-09-30. The game itself is described in
+Decisions and reasoning from planning the game, first written 2026-09-30; the build order is kept current. The game itself is described in
 [far-haul-concept.md](far-haul-concept.md); this file is about how we're building it.
 
 Status key: **Built** is in the code and tested. **Planned** is the intended approach, not built
@@ -20,13 +20,33 @@ or validated yet.
 
 Not all at once. In the order requested:
 
-1. Ship builder using pre-built sections (**prototype built**)
-2. Flying the ship in 3D
-3. Walking inside the ship, compartment to compartment
-4. Landing the ship on a planet and exploring it
-5. Space walks, tethered to the ship, doing repairs
+1. Ship builder using pre-built sections (**built**)
+2. Flying the ship in 3D, with local runs and star jumps (**built**)
+3. Walking inside the ship, compartment to compartment, and the ports (**built**, rough)
+4. Landing on moons and exploring on foot (**built**, rough)
+5. Space walks, tethered to the ship, doing repairs (**built**, rough)
+6. Crew: hire, fire and put to work (**built** in 0.9.0, rough)
+7. Other ships and derelicts, with salvage panels and cargo holds (**built** in 0.10.0 to 0.10.2)
+8. The trade report: the economy simulation made visible (**built** in 0.11.0)
 
-The ship builder comes first because everything else reads from the ship it produces.
+The ship builder came first because everything else reads from the ship it produces.
+
+### Next, in roughly this order (planned)
+
+9. **Fitting salvaged parts**: a part stripped off a wreck can be fitted in the shipyard instead of sold,
+   cheaply, at the condition it came in (its wear carries over).
+10. **Boarding derelicts**: cut in through a wreck's airlock and walk it in the suit, dark and
+    unpowered: loose cargo, a log entry saying what happened, sometimes a survivor to bring home as a
+    passenger.
+11. **Manufacturers**: each part type from two or three companies with recognisable habits (cheap and
+    wears fast, heavy and tough, efficient but runs hot), sold where they're made and found on
+    wrecks.
+12. **Talking to other ships**: hail traffic for a fuel sale or a tow, distress calls from stranded
+    crews, and other haulers racing you to the same wreck.
+13. **Frontier growth**: outposts that grow when they're kept supplied (more demand, better services)
+    and shrink when they aren't. The economy sim's facilities are the starting point.
+14. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
+    claim-jumpers at derelicts. Risks to plan around rather than fights.
 
 ## Built: ship builder architecture
 

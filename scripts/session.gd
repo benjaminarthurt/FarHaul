@@ -525,6 +525,7 @@ static func sell_finds(rates: Dictionary = {}) -> Dictionary:
 		return {"ok": false, "message": "Couldn't load the ship from the save."}
 	_sync_sim(loaded.ship)
 	sim._pay("world", SimWorld.PLAYER, float(roundi(value)))
+	SimStats.on_salvage(sim, float(roundi(value)))   # finds count with salvage in the trade report
 	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
 	pc["revenue"] = float(pc["revenue"]) + float(roundi(value))
 	for key in sold:
@@ -1250,6 +1251,7 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 	if hours > 0:
 		sim.run_hours(hours)
 	sim._pay("world", SimWorld.PLAYER, float(payment))
+	SimStats.on_local(sim, system_id(), delivered, float(payment))
 	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
 	pc["revenue"] = float(pc["revenue"]) + float(payment)
 	pc["trips"] = int(pc["trips"]) + 1

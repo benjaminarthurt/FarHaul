@@ -19,6 +19,10 @@ func _fill(id: String) -> void:
 			_desk_freight(id)
 			if id == "freight":
 				_salvage_section("cargo")
+				sc._action("READ THE TRADE REPORT  (N anywhere)", func() -> void:
+					var r := TradeReport.find(sc.get_tree())
+					if r != null:
+						r.open())
 		"fuel":
 			_desk_fuel()
 		"yard":

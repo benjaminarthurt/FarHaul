@@ -10,6 +10,7 @@ const LIST := [
 	{"id": "money", "where": "concourse", "text": "With some money put by, the SHIPYARD can fit LANDER LEGS (moons and surface work, which pays more) or crew bunks (passengers, and hands from the bar). An FTL drive opens the other stars, at a price that's also astronomical."},
 	{"id": "hab", "where": "hab", "text": "A moon base hab: all the comforts of a tin can. DISPATCH posts timed surface missions, the SUIT STORE sells air tanks and kit, and the LAB pays well for rock samples. The airlock suits you up."},
 	{"id": "hut", "where": "hut", "text": "The mining camp. The FOREMAN has work, and the EXCHANGE pays well for ice. There's no crane here, only you and the low gravity: unload your freight by hand to keep the whole fee."},
+	{"id": "trade", "where": "concourse", "text": "Your first delivery is on the books. Press N for the TRADE REPORT: where the freight's going across known space, who's running short of what, who's earning, and the dent you're making in it all."},
 	{"id": "crew", "where": "concourse", "text": "A spare bunk and nobody in it. The BAR has people looking for a berth: an engineer slows the wear and fixes parts, a deck tech patches the hull, a pilot flies leaner and minds the helm. They want paying every day, and they earn it. Mostly."},
 ]
 
@@ -38,6 +39,11 @@ static func _fits(id: String, c: Dictionary) -> bool:
 			return not c.is_empty() and String(c.get("status", "")) == "arrived"
 		"money":
 			return int(Session.profile.get("credits", 0)) >= 70000 and "welcome" in Session.profile.get("hints_seen", [])
+		"trade":
+			if Session.sim == null or not "welcome" in Session.profile.get("hints_seen", []):
+				return false
+			var life := SimStats.lifetime(Session.sim)
+			return int(life.get("deliveries", 0)) + int(life.get("local_runs", 0)) > 0
 		"crew":
 			if Session.slot < 0 or not Session.crew().is_empty() or not "welcome" in Session.profile.get("hints_seen", []):
 				return false

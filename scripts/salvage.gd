@@ -273,8 +273,10 @@ static func sell(what: String) -> Dictionary:
 				sim._pay(String(o.buyer), SimWorld.PLAYER, float(o.value))
 				var tpu := lib.tonnes_per_unit(StringName(com))
 				sim.ledger.receive(String(o.buyer), com, t / tpu if tpu > 0.0 else 0.0)
+				SimStats.on_salvage(sim, float(o.value), String(o.buyer), t)
 			else:
 				sim._pay("world", SimWorld.PLAYER, float(o.value))
+				SimStats.on_salvage(sim, float(o.value))
 			m.unload(StringName(com), t)
 			total += int(o.value)
 			lines.append("%.1f t of %s to %s" % [t, lib.label(StringName(com)).to_lower(), String(o.name)])
@@ -283,6 +285,7 @@ static func sell(what: String) -> Dictionary:
 		for pt in parts_aboard(m):
 			var v := part_value(pt)
 			sim._pay("world", SimWorld.PLAYER, float(v))
+			SimStats.on_salvage(sim, float(v))
 			m.unload(HARDWARE, float(pt.tonnes))
 			total += v
 			lines.append(part_name(pt).to_lower())
