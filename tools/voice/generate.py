@@ -3,7 +3,9 @@
 
 Run from the repo root, in the Chatterbox environment (it already has torch, torchaudio and librosa):
 
-  python tools/voice/generate.py cast --refs D:/TTS/voices/refs   pick a cast from the reference voices
+  (tools\\voice\\voice.bat runs all of this on Windows: setup, download, refs, then these.)
+
+  python tools/voice/generate.py cast                             pick a cast from tools/voice/refs
   python tools/voice/generate.py plan                             how many clips, and roughly how long
   python tools/voice/generate.py preview                          one line per speaker, to check the cast
   python tools/voice/generate.py run                              record everything (resumable)
@@ -160,7 +162,7 @@ def cmd_cast(a):
             speakers.append({
                 "id": "%s_%s_%d" % (role, sp, n), "roles": [role], "species": sp,
                 "ref": r["path"].replace("\\", "/"),
-                "about": " ".join(x for x in [r["dataset"], r["speaker"], gender(r), r.get("age", ""), r.get("accent", ""), r.get("region", "")] if x and x != "?"),
+                "about": " ".join(x for x in [r["dataset"], r["speaker"], gender(r), r.get("age", ""), r.get("accent", ""), (r.get("region") or "")[:24]] if x and x != "?"),
             })
     if os.path.exists(CAST):
         shutil.copyfile(CAST, os.path.join(HERE, "voices.old.json"))
@@ -168,7 +170,7 @@ def cmd_cast(a):
         "description": "Who says what. Edit freely: swap 'ref' for another voice in the catalogue, add speakers, or set "
                        "exaggeration, cfg_weight, temperature, pitch (semitones) or tempo on a speaker. 'species' and 'roles' "
                        "are what the game matches on. Re-record one speaker by moving its folder out of assets/audio/voice.",
-        "refs_dir": refs.replace("\\", "/"),
+        "refs_dir": _repo_rel(refs),
         "species": SPECIES, "roles": ROLES, "lines": LINE_DEFAULTS, "takes": TAKES,
         "speakers": speakers,
     }
@@ -178,9 +180,16 @@ def cmd_cast(a):
         print("  %-22s %s" % (s["id"], s["about"]))
 
 
+def _repo_rel(p):
+    """A path inside the repo is kept relative to it, so the cast works wherever the repo is."""
+    p = os.path.abspath(p)
+    r = os.path.relpath(p, ROOT)
+    return (p if r.startswith("..") else r).replace("\\", "/")
+
+
 def load_cast():
     if not os.path.exists(CAST):
-        sys.exit("No cast yet. Run: python tools/voice/generate.py cast --refs <your refs folder>")
+        sys.exit("No cast yet. Run: tools\\voice\\voice.bat cast")
     c = load_json(CAST)
     for k, v in (("species", SPECIES), ("roles", ROLES), ("lines", LINE_DEFAULTS), ("takes", TAKES)):
         c.setdefault(k, v)
@@ -309,7 +318,8 @@ class Voice:
     def ref_path(self, speaker):
         p = speaker["ref"]
         if not os.path.isabs(p):
-            p = os.path.join(self.cast.get("refs_dir", ""), p)
+            d = self.cast.get("refs_dir", "")
+            p = os.path.join(d if os.path.isabs(d) else os.path.join(ROOT, d), p)
         if not os.path.exists(p):
             sys.exit("%s: no reference voice at %s" % (speaker["id"], p))
         return p
@@ -738,7 +748,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("cast", help="pick a cast from the reference voices")
-    c.add_argument("--refs", required=True, help="the folder make_refs.py wrote (has catalog.csv)")
+    c.add_argument("--refs", default=os.path.join(HERE, "refs"), help="the folder make_refs.py wrote (has catalog.csv); default tools/voice/refs")
     c.add_argument("--seed", type=int, default=7)
     c.add_argument("--force", action="store_true")
     for name in ("plan", "run", "preview"):

@@ -1,0 +1,536 @@
+{
+  "description": "Who says what. Edit freely: swap 'ref' for another voice in the catalogue, add speakers, or set exaggeration, cfg_weight, temperature, pitch (semitones) or tempo on a speaker. 'species' and 'roles' are what the game matches on. Re-record one speaker by moving its folder out of assets/audio/voice.",
+  "refs_dir": "tools/voice/refs",
+  "species": {
+    "human": {
+      "pitch": 0.0,
+      "tempo": 1.0
+    },
+    "kesh": {
+      "pitch": -3.5,
+      "tempo": 0.92
+    },
+    "ilyan": {
+      "pitch": 3.0,
+      "tempo": 1.1
+    },
+    "vey": {
+      "pitch": 1.5,
+      "tempo": 1.04
+    },
+    "orun": {
+      "pitch": -2.0,
+      "tempo": 0.95
+    }
+  },
+  "roles": {
+    "control": {
+      "exaggeration": 0.4,
+      "cfg_weight": 0.5
+    },
+    "pad": {
+      "exaggeration": 0.45,
+      "cfg_weight": 0.5
+    },
+    "camp": {
+      "exaggeration": 0.6,
+      "cfg_weight": 0.4
+    },
+    "ship": {
+      "exaggeration": 0.5,
+      "cfg_weight": 0.5
+    },
+    "patrol": {
+      "exaggeration": 0.35,
+      "cfg_weight": 0.5
+    },
+    "tug": {
+      "exaggeration": 0.45,
+      "cfg_weight": 0.5
+    },
+    "distress": {
+      "exaggeration": 0.7,
+      "cfg_weight": 0.35
+    },
+    "rival": {
+      "exaggeration": 0.6,
+      "cfg_weight": 0.45
+    },
+    "passenger": {
+      "exaggeration": 0.55,
+      "cfg_weight": 0.5
+    }
+  },
+  "lines": {
+    "comms:sos": {
+      "exaggeration": 0.8,
+      "cfg_weight": 0.3
+    },
+    "comms:sos_answer": {
+      "exaggeration": 0.85,
+      "cfg_weight": 0.3
+    },
+    "comms:sos_bye": {
+      "exaggeration": 0.6
+    },
+    "comms:fined": {
+      "exaggeration": 0.5
+    },
+    "comms:camp_fined": {
+      "exaggeration": 0.75,
+      "cfg_weight": 0.35
+    },
+    "comms:rival_warned_ok": {
+      "exaggeration": 0.75
+    },
+    "comms:rival_warned_no": {
+      "exaggeration": 0.7
+    },
+    "aboard:late": {
+      "exaggeration": 0.65
+    }
+  },
+  "takes": {
+    "default": 2,
+    "with_values": 1,
+    "keys": {
+      "comms:greet": 3,
+      "comms:hold": 3,
+      "comms:speed": 3
+    }
+  },
+  "speakers": [
+    {
+      "id": "control_human_1",
+      "roles": [
+        "control"
+      ],
+      "species": "human",
+      "ref": "vctk/p265.wav",
+      "about": "vctk p265 F 23 Scottish Ross"
+    },
+    {
+      "id": "control_human_2",
+      "roles": [
+        "control"
+      ],
+      "species": "human",
+      "ref": "vctk/p292.wav",
+      "about": "vctk p292 M 23 NorthernIrish Belfast"
+    },
+    {
+      "id": "control_kesh_1",
+      "roles": [
+        "control"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p253.wav",
+      "about": "vctk p253 F 22 Welsh Cardiff"
+    },
+    {
+      "id": "control_kesh_2",
+      "roles": [
+        "control"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p232.wav",
+      "about": "vctk p232 M 23 English Southern England"
+    },
+    {
+      "id": "control_ilyan_1",
+      "roles": [
+        "control"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p297.wav",
+      "about": "vctk p297 F 20 American New York"
+    },
+    {
+      "id": "control_ilyan_2",
+      "roles": [
+        "control"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p245.wav",
+      "about": "vctk p245 M 25 Irish Dublin"
+    },
+    {
+      "id": "control_vey_1",
+      "roles": [
+        "control"
+      ],
+      "species": "vey",
+      "ref": "vctk/p307.wav",
+      "about": "vctk p307 F 23 Canadian Ontario"
+    },
+    {
+      "id": "control_vey_2",
+      "roles": [
+        "control"
+      ],
+      "species": "vey",
+      "ref": "vctk/p347.wav",
+      "about": "vctk p347 M 26 SouthAfrican Johannesburg"
+    },
+    {
+      "id": "control_orun_1",
+      "roles": [
+        "control"
+      ],
+      "species": "orun",
+      "ref": "vctk/p335.wav",
+      "about": "vctk p335 F 25 NewZealand English"
+    },
+    {
+      "id": "control_orun_2",
+      "roles": [
+        "control"
+      ],
+      "species": "orun",
+      "ref": "vctk/p251.wav",
+      "about": "vctk p251 M 26 Indian"
+    },
+    {
+      "id": "pad_human_1",
+      "roles": [
+        "pad"
+      ],
+      "species": "human",
+      "ref": "vctk/p244.wav",
+      "about": "vctk p244 F 22 English Manchester"
+    },
+    {
+      "id": "pad_kesh_1",
+      "roles": [
+        "pad"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p237.wav",
+      "about": "vctk p237 M 22 Scottish Fife"
+    },
+    {
+      "id": "pad_ilyan_1",
+      "roles": [
+        "pad"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p283.wav",
+      "about": "vctk p283 F 24 Irish Cork"
+    },
+    {
+      "id": "pad_vey_1",
+      "roles": [
+        "pad"
+      ],
+      "species": "vey",
+      "ref": "vctk/p311.wav",
+      "about": "vctk p311 M 21 American Iowa"
+    },
+    {
+      "id": "pad_orun_1",
+      "roles": [
+        "pad"
+      ],
+      "species": "orun",
+      "ref": "vctk/p351.wav",
+      "about": "vctk p351 F 21 NorthernIrish Derry"
+    },
+    {
+      "id": "camp_human_1",
+      "roles": [
+        "camp"
+      ],
+      "species": "human",
+      "ref": "vctk/p339.wav",
+      "about": "vctk p339 F 21 American Pennsylvania"
+    },
+    {
+      "id": "camp_orun_1",
+      "roles": [
+        "camp"
+      ],
+      "species": "orun",
+      "ref": "vctk/p286.wav",
+      "about": "vctk p286 M 23 English Newcastle"
+    },
+    {
+      "id": "camp_kesh_1",
+      "roles": [
+        "camp"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p249.wav",
+      "about": "vctk p249 F 22 Scottish Aberdeen"
+    },
+    {
+      "id": "ship_human_1",
+      "roles": [
+        "ship"
+      ],
+      "species": "human",
+      "ref": "vctk/p310.wav",
+      "about": "vctk p310 F 21 American Tennessee"
+    },
+    {
+      "id": "ship_human_2",
+      "roles": [
+        "ship"
+      ],
+      "species": "human",
+      "ref": "vctk/p281.wav",
+      "about": "vctk p281 M 29 Scottish Edinburgh"
+    },
+    {
+      "id": "ship_human_3",
+      "roles": [
+        "ship"
+      ],
+      "species": "human",
+      "ref": "vctk/p239.wav",
+      "about": "vctk p239 F 22 English SW England"
+    },
+    {
+      "id": "ship_kesh_1",
+      "roles": [
+        "ship"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p374.wav",
+      "about": "vctk p374 M 28 Australian English"
+    },
+    {
+      "id": "ship_kesh_2",
+      "roles": [
+        "ship"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p340.wav",
+      "about": "vctk p340 F 18 Irish Dublin"
+    },
+    {
+      "id": "ship_ilyan_1",
+      "roles": [
+        "ship"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p376.wav",
+      "about": "vctk p376 M 22 Indian"
+    },
+    {
+      "id": "ship_vey_1",
+      "roles": [
+        "ship"
+      ],
+      "species": "vey",
+      "ref": "vctk/p303.wav",
+      "about": "vctk p303 F 24 Canadian Toronto"
+    },
+    {
+      "id": "ship_orun_1",
+      "roles": [
+        "ship"
+      ],
+      "species": "orun",
+      "ref": "vctk/p304.wav",
+      "about": "vctk p304 M 22 NorthernIrish Belfast"
+    },
+    {
+      "id": "patrol_human_1",
+      "roles": [
+        "patrol"
+      ],
+      "species": "human",
+      "ref": "vctk/p240.wav",
+      "about": "vctk p240 F 21 English Southern England"
+    },
+    {
+      "id": "patrol_kesh_1",
+      "roles": [
+        "patrol"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p284.wav",
+      "about": "vctk p284 M 20 Scottish Fife"
+    },
+    {
+      "id": "tug_human_1",
+      "roles": [
+        "tug"
+      ],
+      "species": "human",
+      "ref": "vctk/p277.wav",
+      "about": "vctk p277 F 23 English NE England"
+    },
+    {
+      "id": "tug_orun_1",
+      "roles": [
+        "tug"
+      ],
+      "species": "orun",
+      "ref": "vctk/p272.wav",
+      "about": "vctk p272 M 23 Scottish Edinburgh"
+    },
+    {
+      "id": "distress_human_1",
+      "roles": [
+        "distress"
+      ],
+      "species": "human",
+      "ref": "vctk/p308.wav",
+      "about": "vctk p308 F 18 American Alabama"
+    },
+    {
+      "id": "distress_human_2",
+      "roles": [
+        "distress"
+      ],
+      "species": "human",
+      "ref": "vctk/p274.wav",
+      "about": "vctk p274 M 22 English Essex"
+    },
+    {
+      "id": "distress_kesh_1",
+      "roles": [
+        "distress"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p317.wav",
+      "about": "vctk p317 F 23 Canadian Hamilton"
+    },
+    {
+      "id": "distress_ilyan_1",
+      "roles": [
+        "distress"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p285.wav",
+      "about": "vctk p285 M 21 Scottish Edinburgh"
+    },
+    {
+      "id": "distress_vey_1",
+      "roles": [
+        "distress"
+      ],
+      "species": "vey",
+      "ref": "vctk/p295.wav",
+      "about": "vctk p295 F 23 Irish Dublin"
+    },
+    {
+      "id": "distress_orun_1",
+      "roles": [
+        "distress"
+      ],
+      "species": "orun",
+      "ref": "vctk/p326.wav",
+      "about": "vctk p326 M 26 Australian English Sydney"
+    },
+    {
+      "id": "rival_human_1",
+      "roles": [
+        "rival"
+      ],
+      "species": "human",
+      "ref": "vctk/p228.wav",
+      "about": "vctk p228 F 22 English Southern England"
+    },
+    {
+      "id": "rival_human_2",
+      "roles": [
+        "rival"
+      ],
+      "species": "human",
+      "ref": "vctk/p255.wav",
+      "about": "vctk p255 M 19 Scottish Galloway"
+    },
+    {
+      "id": "rival_kesh_1",
+      "roles": [
+        "rival"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p341.wav",
+      "about": "vctk p341 F 26 American Ohio"
+    },
+    {
+      "id": "rival_orun_1",
+      "roles": [
+        "rival"
+      ],
+      "species": "orun",
+      "ref": "vctk/p364.wav",
+      "about": "vctk p364 M 23 Irish Donegal"
+    },
+    {
+      "id": "passenger_human_1",
+      "roles": [
+        "passenger"
+      ],
+      "species": "human",
+      "ref": "libritts/7976.wav",
+      "about": "libritts 7976"
+    },
+    {
+      "id": "passenger_human_2",
+      "roles": [
+        "passenger"
+      ],
+      "species": "human",
+      "ref": "vctk/p278.wav",
+      "about": "vctk p278 M 22 English Cheshire"
+    },
+    {
+      "id": "passenger_human_3",
+      "roles": [
+        "passenger"
+      ],
+      "species": "human",
+      "ref": "vctk/p294.wav",
+      "about": "vctk p294 F 33 American San Francisco"
+    },
+    {
+      "id": "passenger_kesh_1",
+      "roles": [
+        "passenger"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p246.wav",
+      "about": "vctk p246 M 22 Scottish Selkirk"
+    },
+    {
+      "id": "passenger_ilyan_1",
+      "roles": [
+        "passenger"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/s5.wav",
+      "about": "vctk s5 F 22 British new speaker, more data w"
+    },
+    {
+      "id": "passenger_ilyan_2",
+      "roles": [
+        "passenger"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p298.wav",
+      "about": "vctk p298 M 19 Irish Tipperary"
+    },
+    {
+      "id": "passenger_vey_1",
+      "roles": [
+        "passenger"
+      ],
+      "species": "vey",
+      "ref": "vctk/p343.wav",
+      "about": "vctk p343 F 27 Canadian Alberta"
+    },
+    {
+      "id": "passenger_orun_1",
+      "roles": [
+        "passenger"
+      ],
+      "species": "orun",
+      "ref": "libritts/5895.wav",
+      "about": "libritts 5895"
+    }
+  ]
+}
