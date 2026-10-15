@@ -34,16 +34,19 @@ Not all at once. In the order requested:
     shipyard compares them side by side in 0.14.1)
 12. Bigger holds and passenger cabins in three sizes; passengers local and long-haul, riding along
     with freight (**built** in 0.15.0)
+13. The radio: clearance to dock and land, other ships (fuel, news, tows), distress calls, and voices
+    made in code (**built** in 0.16.0)
 
 The ship builder came first because everything else reads from the ship it produces.
 
 ### Next, in roughly this order (planned)
 
-13. **Talking to other ships**: hail traffic for a fuel sale or a tow, distress calls from stranded
-    crews, and other haulers racing you to the same wreck.
-14. **Frontier growth**: outposts that grow when they're kept supplied (more demand, better services)
+14. **Rivals at wrecks** (planned for 0.16.1): other salvage crews stripping a derelict at their own pace,
+    claim beacons for who got there first, and hailing them to split it or warn them off. Later: the fixed
+    radio lines recorded with Chatterbox, several takes each so they don't repeat.
+15. **Frontier growth**: outposts that grow when they're kept supplied (more demand, better services)
     and shrink when they aren't. The economy sim's facilities are the starting point.
-15. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
+16. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
     claim-jumpers at derelicts. Risks to plan around rather than fights.
 
 ## Built: ship builder architecture

@@ -177,10 +177,15 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
 .active small { color: var(--dim); font-size: 13px; }
 .active .acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .note { color: var(--dim); font-size: 13px; margin: 8px 0 0; line-height: 1.4; }
+.comms-now { min-height: 1.4em; color: #bfefff; font-size: 15px; margin: 0 0 8px; }
+.comms-now.you { color: var(--amber); } .comms-now.sos { color: #ff7a6e; }
+.contact { margin: 10px 0 4px; font-size: 13px; letter-spacing: .04em; color: #bcd6ea; } .contact.sos { color: #ff7a6e; }
+.comms-log { color: var(--dim); font-size: 13px; line-height: 1.45; margin-top: 10px; }
 
 @media (min-width: 600px) { .cols { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 900px) {
-  main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr auto; grid-template-areas: "trip trip" "eva eva" "map gauges" "map helm" "ship ship"; align-items: start; }
+  main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto auto auto auto 1fr auto; grid-template-areas: "trip trip" "eva eva" "map gauges" "map helm" "map comms" "ship ship"; align-items: start; }
+  .comms-card { grid-area: comms; }
   .eva-card { grid-area: eva; } .ship-card { grid-area: ship; } .port-card { grid-area: helm; }
   .lever { height: max(220px, min(300px, calc(100dvh - 560px))); }
   .map canvas { aspect-ratio: auto; height: min(calc(100dvh - 330px), 760px); min-height: 420px; }
@@ -314,6 +319,13 @@ main { display: grid; gap: 12px; padding: 12px 16px 96px; grid-template-columns:
           <button class="key wide" id="kTug" hidden><span id="tugText">Call the tug</span><small id="tugWhy">out of fuel · T</small></button>
         </div>
       </div>
+    </section>
+
+    <section class="card comms-card" id="commsCard" hidden>
+      <h2>Comms</h2>
+      <p class="comms-now" id="commsNow"></p>
+      <div id="commsList"></div>
+      <div class="comms-log" id="commsLog"></div>
     </section>
 
     <section class="card port-card" id="portCard" hidden>
@@ -478,6 +490,7 @@ function render() {
   document.querySelector(".helm-card").hidden = !!s.port;
   document.querySelector(".gauges-card").hidden = !!s.port;   // berthed: the status panel says it better
   renderEva(s);
+  renderComms(flying ? s.comms : null);
   renderShip(s.status);
   renderPort(s.port);
   $("prompt").textContent = s.prompt || "";
@@ -485,6 +498,33 @@ function render() {
   faults(s);
   alarms(s);
 }
+
+// ---- Comms: who's in range, what you can say, and what's being said -------------------------
+let commsKey = "";
+function renderComms(c) {
+  $("commsCard").hidden = !c;
+  if (!c) { commsKey = ""; return; }
+  const now = c.now || {};
+  $("commsNow").textContent = now.text ? (now.who ? now.who + ":  " : "") + now.text : "";
+  $("commsNow").className = "comms-now" + (now.who === "YOU" ? " you" : (now.who || "").startsWith("DISTRESS") ? " sos" : "");
+  const key = JSON.stringify([c.contacts, c.log]);
+  if (key === commsKey) return;
+  commsKey = key;
+  let h = c.contacts.length ? "" : '<p class="note">Nobody in range. Space is big; radios aren\'t.</p>';
+  for (const k of c.contacts) {
+    const d = k.dist_m < 0 ? "" : k.dist_m < 2000 ? " · " + Math.round(k.dist_m) + " m" : " · " + (k.dist_m / 1000).toFixed(1) + " km";
+    h += '<div class="contact' + (k.kind === "distress" ? " sos" : "") + '">' + esc(k.name.toUpperCase()) + d + "</div>";
+    for (const o of k.options) h += row("<b>" + esc(o.text) + "</b>" + (!o.enabled && o.why ? "<small>" + esc(o.why) + "</small>" : ""), act("Say it", "comms", k.id + "|" + o.id, { off: !o.enabled }));
+  }
+  $("commsList").innerHTML = h;
+  $("commsLog").innerHTML = (c.log || []).slice(-6).map(l => "<div><b>" + esc(l.who) + ":</b> " + esc(l.text) + "</div>").join("");
+}
+$("commsCard").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-action]");
+  if (!b || b.disabled) return;
+  commsKey = "";
+  cmd("comms", 0, b.dataset.id);
+});
 
 // ---- Space walk ---------------------------------------------------------------------------
 function mmss(sec) { sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }

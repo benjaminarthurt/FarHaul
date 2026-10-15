@@ -263,6 +263,8 @@ func command(action: String, value: float, id := "") -> Dictionary:
 		return r
 	if scene == null or not scene.has_method("remote_command"):
 		return {"ok": false, "message": "Nothing to fly from here. Take the helm first."}
+	if action == "comms" and scene is FlightScene:   # say something on the radio: id is "contact|option"
+		return (scene as FlightScene).comms_c.act_id(id)
 	return scene.remote_command(action, value)
 
 

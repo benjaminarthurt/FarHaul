@@ -1,0 +1,99 @@
+{
+  "description": "Comms (scripts/comms/comms.gd): who you can call in flight and what they say. Ranges, prices, chances, the clearance rules and the lines. {you} is your ship's name, {them} theirs, {control} the station's traffic control. See docs/runtime/comms.md.",
+  "range_m": {"ship": 25000, "control": 60000, "pad": 80000, "distress": 400000},
+  "fuel": {
+    "hauler_price_x": 1.6,
+    "rep_discount_per_point": 0.004,
+    "rep_discount_max": 0.2,
+    "spare_t": [2, 8],
+    "alongside_m": 22,
+    "approach_m_s": 30,
+    "transfer_t_s": 0.5,
+    "hold_still_m_s": 3.0,
+    "rescue_price_x": 2.5,
+    "rescue_wants_t": [2, 5]
+  },
+  "tow": {"hauler_x": [0.6, 1.4], "far_x": 1.3},
+  "clearance": {
+    "hold_chance": 0.3,
+    "hold_clear_m": 1500,
+    "hold_max_s": 45,
+    "fine_cr": 300,
+    "camp_fine_cr": 120,
+    "fine_rep": -1,
+    "berths": [2, 14],
+    "speed_warn_m": 2000,
+    "speed_warn_m_s": 40
+  },
+  "distress": {
+    "chance": 0.2,
+    "along": [0.25, 0.65],
+    "side_m": [2000, 7000],
+    "stop_m": 70,
+    "crew": [1, 4],
+    "ignored_rep": -1,
+    "helped_rep": 3,
+    "fuel_rep": 1,
+    "names": ["Long Patience", "Small Mercy", "Late Again", "Second Wind", "Kettle Black", "Low Hopes", "Fair Weather", "Lucky Seven"],
+    "problems": [
+      "Drive's cooked. Air's fine. Morale isn't.",
+      "Out of fuel and out of ideas.",
+      "Main engine's dead and so's the backup. We're drifting.",
+      "We burned too much on the last leg. Don't ask how."
+    ]
+  },
+  "voices": {
+    "human": {"f0": [110, 200], "rate": 1.0, "scale": 1.0, "breath": 0.02},
+    "kesh": {"f0": [85, 105], "rate": 0.8, "scale": 0.85, "breath": 0.05},
+    "ilyan": {"f0": [210, 260], "rate": 1.35, "scale": 1.2, "breath": 0.0},
+    "vey": {"f0": [160, 200], "rate": 1.15, "scale": 1.05, "breath": 0.03},
+    "orun": {"f0": [115, 140], "rate": 0.85, "scale": 0.9, "breath": 0.08}
+  },
+  "lines": {
+    "you_clearance": ["{control}, {you}. Requesting clearance to dock.", "{control}, this is {you}, inbound. Requesting a berth."],
+    "you_pad": ["{control}, {you}. Requesting clearance to land.", "{control}, {you}, coming down. Which pad?"],
+    "you_hail": ["{them}, this is {you}. Got a minute?", "{them}, {you}. Come in."],
+    "cleared": [
+      "{you}, {control}. Cleared to berth {berth}. Collar's lit green. Try to hit it.",
+      "Copy, {you}. Berth {berth} is yours. Approach slow, we've just had it polished.",
+      "{you}, cleared for berth {berth}. Watch the paint."
+    ],
+    "hold": [
+      "{you}, hold outside two kilometres. The {other} is coming out of the collar. You'll see them.",
+      "Negative on the collar for now, {you}. The {other} is undocking. Hold, and enjoy the view."
+    ],
+    "after_hold": ["{you}, the {other} is clear. Cleared to berth {berth}.", "Collar's yours, {you}. Berth {berth}. Mind their wake."],
+    "already": ["You're already cleared, {you}. Berth {berth}. We're not saying it twice. That was twice."],
+    "fined": [
+      "{you}, you docked without clearance. That's {fine} and a note on your file. Call in next time.",
+      "{you}, nobody cleared you for that collar. {fine}, and your name's on the board in red."
+    ],
+    "pad_cleared": ["{you}, pad control. Pad {berth} is yours. Beacon's on. Mind the dust.", "Cleared to land on pad {berth}, {you}. Gear down, if you have gear."],
+    "camp_cleared": ["{you}? Yeah. Land on the flat bit. The flatter bit. Not that bit.", "Pad's clear, more or less. Come down slow, the foreman's watching."],
+    "camp_fined": ["Next time, call before you drop on my camp. {fine} for the scare.", "You land on my camp without a word? {fine}. And a word."],
+    "speed": [
+      "{you}, you're doing {speed} inside two kilometres. Bleed it off or we start writing.",
+      "Freighter on approach, you're hot. Slow down. The station doesn't move out of the way."
+    ],
+    "greet": ["{them} here. Go ahead.", "This is the {them}. What do you need?", "{them}. Make it quick, we're on the clock.", "Go ahead, {you}. We're listening. Mostly."],
+    "patrol": ["Patrol {them}. Keep it slow near the station and we'll get along fine.", "{them}, system patrol. Nothing to report, and we'd like it to stay that way."],
+    "fuel_offer": ["We can spare {t} tonnes at {price} a tonne. Port's cheaper, but the port's over there.", "{t} tonnes, {price} a tonne. We'll come alongside. Hold still."],
+    "fuel_coming": ["Coming alongside. Hold her steady.", "On our way. Don't do anything clever."],
+    "fuel_wait": ["We can't line up a hose with you moving like that. Hold still.", "Stop wriggling, {you}. We're trying to help."],
+    "fuel_done": ["That's {t} tonnes. Pleasure doing business.", "{t} tonnes in. Bill's on its way. Fly safe."],
+    "fuel_no": ["We're doing {speed} the other way. Ask someone who's stopped.", "We've barely enough for ourselves. Try a hauler at the port."],
+    "tow_offer": ["We'll take your line. Call it {fee}, and we don't discuss the parking.", "We can tow you in for {fee}. It's that or wait for the port tug."],
+    "tug_offer": ["Port tug. {fee} to bring you in, same as always. Sit tight.", "Tug here. {fee}, and keep your hands off the throttle."],
+    "news_tight": ["{place} is short of {goods}. Has been for days. You didn't hear it from us.", "If you're carrying {goods}, {place} will kiss you. Metaphorically."],
+    "news_price": ["Prices at {place} are {dir} {pct} this week. Make of that what you will.", "Heard {place} is {dir} {pct}. Somebody's happy."],
+    "news_wreck": ["There's a dead ship out by the station, {km} km off: {wreck}. Nobody's touched it yet.", "Saw a wreck on the way in, about {km} km out. {wreck}. Not our business."],
+    "news_none": ["Nothing worth the airtime. Quiet out.", "No news. Which is news, round here."],
+    "news_again": ["We told you everything we know. Twice would be making it up."],
+    "sos": ["Mayday, mayday. This is the {them}, {species} registry. {problem} Anyone out there?", "Any ship, any ship, this is the {them}. {problem} We've {crew} aboard."],
+    "sos_answer": ["You heard us? Oh, thank everything. Come alongside, we're not going anywhere.", "{you}? We see you. Please don't be a salvage crew."],
+    "sos_fuel": ["Fuel? Bless you. {t} tonnes at {price} a tonne, and we owe you a drink.", "{t} tonnes. We'll pay {price} a tonne and name a child after you. Small child."],
+    "sos_crew": ["You're taking us off? We'll grab our bags. Somebody grab the cat.", "We're coming across. The ship can wait. We can't."],
+    "sos_room": ["You've no room? Then send word to the port. We'll keep the lights on."],
+    "sos_bye": ["We'll make it from here. Thank you, {you}. Really.", "Fuelled up and limping home. We owe you."]
+  }
+}

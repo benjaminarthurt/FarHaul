@@ -30,6 +30,7 @@ var derelicts: Array = []     ## {ship, name, deep, points: [{id, pos (body fram
 var pods: Array = []          ## {ship, state, t, dur, a, b, rest, home}
 var orbiters: Array = []      ## {ship, world: Node3D it circles, radius, speed, angle, tilt: Basis}
 var deep_key := ""            ## the run the deep derelict (if any) was placed for
+var stops: Array = []         ## other things out on the route the braking autopilot stops at (a ship in distress: Comms)
 var _announce := ""           ## the sensors' line about it, said once the cockpit isn't saying something else
 var site := ""
 var rng := RandomNumberGenerator.new()
@@ -74,6 +75,7 @@ func clear() -> void:
 	parked.clear()
 	movers.clear()
 	derelicts.clear()
+	stops.clear()
 	pods.clear()
 	orbiters.clear()
 	deep_key = ""
@@ -262,6 +264,9 @@ func deep_range(pos: Vector3) -> float:
 	for d in derelicts:
 		if bool(d.deep):
 			best = minf(best, (d.ship as NpcShip).global_position.distance_to(pos))
+	for s in stops:
+		if is_instance_valid(s):
+			best = minf(best, (s as Node3D).global_position.distance_to(pos))
 	return best
 
 
@@ -271,8 +276,9 @@ func brake_target(fallback: Vector3) -> Vector3:
 	var best := fallback
 	var best_d := sc.model.pos.distance_to(fallback)
 	var stop := float((cfg.get("deep", {}) as Dictionary).get("stop_m", 60.0))
-	for d in derelicts:
-		var p: Vector3 = (d.ship as NpcShip).global_position
+	var all: Array = derelicts.map(func(d): return d.ship) + stops.filter(func(s): return is_instance_valid(s))
+	for n in all:
+		var p: Vector3 = (n as Node3D).global_position
 		var to := p - sc.model.pos
 		if to.length() < stop * 2.0 or to.length() >= best_d:
 			continue
@@ -551,6 +557,9 @@ func step(dt: float) -> void:
 				(p.marker as Node3D).rotation += (p.marker as Node3D).get_meta("spin", Vector3.ZERO) * dt   # tumbling slowly
 	if passer != null:
 		passer.show_tag(eye, rng_m * 2.0)
+	for s in stops:   # somebody calling for help: always tagged
+		if is_instance_valid(s):
+			(s as NpcShip).show_tag(eye, 1.0e9)
 
 
 ## A ship coming or going: rest out of sight, then fly from a slot by the station out to far away (or

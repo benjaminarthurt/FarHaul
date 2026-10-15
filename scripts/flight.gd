@@ -66,9 +66,9 @@ var help: Label
 var crosshair: Label
 const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement, times the mouse sensitivity setting
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
-const FLY_HELP := "W/S throttle   Z cut   B braking thrusters   arrows pitch+yaw   Ctrl+arrows slide   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   T traffic/tug   , . time  / x1   M map   G get up   Esc menu"
-const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   , . time  / x1   M map   Esc menu"
-const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   T autoland   F unload (landed on the pad)   G get up   C camera   M map   Esc menu"
+const FLY_HELP := "W/S throttle   Z cut   B braking thrusters   arrows pitch+yaw   Ctrl+arrows slide   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   T traffic/tug   Y comms   , . time  / x1   M map   G get up   Esc menu"
+const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   Y comms   , . time  / x1   M map   Esc menu"
+const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   T autoland   F unload (landed on the pad)   G get up   C camera   Y comms   M map   Esc menu"
 const EVA_HELP := "WASD drift   Space/Ctrl up/down   Shift more jet   mouse or arrows look   1 wrench  2 torch   hold E or click: fix a mark   Q at the hatch: back aboard   Esc menu"
 const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   F10 menu"
 var ship_data: ShipData
@@ -98,6 +98,8 @@ var jump_c: JumpSequence       ## a flown star jump (scripts/flight/jump_sequenc
 var foot_c: OnFoot             ## walking the ship and the suit outside (scripts/flight/on_foot.gd)
 var crew_c: CrewWork           ## the hired crew at work (scripts/flight/crew_work.gd)
 var pax_c: PassengersAboard    ## the passengers, in the beds they paid for (scripts/flight/passengers_aboard.gd)
+var comms_c: Comms             ## the radio: traffic control, other ships, distress calls (scripts/comms/comms.gd)
+var comms_panel: CommsPanel    ## and on screen, Y anywhere aboard (scripts/comms/comms_panel.gd)
 var traffic_c: Traffic         ## other ships and derelicts (scripts/flight/traffic.gd)
 var land_c: Landing            ## descents, lift-offs and the moon coming and going (scripts/flight/landing.gd)
 var world_c: SpaceScenery      ## sky, sun, motes and the station (scripts/flight/space_scenery.gd)
@@ -123,6 +125,9 @@ func _init() -> void:
 	foot_c = OnFoot.new(self)
 	crew_c = CrewWork.new(self)
 	pax_c = PassengersAboard.new(self)
+	comms_c = Comms.new(self)
+	comms_panel = CommsPanel.new(comms_c)
+	add_child(comms_panel)
 	land_c = Landing.new(self)
 	world_c = SpaceScenery.new(self)
 	traffic_c = Traffic.new(self)
@@ -403,6 +408,7 @@ func _process(delta: float) -> void:
 			say("You flew into %s at %s m/s. It didn't move. Planets are solid; the brochure was clear." % [hit_world, ShipStats.commas(roundi(model.last_impact))], 6.0)
 	crew_c.step(minf(delta, 0.05) * float(_warp()))
 	pax_c.step()
+	comms_c.step(minf(delta, 0.05) * float(_warp()), delta)
 	traffic_c.step(minf(delta, 0.05) * float(_warp()))
 	view.set_damage(model.damage)
 	_apply_pose()
@@ -464,6 +470,7 @@ func pilot(action: String, value: float = 0.0) -> Dictionary:
 		"dock":
 			if not model.can_dock():
 				return {"ok": false, "message": "Not close enough to dock. Closer, and slower."}
+			comms_c.arrived(comms_c._station_id())   # no clearance: a fine and a lecture
 			if phase == "approach":
 				_arrived = true   # docked at the destination
 			_return_to_dock()
@@ -471,6 +478,7 @@ func pilot(action: String, value: float = 0.0) -> Dictionary:
 		"traffic":   # on the approach, station traffic control brings the ship in (T at the helm)
 			if phase != "approach":
 				return {"ok": false, "message": "Traffic control only takes ships on the approach."}
+			comms_c.clear_for = comms_c._station_id()   # they're bringing you in: that's clearance
 			_arrived = true
 			_return_to_dock()
 			return {"ok": true, "message": "Traffic control has you."}
@@ -527,7 +535,8 @@ func remote_state() -> Dictionary:
 			"leak_t_h": model.leak_t_per_h(), "cargo_hurt": model.cargo_hurt, "alerts": alerts,
 			"parts": Wear.summary(ship_data, wear) if ship_data != null else "",
 			"has_retro": model.retro_kn > 0.0, "has_rcs": model.rcs_y_kn > 0.0, "retro": model.retro, "strafe": [model.strafe.x, model.strafe.y],
-			"prompt": prompt.text if prompt != null else "", "help": help.text if help != null else ""}, true)
+			"prompt": prompt.text if prompt != null else "", "help": help.text if help != null else "",
+			"comms": comms_c.state() if comms_c != null else {}}, true)
 	if String(job.get("kind", "")) == "jump" and phase == "depart":
 		var why := _jump_blocker()
 		st["jump_ready"] = why == ""
@@ -969,6 +978,9 @@ func _unhandled_input(event: InputEvent) -> void:
 					if model.on_pad():
 						_return_to_dock()   # shut down where the flight started
 					return
+				if model.on_pad():
+					var site := comms_c._site()
+					comms_c.arrived(String(site.get("id", "")), String(site.get("kind", "")) == "camp")   # landed without asking
 				if model.on_pad() or not model.has_fuel():
 					_arrived = true
 					_surface = model.on_pad() and String(job.get("dest_kind", "")) == "moon"
@@ -1043,7 +1055,8 @@ func _return_to_dock() -> void:
 	if leaving:
 		return
 	leaving = true
-	Session.flight_extra.merge({"rescue": model.disabled(), "cargo_hurt": model.cargo_hurt, "wear": wear}, true)   # keeps "adrift" if a space walk ended in the dark
+	comms_panel.close()
+	Session.flight_extra.merge({"rescue": model.disabled(), "cargo_hurt": model.cargo_hurt, "wear": wear, "comms": comms_c.settlement()}, true)   # keeps "adrift" if a space walk ended in the dark
 	if String(job.get("kind", "")) == "jump":
 		Session.finish_jump_flight(model.fuel_burned_t, model.elapsed_s, model.damage, (not model.has_fuel() or model.disabled()) and (phase != "approach" or not model.can_dock()))
 	elif xfer != null:

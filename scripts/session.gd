@@ -855,9 +855,44 @@ static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> 
 	var parts := PackedStringArray()
 	if rescue:
 		parts.append(" The salvage crew added %s cr for the privilege." % ShipStats.commas(salvage))
+	parts.append(_settle_comms(ex.get("comms", {})))
 	if lost > 0.005:
 		parts.append(" About %d%% of the load is %s; the consignee will notice." % [roundi(lost * 100.0), "over the side or in pieces" if rescue else "dented"])
 	return adrift_note + "".join(parts)
+
+
+## What the radio came to on a flight (Comms.settlement): fuel bought from a hauler and sold to a ship in
+## distress, a hauler's tow against the port tug's fee, fines for docking or landing unannounced, and
+## the standing that went with it. Returns a note for the flight's message.
+static func _settle_comms(c: Dictionary) -> String:
+	if c.is_empty() or sim == null:
+		return ""
+	var bits := PackedStringArray()
+	var bought := int(c.get("fuel_bought_cr", 0))
+	if bought > 0:
+		sim._pay(SimWorld.PLAYER, "world", float(bought))
+		bits.append("Fuel off a hauler: %.1f t, %s cr." % [float(c.get("fuel_bought_t", 0.0)), ShipStats.commas(bought)])
+	var sold := int(c.get("fuel_sold_cr", 0))
+	if sold > 0:
+		sim._pay("world", SimWorld.PLAYER, float(sold))
+		var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
+		pc["revenue"] = float(pc["revenue"]) + float(sold)
+		bits.append("Fuel sold to a ship in trouble: %.0f t, %s cr." % [float(c.get("fuel_sold_t", 0.0)), ShipStats.commas(sold)])
+	var tow := int(c.get("tow_delta_cr", 0))
+	if String(c.get("tow_by", "")) != "":
+		if tow > 0:
+			sim._pay(SimWorld.PLAYER, "world", float(tow))
+		elif tow < 0:
+			sim._pay("world", SimWorld.PLAYER, float(-tow))
+		bits.append("The %s towed you, not the port tug: %s cr %s the tug's fee." % [String(c.tow_by), ShipStats.commas(absi(tow)), "on top of" if tow >= 0 else "off"])
+	var fine := int(c.get("fine_cr", 0))
+	if fine > 0:
+		sim._pay(SimWorld.PLAYER, "world", float(fine))
+	for n in c.get("notes", []):
+		bits.append(String(n))
+	var rep := int(c.get("rep", 0)) + int(c.get("fine_rep", 0))
+	var note := (" " + " ".join(bits)) if not bits.is_empty() else ""
+	return note + _add_rep(rep)
 
 
 ## Wear and tear (Wear) ------------------------------------------------------------------------------

@@ -78,6 +78,13 @@ working part's condition (`Wear.parts`), patch and spares kits, the hold, the lo
 they're waiting, whether the pilot has the helm, the loadmaster and steward), in port a line about
 where they are ashore.
 
+## In flight: the radio
+
+`/api/state` in flight carries `comms` (`Comms.state()`): the contacts in range with their options
+(`{id, text, enabled, why}`), the last lines said, and what's being said now. The page shows them as a
+Comms card; a tap sends action `comms` with id `contact|option` (`Comms.act_id`). See
+`docs/runtime/comms.md`.
+
 ## In port: the desks
 
 When the current scene is the place scene or the station terminal (`ShipRemote._in_port`: a saved game,
