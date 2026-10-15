@@ -119,7 +119,7 @@ func _init() -> void:
 	check(not has_warning(cs, "No cargo"), "ship with cargo space has no cargo warning")
 	check(has_warning(ShipStats.compute(s4), "No cargo"), "ship without cargo space is flagged")
 	var cargo_rows := lib.order.filter(func(id: StringName) -> bool: return lib.get_def(id).group == &"cargo")
-	check(cargo_rows.size() == 2, "palette has two cargo modules")
+	check(cargo_rows.size() == 4, "palette has four cargo modules: the hold, the rack, the 2x2 hold and the 2x3 bay")
 	var json9 := ShipData.new(lib)
 	check(json9.from_json(s9.to_json()) and json9.modules.size() == s9.modules.size(), "cargo ship saves and loads")
 

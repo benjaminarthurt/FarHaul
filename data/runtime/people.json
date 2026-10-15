@@ -46,8 +46,8 @@
     "rep_ok": 2,
     "rep_rough": -3,
     "pays_trip_cost_x": [
-      0.8,
-      0.4
+      0.25,
+      0.35
     ]
   },
   "sealed": {

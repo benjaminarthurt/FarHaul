@@ -16,15 +16,17 @@ is done right.
 | Kind | What it is | Pays | Goes wrong when | Then |
 |---|---|---|---|---|
 | Rush | A small load, due in 75% of the usual trip time | 1.9 × the trip cost | It arrives after the due hour | Half pay, standing −4 |
-| Passenger | 1 to 3 people, one spare berth each | (0.8 + 0.4 per seat) × the trip cost, empty | The hull takes damage on the way (a hard landing) | Half the fare, standing −3 |
+| Passenger | 1 to 3 people, a bed each, riding along with anything else | (0.25 + 0.35 per seat) × the trip cost, empty, in spare bunks; more in cabins | The hull takes damage on the way (a hard landing), or they're more than 2 days aboard | Half the fare, standing −3 (−2 late) |
 | Sealed crate | A crate you do not open. Needs Known standing | 1.7 × the trip cost | The hull takes damage on the way | 40% of the pay, standing −6 |
 
 - **Rush jobs** are due sooner than the usual burn gets there. Fly it yourself (a hand-flown run counts
   as flat out, 65% of the usual time), or take the **hard burn** on autopilot: 65% of the time for 130%
   of the fuel. The usual autopilot burn arrives late. A rush job is only offered if your tank can take the
   hard burn with the load.
-- **Passengers** need spare berths: berths beyond the crew the ship needs. The starter has none.
-  `ShipPresets.STARTER_CABIN` adds two crew bunks behind the cockpit.
+- **Passengers** are bookings, not contracts (0.15.0, `docs/runtime/passengers.md`): they ride along
+  with freight, or on their own, and get off when the ship reaches their site. They need beds: spare crew
+  bunks at the basic fare, or passenger cabins at more. One in five wants a cabin and won't take a bunk.
+  The starter has no spare beds; `ShipPresets.STARTER_CABIN` adds two crew bunks behind the cockpit.
 
 ## Standing
 
@@ -50,8 +52,8 @@ is done right.
 - that sealed work is locked;
 - a rush on a hard burn on time, and at a profit;
 - a rush late on the usual burn;
-- passengers refused without berths, then carried in the cabin starter, with half the fare after a hard
-  landing;
+- passengers refused without a bed, then carried in the cabin starter with no contract taken, with half
+  the fare after a hard landing;
 - a sealed crate delivered intact;
 - +1 standing for ordinary freight.
 

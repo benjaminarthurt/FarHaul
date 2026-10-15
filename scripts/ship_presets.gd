@@ -71,6 +71,30 @@ const STARTER_CABIN := [
 ]
 
 
+## A small liner: the FTL starter stretched to carry people. Passenger quarters behind the cockpit, a
+## cabin and a stateroom off the next junction, then the hold, and a Gateworks engine to shift it all.
+## Used by the passenger tests and screenshots (Passengers).
+const STARTER_LINER := [
+	[&"cockpit", Vector3i(0, 0, 0), 0],
+	[&"tee", Vector3i(0, 0, 1), 0],
+	[&"airlock", Vector3i(1, 0, 1), 0],
+	[&"pax_quarters", Vector3i(0, 0, 2), 0],
+	[&"tee", Vector3i(1, 0, 4), 0],
+	[&"pax_cabin", Vector3i(2, 0, 4), 3],
+	[&"pax_stateroom", Vector3i(1, 0, 5), 0],
+	[&"corridor", Vector3i(2, 0, 7), 0],
+	[&"cargo_hold", Vector3i(2, 0, 8), 0],
+	[&"engineering", Vector3i(2, 0, 10), 0],
+	[&"engine__gateworks", Vector3i(2, 0, 11), 0],
+	[&"radiator", Vector3i(3, 0, 10), 0],
+	[&"radiator", Vector3i(1, 0, 10), 2],
+	[&"radiator", Vector3i(3, 0, 9), 0],
+	[&"tank", Vector3i(1, 0, 8), 0],
+	[&"jump_drive", Vector3i(3, 0, 8), 0],
+	[&"radiator", Vector3i(3, 0, 7), 0],
+]
+
+
 ## A longer hauler for other people's ships (Traffic): two holds, two tanks, four radiators. The player
 ## never starts with one.
 const NPC_HAULER := [

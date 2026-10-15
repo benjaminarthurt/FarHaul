@@ -231,7 +231,7 @@ func state() -> Dictionary:
 	if _in_port(scene):
 		var now := Time.get_ticks_msec() / 1000.0
 		var k := "%d|%d|%s|%d|%s|%d" % [int(Session.profile.get("credits", 0)), Session.day(), String(Session.profile.get("port_id", "")), Session.crew().size(),
-				String(Session.active_contract().get("status", "")), Session.patch_kits() * 10 + Session.spares_kits()]
+				String(Session.active_contract().get("status", "")), Session.patch_kits() * 10 + Session.spares_kits() + Passengers.count() * 1000]
 		if k != _port_key or now - _port_t > 5.0:
 			_port_cache = port_state()
 			_port_key = k
@@ -327,12 +327,19 @@ static func port_state() -> Dictionary:
 				"can_cancel": Session.cancel_block() == "", "cancel_fee": Session.cancel_fee(),
 				"due_in_h": int(c.due_hour) - int(Session.sim.hour) if c.has("due_hour") and Session.sim != null else -9999}
 	var board := []
-	if c.is_empty() and not Session.insolvent():
-		for o in Contracts.offers_from(Session.system_id()):
-			board.append(_offer_row(o, stats))
-		for j in Session.people_here():
+	if not Session.insolvent():
+		if c.is_empty():
+			for o in Contracts.offers_from(Session.system_id()):
+				board.append(_offer_row(o, stats))
+		for j in Session.people_here():   # passengers ride along, contract or not
+			if c.is_empty() or String(j.get("person_kind", "")) == "passenger":
+				board.append(_offer_row(j, stats))
+		for j in Passengers.long_haul():
 			board.append(_offer_row(j, stats))
 	out["board"] = board
+	out["passengers"] = Passengers.aboard().map(func(b: Dictionary) -> Dictionary:
+		return {"who": String(b.person), "seats": int(b.seats), "to": String(b.dest_name), "beds": Passengers.beds_text(b.beds), "fare": int(b.fare),
+				"late": Session.day() > int(b.get("due_day", 1 << 30))})
 	var cands := []
 	var free := Session.free_berths(stats) if not stats.is_empty() else 0
 	var mult := float(SimShip.level(String(Session.profile.get("difficulty", "normal"))).get("wage_mult", 1.0))
@@ -381,9 +388,10 @@ static func _offer_row(o: Dictionary, stats: Dictionary) -> Dictionary:
 	var row := {"id": String(o.get("id", "")), "kind": String(o.get("person_kind", "")) if o.has("person_kind") else ("surface" if bool(o.get("surface", false)) else ("local" if local else "freight")),
 			"what": "%d seat%s" % [int(o.seats), "" if int(o.seats) == 1 else "s"] if pax else String(Worlds.commodity(String(o.get("commodity", ""))).get("name", o.get("commodity", ""))),
 			"to": _dest_name(o), "tonnes": 0.0 if pax else float(o.get("offer", 0.0)),
-			"pay": int(o.fare) if pax else roundi(float(o.get("offer", 0.0)) * float(o.get("rate", 0.0))),
+			"pay": maxi(Passengers.fare_now(o, stats), int(o.get("per_seat", 0)) * int(o.get("seats", 1))) if pax else roundi(float(o.get("offer", 0.0)) * float(o.get("rate", 0.0))),
 			"time": "%d h" % int(o.get("hours", 0)) if local else "%.2f ly" % float(o.get("distance_ly", 0.0)),
-			"person": String(o.get("person", "")), "line": String(o.get("line", "")), "locked": String(o.get("locked", ""))}
+			"person": String(o.get("person", "")), "line": String(o.get("line", "")),
+			"locked": String(o.get("locked", "")) if not pax or o.has("locked") or stats.is_empty() else Passengers.why_not(o, stats)}
 	if local and not stats.is_empty() and not pax:
 		row["fuel"] = roundi(float(Session.local_trip_cost(stats, float(o.get("offer", 0.0)), float(o.get("dv_kms", 0.0))).total))
 	return row
@@ -393,7 +401,7 @@ static func _offer_row(o: Dictionary, stats: Dictionary) -> Dictionary:
 static func port_command(action: String, id: String) -> Dictionary:
 	match action:
 		"accept":
-			for o in Contracts.offers_from(Session.system_id()) + Session.people_here():
+			for o in Contracts.offers_from(Session.system_id()) + Session.people_here() + Passengers.long_haul():
 				if String(o.get("id", "")) == id:
 					return Session.accept_contract(o)
 			return {"ok": false, "message": "That job's gone. Someone quicker took it."}

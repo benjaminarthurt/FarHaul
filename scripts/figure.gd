@@ -17,6 +17,7 @@ var _gesture := 0.0
 var _leg_l: Node3D
 var _leg_r: Node3D
 var species := ""          ## human, kesh, ilyan, vey or orun (see make)
+var outfit := "crew"       ## "crew": a work jacket in the job's colour; "passenger": travelling clothes (see make)
 var stride := 0.0          ## walking speed in m/s (0 standing): swings the legs and arms
 var _phase := 0.0
 
@@ -25,9 +26,12 @@ var _phase := 0.0
 ## `species` shapes and colours them: human, kesh (short and massive, grey-green), ilyan (tall and
 ## slender, pale lilac), vey (sea-blue skin, a crest instead of hair), orun (short and broad, warm ochre,
 ## large eyes). "" is human.
-static func make(jacket: Color, seed_v: int, seated := false, species := "") -> Figure:
+## `outfit` "passenger" dresses them for travel instead of work, so nobody takes them for crew: a long
+## coat in `jacket`, a bright scarf, no belt or badge, sometimes a brimmed hat, and a bag in hand.
+static func make(jacket: Color, seed_v: int, seated := false, species := "", outfit := "crew") -> Figure:
 	var f := Figure.new()
 	f.species = species
+	f.outfit = outfit
 	f._build(jacket, seed_v, seated)
 	return f
 
@@ -99,8 +103,17 @@ func _build(jacket: Color, seed_v: int, seated: bool) -> void:
 	_torso.position = Vector3(0, hip, 0)
 	add_child(_torso)
 	_box(_torso, Vector3(0.42, 0.62, 0.24), Vector3(0, 0.33, 0), cloth)
-	_box(_torso, Vector3(0.36, 0.1, 0.22), Vector3(0, 0.0, 0), _mat(Color(0.12, 0.12, 0.13)))   # belt
-	_box(_torso, Vector3(0.1, 0.12, 0.02), Vector3(0.12, 0.5, -0.125), _mat(jacket.lightened(0.45)))   # badge
+	var traveller := outfit == "passenger"
+	var scarf_col := Color.from_hsv(fmod(jacket.h + 0.45 + _rng.randf() * 0.1, 1.0), 0.65, 0.9)
+	if traveller:   # a long coat to the knee, open down the front, and a scarf
+		if not seated:
+			_box(_torso, Vector3(0.46, 0.5, 0.27), Vector3(0, -0.2, 0), cloth)
+		_box(_torso, Vector3(0.03, 0.62, 0.02), Vector3(0, 0.33, -0.13), _mat(jacket.darkened(0.4)))   # the opening
+		_box(_torso, Vector3(0.3, 0.1, 0.28), Vector3(0, 0.62, 0), _mat(scarf_col))
+		_box(_torso, Vector3(0.09, 0.32, 0.03), Vector3(0.08, 0.44, -0.14), _mat(scarf_col))   # the scarf's tail
+	else:
+		_box(_torso, Vector3(0.36, 0.1, 0.22), Vector3(0, 0.0, 0), _mat(Color(0.12, 0.12, 0.13)))   # belt
+		_box(_torso, Vector3(0.1, 0.12, 0.02), Vector3(0.12, 0.5, -0.125), _mat(jacket.lightened(0.45)))   # badge
 	# Arms.
 	for side in [-1.0, 1.0]:
 		var arm := Node3D.new()
@@ -108,6 +121,9 @@ func _build(jacket: Color, seed_v: int, seated: bool) -> void:
 		_torso.add_child(arm)
 		_box(arm, Vector3(0.12, 0.56, 0.14), Vector3(0, -0.27, 0), cloth)
 		_box(arm, Vector3(0.1, 0.1, 0.11), Vector3(0, -0.6, 0), skin)
+		if traveller and side < 0.0 and not seated:   # a travel bag in the left hand
+			_box(arm, Vector3(0.14, 0.32, 0.42), Vector3(-0.02, -0.78, 0), _mat(Color(0.35, 0.22, 0.14).lerp(scarf_col, 0.2)))
+			_box(arm, Vector3(0.03, 0.08, 0.2), Vector3(-0.02, -0.6, 0), _mat(Color(0.1, 0.08, 0.06)))
 		if side < 0.0:
 			_arm_l = arm
 		else:
@@ -124,7 +140,12 @@ func _build(jacket: Color, seed_v: int, seated: bool) -> void:
 	_box(_head, eye, Vector3(0.055, 0.23, -0.121), _mat(eye_col))
 	if species == "vey":   # a fin-like crest from brow to nape
 		_box(_head, Vector3(0.05, 0.12, 0.3), Vector3(0, 0.38, 0.02), hair)
-	elif _rng.randf() < 0.35:   # a cap in the job colour
+	elif traveller and _rng.randf() < 0.5:   # a hat with a brim: nobody on a work shift wears one
+		var hat := _mat(jacket.darkened(0.55))
+		_box(_head, Vector3(0.36, 0.025, 0.38), Vector3(0, 0.34, 0.0), hat)
+		_box(_head, Vector3(0.24, 0.13, 0.26), Vector3(0, 0.41, 0.0), hat)
+		_box(_head, Vector3(0.245, 0.03, 0.265), Vector3(0, 0.37, 0.0), _mat(scarf_col))   # hat band
+	elif not traveller and _rng.randf() < 0.35:   # a cap in the job colour
 		_box(_head, Vector3(0.25, 0.08, 0.27), Vector3(0, 0.35, 0.0), cloth)
 		_box(_head, Vector3(0.22, 0.03, 0.12), Vector3(0, 0.32, -0.18), cloth)
 	else:

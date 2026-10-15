@@ -97,6 +97,7 @@ var _last_feet := Vector3.INF
 var jump_c: JumpSequence       ## a flown star jump (scripts/flight/jump_sequence.gd)
 var foot_c: OnFoot             ## walking the ship and the suit outside (scripts/flight/on_foot.gd)
 var crew_c: CrewWork           ## the hired crew at work (scripts/flight/crew_work.gd)
+var pax_c: PassengersAboard    ## the passengers, in the beds they paid for (scripts/flight/passengers_aboard.gd)
 var traffic_c: Traffic         ## other ships and derelicts (scripts/flight/traffic.gd)
 var land_c: Landing            ## descents, lift-offs and the moon coming and going (scripts/flight/landing.gd)
 var world_c: SpaceScenery      ## sky, sun, motes and the station (scripts/flight/space_scenery.gd)
@@ -121,6 +122,7 @@ func _init() -> void:
 	jump_c = JumpSequence.new(self)
 	foot_c = OnFoot.new(self)
 	crew_c = CrewWork.new(self)
+	pax_c = PassengersAboard.new(self)
 	land_c = Landing.new(self)
 	world_c = SpaceScenery.new(self)
 	traffic_c = Traffic.new(self)
@@ -400,6 +402,7 @@ func _process(delta: float) -> void:
 		else:
 			say("You flew into %s at %s m/s. It didn't move. Planets are solid; the brochure was clear." % [hit_world, ShipStats.commas(roundi(model.last_impact))], 6.0)
 	crew_c.step(minf(delta, 0.05) * float(_warp()))
+	pax_c.step()
 	traffic_c.step(minf(delta, 0.05) * float(_warp()))
 	view.set_damage(model.damage)
 	_apply_pose()

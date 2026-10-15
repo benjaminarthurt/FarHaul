@@ -561,8 +561,12 @@ function renderPort(p) {
     f += '<div class="active"><b>' + esc(a.title) + "</b><small>" + (a.passengers ? a.seats + " passenger" + (a.seats === 1 ? "" : "s") : a.tonnes.toFixed(1) + " t") + " to " + esc(a.to) +
       (a.pay ? " · " + cr(a.pay) : "") + due + (a.arrived ? " · arrived" : "") + "</small>" + (acts ? '<div class="acts">' + acts + "</div>" : "") +
       (a.depart_why ? '<p class="note">' + esc(a.depart_why) + "</p>" : "") + (!a.can_depart && !a.can_deliver && !a.depart_why ? '<p class="note">To fly it yourself, take the helm in the game.</p>' : "") + "</div>";
-  } else if (!p.insolvent) {
-    f += p.board.length ? "" : '<p class="note">Nothing posted. Wait a day, or fly somewhere less sleepy.</p>';
+  }
+  for (const b of (p.passengers || [])) {
+    f += '<div class="active"><span class="tag passenger">ABOARD</span><b>' + esc(b.who) + " → " + esc(b.to) + "</b><small>" + b.seats + " in " + esc(b.beds) + " · " + cr(b.fare) + (b.late ? " · late" : "") + "</small></div>";
+  }
+  if (!p.insolvent) {
+    f += p.board.length || a ? "" : '<p class="note">Nothing posted. Wait a day, or fly somewhere less sleepy.</p>';
     for (const o of p.board) {
       const tag = o.kind && o.kind !== "freight" ? '<span class="tag ' + esc(o.kind) + '">' + esc(o.kind.toUpperCase()) + "</span>" : "";
       const sub = (o.tonnes ? o.tonnes.toFixed(1) + " t · " : "") + esc(o.time) + " · " + cr(o.pay) + (o.fuel ? " · fuel about " + cr(o.fuel) : "");

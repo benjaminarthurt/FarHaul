@@ -56,11 +56,14 @@ func _desk_freight(id: String) -> void:
 			if bool(r.ok):
 				sc.get_tree().reload_current_scene())
 		return
+	if id == "freight":
+		_passengers_section(true)
 	var c := Session.active_contract()
 	var here := String(Session.profile.get("port_id", ""))
 	if not c.is_empty():
 		if id != "freight":
 			_missions_section()
+			_people_section()   # passengers can still ride along
 		var local := bool(c.get("local", false))
 		var arrived := String(c.get("status", "")) == "arrived"
 		var load_text := "%d passengers aboard" % int(c.seats) if String(c.get("person_kind", "")) == "passenger" else "%.1f t aboard" % float(c.get("accepted_tonnes", c.get("offer", 0.0)))
@@ -184,10 +187,21 @@ func _people_section() -> void:
 			", %s at %d" % [People.standing(nxt), nxt] if nxt > 0 else ""], 13))
 	var busy := not Session.active_contract().is_empty()
 	var people := Session.people_here()
+	var st := {}
+	var ld := Session._load_ship(SaveSlots.read(Session.slot)) if Session.slot >= 0 else {}
+	if not ld.is_empty():
+		st = Session.ship_stats(ld.ship)
 	if people.is_empty():
 		sc.panel_list.add_child(Brand.note("No one is asking today.", 14))
 	for j in people:
 		var job: Dictionary = j
+		if String(job.person_kind) == "passenger":   # they ride along: a contract on doesn't stop them
+			var why := Passengers.why_not(job, st) if not st.is_empty() else ""
+			sc._action(Passengers.offer_text(job, st) + ("\n" + why if why != "" else ""), func() -> void:
+				var r := Session.accept_contract(job)
+				sc._say(String(r.message))
+				sc._refill(), not job.has("locked"))
+			continue
 		var tag := String(job.person_kind).to_upper()
 		var pay := int(job.fare) if job.person_kind == "passenger" else roundi(float(job.offer) * float(job.rate))
 		var size := "%d seat%s" % [int(job.seats), "" if int(job.seats) == 1 else "s"] if job.person_kind == "passenger" else "%.1f t" % float(job.offer)
@@ -197,6 +211,71 @@ func _people_section() -> void:
 			var r := Session.accept_contract(job)
 			sc._say(String(r.message))
 			sc._refill(), not busy and not job.has("locked"))
+
+
+## Passengers (Passengers): who's aboard and where they're going, the way to take them there when
+## there's no contract to fly, and (`offers`, at the freight office) long-haul parties asking for passage.
+func _passengers_section(offers: bool) -> void:
+	var st := {}
+	var ld := Session._load_ship(SaveSlots.read(Session.slot)) if Session.slot >= 0 else {}
+	if not ld.is_empty():
+		st = Session.ship_stats(ld.ship)
+	var aboard := Passengers.aboard()
+	var free_contract := Session.active_contract().is_empty() and not Session.insolvent()
+	if not aboard.is_empty():
+		sc.panel_list.add_child(Brand.heading("PASSENGERS ABOARD", 15))
+		var shown := {}
+		for b in aboard:
+			var late := Session.day() > int(b.get("due_day", 1 << 30))
+			sc.panel_list.add_child(Brand.note("%s, %d aboard, to %s, in %s. %s cr%s." % [String(b.person), int(b.seats), String(b.dest_name), Passengers.beds_text(b.beds),
+					ShipStats.commas(int(b.fare)), ", and late: half that now" if late else ", due by day %d" % int(b.due_day) if int(b.get("due_day", 1 << 30)) < (1 << 29) else ""], 14))
+			if not free_contract or shown.has(String(b.dest_port_id) + String(b.dest_system_id)):
+				continue
+			shown[String(b.dest_port_id) + String(b.dest_system_id)] = true
+			if bool(b.local):
+				var dest := String(b.dest_port_id)
+				if dest == String(Session.profile.get("port_id", "")):
+					continue
+				sc._action("FLY THEM TO %s YOURSELF" % String(b.dest_name).to_upper(), func() -> void:
+					var r := Session.begin_ferry_flight(dest)
+					if bool(r.ok):
+						sc._go(Session.FLIGHT_SCENE)
+					else:
+						sc._say(String(r.message)))
+				sc._action("TAKE THEM TO %s ON AUTOPILOT" % String(b.dest_name).to_upper(), func() -> void:
+					var r := Session.local_reposition(dest)
+					Session.flash = String(r.message)
+					if bool(r.ok):
+						sc.get_tree().reload_current_scene()
+					else:
+						sc._say(String(r.message)))
+			else:
+				var sys := String(b.dest_system_id)
+				sc._action("TAKE THEM TO %s ON AUTOPILOT, no freight" % String(b.dest_name).to_upper(), func() -> void:
+					var r := Session.travel_empty(sys)
+					Session.flash = String(r.message)
+					if bool(r.ok):
+						sc.get_tree().reload_current_scene()
+					else:
+						sc._say(String(r.message)))
+	if not offers or Session.insolvent():
+		return
+	var lay := Passengers.layout(st) if not st.is_empty() else {}
+	sc.panel_list.add_child(Brand.heading("PASSENGERS FOR OTHER SYSTEMS", 15))
+	if not lay.is_empty():
+		var f: Array = lay.free
+		sc.panel_list.add_child(Brand.note("Free beds: %d spare bunk%s, %d cabin, %d quarters, %d stateroom. They ride with your freight; best beds first." % [
+				maxi(0, int(f[0])), "" if int(f[0]) == 1 else "s", maxi(0, int(f[1])), maxi(0, int(f[2])), maxi(0, int(f[3]))], 13))
+	var list := Passengers.long_haul()
+	if list.is_empty():
+		sc.panel_list.add_child(Brand.note("Nobody asking for passage. They want a ship with a working FTL drive, or a better day." if not bool(st.get("ftl", false)) else "Nobody asking for passage today.", 14))
+	for o in list:
+		var job: Dictionary = o
+		var why := Passengers.why_not(job, st) if not st.is_empty() else ""
+		sc._action(Passengers.offer_text(job, st) + ("\n" + why if why != "" else ""), func() -> void:
+			var r := Session.accept_contract(job)
+			sc._say(String(r.message))
+			sc._refill())
 
 
 ## Your crew (Crew), with a button to let each go, and who is looking for a berth here today.
@@ -398,6 +477,7 @@ func _desk_bar() -> void:
 	sc._clear_panel("Bar and bunks", "Captains and crews drift through between jobs. Some have work that never reaches the board, for reasons they'd rather not discuss.")
 	_crew_section()
 	_people_section()
+	_passengers_section(false)
 	sc.panel_list.add_child(Brand.heading("BUNKS", 15))
 	var idle := Session.active_contract().is_empty() and Session.sim != null and not Session.insolvent()
 	sc._action("RENT A BUNK AND WAIT A DAY", func() -> void:

@@ -1,0 +1,54 @@
+{
+  "description": "Passengers (scripts/passengers.gd): the beds they sleep in and what each pays, the long-haul parties at the freight office, what a rough or late trip costs, and what they say. Local passengers are asked for in person (people.json, passenger). See docs/runtime/passengers.md.",
+  "tiers": [
+    {"id": "bunk", "name": "spare bunk", "mult": 1.0},
+    {"id": "cabin", "name": "cabin", "mult": 1.3},
+    {"id": "quarters", "name": "quarters", "mult": 1.6},
+    {"id": "stateroom", "name": "stateroom", "mult": 2.5}
+  ],
+  "long_haul": {
+    "per_day": [2, 4],
+    "seats": [1, 4],
+    "fare_base_cr": 150,
+    "fare_per_ly_cr": 70,
+    "due_days_x": 1.5,
+    "due_days_plus": 2,
+    "wants_cabin": 0.3,
+    "wants_stateroom": 0.12,
+    "stateroom_max_seats": 2
+  },
+  "local": {
+    "wants_cabin": 0.2,
+    "due_days": 2
+  },
+  "rough_pay": 0.5,
+  "late_pay": 0.5,
+  "rep_ok": 2,
+  "rep_rough": -3,
+  "rep_late": -2,
+  "max_figures": 10,
+  "species": [["human", 5], ["kesh", 1], ["ilyan", 1], ["vey", 1], ["orun", 1]],
+  "lines": {
+    "long": [
+      "Passage to %s, if you're going. We pack light and complain quietly.",
+      "My sister's in %s and she won't come to me. So.",
+      "I need to be in %s. I'm told your ship mostly arrives.",
+      "Contract work in %s. The company pays the fare, so I'd like the good bed."
+    ],
+    "cabin": [
+      "We'd want a cabin. A door that shuts. We've done the bunk thing; we're past the bunk thing.",
+      "A cabin, please. I'm not sleeping where your engineer sleeps."
+    ],
+    "stateroom": [
+      "A stateroom, naturally. I don't ask the price, so please don't tell me it.",
+      "The stateroom. And the viewport had better have stars in it."
+    ]
+  },
+  "aboard": {
+    "bunk": ["Is this someone's bunk? It smells like someone's bunk.", "I've slept in worse. Not recently.", "The pillow has a name on it. It isn't mine."],
+    "cabin": ["Small, but the door locks. I've paid more for worse.", "The viewport's the size of a plate. A nice plate.", "We're fine. Are we nearly there? We're fine."],
+    "quarters": ["The lounge has a screen. It shows the same three films.", "Someone's snoring in pod two. It's not me. It's never me.", "Nice enough. The curtains don't quite meet."],
+    "stateroom": ["I asked for a window and got a window. Remarkable.", "The plant's real. I checked. I always check.", "Tell the captain the sheets are adequate. High praise."],
+    "late": ["We were promised %s by now.", "I've started counting the rivets. There are a lot of rivets."]
+  }
+}

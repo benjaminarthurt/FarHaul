@@ -5,8 +5,8 @@ class_name People
 ## - **rush:** a small load that has to be there by a set hour. Wait a day and it is late: half pay and a
 ##   knock to your standing. It is due sooner than the usual trip, so you fly it yourself (a hand-flown
 ##   run is a hard burn) or pay for a hard burn on autopilot.
-## - **passenger:** people riding along, one spare berth each. Pays a flat fare; a hard landing on the
-##   way halves it.
+## - **passenger:** people riding along to another site (Passengers: a booking, not a contract, so they
+##   ride with freight). A bed each; cabins pay more. A hard landing on the way halves the fare.
 ## - **sealed:** a crate you do not open, for captains with some standing. Pays well; if the hull takes
 ##   damage on the way the seal breaks and most of the pay goes with it.
 ##
@@ -113,9 +113,14 @@ static func posted(node_id: String, day: int, stats: Dictionary, level: Dictiona
 				j["seats"] = n
 				j["offer"] = 0.0
 				j["fare"] = roundi(float(trip_cost.call(0.0, float(j.dv_kms))) * (float(k.pays_trip_cost_x[0]) + float(k.pays_trip_cost_x[1]) * n) * bonus)
+				j["per_seat"] = roundi(float(j.fare) / float(n) / 10.0) * 10   # in a spare bunk; cabins pay more (Passengers)
+				var pk: Dictionary = Passengers.cfg().get("local", {})
+				j["wants"] = 1 if rng.randf() < float(pk.get("wants_cabin", 0.2)) else 0
+				j["dest_name"] = dest
+				j["due_days"] = int(pk.get("due_days", 2))
 				j["rate"] = 0
 				j["title"] = "%d passenger%s to %s" % [n, "" if n == 1 else "s", dest]
-				j["blurb"] = "Needs %d spare berth%s. A hard landing halves the fare. They notice." % [n, "" if n == 1 else "s"]
+				j["blurb"] = "%s. They ride along with whatever else you're doing. A hard landing halves the fare. They notice." % ("Wants a cabin" if int(j.wants) > 0 else "Any bed will do")
 			"sealed":
 				var frac := rng.randf_range(float(k.tonnes_frac[0]), float(k.tonnes_frac[1]))
 				j["offer"] = maxf(1.0, snappedf(float(j.offer) * frac, 0.5))

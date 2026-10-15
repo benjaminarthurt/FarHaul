@@ -14,7 +14,7 @@ var pilot_braked := false  ## the pilot has taken the brake point this run
 var pilot_waiting := false ## the pilot is holding off braking because someone's outside
 var jobs := 0              ## things the crew did this flight (for tests and the log)
 var figures: Array[Figure] = []   ## the crew aboard, at their posts, seen when you walk the ship
-var passengers := false    ## a passenger run: the steward has someone to look after
+var passengers := false    ## passengers aboard (Passengers): the steward has someone to look after
 
 ## Where each job stands its watch, by module id, in order of preference.
 const POSTS := {
@@ -22,7 +22,7 @@ const POSTS := {
 	"deck_tech": ["airlock", "tee"],
 	"pilot": ["cockpit"],
 	"loadmaster": ["cargo_hold", "tee"],
-	"steward": ["room_2x2", "bunk", "tee"],
+	"steward": ["pax_quarters", "pax_stateroom", "pax_cabin", "room_2x2", "bunk", "tee"],
 }
 const JACKETS := {
 	"engineer": Color(0.85, 0.55, 0.15), "deck_tech": Color(0.85, 0.75, 0.2), "pilot": Color(0.2, 0.35, 0.65),
@@ -34,7 +34,7 @@ func _init(scene: FlightScene) -> void:
 	sc = scene
 	roster = (Session.crew() as Array).duplicate(true) if Session.slot >= 0 else []
 	wear_mult = Crew.wear_mult(roster)
-	passengers = Session.slot >= 0 and String(Session.active_contract().get("person_kind", "")) == "passenger"
+	passengers = Session.slot >= 0 and Passengers.count() > 0
 
 
 func has(role_id: String) -> bool:

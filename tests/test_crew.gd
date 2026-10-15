@@ -305,7 +305,7 @@ func _run() -> void:
 	var fare := {}
 	for i in 25:
 		for j in Session.people_here():
-			if String(j.person_kind) == "passenger" and int(j.seats) == 1 and not j.has("locked"):
+			if String(j.person_kind) == "passenger" and int(j.seats) == 1 and int(j.get("wants", 0)) == 0 and not j.has("locked"):
 				fare = j
 		if not fare.is_empty():
 			break
@@ -314,9 +314,8 @@ func _run() -> void:
 	if not fare.is_empty():
 		r = Session.accept_contract(fare)
 		check(bool(r.ok), "aboard: %s" % r.message)
-		Session.depart_active_contract()
 		var rep0 := int(Session.profile.get("rep", 0))
-		r = Session.deliver_active_contract()
+		r = Session.local_reposition(String(fare.destination_port_id))   # passengers ride along: no contract needed
 		check(String(r.message).contains("care") and int(Session.profile.get("rep", 0)) > rep0, "looked after by the steward: a better fare, and they say so: %s" % r.message)
 	Session.profile["crew"] = []
 	check(absf(float(Session.sim.summary()["cash_error"])) < 0.01, "money conserved")

@@ -355,6 +355,8 @@ func _walk_prompt() -> void:
 			hint = "E: leave the ship" if sc._berthed() else ("E: suit up and go out on the tether" if sc.foot_c.space_walk_blocker() == "" else "Outer hatch stays shut. Outside is mostly vacuum.")
 	if hint == "" and sc.crew_c != null:
 		hint = sc.crew_c.near_line()   # a word with whoever's on watch here
+	if hint == "" and sc.pax_c != null:
+		hint = sc.pax_c.near_line()   # or a passenger, with an opinion about the bed
 	var warn := ""
 	if sc.model.disabled():
 		warn = "HULL BREACHED: back to the helm and call the tug (T)"

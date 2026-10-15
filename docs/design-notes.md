@@ -32,14 +32,13 @@ Not all at once. In the order requested:
 10. Boarding derelicts: the log, the flight recorder, the crew and the odd survivor (**built** in 0.13.0)
 11. Manufacturers: makers' versions of the external parts, cheaper at home (**built** in 0.14.0; the
     shipyard compares them side by side in 0.14.1)
+12. Bigger holds and passenger cabins in three sizes; passengers local and long-haul, riding along
+    with freight (**built** in 0.15.0)
 
 The ship builder came first because everything else reads from the ship it produces.
 
 ### Next, in roughly this order (planned)
 
-12. **Bigger holds and passenger accommodation** (planned for 0.15.0): larger internal cargo holds,
-    and passenger cabins in several sizes apart from crew bunks, paying better fares; spare crew bunks
-    still take passengers at the basic fare.
 13. **Talking to other ships**: hail traffic for a fuel sale or a tow, distress calls from stranded
     crews, and other haulers racing you to the same wreck.
 14. **Frontier growth**: outposts that grow when they're kept supplied (more demand, better services)

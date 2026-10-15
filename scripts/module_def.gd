@@ -38,6 +38,8 @@ const FACES := [
 @export var helm := false  ## true if the ship can be flown from here
 @export var airlock := false  ## true if crew can get in and out of the ship here
 @export var berths := 0  ## crew who can sleep aboard
+@export var cabins := 0  ## passenger beds (Passengers), apart from the crew's berths
+@export var cabin_tier := 0  ## how good those beds are: 1 cabin, 2 quarters, 3 stateroom (Passengers.tiers)
 @export var drive := 0.0  ## jump drive: fraction added to cruising speed (0.3 is +30%)
 @export var lift := 0.0  ## kN of downward-firing lift jets (push the ship along +Y): needed to land
 @export var retro := 0.0  ## kN of forward-firing braking thrusters (push the ship backward, along +Z)
@@ -183,11 +185,22 @@ static func _glow(col: Color) -> StandardMaterial3D:
 	m.emission_energy_multiplier = 1.3
 	return m
 
-## Containers stacked along both sides of a walkable hold, leaving a 1.4 m aisle between them.
+## Containers stacked along both sides of a walkable hold, leaving a 1.4 m aisle between them. A hold
+## two or more cells wide stacks them two high along its outer walls instead, the floor open between.
 func _add_crates(root: Node3D, cells: Array[Vector3i]) -> void:
 	var floor_y := -ShipGrid.CELL * 0.5 + WALL_T
 	var crate := Vector3(0.7, 1.4, 1.4)
 	var n := 0
+	if size.x > 1:
+		var tall := Vector3(0.9, 1.28, 1.4)
+		for z in size.z:
+			for side in [0, size.x - 1]:
+				var x := float(side) * ShipGrid.CELL + (-0.88 if side == 0 else 0.88)
+				for k in 2:
+					var bottom := floor_y + float(k) * (tall.y + 0.04)
+					_add_container(root, Vector3(x, bottom + tall.y * 0.5, float(z) * ShipGrid.CELL), tall, CRATE_COLORS[n % CRATE_COLORS.size()], n, bottom)
+					n += 1
+		return
 	for c in cells:
 		for side in [-1.0, 1.0]:
 			var pos := Vector3(c) * ShipGrid.CELL + Vector3(side * 1.03, floor_y + crate.y * 0.5, 0)

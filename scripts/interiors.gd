@@ -26,11 +26,17 @@ static func dress(def: ModuleDef, root: Node3D) -> void:
 			_airlock(root)
 		"room_2x2":
 			_crew_room(root)
+		"pax_cabin":
+			_pax_cabin(root)
+		"pax_quarters":
+			_pax_quarters(root)
+		"pax_stateroom":
+			_stateroom(root)
 		"corridor", "corner", "tee", "shaft":
 			_connector(def, root)
 		_:
 			if def.cargo_slots > 0:
-				_hold(root)
+				_hold(root, def.size)
 
 
 static func dress_external(def: ModuleDef, root: Node3D) -> void:
@@ -283,14 +289,14 @@ static func _crew_room(root: Node3D) -> void:
 		_b(root, p, Vector3(0.9, 0.03, 0.1), glow(Color(1.0, 0.92, 0.75), 0.45))
 
 
-static func _bunk(root: Node3D, pos: Vector3, yaw: float, length: float) -> void:
+static func _bunk(root: Node3D, pos: Vector3, yaw: float, length: float, blanket_col := Color(0.20, 0.34, 0.52)) -> void:
 	var n := Node3D.new()
 	n.position = pos
 	n.rotation_degrees.y = yaw
 	root.add_child(n)
 	var frame := flat(Color(0.52, 0.55, 0.60), 0.6, 0.1)
 	var mattress := flat(Color(0.78, 0.76, 0.68), 0.9)
-	var blanket := flat(Color(0.20, 0.34, 0.52), 0.95)
+	var blanket := flat(blanket_col, 0.95)
 	var w := 0.8
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
@@ -307,22 +313,129 @@ static func _bunk(root: Node3D, pos: Vector3, yaw: float, length: float) -> void
 
 # --- Cargo hold: gantry, hoist, aisle markings ----------------------------------------------------
 
-static func _hold(root: Node3D) -> void:
+static func _hold(root: Node3D, size := Vector3i(1, 1, 2)) -> void:
 	var yellow := flat(Color(0.90, 0.72, 0.10), 0.6)
 	var dark := flat(Color(0.12, 0.13, 0.15), 0.6, 0.3)
 	var strip := SurfaceTextures.hazard_material()
-	var length := 5.4
-	var zc := ShipGrid.CELL * 0.5  # the hold is two cells long, so its middle is half a cell on
+	var length := ShipGrid.CELL * size.z - 0.6
+	var zc := ShipGrid.CELL * (size.z - 1) * 0.5  # the middle of the hold, along its length
+	var xc := ShipGrid.CELL * (size.x - 1) * 0.5   # and across it
+	var aisle := 0.62 if size.x == 1 else 1.55   # a wide hold's floor is open between the stacks
 	for sx in [-1.0, 1.0]:
-		_b(root, Vector3(sx * 0.62, FLOOR + 0.012, zc), Vector3(0.1, 0.024, length), strip)
-	_b(root, Vector3(0, 1.3, zc), Vector3(0.16, 0.18, length), yellow)  # overhead gantry rail
-	_b(root, Vector3(0, 1.18, zc + 0.7), Vector3(0.5, 0.2, 0.6), dark)  # trolley
-	_cyl(root, Vector3(0, 0.7, zc + 0.7), 0.02, 0.8, dark)  # chain
-	_b(root, Vector3(0, 0.25, zc + 0.7), Vector3(0.14, 0.16, 0.1), yellow)  # hook block
-	for p in [Vector3(0.5, 1.42, zc - 1.1), Vector3(-0.5, 1.42, zc + 1.4)]:
+		_b(root, Vector3(xc + sx * aisle, FLOOR + 0.012, zc), Vector3(0.1, 0.024, length), strip)
+	_b(root, Vector3(xc, 1.3, zc), Vector3(0.16, 0.18, length), yellow)  # overhead gantry rail
+	if size.x > 1:   # and a bridge across, for the stacks along the walls
+		_b(root, Vector3(xc, 1.2, zc + 0.7), Vector3(ShipGrid.CELL * size.x - 0.6, 0.14, 0.2), yellow)
+	_b(root, Vector3(xc, 1.18, zc + 0.7), Vector3(0.5, 0.2, 0.6), dark)  # trolley
+	_cyl(root, Vector3(xc, 0.7, zc + 0.7), 0.02, 0.8, dark)  # chain
+	_b(root, Vector3(xc, 0.25, zc + 0.7), Vector3(0.14, 0.16, 0.1), yellow)  # hook block
+	for p in [Vector3(xc + 0.5, 1.42, zc - 1.1), Vector3(xc - 0.5, 1.42, zc + 1.4)]:
 		_b(root, p, Vector3(0.3, 0.03, 0.2), glow(Color(1.0, 0.92, 0.75), 0.45))
-	for z in [zc - 1.4, zc + 1.4]:  # lashing rings in the deck
-		_cyl(root, Vector3(0, FLOOR + 0.01, z), 0.1, 0.02, dark)
+	for z in size.z:  # lashing rings in the deck
+		_cyl(root, Vector3(xc, FLOOR + 0.01, float(z) * ShipGrid.CELL), 0.1, 0.02, dark)
+	if size.x > 1:
+		_label(root, "CARGO BAY" if size.z > 2 else "HOLD", Vector3(xc, 0.9, -WALL_IN + 0.01), 0.0, Color(0.85, 0.82, 0.7))
+
+
+# --- Passenger cabins: beds for people who paid for them -------------------------------------------
+
+## A viewport: dark glass with a few stars in it, on the wall facing +Z of `n`'s space.
+static func _viewport(root: Node3D, pos: Vector3, yaw: float, w: float, h: float) -> void:
+	var n := Node3D.new()
+	n.position = pos
+	n.rotation_degrees.y = yaw
+	root.add_child(n)
+	var rim := flat(Color(0.2, 0.21, 0.24), 0.5, 0.5)
+	_b(n, Vector3(0, 0, 0.02), Vector3(w + 0.16, h + 0.16, 0.05), rim)
+	_b(n, Vector3(0, 0, 0.05), Vector3(w, h, 0.02), glow(Color(0.03, 0.05, 0.12), 0.6))
+	var r := RandomNumberGenerator.new()
+	r.seed = int(w * 100.0 + h * 10.0)
+	for i in int(w * h * 14.0):
+		_b(n, Vector3(r.randf_range(-w, w) * 0.45, r.randf_range(-h, h) * 0.45, 0.065), Vector3(0.015, 0.015, 0.005), glow(Color(1, 1, 1), 2.0))
+
+
+## One cell, one door (south): a two-high bunk with good blankets, a fold-down desk, a viewport and a
+## rack for bags. Two beds.
+static func _pax_cabin(root: Node3D) -> void:
+	var wood := flat(Color(0.55, 0.40, 0.26), 0.8)
+	var steel := flat(Color(0.52, 0.55, 0.60), 0.6, 0.1)
+	var plum := Color(0.45, 0.22, 0.42)
+	_bunk(root, Vector3(-0.95, FLOOR, -0.35), 0.0, 1.9, plum)
+	_b(root, Vector3(1.05, FLOOR + 0.75, -0.6), Vector3(0.6, 0.05, 0.9), wood)   # fold-down desk
+	_b(root, Vector3(1.32, FLOOR + 0.55, -0.6), Vector3(0.05, 0.4, 0.6), steel)
+	_chair(root, Vector3(0.5, FLOOR, -0.6), -90.0, plum.lightened(0.2))
+	_viewport(root, Vector3(WALL_IN - 0.02, 0.15, -0.6), -90.0, 0.7, 0.5)
+	_b(root, Vector3(1.05, 1.0, 0.6), Vector3(0.5, 0.04, 1.0), steel)   # luggage rack
+	_b(root, Vector3(1.05, 1.17, 0.45), Vector3(0.4, 0.3, 0.55), flat(Color(0.6, 0.32, 0.18), 0.7))   # someone's case
+	_label(root, "CABIN", Vector3(0, 1.0, -WALL_IN + 0.01), 0.0, Color(0.9, 0.85, 0.75))
+	_b(root, Vector3(0, 1.4, 0), Vector3(0.6, 0.03, 0.1), glow(Color(1.0, 0.9, 0.75), 0.45))
+
+
+## Two cells square, doors north (west half) and south (east half): four sleeping pods with curtains
+## along the east and north walls, a lounge with a sofa, a table and a screen. Four beds.
+## The room spans x -1.5..4.5, z -1.5..4.5.
+static func _pax_quarters(root: Node3D) -> void:
+	var wood := flat(Color(0.55, 0.40, 0.26), 0.8)
+	var steel := flat(Color(0.52, 0.55, 0.60), 0.6, 0.1)
+	var dark := flat(Color(0.12, 0.13, 0.15), 0.6, 0.3)
+	var teal := Color(0.16, 0.42, 0.44)
+	var curtain := flat(Color(0.62, 0.52, 0.34), 0.95)
+	for i in 2:   # two double-height pods against the east wall
+		var z := 0.0 + i * 2.0
+		_bunk(root, Vector3(4.05, FLOOR, z), 0.0, 1.8, teal)
+		_b(root, Vector3(3.6, FLOOR + 1.0, z - 0.2), Vector3(0.04, 1.6, 1.2), curtain)   # half-drawn curtain
+	_b(root, Vector3(4.05, FLOOR + 1.95, 1.0), Vector3(0.85, 0.06, 4.0), steel)   # canopy over the pods
+	# The lounge: a sofa against the west wall, a low table, a screen.
+	var sofa := flat(Color(0.30, 0.20, 0.32), 0.95)
+	_b(root, Vector3(-1.05, FLOOR + 0.22, 1.9), Vector3(0.7, 0.44, 2.0), sofa)
+	_b(root, Vector3(-1.32, FLOOR + 0.6, 1.9), Vector3(0.18, 0.8, 2.0), sofa)
+	_b(root, Vector3(0.15, FLOOR + 0.32, 1.9), Vector3(0.7, 0.05, 1.1), wood)
+	_cyl(root, Vector3(0.15, FLOOR + 0.15, 1.9), 0.06, 0.3, steel)
+	_b(root, Vector3(1.3, FLOOR + 1.2, 4.36), Vector3(1.4, 0.8, 0.05), dark)
+	_b(root, Vector3(1.3, FLOOR + 1.2, 4.33), Vector3(1.3, 0.7, 0.01), glow(Color(0.35, 0.55, 0.8), 0.5))
+	_viewport(root, Vector3(-WALL_IN + 0.02, 0.3, 0.2), 90.0, 1.0, 0.6)
+	for x in [0.6, 1.4]:   # luggage lockers by the north door
+		_b(root, Vector3(x + 0.6, FLOOR + 0.8, -WALL_IN + 0.25), Vector3(0.7, 1.6, 0.45), steel)
+		_b(root, Vector3(x + 0.6, FLOOR + 0.8, -WALL_IN + 0.48), Vector3(0.02, 1.4, 0.012), dark)
+	_label(root, "PASSENGERS", Vector3(1.6, 1.0, -WALL_IN + 0.01), 0.0, Color(0.9, 0.85, 0.75))
+	for p in [Vector3(1.5, 1.4, 0.2), Vector3(1.5, 1.4, 3.0)]:
+		_b(root, p, Vector3(0.9, 0.03, 0.1), glow(Color(1.0, 0.9, 0.75), 0.45))
+
+
+## Two cells square, the same doors as quarters: a double bed, two armchairs round a table, a long
+## viewport, a rug, a wardrobe and a plant that somebody waters. Two beds, for people who don't ask.
+static func _stateroom(root: Node3D) -> void:
+	var wood := flat(Color(0.48, 0.30, 0.18), 0.7)
+	var linen := flat(Color(0.92, 0.9, 0.84), 0.9)
+	var wine := Color(0.50, 0.12, 0.18)
+	var brass := flat(Color(0.78, 0.62, 0.30), 0.35, 0.8)
+	# The bed, its head against the east wall.
+	_b(root, Vector3(3.3, FLOOR + 0.25, 1.0), Vector3(2.0, 0.5, 1.8), wood)
+	_b(root, Vector3(3.25, FLOOR + 0.58, 1.0), Vector3(1.9, 0.18, 1.7), linen)
+	_b(root, Vector3(3.0, FLOOR + 0.69, 1.0), Vector3(1.3, 0.06, 1.74), flat(wine, 0.95))
+	for z in [0.55, 1.45]:
+		_b(root, Vector3(4.0, FLOOR + 0.76, z), Vector3(0.3, 0.12, 0.6), linen)
+	_b(root, Vector3(4.33, FLOOR + 0.9, 1.0), Vector3(0.08, 1.2, 1.9), wood)   # headboard
+	for z in [-0.2, 2.2]:   # bedside tables, with lamps
+		_b(root, Vector3(4.05, FLOOR + 0.3, z), Vector3(0.5, 0.6, 0.45), wood)
+		_cyl(root, Vector3(4.05, FLOOR + 0.75, z), 0.1, 0.3, glow(Color(1.0, 0.85, 0.6), 0.9))
+	# A rug, two armchairs and a table by the viewport.
+	_b(root, Vector3(0.3, FLOOR + 0.008, 2.0), Vector3(2.4, 0.016, 2.0), flat(Color(0.35, 0.18, 0.2), 1.0))
+	_chair(root, Vector3(-0.6, FLOOR, 1.3), 120.0, wine)
+	_chair(root, Vector3(-0.6, FLOOR, 2.9), 60.0, wine)
+	_cyl(root, Vector3(0.4, FLOOR + 0.3, 2.1), 0.35, 0.04, wood)
+	_cyl(root, Vector3(0.4, FLOOR + 0.15, 2.1), 0.05, 0.3, brass)
+	_viewport(root, Vector3(-WALL_IN + 0.02, 0.2, 2.0), 90.0, 2.2, 1.0)
+	# Wardrobe in the north-east corner, a plant in the south-west.
+	_b(root, Vector3(3.6, FLOOR + 1.0, -WALL_IN + 0.3), Vector3(1.4, 2.0, 0.55), wood)
+	_b(root, Vector3(3.6, FLOOR + 1.0, -WALL_IN + 0.58), Vector3(0.02, 1.8, 0.012), brass)
+	_cyl(root, Vector3(-1.0, FLOOR + 0.2, 4.0), 0.22, 0.4, flat(Color(0.3, 0.25, 0.22), 0.8))
+	for k in 5:
+		var a := float(k) * TAU / 5.0
+		_b(root, Vector3(-1.0 + cos(a) * 0.15, FLOOR + 0.65 + float(k % 2) * 0.15, 4.0 + sin(a) * 0.15), Vector3(0.12, 0.5, 0.05), flat(Color(0.2, 0.5, 0.22), 0.9))
+	_label(root, "STATEROOM", Vector3(1.5, 1.0, -WALL_IN + 0.01), 0.0, Color(0.95, 0.85, 0.6))
+	for p in [Vector3(1.5, 1.4, 0.2), Vector3(1.5, 1.4, 3.0)]:
+		_b(root, p, Vector3(0.9, 0.03, 0.1), glow(Color(1.0, 0.85, 0.6), 0.4))
 
 
 # --- Corridors, corners, tees and the ladder shaft ------------------------------------------------

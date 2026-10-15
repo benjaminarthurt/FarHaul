@@ -349,6 +349,7 @@ func _show_contracts() -> void:
 	var port := Session.port()
 	var heading := Brand.heading("FREIGHT BOARD — %s" % String(port.get("name", system_id)).to_upper(), 15)
 	contract_list.add_child(heading)
+	_passenger_board()
 	var offers := Contracts.offers_from(system_id)
 	if _sublight():
 		contract_list.add_child(Brand.note("No FTL drive fitted: you can only haul inside this system. Fit a drive in the shipyard to take freight between stars. They won't come to you.", 14))
@@ -379,6 +380,23 @@ func _show_contracts() -> void:
 		Brand.style_button(line, 14)
 		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		line.pressed.connect(func() -> void: _accept(c))
+		contract_list.add_child(line)
+
+
+## Passengers aboard, and long-haul parties asking for passage (Passengers). They ride with any freight.
+func _passenger_board() -> void:
+	var board_ship := _ship_for_board()
+	var st := Session.ship_stats(board_ship) if board_ship != null else {}
+	for b in Passengers.aboard():
+		contract_list.add_child(Brand.note("ABOARD: %s, %d to %s, in %s, %s cr" % [String(b.person), int(b.seats), String(b.dest_name), Passengers.beds_text(b.beds), ShipStats.commas(int(b.fare))], 14))
+	for o in Passengers.long_haul():
+		var job: Dictionary = o
+		var why := Passengers.why_not(job, st) if not st.is_empty() else ""
+		var line := Button.new()
+		line.text = Passengers.offer_text(job, st) + ("\n" + why if why != "" else "\nTAKE THEM ABOARD")
+		Brand.style_button(line, 14)
+		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		line.pressed.connect(func() -> void: _accept(job))
 		contract_list.add_child(line)
 
 

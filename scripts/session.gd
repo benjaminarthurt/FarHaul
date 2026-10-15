@@ -97,6 +97,9 @@ static func load_slot(from_slot: int) -> bool:
 	if data.is_empty() or not data.has("modules"):
 		return false
 	slot = from_slot
+	if String((data.get("active_contract", {}) as Dictionary).get("person_kind", "")) == "passenger":
+		Passengers.migrate(data)   # saved when passengers were a contract: now they're a booking
+		SaveSlots.write(slot, data)
 	profile = SaveSlots.profile(from_slot)
 	if not (data.get("profile", {}) as Dictionary).has("ftl_rules"):
 		# Saved before FTL drives were a separate part: that ship keeps the jump capability it was flown with.
@@ -338,10 +341,14 @@ static func travel_empty(dest_system_id: String) -> Dictionary:
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Flew empty to %s in %.1f days. Running costs: %s cr, for hauling air.%s" % [dest_system_id.replace("_", " ").capitalize(), hours / 24.0, ShipStats.commas(before - int(profile.credits)), work]}
+	var pax := Passengers.count() > 0
+	var msg := "Flew %s to %s in %.1f days. Running costs: %s cr%s.%s" % ["with no freight" if pax else "empty", dest_system_id.replace("_", " ").capitalize(), hours / 24.0, ShipStats.commas(before - int(profile.credits)), "" if pax else ", for hauling air", work]
+	return {"ok": true, "message": msg + Passengers.set_down()}
 
 
 static func accept_contract(contract: Dictionary) -> Dictionary:
+	if String(contract.get("person_kind", "")) == "passenger":
+		return Passengers.book(contract)   # passengers ride along with whatever else the ship is doing
 	if slot < 0 or contract.is_empty() or not active_contract().is_empty():
 		return {"ok": false, "message": "One contract at a time, and only in a saved game."}
 	var data := SaveSlots.read(slot)
@@ -459,7 +466,7 @@ static func local_reposition(dest_id: String) -> Dictionary:
 		_commit_sim(data, loaded.ship)
 		data["profile"] = profile
 		SaveSlots.write(slot, data)
-		return {"ok": true, "message": "Flew empty to %s in %d hours. Fuel and running costs: %s cr.%s" % [String(site["name"]), hrs, ShipStats.commas(before - int(profile.credits)), work]}
+		return {"ok": true, "message": "Flew %s to %s in %d hours. Fuel and running costs: %s cr.%s" % ["with no freight" if Passengers.count() > 0 else "empty", String(site["name"]), hrs, ShipStats.commas(before - int(profile.credits)), work] + Passengers.set_down()}
 	return {"ok": false, "message": "Your tanks can't reach that site."}
 
 
@@ -1115,6 +1122,8 @@ static func finish_jump_flight(fuel_burned_t: float, seconds: float, damage: flo
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
+	if bool(job.get("jumped", false)):
+		msg += Passengers.set_down()
 	flash = msg
 	return msg
 
@@ -1127,7 +1136,8 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	var job := flight_job
 	flight_job = {}
 	var c := active_contract()
-	if slot < 0 or sim == null or c.is_empty() or job.is_empty():
+	var ferry := bool(job.get("ferry", false))   # flown with no contract: passengers, or nobody
+	if slot < 0 or sim == null or (c.is_empty() and not ferry) or job.is_empty():
 		return ""
 	var data := SaveSlots.read(slot)
 	var loaded := _load_ship(data)
@@ -1150,13 +1160,15 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	var dry := "Hull breached" if rescued else "Out of fuel"
 	var msg := ""
 	if arrived:
-		profile["port_id"] = String(c.destination_port_id)
-		if surface and String(LocalSpace.node(String(c.destination_port_id)).get("kind", "")) == "moon":
+		var dest_id := String(job.get("dest_id", "")) if ferry else String(c.destination_port_id)
+		profile["port_id"] = dest_id
+		if surface and String(LocalSpace.node(dest_id).get("kind", "")) == "moon":
 			profile["port_id"] = system_id() + LocalSpace.SEP + "pad"   # landed on the base's pad, not docked in orbit
-		c["status"] = "arrived"
-		if surface:
-			c["surface"] = true
-		data["active_contract"] = c
+		if not ferry:
+			c["status"] = "arrived"
+			if surface:
+				c["surface"] = true
+			data["active_contract"] = c
 		msg = (("Landed on the pad at %s." if surface else "Docked at %s.") + " Fuel %s cr, berth fee %s cr%s.%s") % [job.destination, ShipStats.commas(int(r.fuel_cost)), ShipStats.commas(roundi(berth)),
 				", hull repairs %s cr" % ShipStats.commas(int(r.repair_cost)) if int(r.repair_cost) > 0 else "", (" %s: a tug towed you in for %s cr." % [dry, ShipStats.commas(roundi(tow))]) if stranded else ""]
 	elif stranded:
@@ -1167,8 +1179,32 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 	_commit_sim(data, loaded.ship)
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
+	if arrived:
+		msg += Passengers.set_down()
 	flash = msg
 	return msg
+
+
+## Fly a local hop by hand with no contract: to set passengers down, or just to get there. The flight
+## scene treats it as a run (flight_job kind "run", `ferry` true); finish_local_flight closes it out.
+static func begin_ferry_flight(dest_id: String) -> Dictionary:
+	if slot < 0 or sim == null:
+		return {"ok": false, "message": "No saved game, nowhere to go. Load one first."}
+	if not active_contract().is_empty():
+		return {"ok": false, "message": "Fly the contract: the passengers ride along with it."}
+	if hull_block(false) != "":
+		return {"ok": false, "message": hull_block(false)}
+	for site in local_sites():
+		if String(site["id"]) != dest_id:
+			continue
+		var here := String(profile.get("port_id", ""))
+		var dest := LocalSpace.node(dest_id)
+		flight_job = {"kind": "run", "ferry": true, "contract_id": "", "dv_kms": float(site.dv_kms), "hours": int(site.hours),
+				"destination": String(dest.get("name", "the destination")), "key": "ferry-%s-%d" % [dest_id, day()],
+				"dest_kind": String(dest.get("kind", "port")), "dest_id": dest_id,
+				"origin_kind": String(LocalSpace.node(here).get("kind", "port")), "origin_id": here, "system_id": system_id()}
+		return {"ok": true, "message": "Take the helm."}
+	return {"ok": false, "message": "Your tanks can't reach that site."}
 
 
 ## `hard`: a hard burn for a rush job, sooner and dearer (People.hard_burn).
@@ -1206,7 +1242,7 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 	data["profile"] = profile
 	_commit_sim(data, loaded_ship.ship)
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours%s." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), hours, (" on a hard burn" if hard else "") + ("." + work.trim_suffix(".") if work != "" else "")]}
+	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours%s." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), hours, (" on a hard burn" if hard else "") + ("." + work.trim_suffix(".") if work != "" else "")] + Passengers.set_down()}
 
 
 static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
@@ -1349,7 +1385,7 @@ static func depart_active_contract(hard := false) -> Dictionary:
 	if live:
 		_commit_sim(data, loaded_ship.ship)
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Arrived at %s after %.2f ly.%s" % [Worlds.port(profile.port_id).name, float(c.distance_ly), days_text]}
+	return {"ok": true, "message": "Arrived at %s after %.2f ly.%s" % [Worlds.port(profile.port_id).name, float(c.distance_ly), days_text] + Passengers.set_down()}
 
 
 ## Why the active contract can't set off from here right now, or "" when it can: the hull, then every
@@ -1486,9 +1522,8 @@ static func crew_aboard() -> int:
 ## Berths not taken by the captain, the crew, passengers or rescued survivors aboard right now. It goes to
 ## -1 when a survivor has the jump seat (Salvage.room_for): nobody's hired into that.
 static func free_berths(stats: Dictionary) -> int:
-	var c := active_contract()
-	var pax := int(c.get("seats", 0)) if String(c.get("person_kind", "")) == "passenger" else 0
-	return int(stats.get("berths", 0)) - crew_aboard() - pax - (profile.get("rescued", []) as Array).size()   # survivors off a wreck sleep somewhere too
+	var lay := Passengers.layout(stats)   # passengers in spare bunks, survivors in whatever's free
+	return int(lay.free[0]) - int(lay.over)
 
 
 ## Who is looking for work in this port today (not anyone already hired or let go here).

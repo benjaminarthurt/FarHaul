@@ -93,6 +93,12 @@ static func effect(st: Dictionary, def: ModuleDef) -> Array:
 		var n := int(st.get("drive_count", 0))
 		out.append({"label": "Jumps", "was": "none" if n == 0 else "%d%%" % roundi(float(st.get("drive", 0.0)) * 100.0),
 				"now": "%d%%" % roundi((float(st.get("drive", 0.0)) + def.drive) * 100.0), "good": n == 0, "bad": false})
+	if def.cabins > 0:
+		var cb: Array = st.get("cabin_beds", [0, 0, 0, 0])
+		var was := int(st.get("cabins", 0))
+		out.append({"label": "Passenger beds", "was": "%d" % was, "now": "%d, %d %s at %.1f×" % [was + def.cabins, int(cb[clampi(def.cabin_tier, 1, 3)]) + def.cabins, String(Passengers.tier(def.cabin_tier).name), Passengers.mult(def.cabin_tier)], "good": true, "bad": false})
+	if def.berths > 0:
+		out.append({"label": "Berths", "was": "%d" % int(st.get("berths", 0)), "now": "%d" % (int(st.get("berths", 0)) + def.berths), "good": true, "bad": false})
 	if def.cargo_slots > 0:
 		out.append({"label": "Hold", "was": "%d" % int(st.get("cargo_slots", 0)), "now": "%d containers" % (int(st.get("cargo_slots", 0)) + def.cargo_slots), "good": true, "bad": false})
 	return out.filter(func(e): return not String(e.now).begins_with(String(e.was) + " ") and String(e.now) != String(e.was))   # only what moves

@@ -84,28 +84,30 @@ func _run() -> void:
 			check("late" in String(r.message).to_lower() and int(r.payment) == roundi(int(lc.pay_total) * 0.5), "the usual burn arrives late, at half pay: %s" % r.message)
 			check(int(Session.profile.rep) == maxi(0, rep1 - 4), "and costs standing")
 		_clear()
-	# Passengers need spare berths.
+	# Passengers need beds: a spare bunk will do for most (Passengers).
 	var fare := _find("passenger")
 	check(not fare.is_empty(), "passengers ask for passage")
 	if not fare.is_empty():
 		var r := Session.accept_contract(fare)
-		check(not bool(r.ok) and "spare berth" in String(r.message), "the starter has no spare berth: %s" % r.message)
+		check(not bool(r.ok) and "bed" in String(r.message), "the starter has no spare bed: %s" % r.message)
 		check(_fit(ShipPresets.STARTER_CABIN) == "", "the cabin starter builds")
-		fare = _find("passenger")
-		if int(fare.seats) > 2:
-			for i in 10:
-				Session.wait_days(1)
-				fare = _find("passenger")
-				if int(fare.seats) <= 2:
-					break
+		fare = {}
+		for i in 20:
+			for j in Session.people_here():
+				if String(j.person_kind) == "passenger" and int(j.seats) <= 2 and int(j.get("wants", 0)) == 0:
+					fare = j
+			if not fare.is_empty():
+				break
+			Session.wait_days(1)
+		check(not fare.is_empty(), "someone who'll take a bunk")
 		r = Session.accept_contract(fare)
-		check(bool(r.ok), "with two bunks they come aboard: %s" % r.message)
-		var c := Session.active_contract()
-		check(Contracts.ready(Contracts.check(Session.ship_stats(Session._load_ship(SaveSlots.read(Session.slot)).ship), Session._load_ship(SaveSlots.read(Session.slot)).manifest, c)), "a passenger run is ready to fly with no cargo")
-		Session.depart_active_contract()
+		check(bool(r.ok) and Session.active_contract().is_empty() and Passengers.count() == int(fare.seats), "with two bunks they come aboard, and no contract's taken: %s" % r.message)
+		var bk: Dictionary = Passengers.aboard()[0]
+		var fares0 := int((Session.profile.get("pax_stats", {}) as Dictionary).get("fares_cr", 0))
 		Session.profile["hull_damage"] = 0.2   # a hard landing on the way
-		r = Session.deliver_active_contract()
-		check("rough" in String(r.message) and int(r.payment) == roundi(int(c.pay_total) * 0.5), "a hard landing halves the fare: %s" % r.message)
+		r = Session.local_reposition(String(fare.destination_port_id))
+		var paid := int((Session.profile.get("pax_stats", {}) as Dictionary).get("fares_cr", 0)) - fares0
+		check("rough" in String(r.message) and paid == roundi(int(bk.fare) * 0.5), "a hard landing halves the fare: %s" % r.message)
 		Session.profile["hull_damage"] = 0.0
 		_clear()
 	# Sealed, with standing.

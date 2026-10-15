@@ -111,6 +111,31 @@ func _add_defaults() -> void:
 		{"group": &"cargo", "pressurized": false, "shape": &"rack", "mass": 1.2, "cost": 4000,
 			"cargo_slots": 4, "cargo_capacity": 40.0})
 
+	# Bigger holds: containers two high along the outer walls, an open floor down the middle.
+	_def(&"cargo_hold_2x2", "Cargo hold 2x2", Vector3i(2, 1, 2), Color(0.38, 0.43, 0.35),
+		[
+			_door(Vector3i(0, 0, 0), DIR_N), _door(Vector3i(1, 0, 1), DIR_S),
+			_door(Vector3i(0, 0, 1), DIR_W), _door(Vector3i(1, 0, 0), DIR_E),
+		],
+		{"group": &"cargo", "mass": 5.0, "cost": 11000, "cargo_slots": 8, "cargo_capacity": 52.0})
+	_def(&"cargo_bay_2x3", "Cargo bay 2x3", Vector3i(2, 1, 3), Color(0.38, 0.43, 0.35),
+		[
+			_door(Vector3i(0, 0, 0), DIR_N), _door(Vector3i(1, 0, 2), DIR_S),
+			_door(Vector3i(0, 0, 1), DIR_W), _door(Vector3i(1, 0, 1), DIR_E),
+		],
+		{"group": &"cargo", "mass": 7.0, "cost": 15000, "cargo_slots": 12, "cargo_capacity": 84.0})
+
+	# --- Passenger cabins (walkable): beds for paying passengers, apart from the crew's ---
+	_def(&"pax_cabin", "Passenger cabin", one, Color(0.42, 0.38, 0.52),
+		[_door(o, DIR_S)],
+		{"group": &"cabins", "mass": 1.5, "cost": 7000, "power": -1.0, "cabins": 2, "cabin_tier": 1})
+	_def(&"pax_quarters", "Passenger quarters 2x2", Vector3i(2, 1, 2), Color(0.42, 0.38, 0.52),
+		[_door(Vector3i(0, 0, 0), DIR_N), _door(Vector3i(1, 0, 1), DIR_S)],
+		{"group": &"cabins", "mass": 5.0, "cost": 16000, "power": -3.0, "cabins": 4, "cabin_tier": 2})
+	_def(&"pax_stateroom", "Stateroom 2x2", Vector3i(2, 1, 2), Color(0.50, 0.40, 0.36),
+		[_door(Vector3i(0, 0, 0), DIR_N), _door(Vector3i(1, 0, 1), DIR_S)],
+		{"group": &"cabins", "mass": 6.5, "cost": 26000, "power": -5.0, "heat": 2.0, "cabins": 2, "cabin_tier": 3})
+
 	# --- External parts (not walkable; bolt onto frames or bare hull faces) ---
 	_def(&"frame", "Frame", one, Color(0.32, 0.34, 0.38),
 		[

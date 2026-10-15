@@ -175,7 +175,7 @@ func _run() -> void:
 	check(r.json.get("ok", false) and not Session.active_contract().is_empty(), "take a job off the board: %s" % r.json.get("message", ""))
 	r = await _http(HTTPClient.METHOD_GET, "/api/state", "", token)
 	var active: Dictionary = r.json.port.get("active", {})
-	check(bool(active.get("can_depart", false)) and (r.json.port.board as Array).is_empty(), "with a load aboard, the board gives way to the run: depart on autopilot")
+	check(bool(active.get("can_depart", false)) and (r.json.port.board as Array).all(func(o): return String(o.get("kind", "")) == "passenger"), "with a load aboard, the board gives way to the run (passengers can still ride along): depart on autopilot")
 	var where0 := String(Session.profile.port_id)
 	r = await _http(HTTPClient.METHOD_POST, "/api/cmd", JSON.stringify({"action": "depart"}), token)
 	check(r.json.get("ok", false) and String(Session.profile.port_id) != where0, "depart from the phone: %s" % r.json.get("message", ""))

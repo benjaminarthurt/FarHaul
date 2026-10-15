@@ -294,6 +294,7 @@ func _build_palette(ui: Control) -> void:
 	var group_titles := {
 		&"hull": "HULL (walkable)",
 		&"cargo": "CARGO",
+		&"cabins": "PASSENGER CABINS (paying beds)",
 		&"external": "EXTERNAL (bolt-on)",
 		&"caps": "DOOR CAPS (seal a doorway)",
 	}
@@ -588,6 +589,10 @@ func _module_tooltip(def: ModuleDef) -> String:
 		lines.append("Braking %.0f kN, firing toward the bow (B in flight)" % def.retro)
 	if def.cargo_slots > 0:
 		lines.append("Cargo %d containers, %.0f t" % [def.cargo_slots, def.cargo_capacity])
+	if def.berths > 0:
+		lines.append("Crew berths %d (a spare one takes a passenger at the basic fare)" % def.berths)
+	if def.cabins > 0:
+		lines.append("Passengers %d, in %s beds: %.1f× the basic fare" % [def.cabins, String(Passengers.tier(def.cabin_tier).name), Passengers.mult(def.cabin_tier)])
 	if def.helm:
 		lines.append("Flight controls")
 	if def.airlock:

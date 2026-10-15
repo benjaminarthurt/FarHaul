@@ -84,8 +84,9 @@ When the current scene is the place scene or the station terminal (`ShipRemote._
 not the shipyard, not a flight), `/api/state` carries `port` (`ShipRemote.port_state()`, cached until
 credits, day, site, crew, contract status or kits change, or 5 s): the active contract and what it
 allows (`can_depart`, `hard_burn`, `can_deliver`, `camp`), the freight board plus people with work
-(`board`, rows with `id`), the crew with wages and severance, today's candidates, free berths, and the
-repair desk's prices. Port actions take an `id` where they need one:
+(`board`, rows with `id`; with a contract on, only passengers, who ride along), the long-haul passengers
+(Passengers.long_haul), the passengers aboard (`passengers`), the crew with wages and severance, today's
+candidates, free berths, and the repair desk's prices. Port actions take an `id` where they need one:
 
 `accept` (board id), `depart`, `hard_burn`, `deliver`, `wait` (a day), `hire` / `fire` (person id),
 `buy_patch_kit`, `buy_spares_kit`, `repair`, `overhaul`. Each is the Session call the desk makes.

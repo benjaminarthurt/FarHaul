@@ -29,6 +29,7 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 	var airlocks := 0
 	var cargo_slots := 0
 	var berths := 0
+	var cabin_beds := [0, 0, 0, 0]   # passenger beds by tier (Passengers.tiers): [unused, cabin, quarters, stateroom]
 	var engine_power := 0.0
 	var engine_heat := 0.0
 	var drive := 0.0
@@ -63,6 +64,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		cost += ShipData.paid(m, ship.library)
 		cargo_slots += d.cargo_slots
 		berths += d.berths
+		if d.cabins > 0:
+			cabin_beds[clampi(d.cabin_tier, 1, 3)] += d.cabins
 		drive += d.drive
 		if d.drive > 0.0:
 			drive_count += 1
@@ -165,6 +168,8 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		"fuel": fuel,
 		"wet": wet,  # dry plus full tanks, no cargo
 		"berths": berths,
+		"cabin_beds": cabin_beds,
+		"cabins": int(cabin_beds[1]) + int(cabin_beds[2]) + int(cabin_beds[3]),
 		"engine_power": engine_power,   # kW the engines draw at full throttle (part of power_use)
 		"engine_heat": engine_heat,     # kW of waste heat the engines make at full throttle (part of heat_gen)
 		"radius": (hi - lo).length() * 0.5 + 1.5 if not ship.modules.is_empty() else 0.0,
@@ -214,6 +219,13 @@ static func format(s: Dictionary) -> String:
 		"Crew  %d needed, %d berths%s" % [s.crew_needed, s.berths, ("   FTL drive x%d" % s.drive_count) if s.drive_count > 0 else "   no FTL"],
 		"Thrust  %.0f kN   T/W %.2f empty, %.2f loaded" % [s.thrust_fwd, s.twr, s.twr_loaded],
 	])
+	if int(s.get("cabins", 0)) > 0:
+		var cb: Array = s.cabin_beds
+		var bits := PackedStringArray()
+		for t in [3, 2, 1]:
+			if int(cb[t]) > 0:
+				bits.append("%d %s" % [int(cb[t]), ["", "cabin", "quarters", "stateroom"][t]])
+		lines.append("Passengers  %d beds: %s" % [int(s.cabins), ", ".join(bits)])
 	if float(s.get("lift", 0.0)) > 0.0:
 		lines.append("Lift  %.0f kN   lands where gravity is under %.2f g loaded" % [s.lift, float(s.lift_g) / G])
 	if float(s.get("retro", 0.0)) > 0.0:
