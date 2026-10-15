@@ -1,0 +1,146 @@
+{
+  "description": "How each game line is spoken when it's voiced (tools/voice/build_lines.py expands this into lines.json for the generator). Keys are '<source>:<key>' and each 'say' list lines up, by index, with that key's lines in the game's data (comms.json lines, passengers.json aboard). Names the game fills in (your ship, other ships, stations, wrecks, places, goods, prices) are left out of the spoken version; the subtitle still shows them. Values from small, fixed sets are spoken in every variation: {name} is filled from 'sets'. A null entry means that line is never voiced (babble). 'role' picks who says it (voices.json); 'radio' lines go through the radio effect in the game.",
+  "sets": {
+    "berth": [[2, "two"], [3, "three"], [4, "four"], [5, "five"], [6, "six"], [7, "seven"], [8, "eight"], [9, "nine"], [10, "ten"], [11, "eleven"], [12, "twelve"], [13, "thirteen"], [14, "fourteen"]],
+    "fine": [[270, "two hundred and seventy credits"], [300, "three hundred credits"], [360, "three hundred and sixty credits"]],
+    "camp_fine": [[108, "a hundred and eight credits"], [120, "a hundred and twenty credits"], [144, "a hundred and forty-four credits"]],
+    "t": [[2, "two"], [3, "three"], [4, "four"], [5, "five"], [6, "six"], [7, "seven"], [8, "eight"]],
+    "rescue_t": [[2, "two"], [3, "three"], [4, "four"], [5, "five"]],
+    "crew": [[1, "one"], [2, "two"], [3, "three"], [4, "four"]],
+    "problem": [[0, "Drive's cooked. Air's fine. Morale isn't."], [1, "Out of fuel and out of ideas."], [2, "Main engine's dead and so's the backup. We're drifting."], [3, "We burned too much on the last leg. Don't ask how."]],
+    "species": [["human", "Human"], ["kesh", "Kesh"], ["ilyan", "Ilyan"], ["vey", "Vey"], ["orun", "Orun"]],
+    "dir": [["up", "up"], ["down", "down"]]
+  },
+  "lines": {
+    "comms:cleared": {"role": "control", "radio": true, "say": [
+      "Freighter, traffic control. Cleared to berth {berth}. Collar's lit green. Try to hit it.",
+      "Copy, freighter. Berth {berth} is yours. Approach slow, we've just had it polished.",
+      "Freighter, cleared for berth {berth}. Watch the paint."]},
+    "comms:hold": {"role": "control", "radio": true, "say": [
+      "Freighter, hold outside two kilometres. There's a ship coming out of the collar. You'll see them.",
+      "Negative on the collar for now, freighter. Someone's undocking. Hold, and enjoy the view."]},
+    "comms:after_hold": {"role": "control", "radio": true, "say": [
+      "Freighter, they're clear. Cleared to berth {berth}.",
+      "Collar's yours, freighter. Berth {berth}. Mind their wake."]},
+    "comms:already": {"role": "control", "radio": true, "say": [
+      "You're already cleared, freighter. Berth {berth}. We're not saying it twice. That was twice."]},
+    "comms:fined": {"role": "control", "radio": true, "say": [
+      "Freighter, you docked without clearance. That's {fine} and a note on your file. Call in next time.",
+      "Freighter, nobody cleared you for that collar. {fine}, and your name's on the board in red."]},
+    "comms:pad_cleared": {"role": "pad", "radio": true, "say": [
+      "Freighter, pad control. Pad {berth} is yours. Beacon's on. Mind the dust.",
+      "Cleared to land on pad {berth}. Gear down, if you have gear."]},
+    "comms:camp_cleared": {"role": "camp", "radio": true, "say": [
+      "Freighter? Yeah. Land on the flat bit. The flatter bit. Not that bit.",
+      "Pad's clear, more or less. Come down slow, the foreman's watching."]},
+    "comms:camp_fined": {"role": "camp", "radio": true, "say": [
+      "Next time, call before you drop on my camp. {camp_fine} for the scare.",
+      "You land on my camp without a word? {camp_fine}. And a word."]},
+    "comms:speed": {"role": "control", "radio": true, "say": [
+      "Freighter, you're coming in hot inside two kilometres. Bleed it off or we start writing.",
+      "Freighter on approach, you're hot. Slow down. The station doesn't move out of the way."]},
+    "comms:greet": {"role": "ship", "radio": true, "say": [
+      "Go ahead.",
+      "This is us. What do you need?",
+      "Make it quick, we're on the clock.",
+      "Go ahead, freighter. We're listening. Mostly."]},
+    "comms:patrol": {"role": "patrol", "radio": true, "say": [
+      "System patrol. Keep it slow near the station and we'll get along fine.",
+      "System patrol. Nothing to report, and we'd like it to stay that way."]},
+    "comms:fuel_offer": {"role": "ship", "radio": true, "say": [
+      "We can spare {t} tonnes. Price is on your screen. Port's cheaper, but the port's over there.",
+      "{t} tonnes, price on your screen. We'll come alongside. Hold still."]},
+    "comms:fuel_coming": {"role": "ship", "radio": true, "say": [
+      "Coming alongside. Hold her steady.",
+      "On our way. Don't do anything clever."]},
+    "comms:fuel_wait": {"role": "ship", "radio": true, "say": [
+      "We can't line up a hose with you moving like that. Hold still.",
+      "Stop wriggling, freighter. We're trying to help."]},
+    "comms:fuel_done": {"role": "ship", "radio": true, "say": [
+      "That's your fuel. Pleasure doing business.",
+      "Fuel's in. Bill's on its way. Fly safe."]},
+    "comms:fuel_no": {"role": "ship", "radio": true, "say": [
+      "We're going the other way, fast. Ask someone who's stopped.",
+      "We've barely enough for ourselves. Try a hauler at the port."]},
+    "comms:tow_offer": {"role": "ship", "radio": true, "say": [
+      "We'll take your line. Price is on your screen, and we don't discuss the parking.",
+      "We can tow you in. Price on your screen. It's that or wait for the port tug."]},
+    "comms:tug_offer": {"role": "tug", "radio": true, "say": [
+      "Port tug. We'll bring you in, same fee as always. Sit tight.",
+      "Tug here. Usual fee, and keep your hands off the throttle."]},
+    "comms:news_tight": {"role": "ship", "radio": true, "say": [
+      "Somebody near here is short of something. Has been for days. You didn't hear it from us.",
+      "If you're carrying the right thing, somebody round here will kiss you. Metaphorically."]},
+    "comms:news_price": {"role": "ship", "radio": true, "say": [
+      "Prices are moving {dir} this week. Make of that what you will.",
+      "Heard prices went {dir}. Somebody's happy."]},
+    "comms:news_wreck": {"role": "ship", "radio": true, "say": [
+      "There's a dead ship out by the station. Nobody's touched it yet.",
+      "Saw a wreck on the way in. Not our business."]},
+    "comms:news_none": {"role": "ship", "radio": true, "say": [
+      "Nothing worth the airtime. Quiet out.",
+      "No news. Which is news, round here."]},
+    "comms:news_again": {"role": "ship", "radio": true, "say": [
+      "We told you everything we know. Twice would be making it up."]},
+    "comms:sos": {"role": "distress", "radio": true, "say": [
+      "Mayday, mayday. {species} registry. {problem} Anyone out there?",
+      "Any ship, any ship. {problem} We've {crew} aboard."]},
+    "comms:sos_answer": {"role": "distress", "radio": true, "say": [
+      "You heard us? Oh, thank everything. Come alongside, we're not going anywhere.",
+      "We see you. Please don't be a salvage crew."]},
+    "comms:sos_fuel": {"role": "distress", "radio": true, "say": [
+      "Fuel? Bless you. {rescue_t} tonnes, and we owe you a drink.",
+      "{rescue_t} tonnes. We'll pay what you ask and name a child after you. Small child."]},
+    "comms:sos_crew": {"role": "distress", "radio": true, "say": [
+      "You're taking us off? We'll grab our bags. Somebody grab the cat.",
+      "We're coming across. The ship can wait. We can't."]},
+    "comms:sos_room": {"role": "distress", "radio": true, "say": [
+      "You've no room? Then send word to the port. We'll keep the lights on."]},
+    "comms:sos_bye": {"role": "distress", "radio": true, "say": [
+      "We'll make it from here. Thank you. Really.",
+      "Fuelled up and limping home. We owe you."]},
+    "comms:rival_there": {"role": "rival", "radio": true, "say": [
+      "You're looking at our wreck, freighter. Beacon's on it. Ours.",
+      "Salvage tug here. That's our beacon on that wreck. Move along, or ask nicely."]},
+    "comms:rival_claim": {"role": "rival", "radio": true, "say": [
+      "Salvage tug, coming in on that wreck. Our beacon's going on it now.",
+      "That wreck's ours. Beacon's away. Don't take it personally."]},
+    "comms:rival_yours": {"role": "rival", "radio": true, "say": [
+      "Didn't see your beacon. Didn't look very hard either. Half each, and nobody gets torched?",
+      "Your beacon, is it? Wreck's big. We'll just take the bits you don't want."]},
+    "comms:rival_split": {"role": "rival", "radio": true, "say": [
+      "Half each it is. We'll take every other piece. Stay off our half.",
+      "Deal. Your half, our half. Try to remember which is which."]},
+    "comms:rival_warned_ok": {"role": "rival", "radio": true, "say": [
+      "Fine. Fine! It's yours. We'll find a better one anyway.",
+      "Your beacon, your wreck. We're going. Enjoy the rust."]},
+    "comms:rival_warned_no": {"role": "rival", "radio": true, "say": [
+      "Our beacon was on it first, friend. Read the law. We're staying.",
+      "Clear off? We were here first. You clear off."]},
+    "comms:rival_warned_no_yours": {"role": "rival", "radio": true, "say": [
+      "Beacon or not, we're cutting. Call the port if you like.",
+      "Big talk. We're still cutting."]},
+    "comms:rival_done": {"role": "rival", "radio": true, "say": [
+      "That's us done. Pleasure, mostly.",
+      "We're full. Wreck's all yours, what's left of it."]},
+    "aboard:bunk": {"role": "passenger", "radio": false, "say": [
+      "Is this someone's bunk? It smells like someone's bunk.",
+      "I've slept in worse. Not recently.",
+      "The pillow has a name on it. It isn't mine."]},
+    "aboard:cabin": {"role": "passenger", "radio": false, "say": [
+      "Small, but the door locks. I've paid more for worse.",
+      "The viewport's the size of a plate. A nice plate.",
+      "We're fine. Are we nearly there? We're fine."]},
+    "aboard:quarters": {"role": "passenger", "radio": false, "say": [
+      "The lounge has a screen. It shows the same three films.",
+      "Someone's snoring in pod two. It's not me. It's never me.",
+      "Nice enough. The curtains don't quite meet."]},
+    "aboard:stateroom": {"role": "passenger", "radio": false, "say": [
+      "I asked for a window and got a window. Remarkable.",
+      "The plant's real. I checked. I always check.",
+      "Tell the captain the sheets are adequate. High praise."]},
+    "aboard:late": {"role": "passenger", "radio": false, "say": [
+      "We were promised we'd be there by now.",
+      "I've started counting the rivets. There are a lot of rivets."]}
+  }
+}

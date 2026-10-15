@@ -7,3 +7,9 @@ build/
 
 # The retired browser build: kept on disk if present, no longer tracked
 site/play/
+
+# Voice recording scratch (tools/voice/README.md)
+tools/voice/preview/
+tools/voice/_rejected/
+tools/voice/review.html
+tools/voice/voices.old.json
