@@ -6,23 +6,33 @@ The radio and aboard lines are recorded with Chatterbox TTS, using reference voi
 |---|---|
 | `voiced.json` | How each game line is spoken, and the value sets (berths, fines, tonnes...) to say in every variation. Edit this. |
 | `build_lines.py` | Expands `voiced.json` into `lines.json`: 246 lines with ids. Checks them against the game's data. |
-| `make_refs.py` | Builds 10–15 s reference clips and `catalog.csv` from the datasets. It lives in the TTS project. |
+| `make_refs.py` | Builds 10–15 s reference clips and `catalog.csv` from the datasets. |
+| `voice.bat`, `setup_torch.py` | The Windows front end: setup, download, refs, then the generator's commands. |
 | `generate.py` | Records the lines into `assets/audio/voice/` as OGG, with the `index.json` the game reads. |
 | `voices.json` | The cast, made by `generate.py cast`, then edited by hand. |
 | `manifest.jsonl` | One row per recorded clip: seed, settings, length, checks. |
 
-## Run it (Windows, in the Chatterbox environment)
+## Run it (Windows)
 
-From the repo root, `D:\Dev\FarHaul`, with the TTS project's venv active:
+Everything lives in the repo under `tools\voice\`: the Python environment, the downloaded datasets, the reference clips and Chatterbox's model. Godot ignores that folder (`.gdignore`), and git ignores everything in it except the scripts. Only the recorded clips in `assets\audio\voice\` ship.
+
+From `D:\Dev\FarHaul`:
 
 ```
-python tools\voice\build_lines.py
-python tools\voice\generate.py cast --refs D:\path\to\TTS\voices\refs
-python tools\voice\generate.py plan
-python tools\voice\generate.py preview
-python tools\voice\generate.py run
-python tools\voice\generate.py review
+tools\voice\voice.bat setup
+tools\voice\voice.bat download
+tools\voice\voice.bat refs
+tools\voice\voice.bat cast
+tools\voice\voice.bat plan
+tools\voice\voice.bat preview
+tools\voice\voice.bat run
+tools\voice\voice.bat review
 ```
+
+- **`setup`** makes a Python 3.11 venv in `tools\voice\.venv`. It installs Chatterbox, then swaps in the CUDA build of torch, and finally checks that the GPU is visible. It needs Python 3.11: run `winget install Python.Python.3.11` first if you don't have it.
+- **`download`** fetches VCTK (11 GB) and LibriTTS-R dev-clean (1.3 GB) into `tools\voice\data\` and unpacks them. You can rerun it if a download breaks; it resumes.
+- **`refs`** builds a 10–15 s reference clip per speaker in `tools\voice\refs\`, plus `catalog.csv`.
+- **Every other command** goes to `generate.py`, after `build_lines.py` has refreshed `lines.json`. The first `preview` or `run` downloads Chatterbox's model (about 3 GB) into `tools\voice\.hf\`.
 
 1. **`cast`** picks 48 speakers from `catalog.csv`. It alternates genders, spreads accents and never puts one voice in two roles. Radio roles use VCTK only. The result is written to `voices.json`.
 2. **`plan`** shows what will be recorded: about 2,250 clips, about 3¼ hours of speech, and roughly 3½ to 7 hours on the RTX 2060.

@@ -10,6 +10,10 @@ site/play/
 
 # Voice recording scratch (tools/voice/README.md)
 tools/voice/preview/
+tools/voice/.venv/
+tools/voice/.hf/
+tools/voice/data/
+tools/voice/refs/
 tools/voice/_rejected/
 tools/voice/review.html
 tools/voice/voices.old.json
