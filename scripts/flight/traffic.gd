@@ -31,6 +31,7 @@ var pods: Array = []          ## {ship, state, t, dur, a, b, rest, home}
 var orbiters: Array = []      ## {ship, world: Node3D it circles, radius, speed, angle, tilt: Basis}
 var deep_key := ""            ## the run the deep derelict (if any) was placed for
 var stops: Array = []         ## other things out on the route the braking autopilot stops at (a ship in distress: Comms)
+var on_take: Callable         ## told when you take a point off a derelict: (derelict, point) (Rivals: claim jumping)
 var _announce := ""           ## the sensors' line about it, said once the cockpit isn't saying something else
 var site := ""
 var rng := RandomNumberGenerator.new()
@@ -331,8 +332,12 @@ func salvage_points() -> Array:
 
 
 ## Mark a point cut free (a panel), cut open (a hatch: the hold's items come into view) or taken (an item).
-func take(point: Dictionary) -> void:
+func take(point: Dictionary, by_you := true) -> void:
 	point["taken"] = true
+	if by_you and on_take.is_valid():
+		for d in derelicts:
+			if (d.points as Array).has(point):
+				on_take.call(d, point)
 	if point.has("marker") and is_instance_valid(point.marker):
 		(point.marker as Node3D).visible = false
 	if String(point.get("kind", "")) == "door":

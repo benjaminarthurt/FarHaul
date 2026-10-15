@@ -1018,6 +1018,31 @@ static func buy_patch_kits(n: int) -> Dictionary:
 	return {"ok": true, "message": "Bought %d patch kit%s for %s cr. %d aboard. Plates, sealant, a welder with opinions." % [n, "" if n == 1 else "s", ShipStats.commas(price * n), patch_kits()]}
 
 
+## Claim beacons (Rivals): fired at a wreck to stake it. Bought at the repair desk.
+static func claim_beacon_price() -> int:
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	return roundi(float(Rivals.cfg().get("beacon_price_cr", 150)) * float(lv.get("port_fee_mult", 1.0)))
+
+
+static func buy_claim_beacons(n: int) -> Dictionary:
+	if slot < 0 or sim == null:
+		return {"ok": false, "message": "No saved game, no shop."}
+	var price := claim_beacon_price()
+	var cap := int(Rivals.cfg().get("beacon_max", 4))
+	n = mini(n, cap - Rivals.beacons())
+	if n <= 0:
+		return {"ok": false, "message": "The beacon rack holds %d. Go and claim something." % cap}
+	n = mini(n, int(profile.get("credits", 0)) / maxi(price, 1))
+	if n <= 0:
+		return {"ok": false, "message": "A claim beacon costs %s cr; you have %s cr." % [ShipStats.commas(price), ShipStats.commas(int(profile.credits))]}
+	var have := Rivals.beacons()
+	if not _book(-float(price * n)):
+		return {"ok": false, "message": "The desk's card reader is sulking. Try again."}
+	profile["claim_beacons"] = have + n
+	save_profile()
+	return {"ok": true, "message": "Bought %d claim beacon%s for %s cr. %d aboard. Fire one at a wreck and it's yours, legally speaking." % [n, "" if n == 1 else "s", ShipStats.commas(price * n), Rivals.beacons()]}
+
+
 ## Pay the yard here to make the hull good again (it also restores the thrust damage takes away).
 static func repair_hull() -> Dictionary:
 	var cost := repair_cost()

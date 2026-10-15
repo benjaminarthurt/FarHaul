@@ -303,7 +303,7 @@ static func _crew_in_port() -> Array:
 
 # --- In port: the desks from the phone ------------------------------------------------------------
 
-const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "cancel", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "repair", "overhaul", "sell_cargo", "sell_parts", "hand_in_recorders", "hand_over_remains", "hand_over", "sign_on", "see_off", "collect_finders"]
+const PORT_ACTIONS := ["accept", "depart", "hard_burn", "deliver", "cancel", "wait", "hire", "fire", "buy_patch_kit", "buy_spares_kit", "buy_beacon", "repair", "overhaul", "sell_cargo", "sell_parts", "hand_in_recorders", "hand_over_remains", "hand_over", "sign_on", "see_off", "collect_finders"]
 
 
 ## What the desks offer right now: the active contract and what can be done with it, the freight board
@@ -360,6 +360,7 @@ static func port_state() -> Dictionary:
 	out["free_berths"] = maxi(0, free)
 	out["crew_needed"] = int(stats.get("crew_needed", 1))
 	out["shop"] = {"repair": Session.repair_cost(), "overhaul": Session.overhaul_cost(), "patch_kit": Session.patch_kit_price(),
+			"beacon": Session.claim_beacon_price(), "beacons": Rivals.beacons(), "beacon_max": int(Rivals.cfg().get("beacon_max", 4)),
 			"spares_kit": Session.spares_kit_price(), "hull": Session.hull(), "parts": Wear.summary(loaded.ship, Session.wear()) if not loaded.is_empty() else ""}
 	var sc_lines := []
 	for l in Salvage.cargo_aboard(loaded.get("manifest", null)):
@@ -425,6 +426,8 @@ static func port_command(action: String, id: String) -> Dictionary:
 			return Session.buy_patch_kits(1)
 		"buy_spares_kit":
 			return Session.buy_spares_kit()
+		"buy_beacon":
+			return Session.buy_claim_beacons(1)
 		"repair":
 			return Session.repair_hull()
 		"overhaul":

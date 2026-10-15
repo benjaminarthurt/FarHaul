@@ -101,3 +101,29 @@ not charged twice); docking cleared and not, and the fine and standing settled w
 tug and tow offers when dry; a distress call on a run, out of reach, the braking autopilot stopping at it,
 the crew taken aboard a liner, and the standing lost for flying past. Screenshots:
 `tests/capture_comms.gd`.
+
+## Rivals and claim beacons (0.16.1)
+
+`scripts/comms/rivals.gd` (Rivals), tuning in comms.json `rivals`.
+
+- **Claim beacons** (`profile.claim_beacons`, 2 to start, 4 at most, 150 cr × the port fee multiple at
+  the repair desk and on the remote's shop). Within 2 km of a derelict, the radio lists it with "Fire a
+  claim beacon at it". The claim goes in `profile.claims` (by the derelict's `id_base`, so for the day
+  it exists): a green light on the wreck and "YOUR CLAIM" on its tag. A wreck someone else claimed has
+  an amber light and "CLAIMED", and can't be beaconed.
+- **Rivals**: the first time you come within 3 km of a derelict it rolls for a rival (35%, 20% for a
+  dead ship out on a route), fixed by the wreck. 40% of those are already there with their beacon on
+  it, unless you beaconed it first; the rest turn up 150 to 420 s later while you're within 8 km, fly
+  in at 60 m/s, and beacon it if you haven't. Either way they call in.
+- They park alongside and cut a piece every 35 to 60 s (a flickering torch light where they're
+  working): panels, then the cargo hatch, then the hold (never survivors or the dead). What they take
+  goes in `profile.salvage_taken`, gone for the day. Stripped, they leave and the claim lapses.
+- **Hail them** (the radio lists "Salvage tug ..."):
+  - **Split it**: of what's left, they take every other panel and hold item; the hatch opens for both.
+  - **Clear off**: works 85% of the time if your beacon was first, 15% if theirs was, plus 0.5% a point
+    of standing (up to 25%). Once only. If they go, the claim's yours.
+- **Claim jumping**: taking a piece from a wreck they claimed (or from their half of a split) counts
+  against you: at the end of the flight they complain to the port, standing −2.
+
+Tests: `tests/test_rivals.gd` (beaconing, a rival arriving and cutting, warning them off, their claim
+first and refusing, claim jumping, a split, buying beacons). Screenshot: `tests/capture_rivals.gd`.

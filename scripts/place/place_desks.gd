@@ -378,6 +378,13 @@ func _desk_fuel() -> void:
 			var r := Session.buy_patch_kits(Session.patch_kit_max())
 			sc._say(String(r.message))
 			sc._refill())
+	var bc := Rivals.beacons()
+	var bmax := int(Rivals.cfg().get("beacon_max", 4))
+	sc.panel_list.add_child(Brand.note("Claim beacons aboard: %d of %d. Fire one at a wreck from the radio (Y) and it's yours: rival salvage crews have to deal with you, not the other way round." % [bc, bmax], 14))
+	sc._action("BUY A CLAIM BEACON  %s cr" % ShipStats.commas(Session.claim_beacon_price()), func() -> void:
+		var r := Session.buy_claim_beacons(1)
+		sc._say(String(r.message))
+		sc._refill(), bc < bmax)
 	var f := Session.finds_aboard()
 	if int(f.value) > 0:
 		sc._action("SELL YOUR FINDS  %s cr  (%s)" % [ShipStats.commas(int(f.value)), SurfaceFinds.describe(f)], func() -> void:

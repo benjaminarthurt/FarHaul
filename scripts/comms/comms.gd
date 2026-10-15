@@ -35,6 +35,7 @@ var hold := {}               ## {mover, other, t, site}: told to wait while a sh
 var fuel_deal := {}          ## a hauler bringing fuel: {ship, home, t, price, stage, done, name, voice}
 var distress := {}           ## a ship calling for help on this run: {ship, name, species, crew, problem, key, helped, voice}
 var news_given := {}         ## contacts that have told you all they know
+var rivals: Rivals           ## other salvage crews and claim beacons (scripts/comms/rivals.gd)
 var _speed_t := -100.0
 var _elapsed := 0.0
 var settle := {"fine_cr": 0, "fine_rep": 0, "fuel_bought_cr": 0, "fuel_bought_t": 0.0, "fuel_sold_cr": 0, "fuel_sold_t": 0.0,
@@ -55,6 +56,7 @@ func _init(scene: FlightScene) -> void:
 	player.bus = GameSettings.bus("Effects")
 	player.volume_db = -4.0
 	sc.add_child(player)
+	rivals = Rivals.new(self)
 
 
 # --- Who's out there --------------------------------------------------------------------------------
@@ -142,6 +144,7 @@ func contacts() -> Array:
 		var d := s.global_position.distance_to(pos)
 		if d <= float(r.get("ship", 25000)):
 			ships.append({"id": "ship:" + s.title, "kind": String(e.kind), "name": s.title, "dist_m": d, "options": _ship_options(e, d), "ship": s})
+	ships.append_array(rivals.contacts())
 	ships.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a.dist_m) < float(b.dist_m))
 	out.append_array(ships)
 	if _stranded():
@@ -288,6 +291,8 @@ func _do(c: Dictionary, option: String) -> Dictionary:
 			return {"ok": true, "message": "Tug called."}
 		"distress":
 			return _distress_act(option)
+		"wreck", "rival":
+			return rivals.act(c, option)
 	var s: NpcShip = c.ship
 	var v := _voice(s.title, _ship_species(s))
 	var dist := clampf(float(c.dist_m) / float((cfg().get("range_m", {}) as Dictionary).get("ship", 25000)), 0.0, 1.0)
@@ -509,6 +514,9 @@ func step(dt: float, real: float) -> void:
 	_fuel_step(dt)
 	_distress_step()
 	_speed_step()
+	if sc.traffic_c != null and not sc.traffic_c.on_take.is_valid():
+		sc.traffic_c.on_take = rivals.took
+	rivals.step(dt)
 
 
 func _play(real: float) -> void:
@@ -705,6 +713,9 @@ func arrived(site: String, camp := false) -> void:
 ## What the flight's radio comes to, for Session (flight_extra "comms"), with the ignored distress call.
 func settlement() -> Dictionary:
 	var out := settle.duplicate(true)
+	var rv := rivals.settlement()
+	out.rep = int(out.rep) + int(rv.rep)
+	out.notes.append_array(rv.notes)
 	if not distress.is_empty() and not bool(distress.get("none", false)) and not bool(distress.get("helped", false)):
 		out.rep = int(out.rep) + int((cfg().get("distress", {}) as Dictionary).get("ignored_rep", -1))
 		out.notes.append("Somebody heard you hear the %s's mayday, and kept flying." % String(distress.name))

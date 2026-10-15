@@ -632,6 +632,7 @@ function renderPort(p) {
   let r = row("<b>Repair the hull</b><small>Hull " + Math.round(sh.hull * 100) + "%. All of it, properly, patches and all.</small>", act(sh.repair > 0 ? cr(sh.repair) : "Sound", "repair", "", { off: sh.repair <= 0 || credits < sh.repair }));
   r += row("<b>Overhaul the working parts</b><small>" + (sh.parts ? esc(sh.parts) : "Nothing worn past the warning line.") + "</small>", act(sh.overhaul > 0 ? cr(sh.overhaul) : "No need", "overhaul", "", { off: sh.overhaul <= 0 || credits < sh.overhaul }));
   const stt = state.status || {};
+  r += row("<b>Claim beacon</b><small>Fire one at a wreck from Comms and it's yours. " + (sh.beacons || 0) + " of " + (sh.beacon_max || 4) + " aboard.</small>", act(cr(sh.beacon), "buy_beacon", "", { off: (sh.beacons || 0) >= (sh.beacon_max || 4) || credits < sh.beacon }));
   r += row("<b>Patch kit</b><small>For holes in the hull: yours or the deck tech's. " + (stt.patch_kits || 0) + " of " + (stt.patch_kit_max || 8) + " aboard.</small>", act(cr(sh.patch_kit), "buy_patch_kit", "", { off: (stt.patch_kits || 0) >= (stt.patch_kit_max || 8) || credits < sh.patch_kit }));
   r += row("<b>Spares kit</b><small>Brings a failed part back. " + (stt.spares_kits || 0) + " of " + (stt.spares_kit_max || 4) + " aboard.</small>", act(cr(sh.spares_kit), "buy_spares_kit", "", { off: (stt.spares_kits || 0) >= (stt.spares_kit_max || 4) || credits < sh.spares_kit }));
   const au = p.authority || {};
