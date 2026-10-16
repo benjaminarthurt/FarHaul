@@ -674,7 +674,7 @@ def cmd_run(a):
                 bad, info = check(l["text"], x, GAME_SR, ear, float(st.get("tempo", 1)))
                 if best is None or bad < best[0]:
                     best = (bad, x, seed, info)
-                if bad == 0:
+                if bad < 0.25:   # good enough: Whisper's own slips (a name, "collar" heard as "call") cost ~0.1-0.2
                     break
             bad, x, seed, info = best
             write_ogg(os.path.join(OUT, rel), x)
