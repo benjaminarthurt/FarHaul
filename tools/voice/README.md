@@ -58,7 +58,14 @@ To re-record one speaker with new settings, move its folder out of `assets\audio
 
 ## Checks
 
-Each take is timed against the length the line should be. Rambling, repeating or dropped words make a take too long or too short; such a take is retried up to `--tries` times (3 by default), and the best one is kept. With `--asr`, Whisper also listens and re-rolls takes that don't say the line. This needs `pip install faster-whisper` (or openai-whisper). Takes that still look off are marked with a "?" in the review page.
+Every take is checked two ways:
+
+- **Length.** It's timed against how long the line should be. Rambling and repeated words run long; dropped words run short.
+- **Words.** Whisper (faster-whisper, installed by `setup`) listens and compares what it hears with the line. Numbers and sound-alikes like berth/birth don't count as mistakes. Use `--no-asr` to skip this check.
+
+A take that fails either check is re-rolled, up to `--tries` times (3 by default), and the best one is kept. Takes that still look off get a "?" on the review page, with what Whisper heard.
+
+Invented words, such as the species names, are spelled for the ear in `voiced.json` ("Ill-yan", "Oh-roon", "Vay"). Whisper often mishears them anyway.
 
 ## After a change to the lines
 

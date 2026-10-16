@@ -8,7 +8,7 @@
     "rescue_t": [[2, "two"], [3, "three"], [4, "four"], [5, "five"]],
     "crew": [[1, "one"], [2, "two"], [3, "three"], [4, "four"]],
     "problem": [[0, "Drive's cooked. Air's fine. Morale isn't."], [1, "Out of fuel and out of ideas."], [2, "Main engine's dead and so's the backup. We're drifting."], [3, "We burned too much on the last leg. Don't ask how."]],
-    "species": [["human", "Human"], ["kesh", "Kesh"], ["ilyan", "Ilyan"], ["vey", "Vey"], ["orun", "Orun"]],
+    "species": [["human", "Human"], ["kesh", "Kesh"], ["ilyan", "Ill-yan"], ["vey", "Vay"], ["orun", "Oh-roon"]],
     "dir": [["up", "up"], ["down", "down"]]
   },
   "lines": {

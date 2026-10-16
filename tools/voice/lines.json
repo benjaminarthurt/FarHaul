@@ -1954,7 +1954,7 @@
     "problem": "0",
     "species": "ilyan"
    },
-   "text": "Mayday, mayday. Ilyan registry. Drive's cooked. Air's fine. Morale isn't. Anyone out there?",
+   "text": "Mayday, mayday. Ill-yan registry. Drive's cooked. Air's fine. Morale isn't. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -1967,7 +1967,7 @@
     "problem": "0",
     "species": "vey"
    },
-   "text": "Mayday, mayday. Vey registry. Drive's cooked. Air's fine. Morale isn't. Anyone out there?",
+   "text": "Mayday, mayday. Vay registry. Drive's cooked. Air's fine. Morale isn't. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -1980,7 +1980,7 @@
     "problem": "0",
     "species": "orun"
    },
-   "text": "Mayday, mayday. Orun registry. Drive's cooked. Air's fine. Morale isn't. Anyone out there?",
+   "text": "Mayday, mayday. Oh-roon registry. Drive's cooked. Air's fine. Morale isn't. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2019,7 +2019,7 @@
     "problem": "1",
     "species": "ilyan"
    },
-   "text": "Mayday, mayday. Ilyan registry. Out of fuel and out of ideas. Anyone out there?",
+   "text": "Mayday, mayday. Ill-yan registry. Out of fuel and out of ideas. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2032,7 +2032,7 @@
     "problem": "1",
     "species": "vey"
    },
-   "text": "Mayday, mayday. Vey registry. Out of fuel and out of ideas. Anyone out there?",
+   "text": "Mayday, mayday. Vay registry. Out of fuel and out of ideas. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2045,7 +2045,7 @@
     "problem": "1",
     "species": "orun"
    },
-   "text": "Mayday, mayday. Orun registry. Out of fuel and out of ideas. Anyone out there?",
+   "text": "Mayday, mayday. Oh-roon registry. Out of fuel and out of ideas. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2084,7 +2084,7 @@
     "problem": "2",
     "species": "ilyan"
    },
-   "text": "Mayday, mayday. Ilyan registry. Main engine's dead and so's the backup. We're drifting. Anyone out there?",
+   "text": "Mayday, mayday. Ill-yan registry. Main engine's dead and so's the backup. We're drifting. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2097,7 +2097,7 @@
     "problem": "2",
     "species": "vey"
    },
-   "text": "Mayday, mayday. Vey registry. Main engine's dead and so's the backup. We're drifting. Anyone out there?",
+   "text": "Mayday, mayday. Vay registry. Main engine's dead and so's the backup. We're drifting. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2110,7 +2110,7 @@
     "problem": "2",
     "species": "orun"
    },
-   "text": "Mayday, mayday. Orun registry. Main engine's dead and so's the backup. We're drifting. Anyone out there?",
+   "text": "Mayday, mayday. Oh-roon registry. Main engine's dead and so's the backup. We're drifting. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2149,7 +2149,7 @@
     "problem": "3",
     "species": "ilyan"
    },
-   "text": "Mayday, mayday. Ilyan registry. We burned too much on the last leg. Don't ask how. Anyone out there?",
+   "text": "Mayday, mayday. Ill-yan registry. We burned too much on the last leg. Don't ask how. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2162,7 +2162,7 @@
     "problem": "3",
     "species": "vey"
    },
-   "text": "Mayday, mayday. Vey registry. We burned too much on the last leg. Don't ask how. Anyone out there?",
+   "text": "Mayday, mayday. Vay registry. We burned too much on the last leg. Don't ask how. Anyone out there?",
    "role": "distress",
    "radio": true
   },
@@ -2175,7 +2175,7 @@
     "problem": "3",
     "species": "orun"
    },
-   "text": "Mayday, mayday. Orun registry. We burned too much on the last leg. Don't ask how. Anyone out there?",
+   "text": "Mayday, mayday. Oh-roon registry. We burned too much on the last leg. Don't ask how. Anyone out there?",
    "role": "distress",
    "radio": true
   },

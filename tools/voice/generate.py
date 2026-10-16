@@ -27,8 +27,8 @@ Lines are recorded clean. The game adds the radio sound (band-pass, hiss, squelc
 Options for `run`:
   --role control,ship   only these roles        --speaker control_kesh_1   only these speakers
   --key comms:greet     only these line keys    --limit 20                 stop after this many new clips
-  --asr                 check each take with Whisper (faster-whisper or openai-whisper, if installed)
-                        and re-roll ones that don't say the line
+  --asr / --no-asr      check each take with Whisper and re-roll ones that don't say the line
+                        (on by default when faster-whisper is installed, as voice.bat setup does)
   --tries 3             takes to try per clip before keeping the best one
   --device cuda|cpu     default: cuda if available
   --fake                no Chatterbox: synthetic noise of the right length, for testing the pipeline
@@ -259,8 +259,29 @@ def _split(s):
     return [x.strip() for x in (s or "").split(",") if x.strip()]
 
 
+_ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split()
+_TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def _say_number(n):
+    if n < 20:
+        return _ONES[n]
+    if n < 100:
+        return _TENS[n // 10] + ("" if n % 10 == 0 else " " + _ONES[n % 10])
+    if n < 1000:
+        rest = n % 100
+        return ("a" if n // 100 == 1 else _ONES[n // 100]) + " hundred" + ("" if rest == 0 else " and " + _say_number(rest))
+    return str(n)
+
+
 def words(text):
-    return re.findall(r"[a-z']+", text.lower())
+    """Lower-case words, digits spelled out and apostrophes dropped, so Whisper's '13' matches 'thirteen'."""
+    t = re.sub(r"\d+", lambda m: " " + _say_number(int(m.group())) + " ", text.lower().replace("-", " "))
+    return [_SOUNDS_LIKE.get(w, w) for w in (w.replace("'", "") for w in re.findall(r"[a-z']+", t))]
+
+
+# Words Whisper can't tell apart by ear, folded together so they don't count as mistakes.
+_SOUNDS_LIKE = {"birth": "berth", "tons": "tonnes", "tonne": "tonnes", "ton": "tonnes", "metres": "meters"}
 
 
 def expected_seconds(text):
@@ -380,6 +401,11 @@ class Ear:
             segs, _ = self.m.transcribe(x16, language="en", beam_size=1)
             return " ".join(s.text for s in segs)
         return self.m.transcribe(x16, language="en", fp16=_cuda())["text"]
+
+
+def _has_whisper():
+    import importlib.util
+    return any(importlib.util.find_spec(m) is not None for m in ("faster_whisper", "whisper"))
 
 
 def _cuda():
@@ -581,7 +607,8 @@ def cmd_run(a):
     todo.sort(key=lambda j: (order[j[0]["id"]], j[1]["id"], j[2]))
     print("%d clips to record." % len(todo))
     voice = Voice(cast, a.device, a.fake)
-    ear = Ear(a.device) if a.asr else None
+    use_asr = a.asr or (not a.no_asr and _has_whisper())
+    ear = Ear(a.device) if use_asr else None
     t0, said = time.time(), 0.0
     man = open(MANIFEST, "a", encoding="utf-8")
     try:
@@ -761,7 +788,8 @@ def main():
             p.add_argument("--fake", action="store_true")
         if name == "run":
             p.add_argument("--limit", type=int, default=0)
-            p.add_argument("--asr", action="store_true")
+            p.add_argument("--asr", action="store_true", help="check takes with Whisper (on by default when faster-whisper is installed)")
+            p.add_argument("--no-asr", action="store_true", help="don't check takes with Whisper")
             p.add_argument("--tries", type=int, default=3)
     sub.add_parser("review")
     sub.add_parser("index")
