@@ -21,7 +21,7 @@
       "Negative on the collar for now, freighter. Someone's undocking. Hold, and enjoy the view."]},
     "comms:after_hold": {"role": "control", "radio": true, "say": [
       "Freighter, they're clear. Cleared to berth {berth}.",
-      "Collar's yours, freighter. Berth {berth}. Mind their wake."]},
+      "The collar's yours, freighter. Berth {berth}. Mind their wake."]},
     "comms:already": {"role": "control", "radio": true, "say": [
       "You're already cleared, freighter. Berth {berth}. We're not saying it twice. That was twice."]},
     "comms:fined": {"role": "control", "radio": true, "say": [

@@ -44,17 +44,17 @@ tools\voice\voice.bat review
 
 All of these are in `voices.json`:
 
-- **Per species:** pitch in semitones and tempo.
-  - kesh: −3.5, 0.92
-  - ilyan: +3, 1.1
-  - vey: +1.5, 1.04
-  - orun: −2, 0.95
+- **Per species:** pitch in semitones, tempo, and formant (vocal-tract size: below 1 is a bigger body). The shift is done with Praat (praat-parselmouth), which keeps the words clear.
+  - kesh: −3.5, 0.92, 0.9
+  - ilyan: +3, 1.1, 1.08
+  - vey: +1.5, 1.04, 1.03
+  - orun: −2, 0.95, 0.95
 - **Per role:** Chatterbox `exaggeration` (emotion) and `cfg_weight` (pace). Control is 0.4; distress is 0.7 with cfg 0.35.
 - **Per line key:** overrides under `"lines"`. For example, maydays are louder.
 - **Per speaker:** any of `exaggeration`, `cfg_weight`, `temperature`, `pitch` and `tempo`.
 - **Takes:** 2 per line by default; 1 for lines that already vary by value (the berth number, say); 3 for greetings, holds and speed warnings.
 
-To re-record one speaker with new settings, move its folder out of `assets\audio\voice\` and run again.
+To re-record with new settings, move the clips aside with `voice.bat redo` (`--speaker`, `--species`, `--role` or `--key`), then `voice.bat run`.
 
 ## Checks
 

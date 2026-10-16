@@ -12,6 +12,8 @@ Run from the repo root, in the Chatterbox environment (it already has torch, tor
   python tools/voice/generate.py review                           a page to listen and mark bad takes
   python tools/voice/generate.py run                              again: re-records what you marked
   python tools/voice/generate.py index                            rebuild the game's index only
+  python tools/voice/generate.py redo --species kesh              move clips aside to record again
+                                                                  (also --role, --speaker, --key)
 
 Reads
   tools/voice/lines.json     every spoken line (python tools/voice/build_lines.py makes it)
@@ -63,10 +65,10 @@ GAME_SR = 22050
 # way: kesh low and slow, ilyan high and quick, vey a little high, orun a little low.
 SPECIES = {
     "human": {"pitch": 0.0, "tempo": 1.0},
-    "kesh": {"pitch": -3.5, "tempo": 0.92},
-    "ilyan": {"pitch": 3.0, "tempo": 1.1},
-    "vey": {"pitch": 1.5, "tempo": 1.04},
-    "orun": {"pitch": -2.0, "tempo": 0.95},
+    "kesh": {"pitch": -3.5, "tempo": 0.92, "formant": 0.9},
+    "ilyan": {"pitch": 3.0, "tempo": 1.1, "formant": 1.08},
+    "vey": {"pitch": 1.5, "tempo": 1.04, "formant": 1.03},
+    "orun": {"pitch": -2.0, "tempo": 0.95, "formant": 0.95},
 }
 
 # How each role speaks. exaggeration: Chatterbox's emotion (0.25 flat to 1.0 wild). cfg_weight: lower is
@@ -225,7 +227,8 @@ def settings(cast, speaker, line):
     for role in speaker["roles"]:
         s.update(cast["roles"].get(role, {}))
     s.update(cast["lines"].get(line["key"], {}))
-    for k in ("exaggeration", "cfg_weight", "temperature", "pitch", "tempo"):
+    s["formant"] = float(sp.get("formant", 1.0))
+    for k in ("exaggeration", "cfg_weight", "temperature", "pitch", "tempo", "formant"):
         if k in speaker:
             s[k] = speaker[k]
     return s
@@ -478,10 +481,23 @@ def tidy_silence(x, sr, below=-42.0, keep_edge=0.06, max_gap=0.45):
     return np.concatenate(out) if out else x
 
 
-def shift(x, sr, pitch, tempo):
-    """Species colour: pitch in semitones, tempo as a speed factor."""
-    if abs(pitch) < 0.01 and abs(tempo - 1.0) < 0.005:
+def shift(x, sr, pitch, tempo, formant=1.0):
+    """Species colour: pitch in semitones, tempo as a speed factor, formant as a vocal-tract size factor
+    (below 1 a bigger body, above 1 a smaller one). Praat's PSOLA keeps the words clear; librosa's phase
+    vocoder, the fallback, smears them badly (Whisper's error rate went from 2% to 35% at -3.5 semitones)."""
+    if abs(pitch) < 0.01 and abs(tempo - 1.0) < 0.005 and abs(formant - 1.0) < 0.005:
         return x
+    try:
+        import parselmouth
+        from parselmouth.praat import call
+        snd = parselmouth.Sound(x.astype(np.float64), sr)
+        med = call(snd.to_pitch(), "Get quantile", 0, 0, 0.5, "Hertz")
+        if not med or not np.isfinite(med):
+            med = 150.0
+        out = call(snd, "Change gender", 75, 600, formant, med * 2 ** (pitch / 12.0), 1.0, 1.0 / tempo)
+        return out.values[0].astype(np.float32)
+    except ImportError:
+        print("  (praat-parselmouth missing: using librosa, which blurs the words)")
     import librosa
     if abs(pitch) >= 0.01:
         x = librosa.effects.pitch_shift(x, sr=sr, n_steps=pitch, res_type="soxr_hq")
@@ -516,7 +532,7 @@ def level(x, sr, rms_db=-20.0, peak_db=-1.0):
 
 def finish(x, sr, s):
     x = tidy_silence(x, sr)
-    x = shift(x, sr, float(s.get("pitch", 0)), float(s.get("tempo", 1)))
+    x = shift(x, sr, float(s.get("pitch", 0)), float(s.get("tempo", 1)), float(s.get("formant", 1)))
     x = _resample(x, sr, GAME_SR)
     return level(x, GAME_SR)
 
@@ -531,11 +547,12 @@ def write_ogg(path, x):
     os.replace(tmp, path)
 
 
-def check(text, raw, sr, ear):
-    """How wrong a take looks: 0 is fine. Too long (rambling, repeating) or too short (dropped words) is bad;
-    with Whisper, so is saying something else."""
+def check(text, raw, sr, ear, tempo=1.0):
+    """How wrong a finished take looks: 0 is fine. Too long (rambling, repeating) or too short (dropped
+    words) is bad; with Whisper, so is saying something else. Checked after the species colour, so a
+    voice the processing has blurred gets re-rolled too."""
     d = len(tidy_silence(raw, sr)) / sr
-    want = expected_seconds(text)
+    want = expected_seconds(text) / max(0.5, tempo)
     ratio = d / want if want else 1.0
     bad = 0.0
     if ratio > 1.9:
@@ -589,8 +606,43 @@ def take_rejects():
     return moved
 
 
+def _need_praat(cast):
+    """Species colour needs praat-parselmouth; install it into this environment if it's missing."""
+    if not any(abs(float(v.get("pitch", 0))) > 0.01 for v in cast["species"].values()):
+        return
+    import importlib.util
+    if importlib.util.find_spec("parselmouth") is None:
+        import subprocess
+        print("Installing praat-parselmouth (for the species voices)...")
+        subprocess.call([sys.executable, "-m", "pip", "install", "-q", "praat-parselmouth"])
+
+
+def cmd_redo(a):
+    """Move recorded clips aside so `run` records them again with fresh seeds. Nothing is deleted: they go
+    to tools/voice/_rejected/, numbered like any other rejected take."""
+    cast, lines = load_cast(), load_lines()
+    species = set(_split(a.species))
+    moved = 0
+    for s, l, t, rel in jobs(cast, lines, a):
+        if species and s["species"] not in species:
+            continue
+        src = os.path.join(OUT, rel)
+        if not os.path.exists(src):
+            continue
+        dst = os.path.join(REJECTED, "%s.r%d.ogg" % (rel[:-4], attempts(rel) + 1))
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        os.replace(src, dst)
+        if os.path.exists(src + ".import"):
+            os.replace(src + ".import", dst + ".import")
+        moved += 1
+    print("%d clips moved to %s. Run `voice.bat run` to record them again." % (moved, os.path.relpath(REJECTED, ROOT)))
+    write_index(cast, lines)
+
+
 def cmd_run(a):
     cast, lines = load_cast(), load_lines()
+    if not a.fake:
+        _need_praat(cast)
     _gdignore()
     moved = take_rejects()
     if moved:
@@ -618,19 +670,18 @@ def cmd_run(a):
             best = None
             for tri in range(max(1, a.tries)):
                 seed = seed_for(l["id"], s["id"], take, att, tri)
-                raw = voice.say(s, l["text"], st, seed)
-                bad, info = check(l["text"], raw, voice.sr, ear)
+                x = finish(voice.say(s, l["text"], st, seed), voice.sr, st)
+                bad, info = check(l["text"], x, GAME_SR, ear, float(st.get("tempo", 1)))
                 if best is None or bad < best[0]:
-                    best = (bad, raw, seed, info)
+                    best = (bad, x, seed, info)
                 if bad == 0:
                     break
-            bad, raw, seed, info = best
-            x = finish(raw, voice.sr, st)
+            bad, x, seed, info = best
             write_ogg(os.path.join(OUT, rel), x)
             said += len(x) / GAME_SR
             row = {"file": rel, "id": l["id"], "speaker": s["id"], "take": take, "seed": seed, "attempt": att,
                    "text": l["text"], "length": round(len(x) / GAME_SR, 2), "flag": round(bad, 2), **info,
-                   **{k: st[k] for k in ("exaggeration", "cfg_weight", "temperature", "pitch", "tempo")},
+                   **{k: st.get(k) for k in ("exaggeration", "cfg_weight", "temperature", "pitch", "tempo", "formant")},
                    "at": time.strftime("%Y-%m-%d %H:%M:%S")}
             man.write(json.dumps(row, ensure_ascii=False) + "\n")
             man.flush()
@@ -689,6 +740,8 @@ def cmd_preview(a):
     _gdignore()
     d = os.path.join(HERE, "preview")
     os.makedirs(d, exist_ok=True)
+    if not a.fake:
+        _need_praat(cast)
     voice = Voice(cast, a.device, a.fake)
     only = set(_split(a.speaker))
     for s in cast["speakers"]:
@@ -778,12 +831,14 @@ def main():
     c.add_argument("--refs", default=os.path.join(HERE, "refs"), help="the folder make_refs.py wrote (has catalog.csv); default tools/voice/refs")
     c.add_argument("--seed", type=int, default=7)
     c.add_argument("--force", action="store_true")
-    for name in ("plan", "run", "preview"):
+    for name in ("plan", "run", "preview", "redo"):
         p = sub.add_parser(name)
         p.add_argument("--role", default="")
         p.add_argument("--speaker", default="")
         p.add_argument("--key", default="")
-        if name != "plan":
+        if name == "redo":
+            p.add_argument("--species", default="", help="only speakers of these species, e.g. kesh,ilyan")
+        if name in ("run", "preview"):
             p.add_argument("--device", default="")
             p.add_argument("--fake", action="store_true")
         if name == "run":
@@ -794,7 +849,7 @@ def main():
     sub.add_parser("review")
     sub.add_parser("index")
     a = ap.parse_args()
-    {"cast": cmd_cast, "plan": cmd_plan, "run": cmd_run, "preview": cmd_preview, "review": cmd_review, "index": cmd_index}[a.cmd](a)
+    {"cast": cmd_cast, "plan": cmd_plan, "run": cmd_run, "preview": cmd_preview, "redo": cmd_redo, "review": cmd_review, "index": cmd_index}[a.cmd](a)
 
 
 if __name__ == "__main__":

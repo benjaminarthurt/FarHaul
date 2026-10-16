@@ -653,7 +653,7 @@
    "values": {
     "berth": "2"
    },
-   "text": "Collar's yours, freighter. Berth two. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth two. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -665,7 +665,7 @@
    "values": {
     "berth": "3"
    },
-   "text": "Collar's yours, freighter. Berth three. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth three. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -677,7 +677,7 @@
    "values": {
     "berth": "4"
    },
-   "text": "Collar's yours, freighter. Berth four. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth four. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -689,7 +689,7 @@
    "values": {
     "berth": "5"
    },
-   "text": "Collar's yours, freighter. Berth five. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth five. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -701,7 +701,7 @@
    "values": {
     "berth": "6"
    },
-   "text": "Collar's yours, freighter. Berth six. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth six. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -713,7 +713,7 @@
    "values": {
     "berth": "7"
    },
-   "text": "Collar's yours, freighter. Berth seven. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth seven. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -725,7 +725,7 @@
    "values": {
     "berth": "8"
    },
-   "text": "Collar's yours, freighter. Berth eight. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth eight. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -737,7 +737,7 @@
    "values": {
     "berth": "9"
    },
-   "text": "Collar's yours, freighter. Berth nine. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth nine. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -749,7 +749,7 @@
    "values": {
     "berth": "10"
    },
-   "text": "Collar's yours, freighter. Berth ten. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth ten. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -761,7 +761,7 @@
    "values": {
     "berth": "11"
    },
-   "text": "Collar's yours, freighter. Berth eleven. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth eleven. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -773,7 +773,7 @@
    "values": {
     "berth": "12"
    },
-   "text": "Collar's yours, freighter. Berth twelve. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth twelve. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -785,7 +785,7 @@
    "values": {
     "berth": "13"
    },
-   "text": "Collar's yours, freighter. Berth thirteen. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth thirteen. Mind their wake.",
    "role": "control",
    "radio": true
   },
@@ -797,7 +797,7 @@
    "values": {
     "berth": "14"
    },
-   "text": "Collar's yours, freighter. Berth fourteen. Mind their wake.",
+   "text": "The collar's yours, freighter. Berth fourteen. Mind their wake.",
    "role": "control",
    "radio": true
   },

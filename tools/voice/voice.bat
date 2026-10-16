@@ -48,7 +48,7 @@ if not exist "%PY%" (
   py -3.11 -m venv "%V%.venv" || exit /b 1
 )
 "%PY%" -m pip install --upgrade pip
-"%PY%" -m pip install chatterbox-tts soundfile librosa scipy faster-whisper || exit /b 1
+"%PY%" -m pip install chatterbox-tts soundfile librosa scipy faster-whisper praat-parselmouth || exit /b 1
 rem pip gives the CPU-only torch on Windows: swap in the CUDA build of the same version.
 "%PY%" "%V%setup_torch.py" || exit /b 1
 "%PY%" -c "import torch, chatterbox, soundfile, librosa; print('torch', torch.__version__, '| CUDA:', torch.cuda.is_available(), '|', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'no GPU')"

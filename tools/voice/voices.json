@@ -8,19 +8,23 @@
     },
     "kesh": {
       "pitch": -3.5,
-      "tempo": 0.92
+      "tempo": 0.92,
+      "formant": 0.9
     },
     "ilyan": {
       "pitch": 3.0,
-      "tempo": 1.1
+      "tempo": 1.1,
+      "formant": 1.08
     },
     "vey": {
       "pitch": 1.5,
-      "tempo": 1.04
+      "tempo": 1.04,
+      "formant": 1.03
     },
     "orun": {
       "pitch": -2.0,
-      "tempo": 0.95
+      "tempo": 0.95,
+      "formant": 0.95
     }
   },
   "roles": {
