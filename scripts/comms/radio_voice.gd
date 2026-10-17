@@ -21,7 +21,7 @@ static func voice(species: String, seed_v: int) -> Dictionary:
 	r.seed = seed_v
 	var f0: Array = v.get("f0", [120, 180])
 	return {"f0": r.randf_range(float(f0[0]), float(f0[1])), "rate": float(v.get("rate", 1.0)) * r.randf_range(0.93, 1.07),
-			"scale": float(v.get("scale", 1.0)) * r.randf_range(0.96, 1.04), "breath": float(v.get("breath", 0.0)), "seed": seed_v}
+			"scale": float(v.get("scale", 1.0)) * r.randf_range(0.96, 1.04), "breath": float(v.get("breath", 0.0)), "seed": seed_v, "species": species}
 
 
 ## How long `text` takes to say in `v`, in seconds (before the squelch).
@@ -44,6 +44,69 @@ static func speech(text: String, v: Dictionary, dist := 0.2) -> AudioStreamWAV:
 	out.append_array(_radio(words, dist, r))
 	out.append_array(_squelch(r, false))
 	return _wav(out)
+
+
+## The squelch on its own, opening (a click and a burst of noise) or closing (with the roger beep), for a
+## recorded line (VoiceBank), which brings its own words.
+static func squelch(opening: bool, seed_v := 1) -> AudioStreamWAV:
+	var r := RandomNumberGenerator.new()
+	r.seed = seed_v
+	return _wav(_squelch(r, opening))
+
+
+## `secs` of a species' own language, clean (no radio): what's heard before the translator catches up.
+## Fades out over its last quarter second.
+static func native(v: Dictionary, secs: float, seed_v := 1) -> AudioStreamWAV:
+	var r := RandomNumberGenerator.new()
+	r.seed = seed_v
+	var x := _babble("x".repeat(maxi(4, int(secs / 0.17 * float(v.get("rate", 1.0)) * 4.2))), v, r)
+	var n := mini(x.size(), int(secs * RATE))
+	x = x.slice(0, n)
+	var fade := mini(n, int(0.25 * RATE))
+	for i in fade:
+		x[n - fade + i] *= 1.0 - float(i) / fade
+	for i in x.size():
+		x[i] *= 0.7
+	return _wav(x)
+
+
+## The translator catching up: a quick rising two-step blip, a little digital.
+static func translator_chirp(secs := 0.16) -> AudioStreamWAV:
+	if _cache.has("chirp"):
+		return _cache.chirp
+	var n := int(secs * RATE)
+	var x := PackedFloat32Array()
+	x.resize(n)
+	var ph := 0.0
+	for i in n:
+		var t := float(i) / n
+		var f := 900.0 if t < 0.45 else 1500.0
+		ph += TAU * f / RATE
+		var env := minf(1.0, t / 0.08) * minf(1.0, (1.0 - t) / 0.15)
+		x[i] = 0.22 * env * (sin(ph) + 0.3 * signf(sin(ph * 0.5)))
+	var w := _wav(x)
+	_cache.chirp = w
+	return w
+
+
+## Two seconds of band-limited hiss that loops: the carrier under a recorded line. Louder when far.
+static func hiss() -> AudioStreamWAV:
+	if _cache.has("hiss"):
+		return _cache.hiss
+	var r := RandomNumberGenerator.new()
+	r.seed = 7
+	var n := 2 * RATE
+	var x := PackedFloat32Array()
+	x.resize(n)
+	for i in n:
+		x[i] = r.randfn() * 0.5
+	x = _biquad(_biquad(x, _hp(1500.0)), _lp(4800.0))
+	var w := _wav(x)
+	w.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	w.loop_begin = 0
+	w.loop_end = n
+	_cache.hiss = w
+	return w
 
 
 ## The two-tone chime of an incoming call.

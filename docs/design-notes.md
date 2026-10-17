@@ -35,7 +35,8 @@ Not all at once. In the order requested:
 12. Bigger holds and passenger cabins in three sizes; passengers local and long-haul, riding along
     with freight (**built** in 0.15.0)
 13. The radio: clearance to dock and land, other ships (fuel, news, tows), distress calls, and voices
-    made in code (**built** in 0.16.0); rival salvage crews and claim beacons (**built** in 0.16.1)
+    made in code (**built** in 0.16.0); rival salvage crews and claim beacons (**built** in 0.16.1); the fixed
+    lines recorded with Chatterbox, every variation, five species' voices (**built** in 0.16.2)
 
 The ship builder came first because everything else reads from the ship it produces.
 
@@ -180,6 +181,29 @@ The builder is a small game on its own, so it can be played and judged before fl
 
 - A jointed rope tether plus zero-g movement. It sounds hardest but is the most self-contained, so
   it goes last.
+
+## Recorded voices (0.16.2)
+
+- **Record everything fixed, speak no names.** Every comms and passenger line is recorded in every
+  variation of its small value sets (berth 2 to 14, the fines, tonnes, crew, problem, species); names
+  of ships, places and prices are left out of the spoken line and stay in the subtitle. 1,170 lines, 58
+  speakers, 2,369 clips, 82 MB of OGG. Takes are accepted on Whisper's check alone once a voice has been
+  listened to and approved; a new voice, setting or kind of line gets listened to again.
+- **Licensed reference voices only.** VCTK and LibriTTS-R (CC BY 4.0, credited in Settings, the README
+  and the site), not anyone's own voice or recordings scraped from elsewhere.
+- **Species by processing, not casting.** Kesh lower and slower, Ilyan higher and quicker, Vey and Orun
+  nearer human, done after generation. Praat's PSOLA ("Change gender", with a formant shift) keeps the
+  words; a phase vocoder (librosa) blurred them so badly the first overnight run was redone (Whisper's
+  error rate on a shifted human clip: 35% against 2%).
+- **Checked by ear and by machine.** Each take is timed and transcribed (faster-whisper) after the
+  species shift; bad ones are re-rolled up to three times, and doubtful ones listed for a person to hear.
+- **Clean clips, radio in the mix.** The transmitter is an audio bus, so distance can change it per call
+  and the same clips work aboard (passengers) unfiltered.
+- **Aliens sound alien without losing the words.** Three layers, none of which blur the English: their
+  own wording (Kesh duty, Ilyan economy, Vey community, Orun "we", from cultures.json), a translator
+  conceit (a second of their own language and a chirp before the English), and a sound per species done
+  live on audio buses (octave layers, phaser, chorus, reverb) so it can be tuned without re-recording.
+- **The babble stays.** Anything unrecorded, and players who prefer it, get the generated voices.
 
 ## Open questions and next ideas
 

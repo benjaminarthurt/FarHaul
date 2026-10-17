@@ -214,6 +214,19 @@ container-style codes (`FHCU 882193-4`). Change colours in `scripts/brand.gd` (a
 constants in `tools/make_brand_assets.py`). Everything is drawn from code, so there are no third-party
 fonts or art to license.
 
+## Voices
+
+The radio calls and the passengers' lines are recorded, 2,369 clips in `assets/audio/voice/`, made
+with `tools/voice/` (see [tools/voice/README.md](tools/voice/README.md): `voice.bat setup`, `download`,
+`refs`, `cast`, `run`, `review`). The game picks a clip by the line it's saying (`scripts/comms/voice_bank.gd`)
+and falls back to the generated babble for anything not recorded, or when Settings turns recorded
+voices off.
+
+**Credits (CC BY 4.0).** Reference voices from the CSTR VCTK Corpus (Yamagishi, Veaux & MacDonald,
+University of Edinburgh, CC BY 4.0) and LibriTTS-R (Koizumi et al., Google, CC BY 4.0), built on LibriVox
+recordings. Voices generated with Chatterbox TTS by Resemble AI; every clip carries its inaudible
+watermark.
+
 ## Docs
 
 - [docs/far-haul-concept.md](docs/far-haul-concept.md): the full game concept (Far Haul).

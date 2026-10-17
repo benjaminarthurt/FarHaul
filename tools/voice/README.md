@@ -5,7 +5,8 @@ The radio and aboard lines are recorded with Chatterbox TTS, using reference voi
 | File | What it is |
 |---|---|
 | `voiced.json` | How each game line is spoken, and the value sets (berths, fines, tonnes...) to say in every variation. Edit this. |
-| `build_lines.py` | Expands `voiced.json` into `lines.json`: 246 lines with ids. Checks them against the game's data. |
+| `species_lines.py` | The aliens' own wording of every line (Kesh formal, Ilyan clipped, Vey warm, Orun "we"), written into comms.json and passengers.json. Edit here and rerun. |
+| `build_lines.py` | Expands `voiced.json` into `lines.json`: 1,170 lines with ids, the species' own lines among them. Checks them against the game's data. |
 | `make_refs.py` | Builds 10–15 s reference clips and `catalog.csv` from the datasets. |
 | `voice.bat`, `setup_torch.py` | The Windows front end: setup, download, refs, then the generator's commands. |
 | `generate.py` | Records the lines into `assets/audio/voice/` as OGG, with the `index.json` the game reads. |
@@ -34,8 +35,8 @@ tools\voice\voice.bat review
 - **`refs`** builds a 10–15 s reference clip per speaker in `tools\voice\refs\`, plus `catalog.csv`.
 - **Every other command** goes to `generate.py`, after `build_lines.py` has refreshed `lines.json`. The first `preview` or `run` downloads Chatterbox's model (about 3 GB) into `tools\voice\.hf\`.
 
-1. **`cast`** picks 48 speakers from `catalog.csv`. It alternates genders, spreads accents and never puts one voice in two roles. Radio roles use VCTK only. The result is written to `voices.json`.
-2. **`plan`** shows what will be recorded: about 2,250 clips, about 3¼ hours of speech, and roughly 3½ to 7 hours on the RTX 2060.
+1. **`cast`** picks 58 speakers (every role in every species) from `catalog.csv`. It alternates genders, spreads accents and never puts one voice in two roles. Radio roles use VCTK only. The result is written to `voices.json`. `cast --fill` adds speakers for any role and species the cast lacks, leaving everyone else alone.
+2. **`plan`** shows what will be recorded: about 2,400 clips and 1½ hours of speech. On the RTX 2060 that took about 11 hours, with Whisper checking each take.
 3. **`preview`** writes one line per speaker to `tools\voice\preview\`. If you don't like a voice, change its `ref` in `voices.json` to another `vctk/pNNN.wav` from the catalogue and preview again (`--speaker control_kesh_1`).
 4. **`run`** records everything. Stop it with Ctrl+C whenever you like; running it again carries on where it left off. Narrow a run with `--role control`, `--speaker ...`, `--key comms:greet` or `--limit 50`.
 5. **`review`** writes `tools\voice\review.html`. Open it in a browser, play the clips and click ✕ on bad ones. Paste the list it gives you into `tools\voice\rejects.txt`. The next `run` moves those clips into `tools\voice\_rejected\` and records them again with a new seed.
@@ -64,6 +65,8 @@ Every take is checked two ways:
 - **Words.** Whisper (faster-whisper, installed by `setup`) listens and compares what it hears with the line. Numbers and sound-alikes like berth/birth don't count as mistakes. Use `--no-asr` to skip this check.
 
 A take that fails either check is re-rolled, up to `--tries` times (3 by default), and the best one is kept. Takes that still look off get a "?" on the review page, with what Whisper heard.
+
+Once a voice has been listened to and approved, its takes are accepted on these checks alone. Listen again when something changes: a new voice, new settings or a new kind of line.
 
 Invented words, such as the species names, are spelled for the ear in `voiced.json` ("Ill-yan", "Oh-roon", "Vay"). Whisper often mishears them anyway.
 

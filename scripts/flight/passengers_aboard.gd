@@ -2,11 +2,13 @@ class_name PassengersAboard
 extends RefCounted
 ## The passengers aboard during a flight (Passengers), seen when you walk the ship: dressed for travel,
 ## not work (Figure outfit "passenger"), in the beds they paid for: the stateroom, the quarters, a
-## cabin, or a spare crew bunk. Walk up to one and they have something to say about it.
+## cabin, or a spare crew bunk. Walk up to one and they have something to say about it, out loud when
+## there's a recording of it (VoiceBank): once each time you come up to them.
 
 var sc: FlightScene
 var figures: Array[Figure] = []
 var _placed := false
+var _near: Figure = null      ## who you're standing by: they've had their say until you walk away
 
 ## Where each tier of bed is, by module id, in order of preference.
 const ROOMS := {
@@ -85,6 +87,13 @@ func _place() -> void:
 		f.set_meta("tier", int(p.tier))
 		f.set_meta("n", int(p.n))
 		sc.view.add_child(f)
+		var mouth := AudioStreamPlayer3D.new()
+		mouth.name = "Voice"
+		mouth.bus = GameSettings.bus("Effects")
+		mouth.position = Vector3(0, 1.55, 0)
+		mouth.unit_size = 3.0
+		mouth.max_distance = 12.0
+		f.add_child(mouth)
 		figures.append(f)
 
 
@@ -120,23 +129,79 @@ func step() -> void:
 	for f in figures:
 		f.visible = sc.walking
 		f.look_at_point = sc.view.to_global(sc.walk.pos + Vector3(0, 1.6, 0)) if sc.walking and f.position.distance_to(sc.walk.pos) < 4.0 else Vector3.INF
+	var by := _nearest()
+	if by != _near:
+		_near = by
+		if by != null:
+			_speak(by)
+
+
+func _nearest() -> Figure:
+	if not sc.walking or sc.walk == null:
+		return null
+	for f in figures:
+		if Vector2(f.position.x - sc.walk.pos.x, f.position.z - sc.walk.pos.z).length() < 1.6 and absf(f.position.y - sc.walk.pos.y) < 1.0:
+			return f
+	return null
+
+
+## Say their line out loud, if it's recorded.
+func _speak(f: Figure) -> void:
+	if not VoiceBank.enabled() or not f.has_node("Voice"):
+		return
+	var b: Dictionary = f.get_meta("booking")
+	var ref := line_ref(b, int(f.get_meta("tier")), int(f.get_meta("n")))
+	var parts := VoiceBank.clips([ref], String(b.get("species", "human")), hash("%s|%d" % [String(b.get("id", "")), int(f.get_meta("n"))]))
+	if parts.is_empty():
+		return
+	var sp := String(b.get("species", "human"))
+	var seed_v := hash("%s|%d" % [String(b.get("id", "")), int(f.get_meta("n"))])
+	if sp != "human" and not f.has_meta("heard"):   # their own language first, the first time you meet
+		parts = VoiceBank.with_lead(parts, RadioVoice.voice(sp, seed_v), float(VoiceBank.translator().get("aboard_lead_s", 0.45)))
+	f.set_meta("heard", true)
+	var stream := VoiceBank.joined(parts)
+	var mouth := f.get_node("Voice") as AudioStreamPlayer3D
+	mouth.bus = VoiceBank.species_bus(sp, false)
+	mouth.stream = stream
+	mouth.play()
+	var layers := VoiceBank.layer_buses(sp, false)
+	for k in layers.size():   # a Kesh's octave-down, an Ilyan's octave-up, from the same spot
+		var name := "Layer%d" % k
+		if not f.has_node(name):
+			var lp := AudioStreamPlayer3D.new()
+			lp.name = name
+			lp.position = mouth.position
+			lp.unit_size = mouth.unit_size
+			lp.max_distance = mouth.max_distance
+			f.add_child(lp)
+		var lp3 := f.get_node(name) as AudioStreamPlayer3D
+		lp3.bus = layers[k]
+		lp3.stream = stream
+		lp3.play()
 
 
 ## Who's within arm's reach: "MAGS OSEI, PASSENGER TO CONCORD, IN A CABIN: The viewport's..." or "".
 func near_line() -> String:
-	if not sc.walking or sc.walk == null:
-		return ""
-	for f in figures:
-		if Vector2(f.position.x - sc.walk.pos.x, f.position.z - sc.walk.pos.z).length() < 1.6 and absf(f.position.y - sc.walk.pos.y) < 1.0:
-			return line_for(f.get_meta("booking"), int(f.get_meta("tier")), int(f.get_meta("n")))
-	return ""
+	var f := _nearest()
+	return line_for(f.get_meta("booking"), int(f.get_meta("tier")), int(f.get_meta("n"))) if f != null else ""
+
+
+## Which of passengers.json's aboard lines this passenger says: {key "aboard:<pool>", index}.
+## Their species' own way of putting it (passengers.json aboard_by_species) where there is one.
+static func line_ref(b: Dictionary, t: int, n: int) -> Dictionary:
+	var late := Session.day() > int(b.get("due_day", 1 << 30))
+	var key := "late" if late else String(Passengers.tier(t).id)
+	var sp := String(b.get("species", "human"))
+	var own: Array = ((Passengers.cfg().get("aboard_by_species", {}) as Dictionary).get(sp, {}) as Dictionary).get(key, [])
+	var pool: Array = own if not own.is_empty() else (Passengers.cfg().get("aboard", {}) as Dictionary).get(key, ["..."])
+	var tag := "aboard:" + key + ("@" + sp if not own.is_empty() else "")
+	return {"key": tag, "index": absi(hash(String(b.get("id", "")) + str(n))) % pool.size(), "args": {}, "pool": pool}
 
 
 static func line_for(b: Dictionary, t: int, n: int) -> String:
-	var said: Dictionary = Passengers.cfg().get("aboard", {})
-	var late := Session.day() > int(b.get("due_day", 1 << 30))
-	var pool: Array = said.get("late" if late else String(Passengers.tier(t).id), ["..."])
-	var line := String(pool[absi(hash(String(b.get("id", "")) + str(n))) % pool.size()])
+	var ref := line_ref(b, t, n)
+	var pool: Array = ref.pool
+	var line := String(pool[int(ref.index)])
 	if line.contains("%s"):
 		line = line % String(b.get("dest_name", "there"))
 	var who := String(b.get("person", "")) if n == 0 else "%s's party" % String(b.get("person", "")).get_slice(" ", 0)

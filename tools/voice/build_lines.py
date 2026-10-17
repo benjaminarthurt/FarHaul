@@ -33,6 +33,20 @@ def game_lines():
     return out
 
 
+def species_game():
+    """The species' own lines by '<source>:<key>@<species>'."""
+    out = {}
+    comms = json.load(open(os.path.join(ROOT, "data", "runtime", "comms.json"), encoding="utf-8"))
+    for sp, keys in comms.get("species_lines", {}).items():
+        for k, v in keys.items():
+            out["comms:%s@%s" % (k, sp)] = v
+    pax = json.load(open(os.path.join(ROOT, "data", "runtime", "passengers.json"), encoding="utf-8"))
+    for sp, keys in pax.get("aboard_by_species", {}).items():
+        for k, v in keys.items():
+            out["aboard:%s@%s" % (k, sp)] = v
+    return out
+
+
 def clip_id(key, index, values):
     tail = "".join("|%s=%s" % (n, values[n]) for n in sorted(values))
     return "%s|%d%s" % (key, index, tail)
@@ -40,7 +54,7 @@ def clip_id(key, index, values):
 
 def file_stem(cid):
     """A filename-safe version of an id: comms_cleared_0_berth-6."""
-    s = cid.replace(":", "_").replace("|", "_").replace("=", "-")
+    s = cid.replace(":", "_").replace("|", "_").replace("=", "-").replace("@", "-")
     return re.sub(r"[^A-Za-z0-9_\-]", "", s)
 
 
@@ -73,6 +87,34 @@ def main():
                 cid = clip_id(key, i, values)
                 lines.append({"id": cid, "file": file_stem(cid), "key": key, "index": i, "values": values,
                               "text": said, "role": spec["role"], "radio": bool(spec.get("radio", True))})
+    # The aliens' own lines (comms.json species_lines, passengers.json aboard_by_species: written by
+    # species_lines.py): "<source>:<key>@<species>", said only by that species, spoken as written ([shown,
+    # spoken] when the shown one carries a name).
+    for skey, pools in species_game().items():
+        key, sp = skey.split("@")
+        spec = voiced["lines"].get(key)
+        if spec is None:
+            problems.append("%s: no base line %s" % (skey, key))
+            continue
+        for i, entry in enumerate(pools):
+            text = entry[1] if isinstance(entry, list) else entry
+            names = sorted(set(re.findall(r"\{(\w+)\}", text)))
+            bad = [n for n in names if n not in sets or n == "species"]
+            if bad:
+                problems.append("%s[%d]: {%s} can't be spoken (use [shown, spoken])" % (skey, i, ", ".join(bad)))
+                continue
+            for combo in itertools.product(*[sets[n] for n in names]):
+                values = {n: str(c[0]) for n, c in zip(names, combo)}
+                said = text
+                for n, c in zip(names, combo):
+                    said = said.replace("{%s}" % n, str(c[1]))
+                cid = clip_id(skey, i, values)
+                lines.append({"id": cid, "file": file_stem(cid), "key": skey, "index": i, "values": values, "text": said,
+                              "role": spec["role"], "radio": bool(spec.get("radio", True)), "species": sp})
+    # A base line naming a species that has its own wording of it ("Mayday. Kesh registry...") is never
+    # played: that caller says its own line. Leave it out.
+    own = {(l["key"].split("@")[0], l["species"]) for l in lines if "species" in l}
+    lines = [l for l in lines if "species" in l or (l["key"], l["values"].get("species")) not in own]
     for key in game:
         if key not in voiced["lines"] and not key.startswith("comms:you_"):
             problems.append("%s: in the game but has no voiced entry (null it out to leave it as babble)" % key)

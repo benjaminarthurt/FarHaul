@@ -535,6 +535,96 @@
       "species": "orun",
       "ref": "libritts/5895.wav",
       "about": "libritts 5895"
+    },
+    {
+      "id": "camp_ilyan_1",
+      "roles": [
+        "camp"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p238.wav",
+      "about": "vctk p238 F 22 NorthernIrish Belfast"
+    },
+    {
+      "id": "camp_vey_1",
+      "roles": [
+        "camp"
+      ],
+      "species": "vey",
+      "ref": "vctk/p254.wav",
+      "about": "vctk p254 M 21 English Surrey"
+    },
+    {
+      "id": "patrol_ilyan_1",
+      "roles": [
+        "patrol"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p248.wav",
+      "about": "vctk p248 F 23 Indian"
+    },
+    {
+      "id": "patrol_vey_1",
+      "roles": [
+        "patrol"
+      ],
+      "species": "vey",
+      "ref": "vctk/p345.wav",
+      "about": "vctk p345 M 22 American Florida"
+    },
+    {
+      "id": "patrol_orun_1",
+      "roles": [
+        "patrol"
+      ],
+      "species": "orun",
+      "ref": "vctk/p312.wav",
+      "about": "vctk p312 F 19 Canadian Hamilton"
+    },
+    {
+      "id": "tug_kesh_1",
+      "roles": [
+        "tug"
+      ],
+      "species": "kesh",
+      "ref": "vctk/p271.wav",
+      "about": "vctk p271 M 19 Scottish Fife"
+    },
+    {
+      "id": "tug_ilyan_1",
+      "roles": [
+        "tug"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p323.wav",
+      "about": "vctk p323 F 19 SouthAfrican Pretoria"
+    },
+    {
+      "id": "tug_vey_1",
+      "roles": [
+        "tug"
+      ],
+      "species": "vey",
+      "ref": "vctk/p316.wav",
+      "about": "vctk p316 M 20 Canadian Alberta"
+    },
+    {
+      "id": "rival_ilyan_1",
+      "roles": [
+        "rival"
+      ],
+      "species": "ilyan",
+      "ref": "vctk/p313.wav",
+      "about": "vctk p313 F 24 Irish County Down"
+    },
+    {
+      "id": "rival_vey_1",
+      "roles": [
+        "rival"
+      ],
+      "species": "vey",
+      "ref": "vctk/p279.wav",
+      "about": "vctk p279 M 23 English Leicester"
     }
   ]
 }

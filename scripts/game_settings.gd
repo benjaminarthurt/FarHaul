@@ -15,6 +15,7 @@ const DEFAULTS := {
 	"mouse": 1.0,
 	"remote": false,       ## the ship remote (ShipRemote): a web page for a phone or tablet on this network
 	"remote_code": "",     ## its pairing code, made the first time it's needed
+	"recorded_voices": true,   ## radio and passengers speak their lines (VoiceBank); off for the babble
 	"cheats": false,       ## debug cheats in the pause menu (Cheats): money, repairs, fuel. Marks the save
 }
 

@@ -12,21 +12,28 @@ extends RefCounted
 ##   help. Brake alongside and sell them fuel, or take the crew aboard as survivors (PortAuthority).
 ##   Ignore it and word gets round.
 ##
-## Everything said plays through the radio (RadioVoice) with the words as a subtitle (`current`), and goes
-## in the log. What it costs or earns is settled when the flight ends (Session.flight_extra "comms").
+## Everything said plays through the radio with the words as a subtitle (`current`), and goes in the log:
+## the recorded line if there is one (VoiceBank, through the Radio bus with hiss and squelch), otherwise
+## RadioVoice's babble. What it costs or earns is settled when the flight ends (Session.flight_extra "comms").
 
 const PATH := "res://data/runtime/comms.json"
+const SQUELCH_S := 0.14   ## the squelch opening before a recorded line
 
 static var _cfg: Dictionary = {}
 
 var sc: FlightScene
 var player: AudioStreamPlayer
-var queue: Array = []        ## lines waiting to be said: {who, text, voice, dist, sound}
+var voice_player: AudioStreamPlayer   ## a recorded line, on the Radio bus
+var hiss_player: AudioStreamPlayer    ## the carrier under it
+var queue: Array = []        ## lines waiting to be said: {who, text, voice, dist, sound, refs}
 var current := {}            ## the line being said: {who, text, t, dur}
 var log: Array = []          ## what's been said, oldest first: {who, text}
 var _task := -1              ## a voice being made on a worker thread
 var _made: AudioStreamWAV
 var _making := {}
+var layer_players: Array[AudioStreamPlayer] = []   ## a species' extra voices (VoiceBank.layer_buses)
+var _heard := {}             ## callers heard this flight (by voice seed): the translator's quicker the second time
+var _pending: Array = []     ## lines made by _line since the last thing said: {text, key, index, args}
 var rng := RandomNumberGenerator.new()
 
 var clear_for := ""          ## the station or site that cleared you to dock or land ("" none)
@@ -56,6 +63,12 @@ func _init(scene: FlightScene) -> void:
 	player.bus = GameSettings.bus("Effects")
 	player.volume_db = -4.0
 	sc.add_child(player)
+	voice_player = AudioStreamPlayer.new()
+	voice_player.bus = VoiceBank.radio_bus()
+	sc.add_child(voice_player)
+	hiss_player = AudioStreamPlayer.new()
+	hiss_player.bus = GameSettings.bus("Effects")
+	sc.add_child(hiss_player)
 	rivals = Rivals.new(self)
 
 
@@ -454,7 +467,29 @@ func _line(key: String, args := {}) -> String:
 	var pool: Array = (cfg().get("lines", {}) as Dictionary).get(key, ["..."])
 	var a := {"you": _you()}
 	a.merge(args, true)
-	return String(pool[rng.randi() % pool.size()]).format(a)
+	var i := rng.randi() % pool.size()
+	var text := String(pool[i]).format(a)
+	_pending.append({"text": text, "key": "comms:" + key, "index": i, "args": a})   # which line it was, for VoiceBank
+	if _pending.size() > 24:
+		_pending.pop_front()
+	return text
+
+
+## The lines made by _line that `text` is made of, in order (a news item picked from several, or two lines
+## said together); forgets the rest.
+func _refs_for(text: String) -> Array:
+	var out := []
+	var at := 0
+	for p in _pending:
+		var k := text.find(String(p.text), at)
+		if k >= 0 and String(p.text) != "":
+			out.append(p)
+			at = k + String(p.text).length()
+	_pending.clear()
+	var said := ""
+	for p in out:
+		said += String(p.text)
+	return out if said.replace(" ", "") == text.replace(" ", "") else []
 
 
 static func _short(title: String) -> String:
@@ -490,12 +525,36 @@ func _news() -> String:
 
 
 func _you_say(text: String) -> void:
+	_pending.clear()
 	queue.append({"who": "YOU", "text": text, "voice": {}, "dist": 0.0, "sound": "click"})
 
 
 ## Queue a line from someone over the radio.
 func _say(who: String, text: String, v: Dictionary, dist := 0.2, sound := "") -> void:
-	queue.append({"who": who, "text": text, "voice": v, "dist": dist, "sound": sound})
+	var refs := _refs_for(text)
+	text = _in_their_words(text, refs, String(v.get("species", "human")))
+	queue.append({"who": who, "text": text, "voice": v, "dist": dist, "sound": sound, "refs": refs})
+
+
+## The species' own version of each line in `refs` (comms.json species_lines: a Kesh controller is formal,
+## an Ilyan clipped, a Vey warm, an Orun always "we"), swapped into `text`. Humans keep the base lines.
+func _in_their_words(text: String, refs: Array, species: String) -> String:
+	var own: Dictionary = (cfg().get("species_lines", {}) as Dictionary).get(species, {})
+	if own.is_empty():
+		return text
+	for r in refs:
+		var key := String(r.key).trim_prefix("comms:")
+		var pool: Array = own.get(key, [])
+		if pool.is_empty():
+			continue
+		var i := rng.randi() % pool.size()
+		var e = pool[i]
+		var shown := String(e[0] if e is Array else e).format(r.args)
+		text = text.replace(String(r.text), shown)
+		r.text = shown
+		r.key = "comms:%s@%s" % [key, species]
+		r.index = i
+	return text
 
 
 ## A call coming in unasked: the chime first (or the SOS beacon), then the line.
@@ -522,6 +581,8 @@ func step(dt: float, real: float) -> void:
 func _play(real: float) -> void:
 	if not current.is_empty():
 		current.t = float(current.t) + real
+		if current.has("rec"):
+			_recorded_step()
 		if float(current.t) < float(current.dur) + 0.6:
 			return
 		current = {}
@@ -539,6 +600,12 @@ func _play(real: float) -> void:
 		var s: AudioStreamWAV = RadioVoice.sos() if String(l.sound) == "sos" else (RadioVoice.chime() if String(l.sound) == "chime" else RadioVoice.click())
 		_start(l, s)
 		return
+	if VoiceBank.enabled() and not (l.get("refs", []) as Array).is_empty():
+		var v: Dictionary = l.voice
+		var parts := VoiceBank.clips(l.refs, String(v.get("species", "human")), int(v.get("seed", 0)))
+		if not parts.is_empty():
+			_start_recorded(l, parts)
+			return
 	_making = l
 	_task = WorkerThreadPool.add_task(func() -> void: _made = RadioVoice.speech(String(l.text), l.voice, float(l.dist)), false, "radio voice")
 
@@ -556,6 +623,58 @@ func _start(l: Dictionary, s: AudioStreamWAV) -> void:
 	if s != null and player.is_inside_tree():
 		player.stream = s
 		player.play()
+
+
+## A recorded line: the squelch opens, the words over the carrier hiss, the squelch closes with the beep.
+func _start_recorded(l: Dictionary, parts: Array[AudioStream]) -> void:
+	var v: Dictionary = l.voice
+	var sp := String(v.get("species", "human"))
+	var seed_v := int(v.get("seed", 1))
+	var lead := 0.0
+	if sp != "human":   # their own language first, until the translator catches up
+		lead = float(VoiceBank.sound(sp).get("lead_s", 0.0)) if not _heard.has(seed_v) else float(VoiceBank.translator().get("lead_again_s", 0.3))
+	_heard[seed_v] = true
+	parts = VoiceBank.with_lead(parts, v, lead)
+	var len := VoiceBank.length(parts)
+	var dist := float(l.dist)
+	current = {"who": String(l.who), "text": String(l.text), "t": 0.0, "dur": SQUELCH_S + len + 0.3,
+			"rec": {"stream": VoiceBank.joined(parts), "len": len, "dist": dist, "seed": seed_v, "species": sp, "lead": lead, "on": false, "off": false}}
+	log.append({"who": String(l.who), "text": String(l.text)})
+	if log.size() > 30:
+		log.pop_front()
+	if player.is_inside_tree():
+		player.stream = RadioVoice.squelch(true, int(current.rec.seed))
+		player.play()
+		hiss_player.stream = RadioVoice.hiss()
+		hiss_player.volume_db = lerpf(-30.0, -17.0, clampf(dist, 0.0, 1.0))
+		hiss_player.play()
+
+
+func _recorded_step() -> void:
+	var r: Dictionary = current.rec
+	var t := float(current.t)
+	if not bool(r.on) and t >= SQUELCH_S:
+		r.on = true
+		if voice_player.is_inside_tree():
+			voice_player.bus = VoiceBank.species_bus(String(r.species))
+			VoiceBank.radio_bus(float(r.dist))
+			voice_player.stream = r.stream
+			voice_player.play()
+			var layers := VoiceBank.layer_buses(String(r.species))
+			while layer_players.size() < layers.size():
+				var lp := AudioStreamPlayer.new()
+				sc.add_child(lp)
+				layer_players.append(lp)
+			for k in layers.size():
+				layer_players[k].bus = layers[k]
+				layer_players[k].stream = r.stream
+				layer_players[k].play()
+	if not bool(r.off) and t >= SQUELCH_S + float(r.len):
+		r.off = true
+		if player.is_inside_tree():
+			hiss_player.stop()
+			player.stream = RadioVoice.squelch(false, int(r.seed) + 1)
+			player.play()
 
 
 ## The share of the current line's words shown so far (they type out as it's said).

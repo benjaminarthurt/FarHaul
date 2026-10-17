@@ -1,0 +1,66 @@
+{
+ "version": 1,
+ "rate": 22050,
+ "speakers": {
+  "control_kesh_1": {
+   "roles": [
+    "control"
+   ],
+   "species": "kesh"
+  },
+  "control_human_1": {
+   "roles": [
+    "control"
+   ],
+   "species": "human"
+  },
+  "ship_human_1": {
+   "roles": [
+    "ship"
+   ],
+   "species": "human"
+  }
+ },
+ "clips": {
+  "comms:cleared|0|berth=6": {
+   "control_kesh_1": [
+    "control_kesh_1/comms_cleared_0_berth-6__1.ogg",
+    "control_kesh_1/comms_cleared_0_berth-6__2.ogg"
+   ],
+   "control_human_1": [
+    "control_human_1/comms_cleared_0_berth-6__1.ogg",
+    "control_human_1/comms_cleared_0_berth-6__2.ogg"
+   ]
+  },
+  "comms:cleared|0|berth=7": {
+   "control_kesh_1": [
+    "control_kesh_1/comms_cleared_0_berth-7__1.ogg",
+    "control_kesh_1/comms_cleared_0_berth-7__2.ogg"
+   ],
+   "control_human_1": [
+    "control_human_1/comms_cleared_0_berth-7__1.ogg",
+    "control_human_1/comms_cleared_0_berth-7__2.ogg"
+   ]
+  },
+  "comms:fuel_offer|0|t=3": {
+   "ship_human_1": [
+    "ship_human_1/comms_fuel_offer_0_t-3__1.ogg"
+   ]
+  },
+  "comms:fuel_coming|1": {
+   "ship_human_1": [
+    "ship_human_1/comms_fuel_coming_1__1.ogg"
+   ]
+  },
+  "comms:cleared@kesh|0|berth=6": {
+   "control_kesh_1": [
+    "control_kesh_1/comms_cleared-kesh_0_berth-6__1.ogg"
+   ]
+  },
+  "comms:cleared@kesh|0|berth=7": {
+   "control_kesh_1": [
+    "control_kesh_1/comms_cleared-kesh_0_berth-7__1.ogg"
+   ]
+  }
+ }
+}

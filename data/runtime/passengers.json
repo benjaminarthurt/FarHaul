@@ -50,5 +50,111 @@
     "quarters": ["The lounge has a screen. It shows the same three films.", "Someone's snoring in pod two. It's not me. It's never me.", "Nice enough. The curtains don't quite meet."],
     "stateroom": ["I asked for a window and got a window. Remarkable.", "The plant's real. I checked. I always check.", "Tell the captain the sheets are adequate. High praise."],
     "late": ["We were promised %s by now.", "I've started counting the rivets. There are a lot of rivets."]
+  },
+  "aboard_by_species": {
+    "kesh": {
+      "bunk": [
+        "This bunk was built for a lighter people. I will manage.",
+        "A crew bunk. It is clean. That is what matters.",
+        "Someone keeps this bunk well. I can tell."
+      ],
+      "cabin": [
+        "The cabin is small, but the door is solid. I approve of the door.",
+        "The viewport is small. The frame around it is good.",
+        "We are on schedule? Good. I do not need to be told twice."
+      ],
+      "quarters": [
+        "The lounge furniture would not survive my homeworld.",
+        "Someone in pod two is snoring. It is not me. We do not snore.",
+        "Adequate. The fittings are light, but adequate."
+      ],
+      "stateroom": [
+        "I asked for a window. There is a window. This ship keeps its word.",
+        "The plant is real. Someone waters it. That is care.",
+        "Tell the captain the stateroom is well kept. That is high praise."
+      ],
+      "late": [
+        "We were promised arrival by now. A promise is a load.",
+        "I have counted the rivets. They are sound. We are still late."
+      ]
+    },
+    "ilyan": {
+      "bunk": [
+        "Crew bunk. Efficient. Smells of someone.",
+        "Short bunk. I fold.",
+        "Personal items: not mine. Mass: unnecessary."
+      ],
+      "cabin": [
+        "Small cabin. Correct size, actually.",
+        "Viewport: twenty centimetres. Sufficient.",
+        "Are we on schedule? Checking. Yes. Good."
+      ],
+      "quarters": [
+        "Three films in the lounge. Ninety megabytes of redundancy.",
+        "Snoring, pod two. Not me.",
+        "Curtains overlap by minus two centimetres. Noted."
+      ],
+      "stateroom": [
+        "A window. Exact specification. Remarkable.",
+        "The plant is real. Seventeen grams of soil. Unnecessary. Pleasant.",
+        "Tell the captain: the sheets are within tolerance."
+      ],
+      "late": [
+        "We are late. By my count, eleven hours.",
+        "Rivets counted. Four hundred and twelve. Still late."
+      ]
+    },
+    "vey": {
+      "bunk": [
+        "Someone sleeps here usually. I can feel them.",
+        "It's dry in here. So dry. I'll manage.",
+        "Somebody's name is on the pillow. I'll keep it warm for them."
+      ],
+      "cabin": [
+        "It's small, but it's ours. Mine. For now.",
+        "The air's a little dry. Could someone mist it?",
+        "We're fine. Are we nearly there? We're fine."
+      ],
+      "quarters": [
+        "The lounge has a screen and three films. We've all watched them together.",
+        "Someone in pod two is snoring. It's soothing, honestly.",
+        "The curtains don't quite meet. Nothing ever quite does."
+      ],
+      "stateroom": [
+        "A window. I can watch the stars drift by. Like water.",
+        "The plant's real. I checked. It's thirsty.",
+        "Tell the captain the room is lovely. And a little dry."
+      ],
+      "late": [
+        "We were meant to be there by now. The tide waits for no one.",
+        "We're late. Everyone at home is waiting. They'll understand."
+      ]
+    },
+    "orun": {
+      "bunk": [
+        "This is someone's bunk. We like it. It smells like a home.",
+        "We have slept in worse. With more of us.",
+        "The pillow has a name on it. We will share."
+      ],
+      "cabin": [
+        "The door locks. We do not know why you would want that.",
+        "A small cabin. Cosy. Could fit four of us.",
+        "We are fine. Are we nearly there? We are fine."
+      ],
+      "quarters": [
+        "The lounge is the best room. Everyone is in it.",
+        "Someone in pod two is snoring. We find it comforting.",
+        "The curtains do not meet. Good. We like to see who is there."
+      ],
+      "stateroom": [
+        "A room for one. We feel lonely. It is very nice.",
+        "The plant is real. We have named it.",
+        "Tell the captain the stateroom is big enough for a family. Ours."
+      ],
+      "late": [
+        "We were promised arrival by now. We are all disappointed together.",
+        "We have counted the rivets. All of us. We disagree on the number."
+      ]
+    }
   }
 }

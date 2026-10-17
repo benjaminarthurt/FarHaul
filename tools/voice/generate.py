@@ -32,6 +32,7 @@ Options for `run`:
   --asr / --no-asr      check each take with Whisper and re-roll ones that don't say the line
                         (on by default when faster-whisper is installed, as voice.bat setup does)
   --tries 3             takes to try per clip before keeping the best one
+  --rest 4              pause this many seconds after each clip, so the GPU runs cooler (record_all.bat uses 4)
   --device cuda|cpu     default: cuda if available
   --fake                no Chatterbox: synthetic noise of the right length, for testing the pipeline
 """
@@ -90,12 +91,12 @@ ROLES = {
 SLOTS = {
     "control": ["human", "human", "kesh", "kesh", "ilyan", "ilyan", "vey", "vey", "orun", "orun"],
     "pad": ["human", "kesh", "ilyan", "vey", "orun"],
-    "camp": ["human", "orun", "kesh"],
+    "camp": ["human", "orun", "kesh", "ilyan", "vey"],
     "ship": ["human", "human", "human", "kesh", "kesh", "ilyan", "vey", "orun"],
-    "patrol": ["human", "kesh"],
-    "tug": ["human", "orun"],
+    "patrol": ["human", "kesh", "ilyan", "vey", "orun"],
+    "tug": ["human", "orun", "kesh", "ilyan", "vey"],
     "distress": ["human", "human", "kesh", "ilyan", "vey", "orun"],
-    "rival": ["human", "human", "kesh", "orun"],
+    "rival": ["human", "human", "kesh", "orun", "ilyan", "vey"],
     "passenger": ["human", "human", "human", "kesh", "ilyan", "ilyan", "vey", "orun"],
 }
 
@@ -130,8 +131,11 @@ def save_json(p, d, indent=2):
 
 def cmd_cast(a):
     """Pick a cast from refs/catalog.csv: varied accents, both genders, nobody in two roles."""
+    if os.path.exists(CAST) and a.fill:
+        return _fill_cast(a)
     if os.path.exists(CAST) and not a.force:
-        sys.exit("%s exists. Edit it, or pass --force to pick a fresh cast (the old one is kept as voices.old.json)." % CAST)
+        sys.exit("%s exists. Edit it, pass --fill to add speakers for roles and species it lacks, or --force to "
+                 "pick a fresh cast (the old one is kept as voices.old.json)." % CAST)
     refs = os.path.abspath(a.refs)
     cat = os.path.join(refs, "catalog.csv")
     if not os.path.exists(cat):
@@ -189,6 +193,45 @@ def _repo_rel(p):
     return (p if r.startswith("..") else r).replace("\\", "/")
 
 
+def _fill_cast(a):
+    """Add a speaker for every role and species in SLOTS the cast doesn't have yet; nobody already cast
+    changes. New voices come from the catalogue, not already used, alternating gender, varied accents."""
+    cast = load_json(CAST)
+    refs = cast.get("refs_dir", "")
+    refs = refs if os.path.isabs(refs) else os.path.join(ROOT, refs)
+    rows = [r for r in csv.DictReader(open(os.path.join(refs, "catalog.csv"), encoding="utf-8")) if float(r.get("seconds") or 0) >= 8.0]
+    random.Random(a.seed + 1).shuffle(rows)
+    used = {s["ref"] for s in cast["speakers"]}
+    accents = {}
+    added = []
+    for role, slots in SLOTS.items():
+        have = {}
+        for s in cast["speakers"]:
+            if role in s["roles"]:
+                have[s["species"]] = have.get(s["species"], 0) + 1
+        want = {}
+        for sp in slots:
+            want[sp] = want.get(sp, 0) + 1
+        for sp, n in want.items():
+            for k in range(have.get(sp, 0), n):
+                free = [r for r in rows if r["path"].replace("\\", "/") not in used and (role == "passenger" or r["dataset"] == "vctk")]
+                g = "F" if len(added) % 2 == 0 else "M"
+                free.sort(key=lambda r: ((r.get("gender") or "?")[:1].upper() != g, accents.get(r.get("accent", ""), 0)))
+                r = free[0]
+                ref = r["path"].replace("\\", "/")
+                used.add(ref)
+                accents[r.get("accent", "")] = accents.get(r.get("accent", ""), 0) + 1
+                sid = "%s_%s_%d" % (role, sp, k + 1)
+                s = {"id": sid, "roles": [role], "species": sp, "ref": ref,
+                     "about": " ".join(x for x in [r["dataset"], r["speaker"], r.get("gender", ""), r.get("age", ""), r.get("accent", ""), (r.get("region") or "")[:24]] if x)}
+                cast["speakers"].append(s)
+                added.append(s)
+    save_json(CAST, cast)
+    print("%d speakers added to %s" % (len(added), os.path.relpath(CAST, ROOT)))
+    for s in added:
+        print("  %-22s %s" % (s["id"], s["about"]))
+
+
 def load_cast():
     if not os.path.exists(CAST):
         sys.exit("No cast yet. Run: tools\\voice\\voice.bat cast")
@@ -201,12 +244,26 @@ def load_cast():
 def load_lines():
     if not os.path.exists(LINES):
         sys.exit("No lines.json. Run: python tools/voice/build_lines.py")
-    return load_json(LINES)["lines"]
+    lines = load_json(LINES)["lines"]
+    _VARIANTS.clear()
+    for l in lines:
+        if l.get("species"):
+            _VARIANTS.add((l["key"].split("@")[0], l["species"]))
+    return lines
+
+
+_VARIANTS = set()   # (base key, species) pairs that have the species' own lines
 
 
 def says(speaker, line):
-    """Does this speaker say this line? Right role, and if the line names a species, theirs."""
+    """Does this speaker say this line? Right role; a species' own line only by that species; and the base
+    line only by a species without its own version of it."""
     if line["role"] not in speaker["roles"]:
+        return False
+    own = line.get("species")
+    if own:
+        return own == speaker["species"]
+    if (line["key"], speaker["species"]) in _VARIANTS:
         return False
     sp = line.get("values", {}).get("species")
     return sp is None or sp == speaker["species"]
@@ -214,8 +271,9 @@ def says(speaker, line):
 
 def takes_for(cast, line):
     t = cast["takes"]
-    if line["key"] in t.get("keys", {}):
-        return int(t["keys"][line["key"]])
+    base = line["key"].split("@")[0]
+    if base in t.get("keys", {}):
+        return int(t["keys"][base])
     return int(t.get("with_values", 1) if line.get("values") else t.get("default", 2))
 
 
@@ -226,7 +284,7 @@ def settings(cast, speaker, line):
     s["tempo"] = float(sp.get("tempo", 1.0))
     for role in speaker["roles"]:
         s.update(cast["roles"].get(role, {}))
-    s.update(cast["lines"].get(line["key"], {}))
+    s.update(cast["lines"].get(line["key"].split("@")[0], {}))
     s["formant"] = float(sp.get("formant", 1.0))
     for k in ("exaggeration", "cfg_weight", "temperature", "pitch", "tempo", "formant"):
         if k in speaker:
@@ -691,6 +749,8 @@ def cmd_run(a):
                                                               "  CHECK" if bad > 0 else "", eta // 60))
             if n % 25 == 0:
                 write_index(cast, lines, quiet=True)
+            if a.rest > 0:   # let the GPU cool between clips
+                time.sleep(a.rest)
     except KeyboardInterrupt:
         print("\nStopped. Run again to carry on where it left off.")
     finally:
@@ -831,6 +891,7 @@ def main():
     c.add_argument("--refs", default=os.path.join(HERE, "refs"), help="the folder make_refs.py wrote (has catalog.csv); default tools/voice/refs")
     c.add_argument("--seed", type=int, default=7)
     c.add_argument("--force", action="store_true")
+    c.add_argument("--fill", action="store_true", help="add speakers for roles and species the cast lacks")
     for name in ("plan", "run", "preview", "redo"):
         p = sub.add_parser(name)
         p.add_argument("--role", default="")
@@ -846,6 +907,7 @@ def main():
             p.add_argument("--asr", action="store_true", help="check takes with Whisper (on by default when faster-whisper is installed)")
             p.add_argument("--no-asr", action="store_true", help="don't check takes with Whisper")
             p.add_argument("--tries", type=int, default=3)
+            p.add_argument("--rest", type=float, default=0.0, help="seconds to pause after each clip, to keep the GPU cooler")
     sub.add_parser("review")
     sub.add_parser("index")
     a = ap.parse_args()
