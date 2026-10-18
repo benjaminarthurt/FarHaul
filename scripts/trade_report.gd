@@ -633,11 +633,14 @@ func _draw_growth(a: Rect2) -> void:
 	# Every system.
 	var sx := mx + mw + 24.0
 	var sw := a.end.x - sx
-	_heading(Vector2(sx, a.position.y + 14), "KNOWN SPACE", sw)
+	_heading(Vector2(sx, a.position.y + 14), "KNOWN SPACE  ·  SPACE WEATHER", sw)
 	yy = a.position.y + 44.0
 	var rh := minf(24.0, (a.size.y - 60.0) / maxf(1.0, float((d.systems as Array).size())))
 	for r in d.systems:
 		_text(Vector2(sx, yy), _fit(String(r.name), 14, sw * 0.5), 14, YOU if bool(r.here) else INK)
-		_text(Vector2(sx + sw * 0.52, yy), _fit(String(r.stage_name), 13, sw * 0.38), 13, STAGE_COL[int(r.stage)])
+		if String(r.get("storm", "")) != "":
+			_text(Vector2(sx + sw * 0.52, yy), _fit(String(r.storm).to_upper(), 12, sw * 0.38), 12, ALARM if String(r.storm) == "storm" else AMBER)
+		else:
+			_text(Vector2(sx + sw * 0.52, yy), _fit(String(r.stage_name), 13, sw * 0.38), 13, STAGE_COL[int(r.stage)])
 		_text(Vector2(sx + sw - 14, yy), _arrow(float(r.trend)), 14, _arrow_col(float(r.trend)))
 		yy += rh

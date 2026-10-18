@@ -43,9 +43,10 @@ The ship builder came first because everything else reads from the ship it produ
 ### Next, in roughly this order (planned)
 
 14. **Frontier growth**: every site grows when it's kept supplied and shrinks when it isn't, down to
-    abandoned; systems follow their sites, slower (**building** for 0.17.0, see below).
+    abandoned; systems follow their sites, slower (**built** in 0.17.0, see below).
 15. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
-    claim-jumpers at derelicts. Risks to plan around rather than fights.
+    claim-jumpers at derelicts. Risks to plan around rather than fights (**built** in 0.18.0, see
+    below).
 
 ## Built: ship builder architecture
 
@@ -184,8 +185,8 @@ The builder is a small game on its own, so it can be played and judged before fl
 
 - **Record everything fixed, speak no names.** Every comms and passenger line is recorded in every
   variation of its small value sets (berth 2 to 14, the fines, tonnes, crew, problem, species); names
-  of ships, places and prices are left out of the spoken line and stay in the subtitle. 1,200 lines, 58
-  speakers, 2,465 clips, 80 MB of OGG. Takes are accepted on Whisper's check alone once a voice has been
+  of ships, places and prices are left out of the spoken line and stay in the subtitle. 1,260 lines, 58
+  speakers, 2,633 clips, 85 MB of OGG. Takes are accepted on Whisper's check alone once a voice has been
   listened to and approved; a new voice, setting or kind of line gets listened to again.
 - **Licensed reference voices only.** VCTK and LibriTTS-R (CC BY 4.0, credited in Settings, the README
   and the site), not anyone's own voice or recordings scraped from elsewhere.
@@ -239,6 +240,30 @@ Decided with Ben, 2026-10-18:
   going, how well it's supplied and your share, and what changed lately); the place itself; and the
   radio's news.
 - **Only in a game.** The economy's own calibration tests run without it, so its bands are unchanged.
+
+## Danger without combat (0.18.0)
+
+Decided with Ben, 2026-10-18:
+
+- **Debris fields** lie across some routes: local hops and interstellar lanes, each field placed from
+  the route and the month, so the same field is there all month and gone or moved the next. Flying a
+  run yourself, you see it ahead (a cloud of rock with a marker) and can go round it, slow down, or
+  let the autopilot fly it. Inside, hits come at a rate that grows with speed, and each hit hurts more
+  the faster you're going. With the autopilot flying (course hold or stop-at-target), the rate is about
+  a third: it dodges what it can see. Runs flown entirely on autopilot from the desk roll the same field
+  at the autopilot's rate.
+- **Solar storms** come and go in each system on a schedule of their own, a day or two long, frontier
+  stars more often. Some are forecast a day or three ahead (radio news, the trade report, the port's
+  notices); some only show on the ship's own sensors a few hours out; some arrive unannounced. Always
+  some chance of being caught. In port you're shielded. Out in one, radiators cook (wear, and less
+  cooling while it lasts) and the hull takes a little.
+- **The local economy feels storms.** While a system has one, its haulers hold in port (no departures
+  to or from it in the economy simulation) and its sites get almost nothing from them, so shelves dip
+  and, through frontier growth, outposts feel it. Traffic control advises holding.
+- **Claim-jumpers.** Some rival salvage crews don't care whose beacon is on a wreck. They come to yours,
+  won't split, won't leave when told, and cut faster. You can report them: sometimes a patrol is near
+  and they run; either way, if your beacon was first, the port authority pays a bounty on what they
+  took and your standing goes up.
 
 ## Open questions and next ideas
 

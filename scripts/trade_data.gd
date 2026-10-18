@@ -305,7 +305,7 @@ static func growth(sim: EconomySim, here_system: String) -> Dictionary:
 		var s: Dictionary = sim.dev.systems[sys]
 		systems.append({"id": sys, "name": system_name(sys), "stage": Development.system_stage(sim, sys),
 				"stage_name": Development.stage_name(Development.system_stage(sim, sys)), "score": float(s.score), "canon": float(s.canon),
-				"trend": Development.trend(s), "here": sys == here_system})
+				"trend": Development.trend(s), "here": sys == here_system, "storm": _weather(sim, sys)})
 	systems.sort_custom(func(a, b) -> bool: return float(a.score) > float(b.score) if absf(float(a.score) - float(b.score)) > 0.001 else String(a.name) < String(b.name))
 	var sy: Dictionary = sim.dev.systems.get(here_system, {})
 	return {"system_name": system_name(here_system), "system_stage": Development.system_stage(sim, here_system),
@@ -328,3 +328,11 @@ static func _site_row(sim: EconomySim, id: String, name: String, s: Dictionary) 
 	return {"id": id, "name": name, "stage": st, "stage_name": Development.stage_name(st), "score": float(s.score), "canon": float(s.canon),
 			"trend": tr, "need": need, "npc": npc, "you_share": clampf(you / maxf(0.01, need), 0.0, 9.0), "why": why,
 			"here": id == String(Session.profile.get("port_id", ""))}
+
+
+
+## A system's space weather for the report: "storm" while one rages, "storm day 41" when forecast, or "".
+static func _weather(sim: EconomySim, sys: String) -> String:
+	for st in Hazards.known(sys, sim.now_hour()):
+		return "storm" if int(st.start) <= sim.now_hour() else "storm day %d" % (int(st.start) / 24)
+	return ""

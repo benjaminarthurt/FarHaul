@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "description": "Danger without combat (scripts/sim/hazards.gd, docs/runtime/hazards.md): solar storms per system, debris fields on routes, claim-jumpers. Every number is an assumption to tune.",
+  "storms": {
+    "window_hours": 240,
+    "chance": {"core": 0.12, "developed": 0.16, "outer": 0.22, "frontier": 0.3, "extreme_frontier": 0.38},
+    "hours": [12, 48],
+    "intensity": [0.3, 1.0],
+    "forecast_chance": 0.55,
+    "forecast_lead_hours": [24, 72],
+    "sensor_chance": 0.5,
+    "sensor_lead_hours": [2, 8],
+    "radiator_wear_per_hour": 0.012,
+    "hull_per_hour": 0.0015,
+    "cooling_loss": 0.5,
+    "interstellar_exposure_hours": 4,
+    "npc_supply_cut": 0.8
+  },
+  "debris": {
+    "window_days": 30,
+    "local_chance": 0.3,
+    "lane_chance": 0.18,
+    "density": [0.3, 1.0],
+    "radius_m": [1500, 5000],
+    "along": [0.3, 0.7],
+    "hits_per_km_flown": 0.6,
+    "damage_base": 0.004,
+    "damage_per_m_s": 0.00002,
+    "damage_max": 0.06,
+    "autopilot_rate": 0.35,
+    "desk_crossing_km": 4.0,
+    "desk_speed_m_s": 600,
+    "lane_hits_mean": 1.2,
+    "part_knock_chance": 0.25
+  },
+  "jumpers": {
+    "chance": 0.3,
+    "cut_speed": 1.6,
+    "patrol_chance": 0.45,
+    "bounty_share": 0.5,
+    "report_rep": 2
+  }
+}

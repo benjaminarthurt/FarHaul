@@ -47,6 +47,7 @@ func _run() -> void:
 	rc["there_first"] = 0.0
 	rc["warn_first"] = 1.0
 	rc["warn_second"] = 0.0
+	Hazards.config().jumpers["chance"] = 0.0   # honest crews here; claim-jumpers are tests/test_hazards.gd
 	f.comms_c.rivals = Rivals.new(f.comms_c)   # forget what the first frame rolled, before the wrecks were forced
 	var d: Dictionary = t.derelicts[0]
 	var w: NpcShip = d.ship

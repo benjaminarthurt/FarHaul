@@ -326,6 +326,9 @@ func _refresh_info() -> void:
 	if Session.slot >= 0:
 		lines.append("Credits %s cr    Day %d    Hull %d%%" % [ShipStats.commas(int(Session.profile.credits)), Session.day(), roundi((1.0 - float(Session.profile.get("hull_damage", 0.0))) * 100.0)])
 		lines.append("Standing: %s" % People.standing(int(Session.profile.get("rep", 0))))
+		if Session.sim != null:
+			for st in Hazards.known(Session.system_id(), Session.sim.now_hour()):   # space weather, when there is any
+				lines.append("Solar storm %s" % Hazards.describe(st, Session.sim.now_hour()))
 		var c := Session.active_contract()
 		if not c.is_empty():
 			var due := ""

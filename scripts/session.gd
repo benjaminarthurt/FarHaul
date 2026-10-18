@@ -335,7 +335,9 @@ static func travel_empty(dest_system_id: String) -> Dictionary:
 	var r := sim.player_reposition(SimWorld.PLAYER, dest_system_id)
 	if not bool(r.ok):
 		return r
+	var t0 := sim.now_hour()
 	var hours := sim.run_player_until(SimWorld.PLAYER, "done")
+	var risk := _jump_hazards(loaded.ship, system_id(), dest_system_id, t0, hours)
 	_autopilot_wear(loaded.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)), float(Wear.cfg().get("jump_drive", 0.02)))
 	var work := _crew_between(loaded.ship, float(hours))
 	profile["system_id"] = dest_system_id
@@ -345,7 +347,7 @@ static func travel_empty(dest_system_id: String) -> Dictionary:
 	SaveSlots.write(slot, data)
 	var pax := Passengers.count() > 0
 	var msg := "Flew %s to %s in %.1f days. Running costs: %s cr%s.%s" % ["with no freight" if pax else "empty", dest_system_id.replace("_", " ").capitalize(), hours / 24.0, ShipStats.commas(before - int(profile.credits)), "" if pax else ", for hauling air", work]
-	return {"ok": true, "message": msg + Passengers.set_down()}
+	return {"ok": true, "message": msg + risk + Passengers.set_down()}
 
 
 static func accept_contract(contract: Dictionary) -> Dictionary:
@@ -461,14 +463,18 @@ static func local_reposition(dest_id: String) -> Dictionary:
 		var before := int(profile.credits)
 		var hrs := maxi(1, ceili(float(site["hours"]) * Crew.time_mult(crew())))   # a pilot aboard flies it tighter
 		sim._pay(SimWorld.PLAYER, "world", float(site["cost"]))
+		var t0 := sim.now_hour()
 		sim.run_hours(hrs)
+		var risk := _en_route(loaded.ship, [{"id": system_id(), "from_h": t0, "hours": hrs}],
+				Hazards.local_field(system_id(), String(LocalSpace.node(String(profile.get("port_id", ""))).get("kind", "port")), String(LocalSpace.node(dest_id).get("kind", "port")), sim.day()),
+				false, "empty|%s|%d" % [dest_id, t0])
 		_autopilot_wear(loaded.ship, float(Wear.cfg().get("reposition_engine", 0.01)), 0.0)
 		var work := _crew_between(loaded.ship, float(hrs))
 		profile["port_id"] = dest_id
 		_commit_sim(data, loaded.ship)
 		data["profile"] = profile
 		SaveSlots.write(slot, data)
-		return {"ok": true, "message": "Flew %s to %s in %d hours. Fuel and running costs: %s cr.%s" % ["with no freight" if Passengers.count() > 0 else "empty", String(site["name"]), hrs, ShipStats.commas(before - int(profile.credits)), work] + Passengers.set_down()}
+		return {"ok": true, "message": "Flew %s to %s in %d hours. Fuel and running costs: %s cr.%s" % ["with no freight" if Passengers.count() > 0 else "empty", String(site["name"]), hrs, ShipStats.commas(before - int(profile.credits)), work] + risk + Passengers.set_down()}
 	return {"ok": false, "message": "Your tanks can't reach that site."}
 
 
@@ -917,6 +923,9 @@ static func _settle_comms(c: Dictionary) -> String:
 	var fine := int(c.get("fine_cr", 0))
 	if fine > 0:
 		sim._pay(SimWorld.PLAYER, "world", float(fine))
+	var bounty := int(c.get("bounty_cr", 0))
+	if bounty > 0:   # claim-jumpers reported: the port authority pays
+		sim._pay("world", SimWorld.PLAYER, float(bounty))
 	for n in c.get("notes", []):
 		bits.append(String(n))
 	var rep := int(c.get("rep", 0)) + int(c.get("fine_rep", 0))
@@ -946,6 +955,33 @@ static func _autopilot_wear(ship: ShipData, engine: float, radiator: float, driv
 	if drive > 0.0:
 		Wear.add(w, ship, "drive", drive * wm)
 	profile["wear"] = w
+
+
+## An interstellar trip: a few hours in each end system (storms there) and the lane's debris field.
+static func _jump_hazards(ship: ShipData, from_sys: String, to_sys: String, t0: int, hours: float) -> String:
+	var ex := float(Hazards.config().storms.get("interstellar_exposure_hours", 4))
+	return _en_route(ship, [{"id": from_sys, "from_h": t0, "hours": ex}, {"id": to_sys, "from_h": t0 + int(hours) - int(ex), "hours": ex}],
+			Hazards.lane_field(from_sys, to_sys, sim.day()), true, "lane|%s|%s|%d" % [from_sys, to_sys, t0])
+
+
+## What an autopilot trip ran into (Hazards): storms in the systems it crossed and a debris field on its
+## route. The hull and the radiators pay; the words come back for the trip's message.
+static func _en_route(ship: ShipData, systems: Array, field: Dictionary, lane: bool, seed_key: String) -> String:
+	var t := Hazards.trip(systems, field, lane, seed_key)
+	if float(t.hull) > 0.0:
+		profile["hull_damage"] = clampf(float(profile.get("hull_damage", 0.0)) + float(t.hull), 0.0, 1.0)
+	if float(t.radiator) > 0.0:
+		var w := wear().duplicate()
+		Wear.add(w, ship, "radiator", float(t.radiator))
+		profile["wear"] = w
+	if int(t.hits) > 0 and ship != null:
+		var g := RandomNumberGenerator.new()
+		g.seed = hash("knock|" + seed_key)
+		if g.randf() < float(Hazards.config().debris.get("part_knock_chance", 0.25)):
+			var kw := wear().duplicate()
+			Wear.knock(kw, ship, 0.15, g.randf())   # a hit shakes a part loose
+			profile["wear"] = kw
+	return "" if (t.lines as Array).is_empty() else " " + " ".join(t.lines)
 
 
 static func overhaul_cost() -> int:
@@ -1166,7 +1202,12 @@ static func commit_jump() -> Dictionary:
 	if loaded_ship.is_empty():
 		return {"ok": false, "days": 0.0, "message": "Couldn't load the ship from the save."}
 	_sync_sim(loaded_ship.ship)
+	var t0 := sim.now_hour()
+	var from_sys := system_id()
 	var hours := sim.run_player_until(SimWorld.PLAYER, "arrival")
+	var ex := float(Hazards.config().storms.get("interstellar_exposure_hours", 4))   # the lane and the end systems' weather (the flight applies it)
+	var hz := Hazards.trip([{"id": from_sys, "from_h": t0, "hours": ex}, {"id": String(c.destination_system_id), "from_h": t0 + int(hours) - int(ex), "hours": ex}],
+			Hazards.lane_field(from_sys, String(c.destination_system_id), sim.day()), true, "lane|%s|%s|%d" % [from_sys, String(c.destination_system_id), t0])
 	# The jump's wear and the crew's work on the way go on the flight's own copies (CrewWork.after_jump):
 	# the flight saves its wear and hull when it ends.
 	profile["system_id"] = String(c.destination_system_id)
@@ -1177,7 +1218,7 @@ static func commit_jump() -> Dictionary:
 	_commit_sim(data, loaded_ship.ship)
 	SaveSlots.write(slot, data)
 	flight_job["jumped"] = true
-	return {"ok": true, "days": hours / 24.0, "hours": float(hours), "message": "Jumped %.2f ly in %.1f days." % [float(c.distance_ly), hours / 24.0]}
+	return {"ok": true, "days": hours / 24.0, "hours": float(hours), "hazards": hz, "message": "Jumped %.2f ly in %.1f days." % [float(c.distance_ly), hours / 24.0]}
 
 
 ## Close out a flown jump. Before the jump (`jumped` false) the ship just came home; after it, it has
@@ -1321,7 +1362,11 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 		return {"ok": false, "message": "The tanks cannot cover that burn."}
 	_sync_sim(loaded_ship.ship)
 	sim._pay(SimWorld.PLAYER, "world", float(cost.total))
+	var t0 := sim.now_hour()
 	sim.run_hours(hours)
+	var risk := _en_route(loaded_ship.ship, [{"id": system_id(), "from_h": t0, "hours": hours}],
+			Hazards.local_field(system_id(), String(LocalSpace.node(String(c.origin_port_id)).get("kind", "port")), String(LocalSpace.node(String(c.destination_port_id)).get("kind", "port")), sim.day()),
+			false, "%s|%d" % [String(c.get("id", "")), t0])
 	var wc := Wear.cfg()
 	_autopilot_wear(loaded_ship.ship, float(cost.burn_t) * float(wc.get("autopilot_engine_per_t", 0.006)), float(cost.burn_t) * float(wc.get("autopilot_radiator_per_t", 0.003)))
 	var work := _crew_between(loaded_ship.ship, float(hours))
@@ -1331,7 +1376,7 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 	data["profile"] = profile
 	_commit_sim(data, loaded_ship.ship)
 	SaveSlots.write(slot, data)
-	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours%s." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), hours, (" on a hard burn" if hard else "") + ("." + work.trim_suffix(".") if work != "" else "")] + Passengers.set_down()}
+	return {"ok": true, "message": "Burned %.1f t of fuel (%s cr) and reached %s in %d hours%s." % [float(cost.burn_t), ShipStats.commas(roundi(float(cost.total))), String(LocalSpace.node(String(c.destination_port_id)).get("name", "the site")), hours, (" on a hard burn" if hard else "") + ("." + work.trim_suffix(".") if work != "" else "")] + risk + Passengers.set_down()}
 
 
 static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
@@ -1474,8 +1519,10 @@ static func depart_active_contract(hard := false) -> Dictionary:
 	var live := sim != null and c.has("sim_taken")
 	if live:
 		_sync_sim(loaded_ship.ship)
+		var t0 := sim.now_hour()
 		var hours := sim.run_player_until(SimWorld.PLAYER, "arrival")
 		days_text = " The trip took %.1f days." % (hours / 24.0)
+		days_text += _jump_hazards(loaded_ship.ship, String(c.origin_system_id), String(c.destination_system_id), t0, hours)
 		_autopilot_wear(loaded_ship.ship, float(Wear.cfg().get("jump_engine", 0.03)), float(Wear.cfg().get("jump_radiator", 0.02)), float(Wear.cfg().get("jump_drive", 0.02)))
 		days_text += _crew_between(loaded_ship.ship, float(hours))
 	profile["system_id"] = String(c.destination_system_id)

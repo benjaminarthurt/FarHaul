@@ -48,7 +48,12 @@ Your own lines are amber, distress calls red. The last 30 lines are kept in the 
 - **News** (`Comms._news`): something from the economy (a facility short of goods, TradeData.tight; a
   system's prices moving 3% or more, TradeData.price_movers), a site in this system that grew, shrank or
   emptied in the last three weeks (Development.recent: `news_grew`, `news_shrank`, `news_empty`, twice as
-  likely as the rest), or a derelict near the station. One answer
+  likely as the rest), a storm forecast for this system (`news_storm`, first in line: hazards.md), or a
+  derelict near the station.
+- **Storms**: asking for clearance while a solar storm rages, control advises holding first (`storm_advice`).
+- **Claim-jumpers** (Rivals): some salvage crews ignore your beacon (`rival_jump`), won't deal
+  (`rival_jump_no`), and can be reported (`you_report`, then `rival_report_go` or `rival_report_stay`). See
+  hazards.md. One answer
   per contact per flight.
 - **Tows**: dry or breached, any hauler, orbiter or passer in range offers a tow at 0.6 to 1.4 × the
   tug's fee (× 1.3 out on a run). It's the tug's tow with the difference settled at the end.
@@ -98,9 +103,9 @@ Traffic control speaks for the system's home species. Also: the two-tone hail ch
 ## Recorded voices (`VoiceBank`, 0.16.2)
 
 `scripts/comms/voice_bank.gd` plays recordings from `assets/audio/voice/` (made by `tools/voice/`, see
-its README): 1,200 lines, the aliens' own wording among them, every variation of the berth, fine, tonnes,
-crew count, problem, species and price direction, 58 speakers, one to three takes each, 2,465 OGG clips
-(mono, 22,050 Hz, 80 MB).
+its README): 1,260 lines, the aliens' own wording among them, every variation of the berth, fine, tonnes,
+crew count, problem, species and price direction, 58 speakers, one to three takes each, 2,633 OGG clips
+(mono, 22,050 Hz, 85 MB).
 
 - **Finding the line.** `Comms._line()` remembers which line of which key it picked and what it filled in
   (`_pending`); `_say()` matches the text it's given back to those (`_refs_for`), so a news item picked
@@ -136,9 +141,9 @@ crew count, problem, species and price direction, 58 speakers, one to three take
 ## Tests
 
 `tests/test_voice_bank_real.gd`: the real bank: every line in `lines.json` has clips, each species' own
-lines are said by that species, all 2,465 clips load and have sound, and each species' station clears
+lines are said by that species, all 2,633 clips load and have sound, and each species' station clears
 you in its own voice.
-`tests/test_voice_bank.gd`: ids from game arguments for all 1,200 recorded lines, a speaker per species
+`tests/test_voice_bank.gd`: ids from game arguments for all 1,260 recorded lines, a speaker per species
 and per caller, takes in turn, two lines together, the Radio bus, a recorded line's squelch, words and
 close, the babble when off or unrecorded, and a passenger's line id (on a small fixture bank of tones in
 `tests/fixtures/voice`).

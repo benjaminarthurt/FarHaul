@@ -58,6 +58,9 @@ func _desk_freight(id: String) -> void:
 			if bool(r.ok):
 				sc.get_tree().reload_current_scene())
 		return
+	if Session.sim != null:
+		for st in Hazards.known(Session.system_id(), Session.sim.now_hour()):
+			sc.panel_list.add_child(Brand.note("Space weather: a solar storm here, %s. In port you're shielded; out there the radiators cook. The other haulers will be sitting it out." % Hazards.describe(st, Session.sim.now_hour()), 14))
 	if id == "freight" and Session.site_has("passengers"):
 		_passengers_section(true)
 	var c := Session.active_contract()

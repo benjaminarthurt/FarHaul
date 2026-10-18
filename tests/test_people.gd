@@ -32,6 +32,7 @@ func _find(kind: String, unlocked := true) -> Dictionary:
 		Session.wait_days(1)
 	return {}
 func _run() -> void:
+	Hazards.off = true   # no storms or debris: this is about the people (tests/test_hazards.gd has those)
 	Session.begin_new(2, "Pilot", "human", "normal", "roosevelt_independent_yards")
 	check(People.standing(0) == "Unknown" and People.standing(12) == "Known" and People.standing(60) == "Respected", "standings by points")
 	check(is_equal_approx(People.rep_bonus(100), 0.15), "standing's pay bonus is capped at 15%")

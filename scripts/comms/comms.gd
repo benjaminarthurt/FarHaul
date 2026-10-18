@@ -344,6 +344,8 @@ func _request_dock(c: Dictionary) -> Dictionary:
 	if clear_for == sid:
 		_say(name, _line("already", {"berth": str(berth)}), v, dist)
 		return {"ok": true, "message": "Cleared: berth %d." % berth}
+	if sc.hazard_c != null and not sc.hazard_c.storm_now.is_empty():   # a solar storm on: control wants everyone inside
+		_say(name, _line("storm_advice"), v, dist)
 	var mover := _free_mover()
 	if hold.is_empty() and not mover.is_empty() and rng.randf() < float(k.get("hold_chance", 0.3)):
 		mover.rest = 0.0
@@ -515,6 +517,12 @@ func _news() -> String:
 		for row in TradeData.price_movers(Session.sim, 4):
 			if absf(float(row.change)) >= 3.0:
 				opts.append(_line("news_price", {"place": String(row.name), "dir": "up" if float(row.change) > 0.0 else "down", "pct": "%d%%" % roundi(absf(float(row.change)))}))
+		for st in Hazards.known(Session.system_id(), Session.sim.now_hour()):   # the space weather, first of all
+			if int(st.start) > Session.sim.now_hour():
+				var wl := _line("news_storm", {"when": Hazards.describe(st, Session.sim.now_hour())})
+				opts.append(wl)
+				opts.append(wl)
+				opts.append(wl)
 		for e in Development.recent(Session.sim, 21, Session.system_id()):   # frontier growth: who grew, shrank or emptied
 			var key := "news_empty" if int(e.to) == 0 else ("news_grew" if int(e.to) > int(e.from) else "news_shrank")
 			var line := _line(key, {"place": String(LocalSpace.node(String(e.site)).get("name", e.site))})
@@ -840,6 +848,7 @@ func settlement() -> Dictionary:
 	var rv := rivals.settlement()
 	out.rep = int(out.rep) + int(rv.rep)
 	out.notes.append_array(rv.notes)
+	out["bounty_cr"] = int(rv.get("bounty_cr", 0))
 	if not distress.is_empty() and not bool(distress.get("none", false)) and not bool(distress.get("helped", false)):
 		out.rep = int(out.rep) + int((cfg().get("distress", {}) as Dictionary).get("ignored_rep", -1))
 		out.notes.append("Somebody heard you hear the %s's mayday, and kept flying." % String(distress.name))

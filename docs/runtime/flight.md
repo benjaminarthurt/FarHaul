@@ -188,6 +188,16 @@ figure; hull repairs from collisions are charged too. TURN BACK in the pause men
 (fuel and hours charged, the load stays aboard at the start). Running dry means a tug and a tow fee. Settling
 runs the hop's hours and the berth fee through the sim; the run is then delivered at the dock as before.
 
+## Storms and debris (`scripts/flight/hazard_watch.gd`, since 0.18.0)
+
+`HazardWatch` steps with the flight's game time. A solar storm in the system takes `0.5 × intensity` of the
+radiators' cooling (`FlightModel.storm_cooling` in `cooling_now_kw`), wears them and nicks the hull while it
+lasts; the ship's sensors warn of a sensor-only front a few hours out. On a flown local run, the route's debris
+field (if it has one this month) is drawn where it lies, and inside it hits come at a rate that rises with speed,
+a third as often with course hold or stop-at-target on. A flown star jump takes the lane's field and the end
+systems' storms at the flash (`Session.commit_jump` returns them; `after_jump` applies them to the flight's hull
+and wear). See [hazards.md](hazards.md).
+
 ## Flying a star jump (`scripts/jump_fx.gd`)
 
 An interstellar contract can be flown too (FLY THE JUMP at the dock; DEPART is still the instant autopilot).

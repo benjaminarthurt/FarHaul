@@ -77,6 +77,24 @@
     "comms:news_wreck": {"role": "ship", "radio": true, "say": [
       "There's a dead ship out by the station. Nobody's touched it yet.",
       "Saw a wreck on the way in. Not our business."]},
+    "comms:storm_advice": {"role": "control", "radio": true, "say": [
+      "Advisory: solar storm in progress. Get in and stay in. Your radiators will thank you.",
+      "Storm's up, so we're keeping everyone in. Come on in and wait it out."]},
+    "comms:news_storm": {"role": "ship", "radio": true, "say": [
+      "Space weather's calling a solar storm here soon. Park somewhere with walls.",
+      "Storm coming soon, they say. Radiators hate it. So do I."]},
+    "comms:rival_jump": {"role": "rival", "radio": true, "say": [
+      "Saw your beacon. Didn't see a patrol, though. We'll be quick.",
+      "Beacons are lights. We've got cutters. Stay out of our way."]},
+    "comms:rival_jump_no": {"role": "rival", "radio": true, "say": [
+      "No. Next question.",
+      "Heard you the first time. Still no."]},
+    "comms:rival_report_stay": {"role": "rival", "radio": true, "say": [
+      "Report us? Fine. They'll have to catch us.",
+      "Go on, call it in. We'll be gone before the paperwork is."]},
+    "comms:rival_report_go": {"role": "rival", "radio": true, "say": [
+      "Patrol's on its way? Pack it up, we're leaving.",
+      "Wonderful. Paperwork. We're off."]},
     "comms:news_grew": {"role": "ship", "radio": true, "say": [
       "One of the sites out here is growing. More ships calling, more work. Somebody's been keeping it fed.",
       "Heard one of the sites out here got bigger. Somebody's been hauling there, and it shows."]},

@@ -94,7 +94,8 @@ func _roll(d: Dictionary) -> void:
 	var there := g.randf() < float(k.get("there_first", 0.4)) and claim_of(id) != "you"
 	var after: Array = k.get("arrive_after_s", [180, 480])
 	var r := {"d": d, "name": nm, "species": sp, "state": "coming", "claim": claim_of(id), "deal": "", "share": [], "t": g.randf_range(float(after[0]), float(after[1])),
-			"cut": 0.0, "voice": RadioVoice.voice(sp, hash("rival|" + nm)), "warned": false, "ship": null, "spark": null}
+			"cut": 0.0, "voice": RadioVoice.voice(sp, hash("rival|" + nm)), "warned": false, "ship": null, "spark": null,
+			"jumper": g.randf() < float(Hazards.config().jumpers.get("chance", 0.3)), "reported": false, "took": 0}   # a claim-jumper ignores beacons
 	if claim_of(id) == "them":
 		there = true   # they beaconed it earlier today
 	rivals.append(r)
@@ -128,7 +129,7 @@ func _arrive(r: Dictionary, already: bool) -> void:
 		r.state = "arriving"
 		if claim_of(id) == "you":
 			r.claim = "you"
-			comms.incoming(_who(r), comms._line("rival_yours", {"them": String(r.name), "wreck": _wreck(r)}), r.voice, _dist(r))
+			comms.incoming(_who(r), comms._line("rival_jump" if jumping(r) else "rival_yours", {"them": String(r.name), "wreck": _wreck(r)}), r.voice, _dist(r))
 		else:
 			_claim(id, "them:" + String(r.name))
 			r.claim = "them"
@@ -166,6 +167,8 @@ func _work(r: Dictionary, dt: float) -> void:
 			r.cut = float(r.cut) + dt
 			var every: Array = k.get("cut_every_s", [35, 60])
 			var need := lerpf(float(every[0]), float(every[1]), 0.5)
+			if jumping(r):
+				need /= float(Hazards.config().jumpers.get("cut_speed", 1.6))   # in a hurry: it isn't theirs
 			var p := _next(r)
 			if p.is_empty():
 				if String(r.deal) == "":   # stripped: what's left is anyone's
@@ -180,6 +183,7 @@ func _work(r: Dictionary, dt: float) -> void:
 				r.cut = 0.0
 				sc.traffic_c.take(p, false)
 				_mark(String(p.id))
+				r.took = int(r.get("took", 0)) + 1
 		"leaving":
 			var s: NpcShip = r.ship
 			if not is_instance_valid(s):
@@ -334,6 +338,8 @@ func contacts() -> Array:
 		var dealt := String(r.deal) != ""
 		opts.append(comms._opt("split", "Split it: half each", not dealt, "Already settled" if dealt else ""))
 		opts.append(comms._opt("warn", "This one's ours. Clear off.", not dealt and not bool(r.warned), "They've heard you" if bool(r.warned) else "Already settled"))
+		if jumping(r):
+			opts.append(comms._opt("report", "Report them to the port authority", not bool(r.reported), "Reported"))
 		out.append({"id": "rival:" + String(r.d.id_base), "kind": "rival", "name": _who(r).to_upper(), "dist_m": dist, "options": opts})
 	return out
 
@@ -349,7 +355,17 @@ func act(c: Dictionary, option: String) -> Dictionary:
 	if r.is_empty():
 		return {"ok": false, "message": "They've gone."}
 	var k := cfg()
+	if jumping(r) and option in ["split", "warn"]:   # a claim-jumper doesn't deal
+		if option == "warn":
+			r.warned = true
+			comms._you_say(comms._line("you_warn", {"them": String(r.name)}))
+		else:
+			comms._you_say(comms._line("you_split", {"them": String(r.name)}))
+		comms._say(_who(r), comms._line("rival_jump_no", {"them": String(r.name)}), r.voice, _dist(r))
+		return {"ok": true, "message": "They're claim-jumpers. They don't deal. You could report them."}
 	match option:
+		"report":
+			return _report(r)
 		"split":
 			comms._you_say(comms._line("you_split", {"them": String(r.name)}))
 			var left := (r.d.points as Array).filter(func(p): return not bool(p.taken) and String(p.kind) in ["panel", "item"] and not (String(p.kind) == "item" and String((p.item as Dictionary).get("kind", "")) in ["survivor", "body"]))
@@ -381,6 +397,26 @@ func act(c: Dictionary, option: String) -> Dictionary:
 	return {"ok": false, "message": "Nothing to say."}
 
 
+## A crew cutting a wreck under your beacon, not caring whose it is.
+static func jumping(r: Dictionary) -> bool:
+	return bool(r.get("jumper", false)) and String(r.get("claim", "")) == "you"
+
+
+## Report claim-jumpers: sometimes a patrol is near and they run; either way the port authority pays a
+## bounty on what they took, and your standing goes up, once the flight's over.
+func _report(r: Dictionary) -> Dictionary:
+	r.reported = true
+	comms._you_say(comms._line("you_report", {"them": String(r.name)}))
+	var g := RandomNumberGenerator.new()
+	g.seed = hash("report|" + String(r.d.id_base))
+	if g.randf() < float(Hazards.config().jumpers.get("patrol_chance", 0.45)):
+		r.deal = "reported"
+		_leave(r, "rival_report_go")
+		return {"ok": true, "message": "A patrol's near. They're running. The bounty's yours once you're in port."}
+	comms._say(_who(r), comms._line("rival_report_stay", {"them": String(r.name)}), r.voice, _dist(r))
+	return {"ok": true, "message": "Reported. No patrol close enough to stop them, but the port authority pays a bounty on whatever they take."}
+
+
 func _fire(id: String) -> Dictionary:
 	var d: Dictionary = {}
 	for x in sc.traffic_c.derelicts:
@@ -400,7 +436,16 @@ func _fire(id: String) -> Dictionary:
 
 
 func settlement() -> Dictionary:
-	var out := {"rep": rep, "notes": notes.duplicate()}
+	var out := {"rep": rep, "notes": notes.duplicate(), "bounty_cr": 0}
+	var jc: Dictionary = Hazards.config().jumpers
+	for r in rivals:
+		if not bool(r.get("reported", false)):
+			continue
+		var b := roundi(float(int(r.get("took", 0))) * float(SurfaceFinds.value("salvage")) * float(jc.get("bounty_share", 0.5)))
+		out.rep = int(out.rep) + int(jc.get("report_rep", 2))
+		out.bounty_cr = int(out.bounty_cr) + b
+		out.notes.append("The port authority fined the %s for claim-jumping your wreck%s" % [String(r.name),
+				": a bounty of %s cr on the %d piece%s they took." % [ShipStats.commas(b), int(r.took), "" if int(r.took) == 1 else "s"] if b > 0 else ". They took nothing, so there's no bounty, just the satisfaction."])
 	if jumped > 0:
 		out.rep = int(out.rep) + int(cfg().get("jump_rep", -2))
 		var who := ""

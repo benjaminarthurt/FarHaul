@@ -45,6 +45,7 @@ var heat_base_kw := 0.0
 var engine_heat_kw := 0.0
 var cooling_kw := 0.0
 var heat_mj := 0.0               # stored heat above ambient
+var storm_cooling := 0.0         # share of the radiators' cooling a solar storm is taking away (HazardWatch)
 var overheated := false
 # Body and trouble
 var radius_m := 6.0
@@ -154,7 +155,7 @@ func _fault_level(starts_at_hull: float) -> float:
 
 ## The radiators still working: cracked panels shed less heat from 75% hull down.
 func cooling_now_kw() -> float:
-	return cooling_kw * (1.0 - _fault_level(_fault("cooling_from_hull", 0.75)) * _fault("cooling_loss_at_zero", 0.5))
+	return cooling_kw * (1.0 - _fault_level(_fault("cooling_from_hull", 0.75)) * _fault("cooling_loss_at_zero", 0.5)) * (1.0 - storm_cooling)
 
 
 ## Tonnes an hour leaking from the tanks: nothing above 50% hull, rising to the full rate at 0%.

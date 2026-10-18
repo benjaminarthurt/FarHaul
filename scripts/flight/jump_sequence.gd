@@ -158,6 +158,8 @@ func _arrive_in_system() -> void:
 	sc._jump_result = Session.commit_jump()
 	if bool(sc._jump_result.get("ok", false)) and sc.crew_c != null:
 		sc.crew_c.after_jump(float(sc._jump_result.get("hours", 0.0)))   # the drive's wear, and the crew's work on the way
+	if bool(sc._jump_result.get("ok", false)) and sc.hazard_c != null:
+		sc.hazard_c.after_jump(sc._jump_result.get("hazards", {}))   # storms at either end, debris on the lane
 	sc.station.visible = false
 	sc.station_label.text = String(sc.job.destination).to_upper()
 	var h := hash(String(sc.job.get("dest_system", "")))

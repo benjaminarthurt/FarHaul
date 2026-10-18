@@ -6,7 +6,7 @@ The radio and aboard lines are recorded with Chatterbox TTS, using reference voi
 |---|---|
 | `voiced.json` | How each game line is spoken, and the value sets (berths, fines, tonnes...) to say in every variation. Edit this. |
 | `species_lines.py` | The aliens' own wording of every line (Kesh formal, Ilyan clipped, Vey warm, Orun "we"), written into comms.json and passengers.json. Edit here and rerun. |
-| `build_lines.py` | Expands `voiced.json` into `lines.json`: 1,200 lines with ids, the species' own lines among them. Checks them against the game's data. |
+| `build_lines.py` | Expands `voiced.json` into `lines.json`: 1,260 lines with ids, the species' own lines among them. Checks them against the game's data. |
 | `make_refs.py` | Builds 10–15 s reference clips and `catalog.csv` from the datasets. |
 | `voice.bat`, `setup_torch.py` | The Windows front end: setup, download, refs, then the generator's commands. |
 | `generate.py` | Records the lines into `assets/audio/voice/` as OGG, with the `index.json` the game reads. |

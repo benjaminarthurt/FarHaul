@@ -101,6 +101,7 @@ var pax_c: PassengersAboard    ## the passengers, in the beds they paid for (scr
 var comms_c: Comms             ## the radio: traffic control, other ships, distress calls (scripts/comms/comms.gd)
 var comms_panel: CommsPanel    ## and on screen, Y anywhere aboard (scripts/comms/comms_panel.gd)
 var traffic_c: Traffic         ## other ships and derelicts (scripts/flight/traffic.gd)
+var hazard_c: HazardWatch      ## solar storms and debris fields (scripts/flight/hazard_watch.gd)
 var land_c: Landing            ## descents, lift-offs and the moon coming and going (scripts/flight/landing.gd)
 var world_c: SpaceScenery      ## sky, sun, motes and the station (scripts/flight/space_scenery.gd)
 var hud_c: FlightHud           ## builds and refreshes the readouts (scripts/flight/flight_hud.gd)
@@ -131,6 +132,7 @@ func _init() -> void:
 	land_c = Landing.new(self)
 	world_c = SpaceScenery.new(self)
 	traffic_c = Traffic.new(self)
+	hazard_c = HazardWatch.new(self)
 
 
 func _ready() -> void:
@@ -156,6 +158,7 @@ func _ready() -> void:
 			_setup_transfer()
 	elif LocalSpace.is_surface(String(Session.profile.get("port_id", ""))):
 		_begin_surface_free()   # the helm taken on the moon: sitting on the pad
+	hazard_c.setup()   # the weather, and any debris across the run
 	if Session.walk_aboard:
 		Session.walk_aboard = false
 		get_up.call_deferred()
@@ -410,6 +413,7 @@ func _process(delta: float) -> void:
 	pax_c.step()
 	comms_c.step(minf(delta, 0.05) * float(_warp()), delta)
 	traffic_c.step(minf(delta, 0.05) * float(_warp()))
+	hazard_c.step(minf(delta, 0.05) * float(_warp()))
 	view.set_damage(model.damage)
 	_apply_pose()
 	_update_hud()

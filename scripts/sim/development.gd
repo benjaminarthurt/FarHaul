@@ -109,6 +109,9 @@ static func day_turned(sim: EconomySim) -> void:
 		else:
 			var need := need_t(s)
 			var npc := float(health.get(sys, 1.0)) * exp(luck) * exp(-k * (float(s.score) - float(s.anchor)))
+			var storm := Hazards.storm_at(sys, sim.now_hour())
+			if not storm.is_empty():   # the haulers sat the storm out in port
+				npc *= 1.0 - float(Hazards.config().storms.get("npc_supply_cut", 0.8)) * float(storm.intensity)
 			var r := npc + you / maxf(0.01, need)
 			var inertia := minf(1.0, sqrt(float(cfg.get("inertia_need_t", 12.0)) / maxf(0.01, need)))   # big places turn slowly
 			var step := clampf(g * inertia * (r - 1.0), -float(cfg.max_fall_per_day), float(cfg.max_rise_per_day))

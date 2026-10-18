@@ -38,6 +38,7 @@ func _person(role: String, skill: int) -> Dictionary:
 
 
 func _run() -> void:
+	Hazards.off = true   # no storms or debris: this is about the people (tests/test_hazards.gd has those)
 	print("people looking for work")
 	var a := Crew.candidates("roosevelt_orbital_freight", 5, 1.0)
 	var b := Crew.candidates("roosevelt_orbital_freight", 5, 1.0)

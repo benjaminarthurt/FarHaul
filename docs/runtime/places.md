@@ -14,7 +14,8 @@ Each system's places are built in its own style (architecture, tier and role): s
 [identity.md](identity.md). Since 0.17.0 a place's tier is its size now, which grows and shrinks with how
 well it's supplied, and a small place has fewer services: passengers from frontier, crew from outer. An
 abandoned place has only a fuel pump, its fittings to strip and the gate. See
-[development.md](development.md).
+[development.md](development.md). A solar storm here, raging or forecast, shows on screen and at the freight
+desk (since 0.18.0: [hazards.md](hazards.md)).
 
 Every place also has a **terminal** (the old station menu, also on T) and a **gate** or airlock back to
 your ship.

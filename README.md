@@ -216,7 +216,7 @@ fonts or art to license.
 
 ## Voices
 
-The radio calls and the passengers' lines are recorded, 2,465 clips in `assets/audio/voice/`, made
+The radio calls and the passengers' lines are recorded, 2,633 clips in `assets/audio/voice/`, made
 with `tools/voice/` (see [tools/voice/README.md](tools/voice/README.md): `voice.bat setup`, `download`,
 `refs`, `cast`, `run`, `review`). The game picks a clip by the line it's saying (`scripts/comms/voice_bank.gd`)
 and falls back to the generated babble for anything not recorded, or when Settings turns recorded
@@ -236,6 +236,14 @@ fuel and, at the top, its own shipyard. Neglect works too, down to an empty shel
 on and fittings worth stripping. Systems follow their sites, slower, and make and need more freight as
 they grow. Trade report, page 5, shows who's growing and why. How it works:
 [docs/runtime/development.md](docs/runtime/development.md).
+
+## Danger, without combat
+
+Debris fields lie across some routes for a month at a time: see them coming on a run you fly and go round,
+slow down, or let the autopilot thread them. Solar storms come and go in every system, more on the frontier,
+sometimes forecast, sometimes only on your sensors, sometimes not at all; in port you're shielded, out there
+the radiators cook, and the other haulers sit them out, so the outposts go short. Some salvage crews ignore
+your claim beacon; report them for a bounty. How it works: [docs/runtime/hazards.md](docs/runtime/hazards.md).
 
 ## Docs
 

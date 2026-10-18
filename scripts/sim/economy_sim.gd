@@ -633,7 +633,13 @@ func _eligible(c: Dictionary, k: Dictionary) -> bool:
 	for s in k["systems"]:
 		if not (s in c["network"]):
 			return false
+		if not dev.is_empty() and not Hazards.storm_at(String(s), now_hour()).is_empty():
+			return false   # a solar storm on the way: the haulers hold in port till it's past (in a game only)
 	return true
+
+## Hours since day 0 of the calendar (the clock storms keep).
+func now_hour() -> int:
+	return start_day * 24 + hour
 
 func _dispatch_carriers() -> void:
 	var offered: Array = []

@@ -45,6 +45,7 @@ it's open; N is ignored while typing in a text field or with the pause menu up.
   site: a bar from abandoned to core with the canon size ticked, the stage, an arrow for which way it's
   going over the last week, and why ("short: traffic brings 78% of the 5 t a day it needs", "you bring
   67% of it"). Then what grew, shrank, emptied or was resettled anywhere in the last 30 days, and every
-  system's stage. `TradeData.growth(sim, system)`.
+  system's stage, or its space weather instead when it has a storm raging (red) or forecast (amber, with
+  the day) (`TradeData._weather`, since 0.18.0). `TradeData.growth(sim, system)`.
 
 A one-time concourse hint ("trade", Hints) points at N after the first delivery.

@@ -96,6 +96,24 @@ LINES = {
         "news_empty": [
             ["{place} has been abandoned. Everyone has left. The record will remember who stopped coming.", "A site nearby has been abandoned. Everyone has left. The record will remember who stopped coming."],
             ["Nobody remains at {place}. Its fittings are unattended.", "Nobody remains at a site nearby. Its fittings are unattended."]],
+        "storm_advice": [
+            "Advisory: a solar storm is in progress. All vessels are to remain in port. Enter, and stay.",
+            "Freighter, the storm is upon us. We are keeping every ship in our care. Come in and wait."],
+        "news_storm": [
+            ["The weather office warns of a solar storm here, {when}. Shelter is a duty to your ship.", "The weather office warns of a solar storm here soon. Shelter is a duty to your ship."],
+            ["A storm is coming, {when}. Radiators suffer in it. We will be in port.", "A storm is coming soon. Radiators suffer in it. We will be in port."]],
+        "rival_jump": [
+            ["We see your beacon on the {wreck}. We see no patrol. We will be brief.", "We see your beacon. We see no patrol. We will be brief."],
+            ["Your beacon is noted. It is not respected. Keep clear of our cutters.", "Your beacon is noted. It is not respected. Keep clear of our cutters."]],
+        "rival_jump_no": [
+            "No. That is the whole answer.",
+            "We heard you. The answer has not changed."],
+        "rival_report_stay": [
+            "Report us, then. They must catch us first, and they are slow.",
+            "File your report. We will be gone before it is read."],
+        "rival_report_go": [
+            "A patrol is coming? Then we are leaving. This is not an apology.",
+            "Paperwork. Very well. We withdraw."],
         "news_none": [
             "There is no news. That is good news.",
             "Nothing to report. All is holding."],
@@ -217,6 +235,24 @@ LINES = {
         "news_empty": [
             ["{place}: abandoned. Fittings still there.", "One site, abandoned. Fittings still there."],
             ["{place}, empty. Pumps run. Nothing else.", "A site, empty. Pumps run. Nothing else."]],
+        "storm_advice": [
+            "Advisory. Solar storm. Dock and stay docked.",
+            "Storm active. Everyone holds. Come in. Wait."],
+        "news_storm": [
+            ["Storm forecast here, {when}. Shelter. Radiators fail otherwise.", "Storm forecast here. Soon. Shelter. Radiators fail otherwise."],
+            ["Storm, {when}. We'll be in port. Sensible.", "Storm, soon. We'll be in port. Sensible."]],
+        "rival_jump": [
+            ["Your beacon, on the {wreck}. No patrol. Fast job.", "Your beacon. No patrol. Fast job."],
+            ["Beacon noted. Ignored. Keep clear.", "Beacon noted. Ignored. Keep clear."]],
+        "rival_jump_no": [
+            "No.",
+            "Still no. Stop transmitting."],
+        "rival_report_stay": [
+            "Report it. Patrol's hours out. We're minutes.",
+            "Call it in. We'll be gone. Efficient."],
+        "rival_report_go": [
+            "Patrol inbound. Leaving.",
+            "Paperwork. Not worth it. Off."],
         "news_none": [
             "No news. Efficient day.",
             "Nothing. Quiet."],
@@ -338,6 +374,24 @@ LINES = {
         "news_empty": [
             ["{place} is empty now. They all left. It's a sad stretch of water.", "A site near here is empty now. They all left. It's a sad stretch of water."],
             ["Nobody at {place} any more. Take what's left, but take it kindly.", "Nobody at one of the sites any more. Take what's left, but take it kindly."]],
+        "storm_advice": [
+            "Advisory: there's a solar storm on. Come in and stay in. Everyone's waiting it out together.",
+            "The storm's up, freighter. We're keeping everyone in harbour. Come in and wait with us."],
+        "news_storm": [
+            ["The weather people say a storm's coming here, {when}. Find shelter, and tell whoever's behind you.", "The weather people say a storm's coming here soon. Find shelter, and tell whoever's behind you."],
+            ["Storm, {when}. Radiators boil in it. We'll all be in port, like sensible fish.", "Storm coming soon. Radiators boil in it. We'll all be in port, like sensible fish."]],
+        "rival_jump": [
+            ["We saw your beacon on the {wreck}. No patrol, though. We'll take a little and go.", "We saw your beacon. No patrol, though. We'll take a little and go."],
+            ["Beacons are just lights, friend. The current takes what it likes. So do we.", "Beacons are just lights, friend. The current takes what it likes. So do we."]],
+        "rival_jump_no": [
+            "No, friend. Sorry.",
+            "We heard you. It's still no."],
+        "rival_report_stay": [
+            "Report us if you like. The patrol swims slower than we do.",
+            "Go on and call it in. We'll be downstream by then."],
+        "rival_report_go": [
+            "A patrol? Then we're leaving. No hard feelings.",
+            "Paperwork. Oh, the paperwork. We're going."],
         "news_none": [
             "No news. Calm water.",
             "Nothing worth the airtime. Quiet, everywhere."],
@@ -459,6 +513,24 @@ LINES = {
         "news_empty": [
             ["{place} is empty. All of them left at once, the way we would.", "A site nearby is empty. All of them left at once, the way we would."],
             ["Nobody is at {place}. We checked. Twice. Together.", "Nobody is at one of the sites. We checked. Twice. Together."]],
+        "storm_advice": [
+            "Advisory: we are all having a solar storm. Everyone is in port. Come in and be in port with us.",
+            "The storm is up. We are keeping all of us in. Come in and wait. Together."],
+        "news_storm": [
+            ["We are all hearing a storm is coming here, {when}. We will be in port. All of us.", "We are all hearing a storm is coming here soon. We will be in port. All of us."],
+            ["Storm, {when}. Our radiators hate it. So do we.", "Storm coming soon. Our radiators hate it. So do we."]],
+        "rival_jump": [
+            ["We see your beacon on the {wreck}. We see no patrol. We will all be quick.", "We see your beacon. We see no patrol. We will all be quick."],
+            ["We have discussed your beacon. We decided to ignore it. All of us.", "We have discussed your beacon. We decided to ignore it. All of us."]],
+        "rival_jump_no": [
+            "No. We voted.",
+            "We heard you. We voted again. Still no."],
+        "rival_report_stay": [
+            "Report us. We will all be gone before they arrive.",
+            "Call it in. We are already packing. Slowly."],
+        "rival_report_go": [
+            "A patrol? We are all leaving now. Together.",
+            "Paperwork. We do not like paperwork. Goodbye."],
         "news_none": [
             "No news. We are as surprised as you.",
             "Nothing. Quiet out here. Too quiet for us."],
