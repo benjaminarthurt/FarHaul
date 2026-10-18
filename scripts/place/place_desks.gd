@@ -43,6 +43,8 @@ func _fill(id: String) -> void:
 			_desk_store()
 		"gate":
 			_desk_gate()
+		"strip":
+			_desk_strip()
 
 
 func _desk_freight(id: String) -> void:
@@ -56,7 +58,7 @@ func _desk_freight(id: String) -> void:
 			if bool(r.ok):
 				sc.get_tree().reload_current_scene())
 		return
-	if id == "freight":
+	if id == "freight" and Session.site_has("passengers"):
 		_passengers_section(true)
 	var c := Session.active_contract()
 	var here := String(Session.profile.get("port_id", ""))
@@ -331,6 +333,10 @@ func _crew_section() -> void:
 
 func _desk_fuel() -> void:
 	var mult := Session.site_fuel_mult()
+	if Development.abandoned(Session.sim, String(Session.profile.get("port_id", ""))):
+		sc._clear_panel("Fuel pump", "Everyone left. The pump didn't. It charges %d%% of the system price, because nobody's here to argue with it." % roundi(mult * 100.0))
+		sc.panel_list.add_child(Brand.note("Hull: %d%%. No repairs out here; the yard went with the people." % roundi(Session.hull() * 100.0), 15))
+		return
 	sc._clear_panel("Fuel and repairs", "Fuel here costs %d%% of the system price (%s). You pay for every drop you burn when you leave or land." % [roundi(mult * 100.0),
 			"cheap: a fuel depot" if mult < 0.95 else ("dear: it has to come up from the surface or down from orbit" if mult > 1.2 else "the usual")])
 	sc.panel_list.add_child(Brand.note("Hull: %d%%. %s" % [roundi(Session.hull() * 100.0), _hull_words(Session.hull())], 15))
@@ -482,9 +488,13 @@ static func _hull_words(h: float) -> String:
 
 func _desk_bar() -> void:
 	sc._clear_panel("Bar and bunks", "Captains and crews drift through between jobs. Some have work that never reaches the board, for reasons they'd rather not discuss.")
-	_crew_section()
+	if Session.site_has("crew"):
+		_crew_section()
+	else:
+		sc.panel_list.add_child(Brand.note("Nobody here is looking for a berth: too few people to spare one. Crew sign on where there's a crowd to sign from.", 14))
 	_people_section()
-	_passengers_section(false)
+	if Session.site_has("passengers"):
+		_passengers_section(false)
 	sc.panel_list.add_child(Brand.heading("BUNKS", 15))
 	var idle := Session.active_contract().is_empty() and Session.sim != null and not Session.insolvent()
 	sc._action("RENT A BUNK AND WAIT A DAY", func() -> void:
@@ -494,6 +504,19 @@ func _desk_bar() -> void:
 			sc.get_tree().reload_current_scene()
 		else:
 			sc._say(String(r.message)), idle)
+
+
+## An abandoned site (frontier growth): strip what's left for salvage, and read how it got this way.
+func _desk_strip() -> void:
+	var id := String(Session.profile.get("port_id", ""))
+	var s := Development.site(Session.sim, id)
+	var since := Session.day() - int(s.get("since", Session.day()))
+	sc._clear_panel("Strip the fittings", "Abandoned %s. Nobody kept it supplied, so nobody stayed. The lights are on a timer and the timer is optimistic." % ("today" if since <= 0 else ("%d day%s ago" % [since, "" if since == 1 else "s"])))
+	sc._action("STRIP WHAT'S WORTH TAKING", func() -> void:
+		var r := Session.strip_fittings()
+		sc._say(String(r.message))
+		sc._refill())
+	sc.panel_list.add_child(Brand.note("Salvage parts aboard: %d. Any freight office or yard will buy them." % int(Session.profile.get("salvage", 0)), 14))
 
 
 func _desk_sell(title: String, note: String, rates: Dictionary) -> void:

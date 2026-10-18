@@ -87,6 +87,15 @@ LINES = {
         "news_wreck": [
             ["There is a dead ship {km} kilometres out: {wreck}. Its crew deserved better care.", "There is a dead ship out by the station. Its crew deserved better care."],
             ["We passed a wreck, {km} kilometres out. {wreck}. Nobody has seen to it.", "We passed a wreck on the way in. Nobody has seen to it."]],
+        "news_grew": [
+            ["{place} is growing. Someone has kept it supplied, and it shows.", "A site in this system is growing. Someone has kept it supplied, and it shows."],
+            ["We hear {place} has opened more berths. Care is rewarded.", "We hear a site nearby has opened more berths. Care is rewarded."]],
+        "news_shrank": [
+            ["{place} is failing. Its shelves were left empty. That is a failure of care.", "A site nearby is failing. Its shelves were left empty. That is a failure of care."],
+            ["{place} has closed desks. Fewer ships call. It is a shame.", "A site nearby has closed desks. Fewer ships call. It is a shame."]],
+        "news_empty": [
+            ["{place} has been abandoned. Everyone has left. The record will remember who stopped coming.", "A site nearby has been abandoned. Everyone has left. The record will remember who stopped coming."],
+            ["Nobody remains at {place}. Its fittings are unattended.", "Nobody remains at a site nearby. Its fittings are unattended."]],
         "news_none": [
             "There is no news. That is good news.",
             "Nothing to report. All is holding."],
@@ -199,6 +208,15 @@ LINES = {
         "news_wreck": [
             ["Wreck, {km} kilometres. {wreck}. Untouched.", "Wreck near the station. Untouched."],
             ["Debris field, {km} kilometres out. {wreck}. Mass going to waste.", "Wreck on the way in. Mass going to waste."]],
+        "news_grew": [
+            ["{place}: growing. Supply up. Good.", "One site, growing. Supply up. Good."],
+            ["{place} expanded. Efficient haulers somewhere.", "A site expanded. Efficient haulers somewhere."]],
+        "news_shrank": [
+            ["{place}: shrinking. Undersupplied. Wasteful.", "One site, shrinking. Undersupplied. Wasteful."],
+            ["{place} lost desks. Predictable.", "A site lost desks. Predictable."]],
+        "news_empty": [
+            ["{place}: abandoned. Fittings still there.", "One site, abandoned. Fittings still there."],
+            ["{place}, empty. Pumps run. Nothing else.", "A site, empty. Pumps run. Nothing else."]],
         "news_none": [
             "No news. Efficient day.",
             "Nothing. Quiet."],
@@ -311,6 +329,15 @@ LINES = {
         "news_wreck": [
             ["There's a dead ship {km} kilometres out. {wreck}. Somebody should see to it.", "There's a dead ship out by the station. Somebody should see to it."],
             ["We passed a wreck, {km} kilometres out. {wreck}. Sad, drifting thing.", "We passed a wreck on the way in. Sad, drifting thing."]],
+        "news_grew": [
+            ["{place} is growing. The current's been kind to it, and somebody kept it fed.", "A site near here is growing. The current's been kind to it, and somebody kept it fed."],
+            ["Heard {place} filled out. More hands, more mouths, more work for all of us.", "Heard a site near here filled out. More hands, more mouths, more work for all of us."]],
+        "news_shrank": [
+            ["{place} is drying up. Not enough coming in. It worries everyone downstream.", "A site near here is drying up. Not enough coming in. It worries everyone downstream."],
+            ["{place} is quieter every week. Somebody should take it something.", "A site near here is quieter every week. Somebody should take it something."]],
+        "news_empty": [
+            ["{place} is empty now. They all left. It's a sad stretch of water.", "A site near here is empty now. They all left. It's a sad stretch of water."],
+            ["Nobody at {place} any more. Take what's left, but take it kindly.", "Nobody at one of the sites any more. Take what's left, but take it kindly."]],
         "news_none": [
             "No news. Calm water.",
             "Nothing worth the airtime. Quiet, everywhere."],
@@ -423,6 +450,15 @@ LINES = {
         "news_wreck": [
             ["There is a dead ship {km} kilometres out: {wreck}. Nobody has gone in. We would.", "There is a dead ship out by the station. Nobody has gone in. We would."],
             ["We passed a wreck, {km} kilometres out. {wreck}. Somebody should fix it, or take it.", "We passed a wreck on the way in. Somebody should fix it, or take it."]],
+        "news_grew": [
+            ["We are all hearing that {place} is growing. We are pleased. We helped, probably.", "We are all hearing that a site nearby is growing. We are pleased. We helped, probably."],
+            ["{place} is bigger now. We counted the ships. All of us.", "A site nearby is bigger now. We counted the ships. All of us."]],
+        "news_shrank": [
+            ["We hear {place} is shrinking. We are worried together.", "We hear a site nearby is shrinking. We are worried together."],
+            ["{place} has fewer of us every week. We do not like it.", "A site nearby has fewer of us every week. We do not like it."]],
+        "news_empty": [
+            ["{place} is empty. All of them left at once, the way we would.", "A site nearby is empty. All of them left at once, the way we would."],
+            ["Nobody is at {place}. We checked. Twice. Together.", "Nobody is at one of the sites. We checked. Twice. Together."]],
         "news_none": [
             "No news. We are as surprised as you.",
             "Nothing. Quiet out here. Too quiet for us."],

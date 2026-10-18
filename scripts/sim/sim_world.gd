@@ -37,6 +37,7 @@ static func create(profile: Dictionary, ship: ShipData) -> EconomySim:
 	c["level"] = SimShip.level(String(profile.get("difficulty", "normal")))
 	c["manual"] = true
 	sim._add_carrier(c)
+	Development.enable(sim)   # frontier growth: every site and system at its canon size from today
 	# Make sure there is something to haul on the first day: let the world run (at the sim's expense,
 	# not the player's) until the home port has freight on the board.
 	var cash0 := float(c["cash"])

@@ -282,3 +282,49 @@ static func player(sim: EconomySim) -> Dictionary:
 			"days": sim.day() - int(life.get("since_day", sim.day())), "share_30": mine / all if all > 0.0 else 0.0, "cr_30": mine, "t_30": t30,
 			"series": series, "facilities": fac.slice(0, 6), "facility_count": fac.size(), "systems": sys.slice(0, 6), "system_count": sys.size(),
 			"rank": rank, "companies": cos.size()}
+
+
+## Frontier growth (Development), for the Growth page: the system you're in, site by site; what changed
+## lately; and every system's size and direction.
+static func growth(sim: EconomySim, here_system: String) -> Dictionary:
+	if not Development.on(sim):
+		return {"off": true}
+	var sites := []
+	for n in LocalSpace.nodes(here_system):
+		var id := String(n.id)
+		var s := Development.site(sim, id)
+		if s.is_empty():
+			continue
+		sites.append(_site_row(sim, id, String(n.name), s))
+	var changes := []
+	for e in Development.recent(sim, 30):
+		changes.append({"name": String(LocalSpace.node(String(e.site)).get("name", e.site)), "system_name": system_name(String(e.system_id)),
+				"from": int(e.from), "to": int(e.to), "ago": sim.day() - int(e.day), "up": int(e.to) > int(e.from)})
+	var systems := []
+	for sys in sim.dev.systems:
+		var s: Dictionary = sim.dev.systems[sys]
+		systems.append({"id": sys, "name": system_name(sys), "stage": Development.system_stage(sim, sys),
+				"stage_name": Development.stage_name(Development.system_stage(sim, sys)), "score": float(s.score), "canon": float(s.canon),
+				"trend": Development.trend(s), "here": sys == here_system})
+	systems.sort_custom(func(a, b) -> bool: return float(a.score) > float(b.score) if absf(float(a.score) - float(b.score)) > 0.001 else String(a.name) < String(b.name))
+	var sy: Dictionary = sim.dev.systems.get(here_system, {})
+	return {"system_name": system_name(here_system), "system_stage": Development.system_stage(sim, here_system),
+			"system_trend": Development.trend(sy) if not sy.is_empty() else 0.0, "sites": sites, "changes": changes, "systems": systems}
+
+
+static func _site_row(sim: EconomySim, id: String, name: String, s: Dictionary) -> Dictionary:
+	var st := Development.site_stage(sim, id)
+	var need := float(s.get("need", 0.0))
+	var you := float(s.get("you", 0.0))
+	var npc := float(s.get("npc", 1.0))
+	var tr := Development.trend(s)
+	var why := ""
+	if st == 0:
+		why = "abandoned %d days ago" % (sim.day() - int(s.get("since", sim.day())))
+	elif npc + (you / maxf(0.01, need)) >= 1.0:
+		why = "growing: supplied at %d%% of what it needs" % roundi((npc + you / maxf(0.01, need)) * 100.0) if tr > 0.01 else "holding steady"
+	else:
+		why = "short: traffic brings %d%% of the %s a day it needs" % [roundi(npc * 100.0), "%.0f t" % need if need >= 1.0 else "%.1f t" % need]
+	return {"id": id, "name": name, "stage": st, "stage_name": Development.stage_name(st), "score": float(s.score), "canon": float(s.canon),
+			"trend": tr, "need": need, "npc": npc, "you_share": clampf(you / maxf(0.01, need), 0.0, 9.0), "why": why,
+			"here": id == String(Session.profile.get("port_id", ""))}

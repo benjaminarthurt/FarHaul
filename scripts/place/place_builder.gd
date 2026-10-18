@@ -21,7 +21,7 @@ func _build_env() -> void:
 	env.glow_intensity = 0.7
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.55, 0.58, 0.65)
-	env.ambient_light_energy = 0.35
+	env.ambient_light_energy = 0.35 if not bool(sc.style.get("abandoned", false)) else 0.12
 	var we := WorldEnvironment.new()
 	we.environment = env
 	sc.add_child(we)
@@ -104,7 +104,7 @@ func _room(w: float, d: float, h: float, wall: Color, floor_col: Color, window :
 			var lamp := OmniLight3D.new()
 			lamp.position = Vector3(x, h - 0.6, z)
 			lamp.omni_range = 9.0
-			lamp.light_energy = 1.1
+			lamp.light_energy = 1.1 if not bool(sc.style.get("abandoned", false)) else (0.35 if (x / 8) % 3 == 0 else 0.0)   # empty: a lamp in three, on the emergency circuit
 			lamp.light_color = sc.style.get("lamp", Color(1.0, 0.94, 0.85))
 			sc.add_child(lamp)
 	(sc.walker.walls[0] as Array).append(Rect2(-w * 0.5 - 1.0, -d * 0.5 - 1.0, 1.0 + 0.15, d + 2.0))
@@ -349,14 +349,24 @@ func _build_concourse() -> void:
 	var face_n := Vector3(0, 0, -1)
 	var dz := hd - 1.8
 	var bar_x := w * 0.32
-	_desk("freight", "Freight office", Vector3(-w * 0.32, 0, dz), face_n, Color(0.95, 0.65, 0.2))
-	_desk("fuel", "Fuel and repairs", Vector3(-w * 0.11, 0, dz), face_n, Color(0.4, 0.8, 1.0))
-	if String(st.get("site_kind", "port")) == "port":
+	var gone := bool(st.get("abandoned", false))   # frontier growth: everyone left (scripts/sim/development.gd)
+	var here := String(Session.profile.get("port_id", ""))
+	if gone:
+		_desk("strip", "Strip the fittings", Vector3(-w * 0.32, 0, dz), face_n, Color(0.55, 0.5, 0.45), false)
+		_desk("fuel", "Fuel pump", Vector3(-w * 0.11, 0, dz), face_n, Color(0.3, 0.55, 0.7), false)
+	else:
+		_desk("freight", "Freight office", Vector3(-w * 0.32, 0, dz), face_n, Color(0.95, 0.65, 0.2))
+		_desk("fuel", "Fuel and repairs", Vector3(-w * 0.11, 0, dz), face_n, Color(0.4, 0.8, 1.0))
+	var yard := String(st.get("site_kind", "port")) == "port"
+	if here != "":
+		yard = Development.has(Session.sim, here, "yard")
+	if yard:
 		_desk("yard", "Shipyard", Vector3(w * 0.09, 0, dz), face_n, Color(0.9, 0.85, 0.4))
-	_desk("bar", String(st.bar_name), Vector3(bar_x, 0, dz), face_n, Color(0.85, 0.35, 0.3))
+	if not gone:
+		_desk("bar", String(st.bar_name), Vector3(bar_x, 0, dz), face_n, Color(0.85, 0.35, 0.3))
 	for k in 4:   # bar stools
 		_box(Vector3(bar_x - 3.0 + k * 2.0, 0.4, dz - 1.5), Vector3(0.45, 0.8, 0.45), Color(0.6, 0.25, 0.2))
-	var asking := Session.people_here() if Session.slot >= 0 else []
+	var asking: Array = Session.people_here() if Session.slot >= 0 and not gone else []
 	var jackets := [Color(0.3, 0.5, 0.75), Color(0.55, 0.7, 0.35), Color(0.7, 0.45, 0.65)]
 	var desk_xs := [-w * 0.32, -w * 0.11, w * 0.09]
 	var spots := []
@@ -430,10 +440,15 @@ func _build_hab() -> void:
 	dome.position = Vector3(0, 4.5, 0)
 	dome.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	sc.add_child(dome)
-	_desk("dispatch", "Dispatch", Vector3(0, 0, -8.2), Vector3(0, 0, 1), Color(0.95, 0.65, 0.2))
-	_desk("lab", "Survey lab", Vector3(8.2, 0, -2), Vector3(-1, 0, 0), Color(0.4, 1.0, 0.8))
-	_desk("store", "Suit store", Vector3(8.2, 0, 5), Vector3(-1, 0, 0), Color(0.6, 0.6, 1.0))
-	_desk("fuel", "Pad fuel and repairs", Vector3(0, 0, 8.2), Vector3(0, 0, -1), Color(0.4, 0.8, 1.0))
+	var gone := bool(sc.style.get("abandoned", false))
+	if gone:
+		_desk("strip", "Strip the fittings", Vector3(0, 0, -8.2), Vector3(0, 0, 1), Color(0.55, 0.5, 0.45), false)
+		_desk("fuel", "Pad fuel pump", Vector3(0, 0, 8.2), Vector3(0, 0, -1), Color(0.3, 0.55, 0.7), false)
+	else:
+		_desk("dispatch", "Dispatch", Vector3(0, 0, -8.2), Vector3(0, 0, 1), Color(0.95, 0.65, 0.2))
+		_desk("lab", "Survey lab", Vector3(8.2, 0, -2), Vector3(-1, 0, 0), Color(0.4, 1.0, 0.8))
+		_desk("store", "Suit store", Vector3(8.2, 0, 5), Vector3(-1, 0, 0), Color(0.6, 0.6, 1.0))
+		_desk("fuel", "Pad fuel and repairs", Vector3(0, 0, 8.2), Vector3(0, 0, -1), Color(0.4, 0.8, 1.0))
 	_box(Vector3(-2, 0.75, 1), Vector3(0.8, 1.5, 0.5), Color(0.16, 0.17, 0.2))
 	_box(Vector3(-2, 1.3, 1.26), Vector3(0.6, 0.4, 0.04), Color(0.3, 0.85, 1.0), false, true)
 	sc.desks.append({"id": "terminal", "label": "Base terminal", "pos": Vector3(-2, 0, 2)})
@@ -442,7 +457,8 @@ func _build_hab() -> void:
 	_walk_line(Vector3(-9, 0, 0), Vector3(7, 0, 0))
 	_freight_board(Vector3(3.5, 3.0, 0), Vector3(-1, 0, 0))
 	var crowd: Array = sc.style.get("crowd", ["human"])
-	_add_stroller([Vector3(-6, 0, -3), Vector3(4, 0, -5.5), Vector3(5, 0, 5.5), Vector3(-5, 0, 4)], Color(0.85, 0.85, 0.82), 6, String(crowd[0]))   # a technician in whites, starting across the room
+	if not gone:
+		_add_stroller([Vector3(-6, 0, -3), Vector3(4, 0, -5.5), Vector3(5, 0, 5.5), Vector3(-5, 0, 4)], Color(0.85, 0.85, 0.82), 6, String(crowd[0]))   # a technician in whites, starting across the room
 	_gate(Vector3(-9.8, 0, 0), Vector3(1, 0, 0), "AIRLOCK  PAD 1")
 	_big_sign(_place_name(), Vector3(0, 3.95, 9.8), PI)
 	sc.walker.pos = Vector3(-7.5, 0, 0)
@@ -453,8 +469,12 @@ func _build_hut() -> void:
 	_room(14.0, 9.0, 3.4, _tint(Color(0.62, 0.55, 0.4), "wall", 0.6), _tint(Color(0.25, 0.22, 0.18), "floor", 0.55), 1.0)
 	StyleDressing.dress_room(self, sc.style, 14.0, 9.0, 3.4, [Vector3(-6.4, 0, -3.9), Vector3(6.4, 0, -3.9)], Vector3(-6.8, 0, 0), -1.0)
 	_moon_outside(Vector3(0, 0, 4.5), Vector3(0, 0, 1))
-	_desk("foreman", "Foreman", Vector3(0, 0, -2.9), Vector3(0, 0, 1), Color(1.0, 0.55, 0.3))
-	_desk("exchange", "Ore and parts exchange", Vector3(5.4, 0, 1.5), Vector3(-1, 0, 0), Color(0.8, 0.7, 0.4))
+	var gone := bool(sc.style.get("abandoned", false))
+	if gone:
+		_desk("strip", "Strip the fittings", Vector3(0, 0, -2.9), Vector3(0, 0, 1), Color(0.55, 0.5, 0.45), false)
+	else:
+		_desk("foreman", "Foreman", Vector3(0, 0, -2.9), Vector3(0, 0, 1), Color(1.0, 0.55, 0.3))
+		_desk("exchange", "Ore and parts exchange", Vector3(5.4, 0, 1.5), Vector3(-1, 0, 0), Color(0.8, 0.7, 0.4))
 	_box(Vector3(1.5, 0.75, 3.6), Vector3(0.8, 1.5, 0.5), Color(0.16, 0.17, 0.2))
 	sc.desks.append({"id": "terminal", "label": "Camp terminal", "pos": Vector3(1.5, 0, 2.6)})
 	for i in 3:   # crates
@@ -462,7 +482,8 @@ func _build_hut() -> void:
 	_box(Vector3(-2.0, 0.75, -0.4), Vector3(1.8, 0.08, 1.0), Color(0.4, 0.33, 0.24))   # a table, a worker on a break
 	_box(Vector3(-2.0, 0.37, -0.4), Vector3(0.12, 0.74, 0.12), Color(0.25, 0.22, 0.2), false)
 	_box(Vector3(-2.0, 0.45, -1.25), Vector3(0.5, 0.06, 0.5), Color(0.3, 0.3, 0.32), false)
-	_person(Vector3(-2.0, 0, -1.2), Vector3(0, 0, 1), Color(0.75, 0.45, 0.2), true)
+	if not gone:
+		_person(Vector3(-2.0, 0, -1.2), Vector3(0, 0, 1), Color(0.75, 0.45, 0.2), true)
 	for i in 4:   # suit lockers on the back wall
 		_box(Vector3(2.6 + i * 0.7, 1.0, -4.15), Vector3(0.6, 2.0, 0.4), Color(0.35, 0.4, 0.38))
 	_gate(Vector3(-6.8, 0, 0), Vector3(1, 0, 0), "AIRLOCK")
@@ -473,6 +494,12 @@ func _build_hut() -> void:
 ## Outside a hab or hut window: the moon's ground in its own colours, rocks, your ship on its pad, and
 ## the base's other buildings, lit by a hard sun of their own (visual layer 2), while the room stays
 ## lit from inside. `wall` is the window wall's centre and `out` points outward.
+## How many other buildings stand round a moon base or camp at a stage: one at the edge, three at
+## outer, eight at core; the empty shells stay when it's abandoned.
+static func outside_buildings(stage: int) -> int:
+	return [2, 1, 2, 3, 5, 8][clampi(stage, 0, 5)]
+
+
 func _moon_outside(wall: Vector3, out: Vector3) -> void:
 	var sys := Session.system_id()
 	var body := LocalSpace.body(sys)
@@ -513,15 +540,16 @@ func _moon_outside(wall: Vector3, out: Vector3) -> void:
 		mi.position = wall + out * rng.randf_range(12.0, 300.0) + across * rng.randf_range(-150.0, 150.0) + Vector3(0, r * 0.2, 0)
 		outside.add_child(mi)
 	var domes := Interiors.flat(Color(0.72, 0.71, 0.66), 0.9)
-	for k in 3:   # the base's other buildings
+	for k in outside_buildings(int(sc.style.get("stage", 3))):   # the base's other buildings: more as it grows
 		var dm := MeshInstance3D.new()
 		var sph := SphereMesh.new()
-		sph.radius = 7.0 - k * 1.5
-		sph.height = (7.0 - k * 1.5) * 2.0
+		var rad := maxf(2.5, 7.0 - (k % 4) * 1.5)
+		sph.radius = rad
+		sph.height = rad * 2.0
 		sph.is_hemisphere = true
 		sph.material = domes
 		dm.mesh = sph
-		dm.position = wall + out * (60.0 + k * 25.0) + across * (-45.0 + k * 38.0)
+		dm.position = wall + out * (60.0 + (k % 4) * 25.0 + (k / 4) * 70.0) + across * (-45.0 + (k % 4) * 38.0 + (k / 4) * 19.0)
 		outside.add_child(dm)
 	# Your ship on its pad, out beyond the glass.
 	if Session.slot >= 0:

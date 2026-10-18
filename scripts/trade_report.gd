@@ -9,12 +9,14 @@ extends CanvasLayer
 ##   Companies:  each carrier company's fleet, freight earned and share over 30 days, and cash; you
 ##               ranked among them.
 ##   Your mark:  what you've hauled, earned and relieved, your share of the trade, and who you've supplied.
-## 1-4 or Tab switch pages, N or Esc closes. The game pauses while it's open.
+##   Growth:     frontier growth (Development): this system's sites, how big, which way, and why; what
+##               grew and shrank lately; every system's size.
+## 1-5 or Tab switch pages, N or Esc closes. The game pauses while it's open.
 ## GameSettings.apply_scene adds one to each scene (attach()).
 
 const KEY := KEY_N
-const PAGES := ["overview", "flows", "companies", "you"]
-const TITLES := {"overview": "OVERVIEW", "flows": "FLOWS", "companies": "COMPANIES", "you": "YOUR MARK"}
+const PAGES := ["overview", "flows", "companies", "you", "growth"]
+const TITLES := {"overview": "OVERVIEW", "flows": "FLOWS", "companies": "COMPANIES", "you": "YOUR MARK", "growth": "GROWTH"}
 
 const BACK := Color(0.03, 0.04, 0.06)
 const PLATE := Color(0.065, 0.075, 0.1)
@@ -132,6 +134,8 @@ func _load() -> void:
 			_data = {"rows": TradeData.companies(sim)}
 		"you":
 			_data = TradeData.player(sim)
+		"growth":
+			_data = TradeData.growth(sim, Session.system_id())
 
 
 func _input(event: InputEvent) -> void:
@@ -151,7 +155,7 @@ func _input(event: InputEvent) -> void:
 	match event.keycode:
 		KEY_ESCAPE:
 			close()
-		KEY_1, KEY_2, KEY_3, KEY_4:
+		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5:
 			show_page(PAGES[event.keycode - KEY_1])
 		KEY_TAB:
 			show_page(PAGES[(PAGES.find(page) + 1) % PAGES.size()])
@@ -234,7 +238,7 @@ func _draw_board() -> void:
 	_text(Vector2(24, 38), "TRADE REPORT", 24, AMBER)
 	var sub := "No game running, so no economy. Bliss." if sim == null else "Known space, day %d. What the freight does while you aren't looking." % SimWorld.day(sim)
 	_text(Vector2(24, 60), _fit(sub, 14, size.x - tabs.size.x - 60.0), 14, DIM)
-	_text(Vector2(24, size.y - 16), "N or Esc close    1-4 or Tab switch pages    the game waits while you read", 13, DIM)
+	_text(Vector2(24, size.y - 16), "N or Esc close    1-5 or Tab switch pages    the game waits while you read", 13, DIM)
 	if sim == null or _data.is_empty():
 		return
 	var area := Rect2(24, 84, size.x - 48, size.y - 84 - 36)
@@ -247,6 +251,8 @@ func _draw_board() -> void:
 			_draw_companies(area)
 		"you":
 			_draw_you(area)
+		"growth":
+			_draw_growth(area)
 
 
 ## A line of daily values, scaled to its own peak, in `r`.
@@ -564,3 +570,74 @@ func _draw_you(a: Rect2) -> void:
 		_text(Vector2(fx + fw - 80, yy), tonnes(float(f.t)), 13, GOODS, 80, HORIZONTAL_ALIGNMENT_RIGHT)
 		_text(Vector2(fx, yy + 17), String(f.system_name), 12, DIM)
 		yy += 42.0
+
+
+const STAGE_COL := [Color8(120, 110, 104), Color8(196, 120, 72), Color8(214, 168, 80), Color8(170, 196, 120), Color(0.35, 0.85, 1.0), Color8(230, 226, 214)]
+
+
+func _arrow(tr: float) -> String:
+	if tr > 0.03:
+		return "▲"
+	if tr < -0.03:
+		return "▼"
+	return "·"
+
+
+func _arrow_col(tr: float) -> Color:
+	return YOU if tr > 0.03 else (ALARM if tr < -0.03 else DIM)
+
+
+## Frontier growth: this system's sites on the left with a bar from abandoned to core (its canon size
+## marked), what changed lately in the middle, every system on the right.
+func _draw_growth(a: Rect2) -> void:
+	var d := _data
+	if bool(d.get("off", false)):
+		_text(a.position + Vector2(0, 30), "Nothing grows here. This world isn't keeping track.", 20, INK)
+		return
+	var lw := a.size.x * 0.46
+	var x := a.position.x
+	_heading(Vector2(x, a.position.y + 14), "%s  ·  %s %s" % [String(d.system_name).to_upper(), Development.stage_name(int(d.system_stage)).to_upper(), _arrow(float(d.system_trend))], lw)
+	var y := a.position.y + 46.0
+	var bar_x := x + lw * 0.42
+	var bar_w := lw * 0.3
+	for r in d.sites:
+		var col := YOU if bool(r.here) else INK
+		_text(Vector2(x, y), _fit(String(r.name), 15, lw * 0.4), 15, col)
+		board.draw_rect(Rect2(bar_x, y - 11, bar_w, 9), PLATE)
+		var f := clampf(float(r.score) / 5.5, 0.0, 1.0)
+		board.draw_rect(Rect2(bar_x, y - 11, maxf(2.0, bar_w * f), 9), STAGE_COL[int(r.stage)])
+		var cx := bar_x + bar_w * clampf(float(r.canon) / 5.5, 0.0, 1.0)
+		board.draw_line(Vector2(cx, y - 14), Vector2(cx, y + 1), DIM, 1.0)
+		_text(Vector2(bar_x + bar_w + 10, y), String(r.stage_name), 13, STAGE_COL[int(r.stage)])
+		_text(Vector2(x + lw - 16, y), _arrow(float(r.trend)), 15, _arrow_col(float(r.trend)))
+		var note := String(r.why)
+		if float(r.you_share) >= 0.05:
+			note += ";  you bring %d%% of it" % roundi(float(r.you_share) * 100.0)
+		_text(Vector2(x, y + 17), _fit(note, 12, lw - 8), 12, DIM)
+		y += 44.0
+	_text(Vector2(x, y + 6), _fit("Bars run from abandoned to core. The tick is where each one started.", 12, lw), 12, DIM)
+	# What changed.
+	var mx := x + lw + 24.0
+	var mw := a.size.x * 0.27
+	_heading(Vector2(mx, a.position.y + 14), "CHANGES, LAST 30 DAYS", mw)
+	var yy := a.position.y + 46.0
+	if (d.changes as Array).is_empty():
+		_text(Vector2(mx, yy), _fit("Nothing's changed size. Give it time.", 13, mw), 13, DIM)
+	for c in (d.changes as Array).slice(0, 12):
+		var verb := "grew to %s" % Development.stage_name(int(c.to)) if bool(c.up) else ("was abandoned" if int(c.to) == 0 else "shrank to %s" % Development.stage_name(int(c.to)))
+		if int(c.from) == 0:
+			verb = "was resettled"
+		_text(Vector2(mx, yy), _fit(String(c.name), 14, mw), 14, YOU if bool(c.up) else ALARM)
+		_text(Vector2(mx, yy + 17), _fit("%s, %s" % [verb, "today" if int(c.ago) == 0 else "%d day%s ago" % [int(c.ago), "" if int(c.ago) == 1 else "s"]], 12, mw), 12, DIM)
+		yy += 38.0
+	# Every system.
+	var sx := mx + mw + 24.0
+	var sw := a.end.x - sx
+	_heading(Vector2(sx, a.position.y + 14), "KNOWN SPACE", sw)
+	yy = a.position.y + 44.0
+	var rh := minf(24.0, (a.size.y - 60.0) / maxf(1.0, float((d.systems as Array).size())))
+	for r in d.systems:
+		_text(Vector2(sx, yy), _fit(String(r.name), 14, sw * 0.5), 14, YOU if bool(r.here) else INK)
+		_text(Vector2(sx + sw * 0.52, yy), _fit(String(r.stage_name), 13, sw * 0.38), 13, STAGE_COL[int(r.stage)])
+		_text(Vector2(sx + sw - 14, yy), _arrow(float(r.trend)), 14, _arrow_col(float(r.trend)))
+		yy += rh

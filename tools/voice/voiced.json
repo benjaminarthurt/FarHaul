@@ -77,6 +77,15 @@
     "comms:news_wreck": {"role": "ship", "radio": true, "say": [
       "There's a dead ship out by the station. Nobody's touched it yet.",
       "Saw a wreck on the way in. Not our business."]},
+    "comms:news_grew": {"role": "ship", "radio": true, "say": [
+      "One of the sites out here is growing. More ships calling, more work. Somebody's been keeping it fed.",
+      "Heard one of the sites out here got bigger. Somebody's been hauling there, and it shows."]},
+    "comms:news_shrank": {"role": "ship", "radio": true, "say": [
+      "One of the sites out here is shrinking. Half the desks are shut. Nobody's been bringing it what it needs.",
+      "One of the sites out here is going quiet. Fewer ships every week. Shame."]},
+    "comms:news_empty": {"role": "ship", "radio": true, "say": [
+      "One of the sites out here is empty. Last of them left. The pumps still work, if you're desperate.",
+      "Nobody at one of the sites out here any more. Strip it before someone else does."]},
     "comms:news_none": {"role": "ship", "radio": true, "say": [
       "Nothing worth the airtime. Quiet out.",
       "No news. Which is news, round here."]},

@@ -1890,6 +1890,66 @@
    "radio": true
   },
   {
+   "id": "comms:news_grew|0",
+   "file": "comms_news_grew_0",
+   "key": "comms:news_grew",
+   "index": 0,
+   "values": {},
+   "text": "One of the sites out here is growing. More ships calling, more work. Somebody's been keeping it fed.",
+   "role": "ship",
+   "radio": true
+  },
+  {
+   "id": "comms:news_grew|1",
+   "file": "comms_news_grew_1",
+   "key": "comms:news_grew",
+   "index": 1,
+   "values": {},
+   "text": "Heard one of the sites out here got bigger. Somebody's been hauling there, and it shows.",
+   "role": "ship",
+   "radio": true
+  },
+  {
+   "id": "comms:news_shrank|0",
+   "file": "comms_news_shrank_0",
+   "key": "comms:news_shrank",
+   "index": 0,
+   "values": {},
+   "text": "One of the sites out here is shrinking. Half the desks are shut. Nobody's been bringing it what it needs.",
+   "role": "ship",
+   "radio": true
+  },
+  {
+   "id": "comms:news_shrank|1",
+   "file": "comms_news_shrank_1",
+   "key": "comms:news_shrank",
+   "index": 1,
+   "values": {},
+   "text": "One of the sites out here is going quiet. Fewer ships every week. Shame.",
+   "role": "ship",
+   "radio": true
+  },
+  {
+   "id": "comms:news_empty|0",
+   "file": "comms_news_empty_0",
+   "key": "comms:news_empty",
+   "index": 0,
+   "values": {},
+   "text": "One of the sites out here is empty. Last of them left. The pumps still work, if you're desperate.",
+   "role": "ship",
+   "radio": true
+  },
+  {
+   "id": "comms:news_empty|1",
+   "file": "comms_news_empty_1",
+   "key": "comms:news_empty",
+   "index": 1,
+   "values": {},
+   "text": "Nobody at one of the sites out here any more. Strip it before someone else does.",
+   "role": "ship",
+   "radio": true
+  },
+  {
    "id": "comms:news_none|0",
    "file": "comms_news_none_0",
    "key": "comms:news_none",
@@ -4685,6 +4745,72 @@
    "species": "kesh"
   },
   {
+   "id": "comms:news_grew@kesh|0",
+   "file": "comms_news_grew-kesh_0",
+   "key": "comms:news_grew@kesh",
+   "index": 0,
+   "values": {},
+   "text": "A site in this system is growing. Someone has kept it supplied, and it shows.",
+   "role": "ship",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:news_grew@kesh|1",
+   "file": "comms_news_grew-kesh_1",
+   "key": "comms:news_grew@kesh",
+   "index": 1,
+   "values": {},
+   "text": "We hear a site nearby has opened more berths. Care is rewarded.",
+   "role": "ship",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:news_shrank@kesh|0",
+   "file": "comms_news_shrank-kesh_0",
+   "key": "comms:news_shrank@kesh",
+   "index": 0,
+   "values": {},
+   "text": "A site nearby is failing. Its shelves were left empty. That is a failure of care.",
+   "role": "ship",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:news_shrank@kesh|1",
+   "file": "comms_news_shrank-kesh_1",
+   "key": "comms:news_shrank@kesh",
+   "index": 1,
+   "values": {},
+   "text": "A site nearby has closed desks. Fewer ships call. It is a shame.",
+   "role": "ship",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:news_empty@kesh|0",
+   "file": "comms_news_empty-kesh_0",
+   "key": "comms:news_empty@kesh",
+   "index": 0,
+   "values": {},
+   "text": "A site nearby has been abandoned. Everyone has left. The record will remember who stopped coming.",
+   "role": "ship",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:news_empty@kesh|1",
+   "file": "comms_news_empty-kesh_1",
+   "key": "comms:news_empty@kesh",
+   "index": 1,
+   "values": {},
+   "text": "Nobody remains at a site nearby. Its fittings are unattended.",
+   "role": "ship",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
    "id": "comms:news_none@kesh|0",
    "file": "comms_news_none-kesh_0",
    "key": "comms:news_none@kesh",
@@ -7463,6 +7589,72 @@
    "index": 1,
    "values": {},
    "text": "Wreck on the way in. Mass going to waste.",
+   "role": "ship",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:news_grew@ilyan|0",
+   "file": "comms_news_grew-ilyan_0",
+   "key": "comms:news_grew@ilyan",
+   "index": 0,
+   "values": {},
+   "text": "One site, growing. Supply up. Good.",
+   "role": "ship",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:news_grew@ilyan|1",
+   "file": "comms_news_grew-ilyan_1",
+   "key": "comms:news_grew@ilyan",
+   "index": 1,
+   "values": {},
+   "text": "A site expanded. Efficient haulers somewhere.",
+   "role": "ship",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:news_shrank@ilyan|0",
+   "file": "comms_news_shrank-ilyan_0",
+   "key": "comms:news_shrank@ilyan",
+   "index": 0,
+   "values": {},
+   "text": "One site, shrinking. Undersupplied. Wasteful.",
+   "role": "ship",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:news_shrank@ilyan|1",
+   "file": "comms_news_shrank-ilyan_1",
+   "key": "comms:news_shrank@ilyan",
+   "index": 1,
+   "values": {},
+   "text": "A site lost desks. Predictable.",
+   "role": "ship",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:news_empty@ilyan|0",
+   "file": "comms_news_empty-ilyan_0",
+   "key": "comms:news_empty@ilyan",
+   "index": 0,
+   "values": {},
+   "text": "One site, abandoned. Fittings still there.",
+   "role": "ship",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:news_empty@ilyan|1",
+   "file": "comms_news_empty-ilyan_1",
+   "key": "comms:news_empty@ilyan",
+   "index": 1,
+   "values": {},
+   "text": "A site, empty. Pumps run. Nothing else.",
    "role": "ship",
    "radio": true,
    "species": "ilyan"
@@ -10251,6 +10443,72 @@
    "species": "vey"
   },
   {
+   "id": "comms:news_grew@vey|0",
+   "file": "comms_news_grew-vey_0",
+   "key": "comms:news_grew@vey",
+   "index": 0,
+   "values": {},
+   "text": "A site near here is growing. The current's been kind to it, and somebody kept it fed.",
+   "role": "ship",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:news_grew@vey|1",
+   "file": "comms_news_grew-vey_1",
+   "key": "comms:news_grew@vey",
+   "index": 1,
+   "values": {},
+   "text": "Heard a site near here filled out. More hands, more mouths, more work for all of us.",
+   "role": "ship",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:news_shrank@vey|0",
+   "file": "comms_news_shrank-vey_0",
+   "key": "comms:news_shrank@vey",
+   "index": 0,
+   "values": {},
+   "text": "A site near here is drying up. Not enough coming in. It worries everyone downstream.",
+   "role": "ship",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:news_shrank@vey|1",
+   "file": "comms_news_shrank-vey_1",
+   "key": "comms:news_shrank@vey",
+   "index": 1,
+   "values": {},
+   "text": "A site near here is quieter every week. Somebody should take it something.",
+   "role": "ship",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:news_empty@vey|0",
+   "file": "comms_news_empty-vey_0",
+   "key": "comms:news_empty@vey",
+   "index": 0,
+   "values": {},
+   "text": "A site near here is empty now. They all left. It's a sad stretch of water.",
+   "role": "ship",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:news_empty@vey|1",
+   "file": "comms_news_empty-vey_1",
+   "key": "comms:news_empty@vey",
+   "index": 1,
+   "values": {},
+   "text": "Nobody at one of the sites any more. Take what's left, but take it kindly.",
+   "role": "ship",
+   "radio": true,
+   "species": "vey"
+  },
+  {
    "id": "comms:news_none@vey|0",
    "file": "comms_news_none-vey_0",
    "key": "comms:news_none@vey",
@@ -13029,6 +13287,72 @@
    "index": 1,
    "values": {},
    "text": "We passed a wreck on the way in. Somebody should fix it, or take it.",
+   "role": "ship",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:news_grew@orun|0",
+   "file": "comms_news_grew-orun_0",
+   "key": "comms:news_grew@orun",
+   "index": 0,
+   "values": {},
+   "text": "We are all hearing that a site nearby is growing. We are pleased. We helped, probably.",
+   "role": "ship",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:news_grew@orun|1",
+   "file": "comms_news_grew-orun_1",
+   "key": "comms:news_grew@orun",
+   "index": 1,
+   "values": {},
+   "text": "A site nearby is bigger now. We counted the ships. All of us.",
+   "role": "ship",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:news_shrank@orun|0",
+   "file": "comms_news_shrank-orun_0",
+   "key": "comms:news_shrank@orun",
+   "index": 0,
+   "values": {},
+   "text": "We hear a site nearby is shrinking. We are worried together.",
+   "role": "ship",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:news_shrank@orun|1",
+   "file": "comms_news_shrank-orun_1",
+   "key": "comms:news_shrank@orun",
+   "index": 1,
+   "values": {},
+   "text": "A site nearby has fewer of us every week. We do not like it.",
+   "role": "ship",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:news_empty@orun|0",
+   "file": "comms_news_empty-orun_0",
+   "key": "comms:news_empty@orun",
+   "index": 0,
+   "values": {},
+   "text": "A site nearby is empty. All of them left at once, the way we would.",
+   "role": "ship",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:news_empty@orun|1",
+   "file": "comms_news_empty-orun_1",
+   "key": "comms:news_empty@orun",
+   "index": 1,
+   "values": {},
+   "text": "Nobody is at one of the sites. We checked. Twice. Together.",
    "role": "ship",
    "radio": true,
    "species": "orun"

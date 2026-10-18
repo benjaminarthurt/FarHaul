@@ -70,6 +70,9 @@ static func on_leg(sim: EconomySim, k: Dictionary, lot: Dictionary, c: Dictionar
 		_add(life, "cr", paid)
 		life["deliveries"] = int(life["deliveries"]) + 1
 		_add(life["systems"], b, t)
+		# frontier growth: freight into a system's port supplies it; freight out of one is its trade
+		Development.moved(sim, String(Worlds.primary_port(b).get("id", "")), t)
+		Development.moved(sim, String(Worlds.primary_port(a).get("id", "")), t, true)
 
 
 ## Goods reached the facility that ordered them. `before` is its shortage state for them beforehand;

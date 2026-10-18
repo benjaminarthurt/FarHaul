@@ -129,6 +129,9 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 	var here := node(node_id)
 	if here.is_empty():
 		return out
+	var grown := Development.on(Session.sim)   # frontier growth: busier sites post more, empty ones nothing
+	if grown and Development.abandoned(Session.sim, node_id):
+		return out
 	var b: Dictionary = config()["board"]
 	var window := day / (window_days if window_days > 0 else int(b["refresh_days"]))
 	var rng := RandomNumberGenerator.new()
@@ -140,6 +143,8 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 	for n in nodes(sys):
 		if String(n["id"]) == node_id:
 			continue
+		if grown and Development.abandoned(Session.sim, String(n["id"])):
+			continue   # nobody there to take it
 		if (bool(n.get("surface", false)) or bool(here.get("surface", false))) and not lander:
 			continue   # surface work only shows to a ship that can land
 		var reach := hop(String(here["kind"]), String(n["kind"]))
@@ -149,8 +154,17 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 	if others.is_empty():
 		return out
 	var mult := float(level.get("local_pay_mult", 1.0)) if pay_override < 0.0 else pay_override
-	for i in (int(b["jobs_per_site"]) if count < 0 else count):
-		var dest: Dictionary = others[rng.randi() % others.size()]
+	var jobs := int(b["jobs_per_site"]) if count < 0 else count
+	var weights := []   # a destination draws freight by its size against its canon size (all equal at canon)
+	var total_w := 0.0
+	if grown:
+		jobs = maxi(1, roundi(float(jobs) * clampf(sqrt(_growth(node_id)), 0.4, 3.0)))
+		for n in others:
+			var wgt := _growth(String(n["id"]))
+			weights.append(wgt)
+			total_w += wgt
+	for i in jobs:
+		var dest: Dictionary = others[rng.randi() % others.size()] if not grown else _pick(others, weights, total_w, rng)
 		var good: String = goods[rng.randi() % goods.size()]
 		var tonnes := snappedf(rng.randf_range(float(b["min_tonnes"]), float(b["max_tonnes"])), 0.5)
 		var spread := 1.0 + rng.randf_range(-1.0, 1.0) * float(b["variance"])
@@ -189,6 +203,25 @@ static func board(node_id: String, day: int, ship: Dictionary, level: Dictionary
 			"surface": surface,
 		})
 	return out
+
+
+## A site's size now against its canon size: 2 when it has grown a stage, 0.5 when it has shrunk one.
+static func _growth(site_id: String) -> float:
+	return Development.pull(Session.sim, site_id) / maxf(0.001, pow(2.0, Development.canon_score(site_id) - 2.0))
+
+
+static func _pick(others: Array[Dictionary], weights: Array, total: float, rng: RandomNumberGenerator) -> Dictionary:
+	var even := true
+	for w in weights:
+		even = even and absf(float(w) - float(weights[0])) < 1e-6
+	if even:   # nothing has grown or shrunk: the board is exactly the one it always was
+		return others[rng.randi() % others.size()]
+	var r := rng.randf() * total
+	for i in others.size():
+		r -= float(weights[i])
+		if r <= 0.0:
+			return others[i]
+	return others[others.size() - 1]
 
 
 static var _goods_cache: Array[String] = []

@@ -216,7 +216,7 @@ fonts or art to license.
 
 ## Voices
 
-The radio calls and the passengers' lines are recorded, 2,369 clips in `assets/audio/voice/`, made
+The radio calls and the passengers' lines are recorded, 2,465 clips in `assets/audio/voice/`, made
 with `tools/voice/` (see [tools/voice/README.md](tools/voice/README.md): `voice.bat setup`, `download`,
 `refs`, `cast`, `run`, `review`). The game picks a clip by the line it's saying (`scripts/comms/voice_bank.gd`)
 and falls back to the generated babble for anything not recorded, or when Settings turns recorded
@@ -226,6 +226,16 @@ voices off.
 University of Edinburgh, CC BY 4.0) and LibriTTS-R (Koizumi et al., Google, CC BY 4.0), built on LibriVox
 recordings. Voices generated with Chatterbox TTS by Resemble AI; every clip carries its inaudible
 watermark.
+
+## Frontier growth
+
+Every port, fuel depot, moon base, belt works and mining camp in known space has a size, and keeps it only
+as long as somebody keeps it supplied. The other carriers do most of that. You can do more: haul to a moon
+base for a few weeks and it grows a bigger concourse, more freight, passengers, crew for hire, cheaper
+fuel and, at the top, its own shipyard. Neglect works too, down to an empty shell with the pumps still
+on and fittings worth stripping. Systems follow their sites, slower, and make and need more freight as
+they grow. Trade report, page 5, shows who's growing and why. How it works:
+[docs/runtime/development.md](docs/runtime/development.md).
 
 ## Docs
 

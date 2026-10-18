@@ -515,6 +515,11 @@ func _news() -> String:
 		for row in TradeData.price_movers(Session.sim, 4):
 			if absf(float(row.change)) >= 3.0:
 				opts.append(_line("news_price", {"place": String(row.name), "dir": "up" if float(row.change) > 0.0 else "down", "pct": "%d%%" % roundi(absf(float(row.change)))}))
+		for e in Development.recent(Session.sim, 21, Session.system_id()):   # frontier growth: who grew, shrank or emptied
+			var key := "news_empty" if int(e.to) == 0 else ("news_grew" if int(e.to) > int(e.from) else "news_shrank")
+			var line := _line(key, {"place": String(LocalSpace.node(String(e.site)).get("name", e.site))})
+			opts.append(line)
+			opts.append(line)   # this week's news first: it's what everyone's talking about
 	if sc.traffic_c != null:
 		for d in sc.traffic_c.derelicts:
 			if not bool(d.deep):

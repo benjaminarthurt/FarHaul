@@ -114,6 +114,8 @@ static func load_slot(from_slot: int) -> bool:
 			data["profile"] = profile
 			SaveSlots.write(slot, data)
 	sim = SimWorld.restore(String(data["sim"])) if data.has("sim") else null
+	if sim != null and sim.dev.is_empty():   # saved before frontier growth: everywhere starts at its canon size now
+		Development.enable(sim)
 	if sim == null:   # older save: the world starts now, around the player's current ship
 		var ship := ShipData.new(ModuleLibrary.new())
 		if ship.from_json(JSON.stringify(data)):
@@ -716,12 +718,39 @@ static func crate_carried() -> Dictionary:
 static func site_fuel_mult(site_id: String = "") -> float:
 	var id := site_id if site_id != "" else String(profile.get("port_id", ""))
 	var kind := String(LocalSpace.node(id).get("kind", "port"))
-	return float(LocalSpace.config().get("site_fuel_price", {}).get(kind, 1.0))
+	return float(LocalSpace.config().get("site_fuel_price", {}).get(kind, 1.0)) * Development.price_mult(sim, id)   # dearer on the edge, cheaper as it grows
 
 
 static func site_repair_mult() -> float:
-	var kind := String(LocalSpace.node(String(profile.get("port_id", ""))).get("kind", "port"))
-	return float(LocalSpace.config().get("site_repair_rate", {}).get(kind, 1.0))
+	var id := String(profile.get("port_id", ""))
+	var kind := String(LocalSpace.node(id).get("kind", "port"))
+	return float(LocalSpace.config().get("site_repair_rate", {}).get(kind, 1.0)) * Development.price_mult(sim, id)
+
+
+## Whether the site you're at has a service at its size (frontier growth): freight, repairs,
+## passengers, crew, yard.
+static func site_has(service: String) -> bool:
+	return Development.has(sim, String(profile.get("port_id", "")), service)
+
+
+## Strip an abandoned site's fittings for salvage: a few parts, then nothing until it's been a while.
+static func strip_fittings() -> Dictionary:
+	var id := String(profile.get("port_id", ""))
+	if not Development.abandoned(sim, id):
+		return {"ok": false, "message": "People still work here. They'd notice."}
+	var cfg: Dictionary = Development.config().get("abandoned_salvage", {})
+	var every := int(cfg.get("every_days", 20))
+	var done: Dictionary = profile.get("stripped", {})
+	var last := int(done.get(id, -100000))
+	if day() - last < every:
+		return {"ok": false, "message": "You've had everything worth unbolting. Come back in %d days, when you've forgotten how little there was." % (every - (day() - last))}
+	var n := int(cfg.get("parts", 3))
+	profile["salvage"] = int(profile.get("salvage", 0)) + n
+	done = done.duplicate()
+	done[id] = day()
+	profile["stripped"] = done
+	save_profile()
+	return {"ok": true, "message": "Stripped %d salvage parts from what they left behind. They left in a hurry." % n}
 
 
 ## What fixing the hull costs here: all of it, or `amount` of it (a fraction of the whole hull).
@@ -1354,6 +1383,9 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 		sim.run_hours(hours)
 	sim._pay("world", SimWorld.PLAYER, float(payment))
 	SimStats.on_local(sim, system_id(), delivered, float(payment))
+	var moved_t := float(int(c.get("seats", 0))) * float(Development.config().get("passenger_t", 0.1)) if passengers else delivered
+	Development.moved(sim, String(c.destination_port_id), moved_t)   # frontier growth: supply here, trade where it came from
+	Development.moved(sim, String(c.get("origin_port_id", "")), moved_t, true)
 	var pc: Dictionary = sim.carriers[SimWorld.PLAYER]
 	pc["revenue"] = float(pc["revenue"]) + float(payment)
 	pc["trips"] = int(pc["trips"]) + 1
@@ -1405,9 +1437,18 @@ static func people_here() -> Array[Dictionary]:
 	var id := String(profile.get("port_id", ""))
 	if LocalSpace.node(id).is_empty():
 		return []
+	if Development.abandoned(sim, id):
+		return []
 	var st := ship_stats(loaded.ship)
-	return People.posted(id, day(), st, SimShip.level(String(profile.get("difficulty", "normal"))), profile.get("local_taken", []), int(profile.get("rep", 0)),
+	var out := People.posted(id, day(), st, SimShip.level(String(profile.get("difficulty", "normal"))), profile.get("local_taken", []), int(profile.get("rep", 0)),
 			func(cargo_t: float, dv: float) -> float: return float(local_trip_cost(st, cargo_t, dv).total))
+	if site_has("passengers"):
+		return out
+	var kept: Array[Dictionary] = []   # too small a place for anyone to be travelling from
+	for j in out:
+		if String(j.get("person_kind", "")) != "passenger":
+			kept.append(j)
+	return kept
 
 
 static func depart_active_contract(hard := false) -> Dictionary:

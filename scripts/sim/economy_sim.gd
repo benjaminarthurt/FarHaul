@@ -27,6 +27,8 @@ var orders: Dictionary = {}
 var contracts: Dictionary = {}
 var events: Array = []
 var stats: Dictionary = {}           # the trade report's history (SimStats): what moved, prices, the player's impact
+var dev: Dictionary = {}             # frontier growth (Development), on in a game only: sites' and systems' sizes
+var _scale: Dictionary = {}          # system -> how much its facilities make and use against canon (Development)
 var violations: Array = []
 var verbose := false
 var world_cash := 0.0                # the rest of the economy (fuel, fees, wages, household income)
@@ -402,6 +404,8 @@ func step_hour() -> void:
 		_generate_procurement()                 # generate_procurement + allocate_shipments
 		_update_markets()                       # update_markets
 		SimStats.day_turned(self)               # (reporting) prices and shortages for the trade report
+		Development.day_turned(self)            # frontier growth: sites and systems grow or shrink
+		_scale = {}
 		_company_decisions()                    # run_company_decisions
 		_escalate_open_contracts()              # generate_contract_offers (rate pressure)
 	_dispatch_carriers()                        # dispatch_npc_carriers
@@ -419,12 +423,21 @@ func run_hours(n: int) -> void:
 func run_days(n: int) -> void:
 	run_hours(n * 24)
 
+## How much a system's facilities make and use against canon (frontier growth); 1 with growth off.
+func scale(system_id: String) -> float:
+	if dev.is_empty():
+		return 1.0
+	if not _scale.has(system_id):
+		_scale[system_id] = Development.demand_scale(self, system_id)
+	return float(_scale[system_id])
+
 func _consume_and_produce() -> void:
 	for f in facilities.values():
+		var k := scale(String(f["system_id"]))
 		for com in f["items"]:
 			var it: Dictionary = f["items"][com]
 			if it["demand"] > 0.0:
-				var want: float = it["demand"] / 24.0
+				var want: float = it["demand"] * k / 24.0
 				var got := ledger.consume(f["id"], com, want)
 				it["consumed_today"] += want    # demand, not fulfilment: shortages must not shrink the forecast
 				if got < want - 1e-9:
@@ -432,7 +445,7 @@ func _consume_and_produce() -> void:
 					it["stockout_hours"] += 1
 			if it["produce"] > 0.0:
 				var room: float = it["max_stock"] - ledger.on_hand(f["id"], com)
-				var made := minf(it["produce"] / 24.0, maxf(room, 0.0))
+				var made := minf(it["produce"] * k / 24.0, maxf(room, 0.0))
 				if made > 0.0:
 					ledger.produce(f["id"], com, made)
 					_pay(f["id"], "world", made * it["unit_cost"])
@@ -1214,7 +1227,7 @@ func to_state(keep_days: int = 20) -> Dictionary:
 			"contracts": contracts, "violations": violations,
 			"ledger": {"entries": ledger.entries, "produced": ledger.produced_total,
 					"consumed": ledger.consumed_total, "initial": ledger.initial_total},
-			"events": events.slice(maxi(0, events.size() - 200)), "stats": stats}
+			"events": events.slice(maxi(0, events.size() - 200)), "stats": stats, "dev": dev}
 
 func load_state(st: Dictionary) -> void:
 	hour = int(st["hour"])
@@ -1233,6 +1246,8 @@ func load_state(st: Dictionary) -> void:
 	ledger.initial_total = st["ledger"]["initial"]
 	events = st.get("events", [])
 	stats = st.get("stats", {})
+	dev = st.get("dev", {})
+	_scale = {}
 	_rebuild_open_idx()
 
 ## Drop orders that finished more than `keep_days` ago, with their lots and contracts, so a long

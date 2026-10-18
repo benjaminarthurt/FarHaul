@@ -42,11 +42,9 @@ The ship builder came first because everything else reads from the ship it produ
 
 ### Next, in roughly this order (planned)
 
-14. **Recorded radio lines** (later): the fixed lines recorded with Chatterbox, several takes each so they
-    don't repeat.
-15. **Frontier growth**: outposts that grow when they're kept supplied (more demand, better services)
-    and shrink when they aren't. The economy sim's facilities are the starting point.
-16. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
+14. **Frontier growth**: every site grows when it's kept supplied and shrinks when it isn't, down to
+    abandoned; systems follow their sites, slower (**building** for 0.17.0, see below).
+15. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
     claim-jumpers at derelicts. Risks to plan around rather than fights.
 
 ## Built: ship builder architecture
@@ -186,8 +184,8 @@ The builder is a small game on its own, so it can be played and judged before fl
 
 - **Record everything fixed, speak no names.** Every comms and passenger line is recorded in every
   variation of its small value sets (berth 2 to 14, the fines, tonnes, crew, problem, species); names
-  of ships, places and prices are left out of the spoken line and stay in the subtitle. 1,170 lines, 58
-  speakers, 2,369 clips, 82 MB of OGG. Takes are accepted on Whisper's check alone once a voice has been
+  of ships, places and prices are left out of the spoken line and stay in the subtitle. 1,200 lines, 58
+  speakers, 2,465 clips, 80 MB of OGG. Takes are accepted on Whisper's check alone once a voice has been
   listened to and approved; a new voice, setting or kind of line gets listened to again.
 - **Licensed reference voices only.** VCTK and LibriTTS-R (CC BY 4.0, credited in Settings, the README
   and the site), not anyone's own voice or recordings scraped from elsewhere.
@@ -204,6 +202,43 @@ The builder is a small game on its own, so it can be played and judged before fl
   conceit (a second of their own language and a chirp before the English), and a sound per species done
   live on audio buses (octave layers, phaser, chorus, reverb) so it can be tuned without re-recording.
 - **The babble stays.** Anything unrecorded, and players who prefer it, get the generated voices.
+
+## Frontier growth (0.17.0)
+
+Decided with Ben, 2026-10-18:
+
+- **The economy drives it, not a script.** Every site (the main port, fuel depot, moon station, belt
+  works, moon base pad, mining camp, Sol's outer stations) has a size, and a size has a demand: tonnes
+  a day it needs brought in. Each day the site is supplied by the NPC traffic of its system and by you.
+  Supplied better than it needs, it grows; worse, it shrinks. The NPC share follows the system's real
+  supply health in the economy simulation (what share of its demand its shelves met, against what they
+  met when the game began), times a slow per-site fortune (good months and bad months), and falls off as
+  a site outgrows what the traffic is used to serving.
+- **What you do counts in full.** Every tonne you deliver to a site, or carry away from it, is supply
+  on top of the NPCs'. Small sites need little, so hauling exclusively to Luna grows it in weeks.
+- **No caps.** A site can grow past the biggest concourse the game draws, and its demand keeps rising.
+  It can also shrink to nothing: below the lowest stage it is **abandoned**. Its people leave, its desks
+  close, its freight stops, and what's left can be stripped for salvage. The pumps still work. An
+  abandoned site can be resettled if its system booms.
+- **Growth sticks, slowly.** What the traffic is used to serving drifts toward what a site actually is,
+  over about three months. Grow a site and the haulers learn to keep it fed; let it decline and they
+  learn to stop coming.
+- **Sites fast, systems slow.** A system's own size moves toward its canon size plus half its sites'
+  average growth, and toward better or worse supply health, over about a month. A system's size scales
+  everything its works make and its exchange uses in the economy simulation, so a growing system ships
+  and needs more freight, and if the haulers can't keep up, it stalls.
+- **Stages** are the canon tiers, plus abandoned: abandoned, extreme frontier, frontier, outer,
+  developed, core. Each site starts at its canon tier (the system's for its port, a step down for its
+  stations, two down for the pad and the camp).
+- **What a stage gives.** Freight, fuel and repairs from extreme frontier up, passengers from frontier,
+  crew for hire from outer, and fuel and repairs 5% cheaper per stage above outer, dearer below it. A main port
+  keeps its shipyard while anyone lives there (new games start at one); any other site opens one at
+  core. The concourse's size, crowd
+  and wear follow the stage, and so do the moon base's domes and the camp's huts.
+- **Seen in three places.** The trade report has a Growth page (every site's stage, which way it's
+  going, how well it's supplied and your share, and what changed lately); the place itself; and the
+  radio's news.
+- **Only in a game.** The economy's own calibration tests run without it, so its bands are unchanged.
 
 ## Open questions and next ideas
 

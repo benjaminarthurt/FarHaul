@@ -238,6 +238,13 @@ Affordability: after the 92,600 cr starter the captain holds about 127k / 57k / 
 
 Local runs can be flown (see flight.md): the dock's DEPART is the autopilot and charges the rocket-equation fuel; FLY THE RUN charges what the pilot actually burned. Towing after running dry costs `tow_fee_cr` (900) times the level's port-fee multiplier. The pay solver and the sublight stand-in assume the autopilot.
 
+## Frontier growth
+
+In a game, `EconomySim.dev` holds every site's and system's size (`Development`, docs/runtime/development.md).
+At midnight `Development.day_turned` reviews them, and each facility makes and uses `scale(system)` times its
+scenario figures: 1 at canon size, doubling per stage of growth. With `dev` empty (the calibration tests),
+`scale` is 1 everywhere and nothing changes.
+
 ## Reporting
 
 `EconomySim.stats` keeps a 30-day history and the player's lifetime totals for the trade report

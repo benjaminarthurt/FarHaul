@@ -43,6 +43,7 @@ const TIER := {
 	"outer": {"width": 36.0, "depth": 12.0, "walkers": 2, "wear": 0.45, "planters": false, "banners": false},
 	"frontier": {"width": 30.0, "depth": 11.0, "walkers": 1, "wear": 0.7, "planters": false, "banners": false},
 	"extreme_frontier": {"width": 26.0, "depth": 10.0, "walkers": 1, "wear": 0.9, "planters": false, "banners": false},
+	"abandoned": {"width": 26.0, "depth": 10.0, "walkers": 0, "wear": 1.0, "planters": false, "banners": false},
 }
 
 ## The planet below by role (and the home worlds by name): its colour.
@@ -130,20 +131,28 @@ static func for_system(system_id: String) -> Dictionary:
 	return out
 
 
-## The style for a site in a system: the system's own for its main port; a step smaller and rougher for
-## its fuel depot, belt works, moon station and Sol's outer-planet stations, which are working sites
-## rather than the front door.
+## A system's tier from its classification, before anything has grown or shrunk.
+static func canon_tier(system_id: String) -> String:
+	return _tier(Worlds.system(system_id).get("classification", []))
+
+
+## The style for a site in a system: the system's own architecture, at the site's size now (frontier
+## growth, scripts/sim/development.gd: a working site starts a step smaller and rougher than the
+## system's front door, and every site grows or shrinks from there, down to abandoned).
 static func for_site(port_id: String) -> Dictionary:
 	var n := LocalSpace.node(port_id)
 	var sys := String(n.get("system_id", "")) if not n.is_empty() else String(Worlds.port(port_id).get("system_id", Session.system_id()))
 	var st := for_system(sys).duplicate()
 	var kind := String(n.get("kind", "port")) if not n.is_empty() else "port"
 	st["site_kind"] = kind
+	var site_id := String(n.get("id", port_id))
+	var stage := Development.site_stage(Session.sim, site_id)
+	var t := Development.stage_id(stage)
+	st.merge(TIER[t], true)
+	st["tier"] = t
+	st["stage"] = stage
+	st["abandoned"] = stage == 0
 	if kind in LocalSpace.OUT_SITES:
-		var order := ["core", "developed", "outer", "frontier", "extreme_frontier"]
-		var t: String = order[mini(order.find(String(st.tier)) + 1, order.size() - 1)]
-		st.merge(TIER[t], true)
-		st["tier"] = t
 		st["bar_name"] = "Bar and bunks"
 		st["landmark"] = {}   # the system's landmark is at its main port, not out here
 		st["port_type"] = {"depot": "fuel_depot", "belt": "belt_works", "moon": "moon_station", "venus": "cloud_port",

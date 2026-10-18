@@ -5,7 +5,7 @@ freight office's READ THE TRADE REPORT). scripts/trade_report.gd (TradeReport, a
 to every scene but the title by GameSettings.apply_scene) draws it; scripts/trade_data.gd (TradeData)
 works out what to show; scripts/sim/sim_stats.gd (SimStats) keeps the history it reads.
 
-The game pauses while it's open. 1-4 or Tab switch pages; N or Esc closes. Keys go nowhere else while
+The game pauses while it's open. 1-5 or Tab switch pages; N or Esc closes. Keys go nowhere else while
 it's open; N is ignored while typing in a text field or with the pause menu up.
 
 ## History (SimStats, in EconomySim.stats, saved with the sim)
@@ -41,5 +41,10 @@ it's open; N is ignored while typing in a text field or with the pause menu up.
 - **Your mark**: tonnes delivered (between systems and in-system), money earned hauling, share of all
   freight paid over 30 days, rank among the companies, deliveries that reached a shelf running short,
   salvage and finds sold, takings day by day, where you've delivered and who you've supplied.
+- **Growth** (since 0.17.0): frontier growth (docs/runtime/development.md). The system you're in, site by
+  site: a bar from abandoned to core with the canon size ticked, the stage, an arrow for which way it's
+  going over the last week, and why ("short: traffic brings 78% of the 5 t a day it needs", "you bring
+  67% of it"). Then what grew, shrank, emptied or was resettled anywhere in the last 30 days, and every
+  system's stage. `TradeData.growth(sim, system)`.
 
 A one-time concourse hint ("trade", Hints) points at N after the first delivery.
