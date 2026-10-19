@@ -3,7 +3,8 @@
 Code: `scripts/sim/development.gd` (`Development`). Tuning: `data/runtime/development.json`. Since 0.17.0.
 
 Every site in known space (each system's main port, fuel depot, moon station, belt works, moon base pad,
-mining camp, and Sol's three outer stations: 111 in all) has a size, and grows or shrinks with how well
+mining camp, and Sol's three outer stations: 111 in all; since 0.19.0 also each main world's downport and
+landing field and Sol's Mars downport, 31 more, 142 in all) has a size, and grows or shrinks with how well
 it's supplied. Systems follow their sites, more slowly. It's on in a game only: `SimWorld.create` calls
 `Development.enable`, and an older save gets it on load. The economy's own calibration tests run without
 it (`EconomySim.dev` empty), so their bands don't move.

@@ -144,5 +144,6 @@ about 4.5 t on a heavy one, so heavy moons call for more legs. The descent headi
 
 ## Not yet
 
-- Atmospheres and rovers. (Landing away from the pads, at the outpost, the ice mine and the glass crater, is in `sites.md`.)
+- Rovers. (Landing away from the pads, at the outpost, the ice mine and the glass crater, is in `sites.md`.
+  Planets with air, their entries and downports, are in `planets.md`, since 0.19.0.)
 - Lift-jet torque: the jets push through the centre of mass wherever the legs are bolted.

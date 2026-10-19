@@ -368,7 +368,7 @@ func _show_contracts() -> void:
 		if bool(c.get("local", false)) and not board_stats.is_empty():
 			var trip := Session.local_trip_cost(board_stats, float(c.offer), float(c.dv_kms))
 			var lands := String(LocalSpace.node(String(c.destination_port_id)).get("kind", "")) == "moon" and float(board_stats.get("lift", 0.0)) > 0.0
-			line.text = (("SURFACE  %s" if bool(c.get("surface", false)) else "LOCAL  %s") + "  →  %s\n%.1f t  ·  %.1f km/s  ·  %d h  ·  %s cr/t  ·  up to %s cr, fuel about %s cr" + ("  ·  +%d%% if you land it" % roundi(float(SurfaceTerrain.config().get("surface_bonus", 0.25)) * 100.0) if lands else "") + "\nACCEPT & LOAD") % [
+			line.text = (("FRESH  %s" if bool(c.get("fresh", false)) else "PLANET  %s" if bool(c.get("planet", false)) else "SURFACE  %s" if bool(c.get("surface", false)) else "LOCAL  %s") + "  →  %s\n%.1f t  ·  %.1f km/s  ·  %d h  ·  %s cr/t  ·  up to %s cr, fuel about %s cr" + ("  ·  +%d%% if you land it" % roundi(float(SurfaceTerrain.config().get("surface_bonus", 0.25)) * 100.0) if lands else "") + "\nACCEPT & LOAD") % [
 				goods.name, _site_name(String(c.destination_port_id)), float(c.offer), float(c.dv_kms), int(c.hours),
 				ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate))), ShipStats.commas(roundi(float(trip.total)))]
 		else:

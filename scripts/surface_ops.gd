@@ -19,11 +19,15 @@ var hold_t := 0.0           ## seconds E has been held on a drill
 var site := ""              ## the surface site the ship is at: "pad" or "camp"
 var _blackout := false
 var _low_t := 0.0
+var open_air := false        ## on a planet whose air you can breathe: no tank to run down
+var planet := false          ## on a planet's surface (a downport or a field): no moon finds, no moon missions
 
 
 func setup(f: Node, at_site: String) -> void:
 	flight = f
 	site = at_site
+	planet = Planets.is_planet_kind(at_site)
+	open_air = planet and Planets.breathable(String(flight._system_id()), at_site, String(Session.profile.get("species", "human")))
 	_build_mission()
 	_build_unload()
 
@@ -264,7 +268,8 @@ func step(delta: float, running: bool) -> void:
 		return
 	var s := SurfaceWork.suit_cfg()
 	clock += delta
-	o2 -= delta * (float(s.get("run_o2_mult", 1.5)) if running else 1.0)
+	if not open_air:
+		o2 -= delta * (float(s.get("run_o2_mult", 1.5)) if running else 1.0)
 	if o2 < o2_max * float(s.get("low_o2_frac", 0.2)) and o2 > 0.0:   # the low-air warning, every few seconds
 		_low_t -= delta
 		if _low_t <= 0.0:
@@ -354,7 +359,7 @@ func scan() -> Dictionary:
 				var d: float = flight.suit.distance_to(p)
 				if d < best_d * 4.0:   # the mission's points always show
 					return _bearing("mission point", p, d)
-	for f in Session.finds_here():
+	for f in ([] if planet else Session.finds_here()):
 		if bool(f.taken):
 			continue
 		var p := Vector3(float(f.x), 0, float(f.z))
@@ -380,7 +385,10 @@ func hud_lines() -> PackedStringArray:
 	var jets := ""
 	if "jetpack" in owned:
 		jets = "    JETS  %d%%" % roundi(flight.suit.jet_fuel / float(SurfaceWork.suit_cfg().get("jet_fuel_s", 6.0)) * 100.0)
-	lines.append("AIR  %s%s%s" % [SurfaceWork.clock(o2), "  LOW: HEAD BACK" if low else "", jets])
+	if open_air:
+		lines.append("AIR  breathable: visor up%s" % jets)
+	else:
+		lines.append("AIR  %s%s%s" % [SurfaceWork.clock(o2), "  LOW: HEAD BACK" if low else "", jets])
 	var m := Session.mission()
 	if not m.is_empty():
 		if mission_here().is_empty():

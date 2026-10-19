@@ -68,6 +68,7 @@ const MOUSE_TURN := 0.0025     ## radians per pixel of mouse movement, times the
 const KEY_TURN := 1.8          ## radians per second with the arrow keys
 const FLY_HELP := "W/S throttle   Z cut   B braking thrusters   arrows pitch+yaw   Ctrl+arrows slide   Q/E roll   X autopilot stop   V course hold   R assist   C camera   F dock   J jump (when clear)   T traffic/tug   Y comms   , . time  / x1   M map   G get up   Esc menu"
 const WALK_HELP := "WASD walk   mouse or arrows look   Shift run   E use (helm, ladder, airlock)   Y comms   , . time  / x1   M map   Esc menu"
+const ENTRY_HELP := "arrows pitch+yaw   Q/E roll   keep the belly to the air   Space lift jets (they brake, belly first)   W/S main engine   T autopilot   , . time   C camera   Y comms   M map   Esc menu"
 const LAND_HELP := "Space lift jets   H hover hold   W/S main engine   arrows pitch+yaw   Q/E roll   T autoland   F unload (landed on the pad)   G get up   C camera   Y comms   M map   Esc menu"
 const EVA_HELP := "WASD drift   Space/Ctrl up/down   Shift more jet   mouse or arrows look   1 wrench  2 torch   hold E or click: fix a mark   Q at the hatch: back aboard   Esc menu"
 const SUIT_HELP := "WASD walk   Shift run   Space jump (hold for suit jets)   mouse or arrows look   E use   Q back aboard (at the hatch)   F10 menu"
@@ -89,6 +90,15 @@ var _dv_space := 0.0           ## the part of a run's delta-v spent in space (th
 var _ground_task := -1         ## the moon's ground mesh, built on a worker thread during the cruise
 var _ground_mesh: MeshInstance3D
 var _ground_terrain: SurfaceTerrain
+var _ground_kind := "pad"      ## the surface site kind the prebuilt ground is for
+var _orbit_refused := false    ## the climb to orbit was refused for want of fuel: wait for the ship to come back down
+var _ground_key := ""          ## which ground was prebuilt: "moon", "world" or "mars" (Landing.body_key)
+var _ground_far: ArrayMesh     ## a planet's far ground mesh, prebuilt with it
+var _scenery_key := ""         ## which ground is built in the scene now ("" none)
+var world: PlanetScenery       ## a planet's ground, sea, port, field and city, once the ship is coming down to one
+var _space_sky: Sky            ## the starfield, kept while a planet's sky is up
+var weather := {}              ## the weather at the planet site (Planets.weather)
+var entry_glow: MeshInstance3D ## the air burning bright on the windward side, coming in fast
 var _hazards_shown := 0
 var _hazard_t := -100.0
 var sounds: WorldAudio         ## room tone, engines, the suit's breathing, footsteps, cues
@@ -179,13 +189,21 @@ func _make_station(port_id := "") -> Node3D:
 ## A flown local run: undock from the origin site, fly clear, cruise to the destination (the clock can be
 ## sped up), then dock there.
 func _setup_transfer() -> void:
-	var o_s := String(job.get("origin_kind", "")) in LocalSpace.SURFACE
-	var d_s := String(job.get("dest_kind", "")) in LocalSpace.SURFACE
+	var ok := String(job.get("origin_kind", ""))
+	var dk := String(job.get("dest_kind", ""))
+	var o_s := ok in LocalSpace.SURFACE
+	var d_s := dk in LocalSpace.SURFACE
+	var same_ground := o_s and d_s and Landing.body_key(ok) == Landing.body_key(dk)   # a hop across one surface
 	var sdv := float(LocalSpace.config().get("surface_dv_kms", 1.8))
-	_dv_space = float(job.dv_kms) - (sdv if o_s else 0.0) - (sdv if d_s else 0.0)
+	var sys := _system_id()
+	var o_part := (Planets.up_dv(sys, ok) if Planets.is_planet_kind(ok) else sdv) if o_s else 0.0
+	var d_part := (float(Planets.config().surface.down_dv_kms) if Planets.is_planet_kind(dk) else sdv) if d_s else 0.0
+	_dv_space = float(job.dv_kms) - o_part - d_part
 	xfer = TransferFlight.plan(stats, maxf(_dv_space, 0.3), String(job.key))
-	if (String(job.get("dest_kind", "")) == "moon" or d_s) and model.lift_kn > 0.0 and not o_s:
-		_ground_task = WorkerThreadPool.add_task(_prebuild_ground, false, "moon ground")
+	if (dk == "moon" and model.lift_kn > 0.0 or d_s) and not same_ground:
+		_ground_key = Landing.body_key(dk if d_s else "pad")
+		_ground_kind = dk if d_s else "pad"
+		_ground_task = WorkerThreadPool.add_task(_prebuild_ground, false, "surface ground")
 	phase = "depart"
 	var dock_dir := Vector3(0.35, 0.15, 1.0).normalized()
 	# The destination lies about 35 degrees off the way the ship leaves the dock.
@@ -197,9 +215,9 @@ func _setup_transfer() -> void:
 	beacon.add_theme_color_override("font_color", Brand.AMBER)
 	hud.get_parent().add_child(beacon)
 	if o_s:
-		# Starting on the moon: sitting on the origin pad, lift off first.
+		# Starting on the surface: sitting on the origin pad, lift off first.
 		_begin_surface(String(job.get("origin_kind", "pad")))
-		if d_s:
+		if same_ground:
 			_aim_descent_at(String(job.get("dest_kind", "pad")))   # a hop across the surface
 			phase = "descent"
 		else:
@@ -385,6 +403,13 @@ func _process(delta: float) -> void:
 				else:
 					_begin_approach()
 				break
+			if phase == "entry" and _entry_over():
+				phase = "descent"   # low and slow enough: the landing, as over a moon
+				help.text = LAND_HELP
+			if model.autoland and not _beacon and _on_planet():   # the entry autopilot handed over at a field
+				model.autoland = false
+				hover_hold = true
+				say("Over the field, hovering. No beacon here: set her down yourself. H lets go of the hover.", 6.0)
 		if phase == "depart" and xfer != null and model.pos.length() > CLEAR_M:
 			if _dv_space <= 0.3 and String(job.get("dest_kind", "")) in LocalSpace.SURFACE:
 				_begin_descent()   # from the base's station straight down to the surface
@@ -392,8 +417,10 @@ func _process(delta: float) -> void:
 				phase = "cruise"
 				station.visible = false
 				model.station_solid = false
-		if phase == "ascent" and model.altitude() > float(model.land_cfg.get("ascent_clear_m", 1500.0)):
-			_reach_orbit()
+		if phase == "ascent" and model.altitude() > float(model.land_cfg.get("ascent_clear_m", 1500.0)) and not _orbit_refused:
+			_orbit_refused = not land_c._reach_orbit()
+		elif _orbit_refused and (model.landed or model.altitude() < float(model.land_cfg.get("ascent_clear_m", 1500.0)) - 300.0):
+			_orbit_refused = false
 		if phase == "cruise" or phase == "depart":
 			_wrap_markers()
 	if model.impacts != _impacts_seen:
@@ -402,6 +429,9 @@ func _process(delta: float) -> void:
 	var hit_world := model.crashed_into
 	model.crashed_into = ""
 	_check_hull()
+	if world != null and _on_surface():
+		land_c.update_planet(minf(delta, 0.05) * float(_warp()))
+	_update_entry_glow()
 	_wear_step(minf(delta, 0.05) * float(_warp()))
 	if hit_world != "":   # said last, so the hull's own warnings don't drown it out (they're on the HUD and the alerts)
 		if model.crashed_ship:
@@ -662,6 +692,10 @@ func _warp_limit() -> Dictionary:
 		return {"max": 1, "why": "Time compression starts %.0f km out: %.1f km to go" % [WARP_FROM_M / 1000.0, (WARP_FROM_M - model.pos.length()) / 1000.0]}
 	if phase == "approach":
 		return {"max": 1, "why": "No time compression on the approach: docking is real time"}
+	if phase == "entry" and model.altitude() > 25000.0:
+		return {"max": 5, "why": "Max x5 in the upper air"}
+	if (phase == "entry" or (phase == "descent" and _on_planet() and not model.landed)) and model.altitude() > 4000.0:
+		return {"max": 2, "why": "Max x2 coming down through the air"}
 	if phase != "cruise" and phase != "depart":
 		return {"max": 1, "why": "No time compression near the ground"}
 	if phase == "cruise" and xfer.brake_now(model) and not model.braking:
@@ -920,6 +954,15 @@ func _apply_pose() -> void:
 	elif walking:
 		camera.global_position = model.pos + model.basis * (view.position + walk.eye())
 		camera.global_basis = model.basis * walk.look_basis()
+	elif chase and _on_planet() and _on_surface():
+		# Over a planet the chase camera keeps the horizon level: behind the way she's going, a little above.
+		var head := Vector3(model.vel.x, 0, model.vel.z)
+		if head.length() < 3.0:
+			head = Vector3(-model.basis.z.x, 0, -model.basis.z.z)
+		head = head.normalized() if head.length() > 0.01 else Vector3.FORWARD
+		var r := float(stats.get("radius", 9.0))
+		camera.global_position = model.pos - head * r * 3.2 + Vector3.UP * r * 1.1
+		camera.look_at(model.pos + head * r * 2.0 - Vector3.UP * r * 0.3, Vector3.UP)
 	elif chase:
 		var back := model.basis * Vector3(0, 6.0, 26.0)
 		camera.global_position = model.pos + back
@@ -966,7 +1009,13 @@ func _unhandled_input(event: InputEvent) -> void:
 					return
 				if phase == "ascent":
 					auto_ascent = not auto_ascent and model.can_hover()
+				elif _on_planet() and not model.landed and (phase == "entry" or model.airspeed() > 30.0 or model.autoentry):
+					model.autoentry = not model.autoentry   # down through the air on the autopilot
+					model.autoland = false
+					if model.autoentry and not _beacon:
+						say("No beacon at the field: the autopilot brings her down near it and hands back to you for the last bit.", 5.0)
 				else:
+					model.autoentry = false
 					model.autoland = not model.autoland and model.can_hover() and _beacon
 				hover_hold = false
 				return
@@ -1106,7 +1155,12 @@ func _walk_prompt() -> void:
 # happen over the same ground.
 
 func _on_surface() -> bool:
-	return phase == "descent" or phase == "ascent"
+	return phase == "descent" or phase == "ascent" or phase == "entry"
+
+
+## Coming down to (or sitting on) a planet with air, not the moon.
+func _on_planet() -> bool:
+	return land_c.on_planet()
 
 
 func _system_id() -> String:
@@ -1114,12 +1168,82 @@ func _system_id() -> String:
 
 
 func _body() -> Dictionary:
-	return LocalSpace.body(_system_id())
+	return LocalSpace.body_at(_system_id(), _target_kind)
 
 
 func _make_terrain() -> SurfaceTerrain:
+	return _make_terrain_for(_target_kind)
+
+
+## The ground a surface site kind is on: the moon's, or a planet's (the downport and its field share one).
+func _make_terrain_for(kind: String) -> SurfaceTerrain:
 	var sys := _system_id()
+	if Planets.is_planet_kind(kind):
+		return PlanetTerrain.make_planet(sys, Landing.body_key(kind))
 	return SurfaceTerrain.make(sys + LocalSpace.SEP + "moon", [SurfaceFinds.camp_xz()] + SurfaceSites.pads(sys), SurfaceSites.craters(sys))
+
+
+## Over a planet: the entry is done once the ship is low and slow enough to land like anywhere else.
+func _entry_over() -> bool:
+	var e: Dictionary = Planets.config().entry
+	return (model.altitude() < float(e.descent_below_m) and model.airspeed() < float(e.descent_below_m_s)) or model.altitude() < 1500.0 or model.landed
+
+
+const GLOW_SHADER := """
+shader_type spatial;
+render_mode unshaded, blend_add, cull_back, depth_draw_never;
+uniform vec4 glow : source_color = vec4(1.0, 0.45, 0.15, 1.0);
+uniform float strength = 0.5;
+void fragment() {
+	float rim = 1.0 - abs(dot(normalize(NORMAL), normalize(VIEW)));
+	float flick = 0.85 + 0.15 * sin(TIME * 37.0 + UV.y * 40.0);
+	ALBEDO = glow.rgb * strength * (0.06 + 1.8 * rim * rim) * flick;
+}
+"""
+
+
+## The shock layer: a glow wrapped round the windward side while the air is heating the ship hard, from
+## orange to a hot pink-white as it gets worse.
+func _update_entry_glow() -> void:
+	var hot := clampf(model.heat_rate / 0.05, 0.0, 1.0) if not model.air.is_empty() and not model.landed else 0.0
+	if hot <= 0.01:
+		if entry_glow != null:
+			entry_glow.visible = false
+		return
+	if entry_glow == null:
+		entry_glow = MeshInstance3D.new()
+		var sp := SphereMesh.new()
+		sp.radius = 1.0
+		sp.height = 2.0
+		sp.radial_segments = 32
+		sp.rings = 16
+		var sh := Shader.new()
+		sh.code = GLOW_SHADER
+		var m := ShaderMaterial.new()
+		m.shader = sh
+		sp.material = m
+		entry_glow.mesh = sp
+		entry_glow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(entry_glow)
+	var r := float(stats.get("radius", 8.0))
+	var va := model.vel - model.wind
+	var into := va.normalized() if va.length() > 1.0 else Vector3.DOWN
+	entry_glow.visible = true
+	entry_glow.global_position = model.pos + into * r * 0.35
+	entry_glow.global_basis = Basis.looking_at(into, Vector3.UP if absf(into.dot(Vector3.UP)) < 0.98 else Vector3.RIGHT).scaled(Vector3(r * 1.05, r * 1.05, r * 0.75))
+	var m2 := (entry_glow.mesh as SphereMesh).material as ShaderMaterial
+	m2.set_shader_parameter("glow", Color(1.0, 0.42, 0.12).lerp(Color(1.0, 0.7, 0.85), clampf(hot * 1.3 - 0.4, 0.0, 1.0)))
+	m2.set_shader_parameter("strength", 0.15 + 1.4 * hot)
+
+
+func _build_world_ground() -> void:
+	world = PlanetScenery.new()
+	add_child(world)
+	var key := Landing.body_key(_target_kind)
+	var site := _system_id() + LocalSpace.SEP + key
+	world.build(_system_id(), _target_kind, model.terrain as PlanetTerrain, _ground_far if _ground_key == key else null,
+			Development.site_stage(Session.sim, site))
+	pad_label = world.pad_label
 
 
 func _pad_pos(kind: String) -> Vector3:
@@ -1210,8 +1334,12 @@ func _suit_prompt() -> void:
 
 ## Runs on a worker thread while the ship cruises, so the descent opens without a pause.
 func _prebuild_ground() -> void:
-	var t := _make_terrain()
-	_ground_mesh = MoonScenery.ground_mesh(t, model.land_cfg, _body())
+	var t := _make_terrain_for(_ground_kind)
+	if t is PlanetTerrain:
+		var tc: Dictionary = Planets.config().terrain
+		_ground_far = (t as PlanetTerrain).planet_mesh(Vector2.ZERO, float(tc.size_m), int(tc.far_cells), Planets.planet(_system_id(), Landing.body_key(_ground_kind)), true)
+	else:
+		_ground_mesh = MoonScenery.ground_mesh(t, model.land_cfg, LocalSpace.body(_system_id()))
 	_ground_terrain = t
 
 
@@ -1231,7 +1359,8 @@ func _mix_audio(_delta: float) -> void:
 	sounds.level("lift", 0.0 if outside else lift, 0.9 + 0.3 * lift)
 	sounds.level("ship_hum", 0.0 if outside else (1.0 if walking else 0.55))
 	var running := Input.is_key_pressed(KEY_SHIFT)
-	sounds.level("breath", (1.0 if running else 0.7) if outside or eva != null else 0.0, 1.15 if running else 1.0)
+	var visor_up := outside and ops != null and ops.open_air   # breathing the planet's own air: no suit hiss
+	sounds.level("breath", (1.0 if running else 0.7) if (outside and not visor_up) or eva != null else 0.0, 1.15 if running else 1.0)
 	var feet := Vector3.INF
 	var on_ground := true
 	if outside and suit != null:

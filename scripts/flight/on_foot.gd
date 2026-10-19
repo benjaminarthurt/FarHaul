@@ -663,7 +663,7 @@ func _eva_hud() -> void:
 
 ## The find within reach of the suit, or {}.
 func find_in_reach() -> Dictionary:
-	if sc.suit == null or Session.slot < 0:
+	if sc.suit == null or Session.slot < 0 or sc._on_planet():
 		return {}
 	var reach := float(SurfaceFinds.config().get("reach_m", 2.5))
 	for f in Session.finds_here():
@@ -709,7 +709,7 @@ func go_outside() -> bool:
 	sc.suit.face(sc.model.basis * out_dir)
 	if sc.ops == null:
 		sc.ops = SurfaceOps.new()
-		sc.moon.add_child(sc.ops)
+		(sc.world if sc._on_planet() else sc.moon).add_child(sc.ops)
 		sc.ops.setup(sc, sc._site_here())
 	sc.outside = true
 	sc.ops.begin_outing()
@@ -776,6 +776,11 @@ func _suit_input(event: InputEvent) -> void:
 
 ## Which surface site the ship is at: "pad" or "camp" (by the nearer pad).
 func _site_here() -> String:
+	if sc._on_planet():
+		var t := sc.model.terrain as PlanetTerrain
+		if sc._target_kind != "mars" and t != null and Vector2(sc.model.pos.x - t.field_xz.x, sc.model.pos.z - t.field_xz.y).length() < Vector2(sc.model.pos.x, sc.model.pos.z).length():
+			return "field"
+		return "mars" if sc._target_kind == "mars" else "world"
 	var c := SurfaceFinds.camp_xz()
 	return "camp" if Vector2(sc.model.pos.x - c.x, sc.model.pos.z - c.y).length() < Vector2(sc.model.pos.x, sc.model.pos.z).length() else "pad"
 

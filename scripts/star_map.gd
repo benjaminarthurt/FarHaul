@@ -20,13 +20,13 @@ const INK := Color8(230, 226, 214)
 const DIM := Color8(140, 146, 156)
 const FAINT := Color(0.55, 0.6, 0.7, 0.28)
 const BACK := Color(0.03, 0.04, 0.06)   # opaque: the flight readouts mustn't show through
-const NEAR := ["port", "depot", "moon", "pad", "camp"]   ## the sites round the main world, drawn in the close-up
+const NEAR := ["port", "depot", "moon", "pad", "camp", "world", "field"]   ## the sites round the main world, drawn in the close-up
 const ROUTE := Color(0.35, 0.85, 1.0)
 
 ## Real orbits for Sol, in AU; everything else is placed by type.
 const SOL_AU := {"mercury": 0.39, "venus": 0.72, "earth": 1.0, "mars": 1.52, "sol_belt": 2.7, "jupiter": 5.2, "saturn": 9.5}
 ## Where each site sits on the chart, by kind: next to the main world, on the moon, on the belt, or at a body.
-const SITE_AT := {"venus": "venus", "jovian": "jupiter", "saturn": "saturn"}
+const SITE_AT := {"venus": "venus", "jovian": "jupiter", "saturn": "saturn", "mars": "mars"}
 
 var source: Callable          ## returns the state the map draws (see above)
 var blocks_keys := false      ## true in ports: while the map is open, walking keys do nothing
@@ -263,6 +263,10 @@ static func site_positions(system_id: String) -> Dictionary:
 				at = moon + Vector2(-0.015, -0.01)
 			"camp":
 				at = moon + Vector2(0.02, -0.03)
+			"world":   # down on the main world itself
+				at = prim + Vector2(-0.012, 0.012)
+			"field":
+				at = prim + Vector2(0.014, -0.01)
 			"belt":
 				at = belt
 			_:

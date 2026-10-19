@@ -3,7 +3,8 @@
   "canon_status": "draft",
   "note": "ASSUMED. Who makes and who uses each freight good in the full known-space economy, read by tools/gen_known_space.py. Makers and users are system ids. Where markets.json already says a system is abundant in a good (stock 4+) it is added as a maker; where it says demand is strong (4+) or demand beats stock by 2 it is added as a user. Goods listed in 'hand_built' keep the hand-authored Hopewell chains and are not generated. 'skip' goods are not physical freight the simulation can carry. 'volume' is a multiplier on how many SCU of the good a typical user takes per day.",
   "hand_built": ["filters", "rare_minerals", "fuel", "platinum_group_metals"],
-  "skip": {"survey_data": "Information, not freight: zero volume. It will be a contract type of its own (survey missions), not hauled lots."},
+  "skip": {"survey_data": "Information, not freight: zero volume. It will be a contract type of its own (survey missions), not hauled lots.",
+    "fresh_produce": "Grown on the planets with air and sent up from their downports and fields on the local board only (data/runtime/planets.json \"fresh\"). It spoils, so the interstellar economy doesn't trade it."},
   "category_defaults": {
     "food":              {"makers": ["hesperus", "pelagos"], "users": ["sol", "new_houston", "concord", "keshar", "carver", "port_meridian"], "volume": 1.6},
     "agriculture":       {"makers": ["hesperus"], "users": ["new_houston", "concord", "carver", "bradbury"], "volume": 0.8},

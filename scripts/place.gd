@@ -49,7 +49,7 @@ func _ready() -> void:
 		Session.save_profile()
 	site = Session.port() if Session.slot >= 0 else {}
 	var k := String(LocalSpace.node(String(Session.profile.get("port_id", ""))).get("kind", "port"))
-	kind = "hab" if k == "pad" else ("hut" if k == "camp" else "concourse")
+	kind = "hab" if k == "pad" else ("hut" if k == "camp" or k == "field" else "concourse")   # a downport's terminal is a concourse
 	style = SystemStyle.for_site(String(Session.profile.get("port_id", "")))   # this system's look (scripts/identity)
 	_build_env()
 	walker = ShipWalk.new()
@@ -320,15 +320,28 @@ func _build_hud() -> void:
 	fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
+func _kind_name() -> String:
+	var k := String(LocalSpace.node(String(Session.profile.get("port_id", ""))).get("kind", ""))
+	match k:
+		"world", "mars":
+			return "Downport terminal"
+		"field":
+			return "Landing field shed"
+	return {"concourse": "Station concourse", "hab": "Moon base hab", "hut": "Mining camp"}[kind]
+
+
 func _refresh_info() -> void:
 	var lines := PackedStringArray([_place_name(),
-		"%s  ·  %s" % [String(Worlds.system(Session.system_id()).get("name", Session.system_id().capitalize())), {"concourse": "Station concourse", "hab": "Moon base hab", "hut": "Mining camp"}[kind]]])
+		"%s  ·  %s" % [String(Worlds.system(Session.system_id()).get("name", Session.system_id().capitalize())), _kind_name()]])
 	if Session.slot >= 0:
 		lines.append("Credits %s cr    Day %d    Hull %d%%" % [ShipStats.commas(int(Session.profile.credits)), Session.day(), roundi((1.0 - float(Session.profile.get("hull_damage", 0.0))) * 100.0)])
 		lines.append("Standing: %s" % People.standing(int(Session.profile.get("rep", 0))))
 		if Session.sim != null:
 			for st in Hazards.known(Session.system_id(), Session.sim.now_hour()):   # space weather, when there is any
 				lines.append("Solar storm %s" % Hazards.describe(st, Session.sim.now_hour()))
+			var here_kind := String(LocalSpace.node(String(Session.profile.get("port_id", ""))).get("kind", ""))
+			if Planets.is_planet_kind(here_kind):   # down on a planet: the weather outside
+				lines.append("Outside: %s" % Planets.describe_weather(Planets.weather(Session.system_id(), here_kind, Session.sim.now_hour())))
 		var c := Session.active_contract()
 		if not c.is_empty():
 			var due := ""

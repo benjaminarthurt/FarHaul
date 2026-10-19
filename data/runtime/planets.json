@@ -1,0 +1,204 @@
+{
+  "schema_version": "0.1.0",
+  "canon_status": "draft",
+  "note": "Planets with air (scripts/planets.gd, docs/runtime/planets.md). Every system's main world gets a downport on its surface (site kind 'world') near its city, and a rough landing field a few km off ('field'); Sol adds a downport on Mars ('mars'). Worlds come from data/world/worlds.json; cities from settlements.json and secondary_settlements.json, or named here where the canon has only a region. air.density is sea-level density against Earth's; scale_km is how fast it thins with height; breathable lists who can breathe it outside without a suit ('all' for everyone). Gravity is in g. Hops to and from a world are not the same both ways: coming down, the air does the braking (down_dv_kms); going up there is nothing for it but fuel (up_dv_kms, scaled by the square root of the world's gravity). Pay is figured on the climb either way, because a load brought down through the heat is not a cheaper load. Every number here is an assumption to tune.",
+  "kinds": {
+    "world": {"name": "Downport"},
+    "field": {"name": "Landing field"},
+    "mars": {"name": "Mars downport"}
+  },
+  "surface": {
+    "up_dv_kms": 2.3,
+    "down_dv_kms": 0.4,
+    "up_hours": 3,
+    "down_hours": 2,
+    "port_to_orbit_dv_kms": 0.2,
+    "field_hop_dv_kms": 0.8,
+    "field_hop_hours": 1,
+    "ascent_clear_m": 3000.0,
+    "surface_rate_mult": 1.6
+  },
+  "mars_hops": {
+    "port": {"dv_kms": 5.6, "hours": 60},
+    "depot": {"dv_kms": 5.0, "hours": 54},
+    "moon": {"dv_kms": 5.8, "hours": 62},
+    "belt": {"dv_kms": 3.4, "hours": 30},
+    "pad": {"dv_kms": 7.4, "hours": 64},
+    "camp": {"dv_kms": 7.4, "hours": 64},
+    "venus": {"dv_kms": 8.0, "hours": 96},
+    "jovian": {"dv_kms": 6.4, "hours": 66},
+    "saturn": {"dv_kms": 7.6, "hours": 90},
+    "world": {"dv_kms": 5.6, "hours": 62},
+    "field": {"dv_kms": 5.6, "hours": 63}
+  },
+  "entry": {
+    "start_altitude_m": 52000.0,
+    "start_speed_m_s": 1900.0,
+    "start_angle_deg": 13.0,
+    "aim_short_m": 2500.0,
+    "density_kg_m3": 1.225,
+    "cd_flat": 1.15,
+    "cd_nose": 0.45,
+    "heat_k": 6.9e-11,
+    "heat_nose_mult": 1.7,
+    "heat_shed_per_s": 0.012,
+    "heat_damage_per_s": 0.02,
+    "heat_wear_per_s": 0.03,
+    "shield_tolerance": 1.6,
+    "descent_below_m": 9000.0,
+    "descent_below_m_s": 260.0,
+    "autoland_cruise_m_s": 55.0,
+    "touchdown_speed_m_s": 3.0,
+    "landing_zone_m": 150.0,
+    "field_zone_m": 70.0,
+    "field_distance_m": 5200.0,
+    "sea_damage": 0.25
+  },
+  "terrain": {
+    "size_m": 40000.0,
+    "map_px": 1024,
+    "far_cells": 384,
+    "near_size_m": 3200.0,
+    "near_cells": 200,
+    "port_flat_m": 260.0,
+    "field_flat_m": 120.0,
+    "city_flat_m": 2400.0,
+    "city_distance_m": 4800.0
+  },
+  "weather": {
+    "window_hours": 6,
+    "kinds": {
+      "calm": {"wind_m_s": [0, 3], "gust": 0.2, "fog": 0.0, "name": "Calm"},
+      "breezy": {"wind_m_s": [4, 9], "gust": 0.35, "fog": 0.0, "name": "Breezy"},
+      "windy": {"wind_m_s": [10, 16], "gust": 0.5, "fog": 0.1, "name": "Strong winds"},
+      "gale": {"wind_m_s": [17, 26], "gust": 0.6, "fog": 0.25, "name": "Gale"},
+      "rain": {"wind_m_s": [5, 12], "gust": 0.45, "fog": 0.45, "name": "Rain"},
+      "dust": {"wind_m_s": [9, 18], "gust": 0.5, "fog": 0.6, "name": "Dust storm"},
+      "snow": {"wind_m_s": [4, 11], "gust": 0.4, "fog": 0.5, "name": "Snow"}
+    },
+    "solar_storm_gale": 0.6
+  },
+  "fresh": {
+    "commodity": "fresh_produce",
+    "share_of_jobs": 0.35,
+    "fresh_hours": 36,
+    "spoil_per_hour": 0.02,
+    "spoil_floor": 0.3,
+    "rate_mult": 1.35
+  },
+  "parts": {
+    "heavy_legs": {"lift_kn": 320.0, "mass_t": 2.6, "cost": 36000, "note": "the numbers live in module_library.gd; these are for the docs"},
+    "heat_shield": {"mass_t": 0.5, "cost": 8000}
+  },
+  "worlds": {
+    "sol": [
+      {"kind": "world", "world": "earth", "name": "Earth", "port": "Maasvlakte Downport", "city": "Rotterdam", "population": 9000000,
+        "gravity_g": 1.0, "air": {"density": 1.0, "scale_km": 8.5, "breathable": ["all"]},
+        "land": "coast", "relief_m": 120.0, "sea": true, "ground": [0.30, 0.38, 0.20], "high": [0.42, 0.42, 0.36], "rock": [0.36, 0.34, 0.31], "shore": [0.62, 0.58, 0.46], "water": [0.10, 0.22, 0.30],
+        "sky": [0.42, 0.62, 0.92], "haze": 0.5, "city_style": "old", "weather": ["calm", "breezy", "breezy", "windy", "rain", "rain", "gale"],
+        "field": {"name": "Flevo freight strip", "what": "polder strip"}},
+      {"kind": "mars", "world": "mars", "name": "Mars", "port": "Northern Corridor Downport", "city": "Acidalia Station", "population": 600000,
+        "gravity_g": 0.38, "air": {"density": 0.016, "scale_km": 11.0, "breathable": []},
+        "land": "desert", "relief_m": 320.0, "sea": false, "ground": [0.55, 0.30, 0.18], "high": [0.62, 0.40, 0.26], "rock": [0.36, 0.20, 0.13], "shore": [0.55, 0.30, 0.18], "water": [0.0, 0.0, 0.0],
+        "sky": [0.86, 0.62, 0.46], "haze": 0.35, "city_style": "domes", "weather": ["calm", "calm", "breezy", "breezy", "dust", "dust"]}
+    ],
+    "keshar": [
+      {"kind": "world", "world": "keshar_prime", "name": "Keshar Prime", "port": "Shelf Downport", "city": "Tarrask Shelf", "population": 14000000,
+        "gravity_g": 1.35, "air": {"density": 1.6, "scale_km": 7.0, "breathable": ["kesh"]},
+        "land": "coast", "relief_m": 260.0, "sea": true, "ground": [0.46, 0.40, 0.24], "high": [0.50, 0.44, 0.34], "rock": [0.40, 0.33, 0.26], "shore": [0.70, 0.62, 0.44], "water": [0.18, 0.28, 0.24],
+        "sky": [0.86, 0.74, 0.52], "haze": 0.7, "city_style": "kesh", "weather": ["calm", "breezy", "windy", "windy", "gale", "rain"],
+        "field": {"name": "Upland Works strip", "what": "works strip"}}
+    ],
+    "ilos": [
+      {"kind": "world", "world": "ilos_prime", "name": "Ilos Prime", "port": "Escarpment Downport", "city": "Lattice Reach", "population": 6000000,
+        "gravity_g": 0.55, "air": {"density": 1.35, "scale_km": 14.0, "breathable": ["ilyan"]},
+        "land": "escarpment", "relief_m": 900.0, "sea": false, "ground": [0.36, 0.34, 0.44], "high": [0.50, 0.48, 0.58], "rock": [0.30, 0.28, 0.36], "shore": [0.36, 0.34, 0.44], "water": [0.0, 0.0, 0.0],
+        "sky": [0.56, 0.52, 0.92], "haze": 0.65, "city_style": "spires", "weather": ["calm", "calm", "breezy", "windy", "rain"],
+        "field": {"name": "Deep Basin survey post", "what": "survey post"}}
+    ],
+    "veyara": [
+      {"kind": "world", "world": "veyara_prime", "name": "Veyara Prime", "port": "Arc Island Downport", "city": "Nine Currents", "population": 8000000,
+        "gravity_g": 0.92, "air": {"density": 1.1, "scale_km": 8.5, "breathable": ["all"]},
+        "land": "islands", "relief_m": 180.0, "sea": true, "ground": [0.26, 0.42, 0.30], "high": [0.40, 0.46, 0.38], "rock": [0.32, 0.34, 0.32], "shore": [0.76, 0.72, 0.58], "water": [0.08, 0.30, 0.36],
+        "sky": [0.44, 0.72, 0.82], "haze": 0.6, "city_style": "vey", "weather": ["calm", "breezy", "rain", "rain", "windy"],
+        "field": {"name": "Outer Arc platform", "what": "platform"}}
+    ],
+    "orun": [
+      {"kind": "world", "world": "orun_prime", "name": "Orun Prime", "port": "Junction Downport", "city": "Warm Junction", "population": 5000000,
+        "gravity_g": 0.88, "air": {"density": 0.95, "scale_km": 8.0, "breathable": ["all"]},
+        "land": "rock", "relief_m": 340.0, "sea": false, "ground": [0.50, 0.36, 0.24], "high": [0.58, 0.44, 0.30], "rock": [0.40, 0.28, 0.20], "shore": [0.50, 0.36, 0.24], "water": [0.0, 0.0, 0.0],
+        "sky": [0.94, 0.70, 0.46], "haze": 0.55, "city_style": "orun", "weather": ["calm", "breezy", "windy", "dust", "dust"],
+        "field": {"name": "Dust Flats relay", "what": "relay"}}
+    ],
+    "concord": [
+      {"kind": "world", "world": "concord_prime", "name": "Concord Prime", "port": "Exchange Belt Downport", "city": "Central Concord", "population": 12000000,
+        "gravity_g": 0.96, "air": {"density": 1.0, "scale_km": 8.5, "breathable": ["all"]},
+        "land": "plains", "relief_m": 140.0, "sea": true, "ground": [0.32, 0.42, 0.24], "high": [0.44, 0.46, 0.36], "rock": [0.36, 0.35, 0.32], "shore": [0.64, 0.60, 0.48], "water": [0.10, 0.24, 0.32],
+        "sky": [0.46, 0.66, 0.94], "haze": 0.5, "city_style": "towers", "weather": ["calm", "calm", "breezy", "windy", "rain"],
+        "field": {"name": "Inland Sea depot", "what": "depot strip"}}
+    ],
+    "new_houston": [
+      {"kind": "world", "world": "roosevelt", "name": "Roosevelt", "port": "New Houston Surface Port", "city": "New Houston", "population": 11800000,
+        "gravity_g": 0.84, "air": {"density": 1.05, "scale_km": 8.0, "breathable": ["all"]},
+        "land": "plains", "relief_m": 220.0, "sea": false, "ground": [0.40, 0.42, 0.36], "high": [0.52, 0.54, 0.55], "rock": [0.38, 0.38, 0.38], "shore": [0.40, 0.42, 0.36], "water": [0.0, 0.0, 0.0],
+        "sky": [0.60, 0.72, 0.92], "haze": 0.45, "city_style": "industrial", "weather": ["calm", "breezy", "windy", "snow", "snow", "gale"],
+        "field": {"name": "Truman Junction yard", "what": "rail yard"}}
+    ],
+    "hesperus": [
+      {"kind": "world", "world": "hesperus_prime", "name": "Hesperus Prime", "port": "Greenline Downport", "city": "Greenline", "population": 1900000,
+        "gravity_g": 0.91, "air": {"density": 1.0, "scale_km": 8.5, "breathable": ["all"]},
+        "land": "plains", "relief_m": 90.0, "sea": false, "ground": [0.44, 0.48, 0.22], "high": [0.40, 0.46, 0.26], "rock": [0.40, 0.38, 0.30], "shore": [0.44, 0.48, 0.22], "water": [0.0, 0.0, 0.0],
+        "sky": [0.48, 0.68, 0.96], "haze": 0.45, "city_style": "agri", "weather": ["calm", "calm", "breezy", "breezy", "rain", "windy"],
+        "field": {"name": "Rainmaker harvest strip", "what": "harvest strip"}}
+    ],
+    "iron_gate": [
+      {"kind": "world", "world": "iron_gate_prime", "name": "Iron Gate Prime", "port": "Keelward Downport", "city": "Keelward", "population": 7400000,
+        "gravity_g": 0.72, "air": {"density": 0.9, "scale_km": 9.0, "breathable": ["all"]},
+        "land": "rock", "relief_m": 300.0, "sea": false, "ground": [0.48, 0.42, 0.34], "high": [0.56, 0.50, 0.42], "rock": [0.36, 0.32, 0.28], "shore": [0.48, 0.42, 0.34], "water": [0.0, 0.0, 0.0],
+        "sky": [0.72, 0.68, 0.62], "haze": 0.55, "city_style": "industrial", "weather": ["calm", "breezy", "windy", "dust"],
+        "field": {"name": "Hammer Junction ore head", "what": "ore head"}}
+    ],
+    "bradbury": [
+      {"kind": "world", "world": "bradbury_prime", "name": "Bradbury Prime", "port": "Lowell Downport", "city": "Lowell", "population": 4300000,
+        "gravity_g": 0.68, "air": {"density": 0.6, "scale_km": 10.0, "breathable": ["all"]},
+        "land": "plateau", "relief_m": 600.0, "sea": false, "ground": [0.46, 0.40, 0.32], "high": [0.56, 0.52, 0.46], "rock": [0.36, 0.32, 0.28], "shore": [0.46, 0.40, 0.32], "water": [0.0, 0.0, 0.0],
+        "sky": [0.56, 0.72, 0.96], "haze": 0.3, "city_style": "research", "weather": ["calm", "calm", "breezy", "windy", "dust"],
+        "field": {"name": "Mariner Valley station", "what": "survey station"}}
+    ],
+    "pelagos": [
+      {"kind": "world", "world": "pelagos_prime", "name": "Pelagos Prime", "port": "Crosswater Downport", "city": "Crosswater", "population": 2600000,
+        "gravity_g": 0.94, "air": {"density": 1.15, "scale_km": 8.5, "breathable": ["all"]},
+        "land": "islands", "relief_m": 260.0, "sea": true, "ground": [0.24, 0.40, 0.22], "high": [0.30, 0.28, 0.26], "rock": [0.24, 0.22, 0.22], "shore": [0.72, 0.66, 0.52], "water": [0.06, 0.28, 0.40],
+        "sky": [0.44, 0.70, 0.96], "haze": 0.55, "city_style": "floating", "weather": ["calm", "breezy", "rain", "rain", "windy", "gale"],
+        "field": {"name": "Shoal City pier", "what": "pier"}}
+    ],
+    "tidemark": [
+      {"kind": "world", "world": "tidemark_prime", "name": "Tidemark Prime", "port": "Anchor Seven Downport", "city": "Anchor Seven", "population": 184000,
+        "gravity_g": 1.03, "air": {"density": 1.3, "scale_km": 8.0, "breathable": ["all"]},
+        "land": "ocean", "relief_m": 60.0, "sea": true, "ground": [0.26, 0.28, 0.26], "high": [0.30, 0.30, 0.30], "rock": [0.24, 0.24, 0.24], "shore": [0.40, 0.40, 0.38], "water": [0.06, 0.16, 0.22],
+        "sky": [0.40, 0.52, 0.70], "haze": 0.75, "city_style": "rigs", "weather": ["breezy", "windy", "rain", "rain", "gale", "gale"],
+        "field": {"name": "Rig Twelve", "what": "rig"}}
+    ],
+    "foundry": [
+      {"kind": "world", "world": "foundry_prime", "name": "Foundry Prime", "port": "Deepworks Downport", "city": "Deepworks", "population": 5100000,
+        "gravity_g": 1.08, "air": {"density": 0.5, "scale_km": 9.0, "breathable": []},
+        "land": "volcanic", "relief_m": 420.0, "sea": false, "ground": [0.24, 0.20, 0.18], "high": [0.34, 0.28, 0.24], "rock": [0.16, 0.13, 0.12], "shore": [0.24, 0.20, 0.18], "water": [0.0, 0.0, 0.0],
+        "sky": [0.82, 0.58, 0.44], "haze": 0.6, "city_style": "vents", "weather": ["calm", "breezy", "windy", "dust"],
+        "field": {"name": "Liftmouth pad", "what": "pad"}}
+    ],
+    "talos": [
+      {"kind": "world", "world": "talos_prime", "name": "Talos Prime", "port": "Hopewell Downport", "city": "Hopewell", "population": 51000,
+        "gravity_g": 0.79, "air": {"density": 0.55, "scale_km": 9.5, "breathable": ["all"]},
+        "land": "desert", "relief_m": 380.0, "sea": false, "ground": [0.52, 0.46, 0.38], "high": [0.62, 0.56, 0.50], "rock": [0.42, 0.36, 0.32], "shore": [0.52, 0.46, 0.38], "water": [0.0, 0.0, 0.0],
+        "sky": [0.66, 0.66, 0.84], "haze": 0.3, "city_style": "boomtown", "weather": ["calm", "breezy", "windy", "dust", "dust"],
+        "field": {"name": "Claim Camp Four", "what": "claim camp"}}
+    ],
+    "lastlight": [
+      {"kind": "world", "world": "lastlight_settlement", "name": "Lastlight", "port": "Beacon Downport", "city": "Beacon", "population": 7900,
+        "gravity_g": 0.87, "air": {"density": 0.7, "scale_km": 9.0, "breathable": ["all"]},
+        "land": "plains", "relief_m": 260.0, "sea": false, "ground": [0.40, 0.42, 0.40], "high": [0.58, 0.6, 0.62], "rock": [0.34, 0.34, 0.36], "shore": [0.40, 0.42, 0.40], "water": [0.0, 0.0, 0.0],
+        "sky": [0.56, 0.64, 0.84], "haze": 0.35, "city_style": "frontier", "weather": ["calm", "breezy", "windy", "snow", "snow"],
+        "field": {"name": "Reserve Post", "what": "outpost"}}
+    ]
+  }
+}

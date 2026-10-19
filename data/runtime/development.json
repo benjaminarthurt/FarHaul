@@ -28,7 +28,10 @@
     "jovian": 1,
     "saturn": 1,
     "pad": 2,
-    "camp": 2
+    "camp": 2,
+    "world": 0,
+    "field": 2,
+    "mars": 1
   },
   "demand_t_per_day": {
     "port": 10.0,
@@ -39,7 +42,10 @@
     "jovian": 3.0,
     "saturn": 3.0,
     "pad": 2.0,
-    "camp": 2.0
+    "camp": 2.0,
+    "world": 10.0,
+    "field": 2.0,
+    "mars": 4.0
   },
   "demand_doubles_per_stage": true,
   "growth_per_day": 0.06,

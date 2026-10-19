@@ -1362,6 +1362,650 @@
    "radio": true
   },
   {
+   "id": "comms:downport_cleared|0|berth=2",
+   "file": "comms_downport_cleared_0_berth-2",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Freighter, downport control. Pad two, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=3",
+   "file": "comms_downport_cleared_0_berth-3",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Freighter, downport control. Pad three, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=4",
+   "file": "comms_downport_cleared_0_berth-4",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Freighter, downport control. Pad four, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=5",
+   "file": "comms_downport_cleared_0_berth-5",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Freighter, downport control. Pad five, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=6",
+   "file": "comms_downport_cleared_0_berth-6",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Freighter, downport control. Pad six, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=7",
+   "file": "comms_downport_cleared_0_berth-7",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Freighter, downport control. Pad seven, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=8",
+   "file": "comms_downport_cleared_0_berth-8",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Freighter, downport control. Pad eight, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=9",
+   "file": "comms_downport_cleared_0_berth-9",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Freighter, downport control. Pad nine, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=10",
+   "file": "comms_downport_cleared_0_berth-10",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Freighter, downport control. Pad ten, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=11",
+   "file": "comms_downport_cleared_0_berth-11",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Freighter, downport control. Pad eleven, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=12",
+   "file": "comms_downport_cleared_0_berth-12",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Freighter, downport control. Pad twelve, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=13",
+   "file": "comms_downport_cleared_0_berth-13",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Freighter, downport control. Pad thirteen, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|0|berth=14",
+   "file": "comms_downport_cleared_0_berth-14",
+   "key": "comms:downport_cleared",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Freighter, downport control. Pad fourteen, cleared to land. Keep your burn off the terminal glass.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=2",
+   "file": "comms_downport_cleared_1_berth-2",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Cleared for pad two. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=3",
+   "file": "comms_downport_cleared_1_berth-3",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Cleared for pad three. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=4",
+   "file": "comms_downport_cleared_1_berth-4",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Cleared for pad four. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=5",
+   "file": "comms_downport_cleared_1_berth-5",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Cleared for pad five. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=6",
+   "file": "comms_downport_cleared_1_berth-6",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Cleared for pad six. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=7",
+   "file": "comms_downport_cleared_1_berth-7",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Cleared for pad seven. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=8",
+   "file": "comms_downport_cleared_1_berth-8",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Cleared for pad eight. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=9",
+   "file": "comms_downport_cleared_1_berth-9",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Cleared for pad nine. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=10",
+   "file": "comms_downport_cleared_1_berth-10",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Cleared for pad ten. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=11",
+   "file": "comms_downport_cleared_1_berth-11",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Cleared for pad eleven. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=12",
+   "file": "comms_downport_cleared_1_berth-12",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Cleared for pad twelve. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=13",
+   "file": "comms_downport_cleared_1_berth-13",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Cleared for pad thirteen. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_cleared|1|berth=14",
+   "file": "comms_downport_cleared_1_berth-14",
+   "key": "comms:downport_cleared",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Cleared for pad fourteen. Come in belly first, and leave the city where it is.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=2",
+   "file": "comms_downport_gale_0_berth-2",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Freighter, downport control. Pad two. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=3",
+   "file": "comms_downport_gale_0_berth-3",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Freighter, downport control. Pad three. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=4",
+   "file": "comms_downport_gale_0_berth-4",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Freighter, downport control. Pad four. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=5",
+   "file": "comms_downport_gale_0_berth-5",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Freighter, downport control. Pad five. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=6",
+   "file": "comms_downport_gale_0_berth-6",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Freighter, downport control. Pad six. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=7",
+   "file": "comms_downport_gale_0_berth-7",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Freighter, downport control. Pad seven. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=8",
+   "file": "comms_downport_gale_0_berth-8",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Freighter, downport control. Pad eight. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=9",
+   "file": "comms_downport_gale_0_berth-9",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Freighter, downport control. Pad nine. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=10",
+   "file": "comms_downport_gale_0_berth-10",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Freighter, downport control. Pad ten. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=11",
+   "file": "comms_downport_gale_0_berth-11",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Freighter, downport control. Pad eleven. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=12",
+   "file": "comms_downport_gale_0_berth-12",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Freighter, downport control. Pad twelve. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=13",
+   "file": "comms_downport_gale_0_berth-13",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Freighter, downport control. Pad thirteen. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|0|berth=14",
+   "file": "comms_downport_gale_0_berth-14",
+   "key": "comms:downport_gale",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Freighter, downport control. Pad fourteen. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=2",
+   "file": "comms_downport_gale_1_berth-2",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=3",
+   "file": "comms_downport_gale_1_berth-3",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=4",
+   "file": "comms_downport_gale_1_berth-4",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=5",
+   "file": "comms_downport_gale_1_berth-5",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=6",
+   "file": "comms_downport_gale_1_berth-6",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=7",
+   "file": "comms_downport_gale_1_berth-7",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=8",
+   "file": "comms_downport_gale_1_berth-8",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=9",
+   "file": "comms_downport_gale_1_berth-9",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=10",
+   "file": "comms_downport_gale_1_berth-10",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=11",
+   "file": "comms_downport_gale_1_berth-11",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=12",
+   "file": "comms_downport_gale_1_berth-12",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=13",
+   "file": "comms_downport_gale_1_berth-13",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:downport_gale|1|berth=14",
+   "file": "comms_downport_gale_1_berth-14",
+   "key": "comms:downport_gale",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth.",
+   "role": "pad",
+   "radio": true
+  },
+  {
+   "id": "comms:field_cleared|0",
+   "file": "comms_field_cleared_0",
+   "key": "comms:field_cleared",
+   "index": 0,
+   "values": {},
+   "text": "Freighter? Field's clear. Land by the flares, upwind of the shed. The shed's had enough.",
+   "role": "camp",
+   "radio": true
+  },
+  {
+   "id": "comms:field_cleared|1",
+   "file": "comms_field_cleared_1",
+   "key": "comms:field_cleared",
+   "index": 1,
+   "values": {},
+   "text": "Yeah, come down. Watch the windsock. The sock's usually right.",
+   "role": "camp",
+   "radio": true
+  },
+  {
    "id": "comms:camp_fined|0|camp_fine=108",
    "file": "comms_camp_fined_0_camp_fine-108",
    "key": "comms:camp_fined",
@@ -2824,6 +3468,704 @@
    "text": "I've started counting the rivets. There are a lot of rivets.",
    "role": "passenger",
    "radio": false
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=2",
+   "file": "comms_downport_cleared-kesh_0_berth-2",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Freighter, downport control. Pad two is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=3",
+   "file": "comms_downport_cleared-kesh_0_berth-3",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Freighter, downport control. Pad three is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=4",
+   "file": "comms_downport_cleared-kesh_0_berth-4",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Freighter, downport control. Pad four is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=5",
+   "file": "comms_downport_cleared-kesh_0_berth-5",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Freighter, downport control. Pad five is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=6",
+   "file": "comms_downport_cleared-kesh_0_berth-6",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Freighter, downport control. Pad six is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=7",
+   "file": "comms_downport_cleared-kesh_0_berth-7",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Freighter, downport control. Pad seven is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=8",
+   "file": "comms_downport_cleared-kesh_0_berth-8",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Freighter, downport control. Pad eight is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=9",
+   "file": "comms_downport_cleared-kesh_0_berth-9",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Freighter, downport control. Pad nine is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=10",
+   "file": "comms_downport_cleared-kesh_0_berth-10",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Freighter, downport control. Pad ten is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=11",
+   "file": "comms_downport_cleared-kesh_0_berth-11",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Freighter, downport control. Pad eleven is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=12",
+   "file": "comms_downport_cleared-kesh_0_berth-12",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Freighter, downport control. Pad twelve is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=13",
+   "file": "comms_downport_cleared-kesh_0_berth-13",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Freighter, downport control. Pad thirteen is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|0|berth=14",
+   "file": "comms_downport_cleared-kesh_0_berth-14",
+   "key": "comms:downport_cleared@kesh",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Freighter, downport control. Pad fourteen is assigned to you. Keep your exhaust from the terminal.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=2",
+   "file": "comms_downport_cleared-kesh_1_berth-2",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=3",
+   "file": "comms_downport_cleared-kesh_1_berth-3",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=4",
+   "file": "comms_downport_cleared-kesh_1_berth-4",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=5",
+   "file": "comms_downport_cleared-kesh_1_berth-5",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=6",
+   "file": "comms_downport_cleared-kesh_1_berth-6",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=7",
+   "file": "comms_downport_cleared-kesh_1_berth-7",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=8",
+   "file": "comms_downport_cleared-kesh_1_berth-8",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=9",
+   "file": "comms_downport_cleared-kesh_1_berth-9",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=10",
+   "file": "comms_downport_cleared-kesh_1_berth-10",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=11",
+   "file": "comms_downport_cleared-kesh_1_berth-11",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=12",
+   "file": "comms_downport_cleared-kesh_1_berth-12",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=13",
+   "file": "comms_downport_cleared-kesh_1_berth-13",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_cleared@kesh|1|berth=14",
+   "file": "comms_downport_cleared-kesh_1_berth-14",
+   "key": "comms:downport_cleared@kesh",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen is cleared, freighter. Belly first. The city is not your landing zone.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=2",
+   "file": "comms_downport_gale-kesh_0_berth-2",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Freighter, pad two. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=3",
+   "file": "comms_downport_gale-kesh_0_berth-3",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Freighter, pad three. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=4",
+   "file": "comms_downport_gale-kesh_0_berth-4",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Freighter, pad four. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=5",
+   "file": "comms_downport_gale-kesh_0_berth-5",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Freighter, pad five. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=6",
+   "file": "comms_downport_gale-kesh_0_berth-6",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Freighter, pad six. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=7",
+   "file": "comms_downport_gale-kesh_0_berth-7",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Freighter, pad seven. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=8",
+   "file": "comms_downport_gale-kesh_0_berth-8",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Freighter, pad eight. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=9",
+   "file": "comms_downport_gale-kesh_0_berth-9",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Freighter, pad nine. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=10",
+   "file": "comms_downport_gale-kesh_0_berth-10",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Freighter, pad ten. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=11",
+   "file": "comms_downport_gale-kesh_0_berth-11",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Freighter, pad eleven. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=12",
+   "file": "comms_downport_gale-kesh_0_berth-12",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Freighter, pad twelve. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=13",
+   "file": "comms_downport_gale-kesh_0_berth-13",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Freighter, pad thirteen. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|0|berth=14",
+   "file": "comms_downport_gale-kesh_0_berth-14",
+   "key": "comms:downport_gale@kesh",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Freighter, pad fourteen. The wind is strong. Hold into it and land with care, or do not land.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=2",
+   "file": "comms_downport_gale-kesh_1_berth-2",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=3",
+   "file": "comms_downport_gale-kesh_1_berth-3",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=4",
+   "file": "comms_downport_gale-kesh_1_berth-4",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=5",
+   "file": "comms_downport_gale-kesh_1_berth-5",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=6",
+   "file": "comms_downport_gale-kesh_1_berth-6",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=7",
+   "file": "comms_downport_gale-kesh_1_berth-7",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=8",
+   "file": "comms_downport_gale-kesh_1_berth-8",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=9",
+   "file": "comms_downport_gale-kesh_1_berth-9",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=10",
+   "file": "comms_downport_gale-kesh_1_berth-10",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=11",
+   "file": "comms_downport_gale-kesh_1_berth-11",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=12",
+   "file": "comms_downport_gale-kesh_1_berth-12",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=13",
+   "file": "comms_downport_gale-kesh_1_berth-13",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:downport_gale@kesh|1|berth=14",
+   "file": "comms_downport_gale-kesh_1_berth-14",
+   "key": "comms:downport_gale@kesh",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record.",
+   "role": "pad",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:field_cleared@kesh|0",
+   "file": "comms_field_cleared-kesh_0",
+   "key": "comms:field_cleared@kesh",
+   "index": 0,
+   "values": {},
+   "text": "Freighter. The field is clear. Land between the flares, upwind of the shed.",
+   "role": "camp",
+   "radio": true,
+   "species": "kesh"
+  },
+  {
+   "id": "comms:field_cleared@kesh|1",
+   "file": "comms_field_cleared-kesh_1",
+   "key": "comms:field_cleared@kesh",
+   "index": 1,
+   "values": {},
+   "text": "The ground by the flares has been tested. Mind the windsock. Set down there.",
+   "role": "camp",
+   "radio": true,
+   "species": "kesh"
   },
   {
    "id": "comms:cleared@kesh|0|berth=2",
@@ -5807,6 +7149,704 @@
    "species": "kesh"
   },
   {
+   "id": "comms:downport_cleared@ilyan|0|berth=2",
+   "file": "comms_downport_cleared-ilyan_0_berth-2",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Downport control. Pad two. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=3",
+   "file": "comms_downport_cleared-ilyan_0_berth-3",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Downport control. Pad three. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=4",
+   "file": "comms_downport_cleared-ilyan_0_berth-4",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Downport control. Pad four. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=5",
+   "file": "comms_downport_cleared-ilyan_0_berth-5",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Downport control. Pad five. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=6",
+   "file": "comms_downport_cleared-ilyan_0_berth-6",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Downport control. Pad six. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=7",
+   "file": "comms_downport_cleared-ilyan_0_berth-7",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Downport control. Pad seven. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=8",
+   "file": "comms_downport_cleared-ilyan_0_berth-8",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Downport control. Pad eight. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=9",
+   "file": "comms_downport_cleared-ilyan_0_berth-9",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Downport control. Pad nine. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=10",
+   "file": "comms_downport_cleared-ilyan_0_berth-10",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Downport control. Pad ten. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=11",
+   "file": "comms_downport_cleared-ilyan_0_berth-11",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Downport control. Pad eleven. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=12",
+   "file": "comms_downport_cleared-ilyan_0_berth-12",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Downport control. Pad twelve. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=13",
+   "file": "comms_downport_cleared-ilyan_0_berth-13",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Downport control. Pad thirteen. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|0|berth=14",
+   "file": "comms_downport_cleared-ilyan_0_berth-14",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Downport control. Pad fourteen. Burn away from the glass.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=2",
+   "file": "comms_downport_cleared-ilyan_1_berth-2",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=3",
+   "file": "comms_downport_cleared-ilyan_1_berth-3",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=4",
+   "file": "comms_downport_cleared-ilyan_1_berth-4",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=5",
+   "file": "comms_downport_cleared-ilyan_1_berth-5",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=6",
+   "file": "comms_downport_cleared-ilyan_1_berth-6",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=7",
+   "file": "comms_downport_cleared-ilyan_1_berth-7",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=8",
+   "file": "comms_downport_cleared-ilyan_1_berth-8",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=9",
+   "file": "comms_downport_cleared-ilyan_1_berth-9",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=10",
+   "file": "comms_downport_cleared-ilyan_1_berth-10",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=11",
+   "file": "comms_downport_cleared-ilyan_1_berth-11",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=12",
+   "file": "comms_downport_cleared-ilyan_1_berth-12",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=13",
+   "file": "comms_downport_cleared-ilyan_1_berth-13",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_cleared@ilyan|1|berth=14",
+   "file": "comms_downport_cleared-ilyan_1_berth-14",
+   "key": "comms:downport_cleared@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen. Belly first. The city is not a pad.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=2",
+   "file": "comms_downport_gale-ilyan_0_berth-2",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=3",
+   "file": "comms_downport_gale-ilyan_0_berth-3",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=4",
+   "file": "comms_downport_gale-ilyan_0_berth-4",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=5",
+   "file": "comms_downport_gale-ilyan_0_berth-5",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=6",
+   "file": "comms_downport_gale-ilyan_0_berth-6",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=7",
+   "file": "comms_downport_gale-ilyan_0_berth-7",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=8",
+   "file": "comms_downport_gale-ilyan_0_berth-8",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=9",
+   "file": "comms_downport_gale-ilyan_0_berth-9",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=10",
+   "file": "comms_downport_gale-ilyan_0_berth-10",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=11",
+   "file": "comms_downport_gale-ilyan_0_berth-11",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=12",
+   "file": "comms_downport_gale-ilyan_0_berth-12",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=13",
+   "file": "comms_downport_gale-ilyan_0_berth-13",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|0|berth=14",
+   "file": "comms_downport_gale-ilyan_0_berth-14",
+   "key": "comms:downport_gale@ilyan",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen. Strong wind. Gusting. Crab into it. Land firm.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=2",
+   "file": "comms_downport_gale-ilyan_1_berth-2",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=3",
+   "file": "comms_downport_gale-ilyan_1_berth-3",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=4",
+   "file": "comms_downport_gale-ilyan_1_berth-4",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=5",
+   "file": "comms_downport_gale-ilyan_1_berth-5",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=6",
+   "file": "comms_downport_gale-ilyan_1_berth-6",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=7",
+   "file": "comms_downport_gale-ilyan_1_berth-7",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=8",
+   "file": "comms_downport_gale-ilyan_1_berth-8",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=9",
+   "file": "comms_downport_gale-ilyan_1_berth-9",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=10",
+   "file": "comms_downport_gale-ilyan_1_berth-10",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=11",
+   "file": "comms_downport_gale-ilyan_1_berth-11",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=12",
+   "file": "comms_downport_gale-ilyan_1_berth-12",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=13",
+   "file": "comms_downport_gale-ilyan_1_berth-13",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:downport_gale@ilyan|1|berth=14",
+   "file": "comms_downport_gale-ilyan_1_berth-14",
+   "key": "comms:downport_gale@ilyan",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen. Hard gusts. Three bounces today. Inefficient.",
+   "role": "pad",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:field_cleared@ilyan|0",
+   "file": "comms_field_cleared-ilyan_0",
+   "key": "comms:field_cleared@ilyan",
+   "index": 0,
+   "values": {},
+   "text": "Field clear. Between the flares. Upwind of the shed.",
+   "role": "camp",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
+   "id": "comms:field_cleared@ilyan|1",
+   "file": "comms_field_cleared-ilyan_1",
+   "key": "comms:field_cleared@ilyan",
+   "index": 1,
+   "values": {},
+   "text": "Field. Watch the sock. Land.",
+   "role": "camp",
+   "radio": true,
+   "species": "ilyan"
+  },
+  {
    "id": "comms:cleared@ilyan|0|berth=2",
    "file": "comms_cleared-ilyan_0_berth-2",
    "key": "comms:cleared@ilyan",
@@ -8788,6 +10828,704 @@
    "species": "ilyan"
   },
   {
+   "id": "comms:downport_cleared@vey|0|berth=2",
+   "file": "comms_downport_cleared-vey_0_berth-2",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Freighter, downport control. Pad two is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=3",
+   "file": "comms_downport_cleared-vey_0_berth-3",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Freighter, downport control. Pad three is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=4",
+   "file": "comms_downport_cleared-vey_0_berth-4",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Freighter, downport control. Pad four is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=5",
+   "file": "comms_downport_cleared-vey_0_berth-5",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Freighter, downport control. Pad five is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=6",
+   "file": "comms_downport_cleared-vey_0_berth-6",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Freighter, downport control. Pad six is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=7",
+   "file": "comms_downport_cleared-vey_0_berth-7",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Freighter, downport control. Pad seven is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=8",
+   "file": "comms_downport_cleared-vey_0_berth-8",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Freighter, downport control. Pad eight is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=9",
+   "file": "comms_downport_cleared-vey_0_berth-9",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Freighter, downport control. Pad nine is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=10",
+   "file": "comms_downport_cleared-vey_0_berth-10",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Freighter, downport control. Pad ten is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=11",
+   "file": "comms_downport_cleared-vey_0_berth-11",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Freighter, downport control. Pad eleven is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=12",
+   "file": "comms_downport_cleared-vey_0_berth-12",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Freighter, downport control. Pad twelve is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=13",
+   "file": "comms_downport_cleared-vey_0_berth-13",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Freighter, downport control. Pad thirteen is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|0|berth=14",
+   "file": "comms_downport_cleared-vey_0_berth-14",
+   "key": "comms:downport_cleared@vey",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Freighter, downport control. Pad fourteen is yours. Keep the burn off the windows, people are waving.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=2",
+   "file": "comms_downport_cleared-vey_1_berth-2",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=3",
+   "file": "comms_downport_cleared-vey_1_berth-3",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=4",
+   "file": "comms_downport_cleared-vey_1_berth-4",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=5",
+   "file": "comms_downport_cleared-vey_1_berth-5",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=6",
+   "file": "comms_downport_cleared-vey_1_berth-6",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=7",
+   "file": "comms_downport_cleared-vey_1_berth-7",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=8",
+   "file": "comms_downport_cleared-vey_1_berth-8",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=9",
+   "file": "comms_downport_cleared-vey_1_berth-9",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=10",
+   "file": "comms_downport_cleared-vey_1_berth-10",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=11",
+   "file": "comms_downport_cleared-vey_1_berth-11",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=12",
+   "file": "comms_downport_cleared-vey_1_berth-12",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=13",
+   "file": "comms_downport_cleared-vey_1_berth-13",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@vey|1|berth=14",
+   "file": "comms_downport_cleared-vey_1_berth-14",
+   "key": "comms:downport_cleared@vey",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=2",
+   "file": "comms_downport_gale-vey_0_berth-2",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Freighter, pad two. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=3",
+   "file": "comms_downport_gale-vey_0_berth-3",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Freighter, pad three. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=4",
+   "file": "comms_downport_gale-vey_0_berth-4",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Freighter, pad four. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=5",
+   "file": "comms_downport_gale-vey_0_berth-5",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Freighter, pad five. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=6",
+   "file": "comms_downport_gale-vey_0_berth-6",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Freighter, pad six. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=7",
+   "file": "comms_downport_gale-vey_0_berth-7",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Freighter, pad seven. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=8",
+   "file": "comms_downport_gale-vey_0_berth-8",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Freighter, pad eight. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=9",
+   "file": "comms_downport_gale-vey_0_berth-9",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Freighter, pad nine. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=10",
+   "file": "comms_downport_gale-vey_0_berth-10",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Freighter, pad ten. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=11",
+   "file": "comms_downport_gale-vey_0_berth-11",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Freighter, pad eleven. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=12",
+   "file": "comms_downport_gale-vey_0_berth-12",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Freighter, pad twelve. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=13",
+   "file": "comms_downport_gale-vey_0_berth-13",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Freighter, pad thirteen. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|0|berth=14",
+   "file": "comms_downport_gale-vey_0_berth-14",
+   "key": "comms:downport_gale@vey",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Freighter, pad fourteen. It's blowing hard. Lean into it, like a current. Come down when the gust lets go.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=2",
+   "file": "comms_downport_gale-vey_1_berth-2",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=3",
+   "file": "comms_downport_gale-vey_1_berth-3",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=4",
+   "file": "comms_downport_gale-vey_1_berth-4",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=5",
+   "file": "comms_downport_gale-vey_1_berth-5",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=6",
+   "file": "comms_downport_gale-vey_1_berth-6",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=7",
+   "file": "comms_downport_gale-vey_1_berth-7",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=8",
+   "file": "comms_downport_gale-vey_1_berth-8",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=9",
+   "file": "comms_downport_gale-vey_1_berth-9",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=10",
+   "file": "comms_downport_gale-vey_1_berth-10",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=11",
+   "file": "comms_downport_gale-vey_1_berth-11",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=12",
+   "file": "comms_downport_gale-vey_1_berth-12",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=13",
+   "file": "comms_downport_gale-vey_1_berth-13",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:downport_gale@vey|1|berth=14",
+   "file": "comms_downport_gale-vey_1_berth-14",
+   "key": "comms:downport_gale@vey",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen. It's rough today. Three ships bounced. We caught them, mostly.",
+   "role": "pad",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:field_cleared@vey|0",
+   "file": "comms_field_cleared-vey_0",
+   "key": "comms:field_cleared@vey",
+   "index": 0,
+   "values": {},
+   "text": "Freighter? Welcome. Land between the flares, on the windward side of the shed.",
+   "role": "camp",
+   "radio": true,
+   "species": "vey"
+  },
+  {
+   "id": "comms:field_cleared@vey|1",
+   "file": "comms_field_cleared-vey_1",
+   "key": "comms:field_cleared@vey",
+   "index": 1,
+   "values": {},
+   "text": "Come down. Watch the sock. The sock's never lied to us.",
+   "role": "camp",
+   "radio": true,
+   "species": "vey"
+  },
+  {
    "id": "comms:cleared@vey|0|berth=2",
    "file": "comms_cleared-vey_0_berth-2",
    "key": "comms:cleared@vey",
@@ -11767,6 +14505,704 @@
    "role": "rival",
    "radio": true,
    "species": "vey"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=2",
+   "file": "comms_downport_cleared-orun_0_berth-2",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad two. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=3",
+   "file": "comms_downport_cleared-orun_0_berth-3",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad three. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=4",
+   "file": "comms_downport_cleared-orun_0_berth-4",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad four. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=5",
+   "file": "comms_downport_cleared-orun_0_berth-5",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad five. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=6",
+   "file": "comms_downport_cleared-orun_0_berth-6",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad six. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=7",
+   "file": "comms_downport_cleared-orun_0_berth-7",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad seven. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=8",
+   "file": "comms_downport_cleared-orun_0_berth-8",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad eight. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=9",
+   "file": "comms_downport_cleared-orun_0_berth-9",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad nine. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=10",
+   "file": "comms_downport_cleared-orun_0_berth-10",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad ten. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=11",
+   "file": "comms_downport_cleared-orun_0_berth-11",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad eleven. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=12",
+   "file": "comms_downport_cleared-orun_0_berth-12",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad twelve. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=13",
+   "file": "comms_downport_cleared-orun_0_berth-13",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad thirteen. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|0|berth=14",
+   "file": "comms_downport_cleared-orun_0_berth-14",
+   "key": "comms:downport_cleared@orun",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Freighter, this is all of us at downport control. Pad fourteen. Keep your burn off the terminal. We are all at the window.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=2",
+   "file": "comms_downport_cleared-orun_1_berth-2",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=3",
+   "file": "comms_downport_cleared-orun_1_berth-3",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=4",
+   "file": "comms_downport_cleared-orun_1_berth-4",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=5",
+   "file": "comms_downport_cleared-orun_1_berth-5",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=6",
+   "file": "comms_downport_cleared-orun_1_berth-6",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=7",
+   "file": "comms_downport_cleared-orun_1_berth-7",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=8",
+   "file": "comms_downport_cleared-orun_1_berth-8",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=9",
+   "file": "comms_downport_cleared-orun_1_berth-9",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=10",
+   "file": "comms_downport_cleared-orun_1_berth-10",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=11",
+   "file": "comms_downport_cleared-orun_1_berth-11",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=12",
+   "file": "comms_downport_cleared-orun_1_berth-12",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=13",
+   "file": "comms_downport_cleared-orun_1_berth-13",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_cleared@orun|1|berth=14",
+   "file": "comms_downport_cleared-orun_1_berth-14",
+   "key": "comms:downport_cleared@orun",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen, freighter. Belly first. Not the city. Everyone in the city is watching.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=2",
+   "file": "comms_downport_gale-orun_0_berth-2",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Freighter, pad two. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=3",
+   "file": "comms_downport_gale-orun_0_berth-3",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Freighter, pad three. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=4",
+   "file": "comms_downport_gale-orun_0_berth-4",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Freighter, pad four. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=5",
+   "file": "comms_downport_gale-orun_0_berth-5",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Freighter, pad five. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=6",
+   "file": "comms_downport_gale-orun_0_berth-6",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Freighter, pad six. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=7",
+   "file": "comms_downport_gale-orun_0_berth-7",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Freighter, pad seven. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=8",
+   "file": "comms_downport_gale-orun_0_berth-8",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Freighter, pad eight. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=9",
+   "file": "comms_downport_gale-orun_0_berth-9",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Freighter, pad nine. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=10",
+   "file": "comms_downport_gale-orun_0_berth-10",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Freighter, pad ten. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=11",
+   "file": "comms_downport_gale-orun_0_berth-11",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Freighter, pad eleven. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=12",
+   "file": "comms_downport_gale-orun_0_berth-12",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Freighter, pad twelve. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=13",
+   "file": "comms_downport_gale-orun_0_berth-13",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Freighter, pad thirteen. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|0|berth=14",
+   "file": "comms_downport_gale-orun_0_berth-14",
+   "key": "comms:downport_gale@orun",
+   "index": 0,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Freighter, pad fourteen. We are all having a gale. Hold into it. We will all hold our breath.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=2",
+   "file": "comms_downport_gale-orun_1_berth-2",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "2"
+   },
+   "text": "Pad two. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=3",
+   "file": "comms_downport_gale-orun_1_berth-3",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "3"
+   },
+   "text": "Pad three. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=4",
+   "file": "comms_downport_gale-orun_1_berth-4",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "4"
+   },
+   "text": "Pad four. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=5",
+   "file": "comms_downport_gale-orun_1_berth-5",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "5"
+   },
+   "text": "Pad five. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=6",
+   "file": "comms_downport_gale-orun_1_berth-6",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "6"
+   },
+   "text": "Pad six. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=7",
+   "file": "comms_downport_gale-orun_1_berth-7",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "7"
+   },
+   "text": "Pad seven. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=8",
+   "file": "comms_downport_gale-orun_1_berth-8",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "8"
+   },
+   "text": "Pad eight. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=9",
+   "file": "comms_downport_gale-orun_1_berth-9",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "9"
+   },
+   "text": "Pad nine. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=10",
+   "file": "comms_downport_gale-orun_1_berth-10",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "10"
+   },
+   "text": "Pad ten. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=11",
+   "file": "comms_downport_gale-orun_1_berth-11",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "11"
+   },
+   "text": "Pad eleven. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=12",
+   "file": "comms_downport_gale-orun_1_berth-12",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "12"
+   },
+   "text": "Pad twelve. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=13",
+   "file": "comms_downport_gale-orun_1_berth-13",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "13"
+   },
+   "text": "Pad thirteen. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:downport_gale@orun|1|berth=14",
+   "file": "comms_downport_gale-orun_1_berth-14",
+   "key": "comms:downport_gale@orun",
+   "index": 1,
+   "values": {
+    "berth": "14"
+   },
+   "text": "Pad fourteen. Hard gusts. Three ships bounced today. We went and looked at all of them.",
+   "role": "pad",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:field_cleared@orun|0",
+   "file": "comms_field_cleared-orun_0",
+   "key": "comms:field_cleared@orun",
+   "index": 0,
+   "values": {},
+   "text": "Freighter? Yes. Land by the flares. We are all in the shed. Not on the shed.",
+   "role": "camp",
+   "radio": true,
+   "species": "orun"
+  },
+  {
+   "id": "comms:field_cleared@orun|1",
+   "file": "comms_field_cleared-orun_1",
+   "key": "comms:field_cleared@orun",
+   "index": 1,
+   "values": {},
+   "text": "Come down. Watch the sock. We all trust the sock.",
+   "role": "camp",
+   "radio": true,
+   "species": "orun"
   },
   {
    "id": "comms:cleared@orun|0|berth=2",

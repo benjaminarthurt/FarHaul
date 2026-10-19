@@ -42,6 +42,19 @@
       ]
     },
     {
+      "id": "fresh_produce",
+      "name": "Fresh Produce",
+      "category": "food",
+      "mass_kg_per_unit": 600,
+      "scu_per_unit": 1,
+      "container_type": "refrigerated",
+      "base_value": 1700,
+      "handling": [
+        "cold",
+        "perishable"
+      ]
+    },
+    {
       "id": "aquatic_food_products",
       "name": "Aquatic Food Products",
       "category": "food",

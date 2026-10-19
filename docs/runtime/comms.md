@@ -37,6 +37,9 @@ Your own lines are amber, distress calls red. The last 30 lines are kept in the 
   in (T) counts as clearance.
 - **Landing**: pad control at a moon base gives you a pad; a camp's foreman points at the flat bit.
   Landing unannounced is the same fine at a base, 120 cr at a camp.
+- **On a planet** (0.19.0): downport control gives you a pad and the wind (`downport_cleared`, or
+  `downport_gale` when it's blowing 17 m/s or more); a landing field's foreman points at the flares
+  (`field_cleared`). The wind is shown, not spoken: the recordings leave it out.
 - Coming in at more than 40 m/s within 2 km of the collar, traffic control tells you so (every 90 s).
 
 ## Ships
@@ -103,9 +106,9 @@ Traffic control speaks for the system's home species. Also: the two-tone hail ch
 ## Recorded voices (`VoiceBank`, 0.16.2)
 
 `scripts/comms/voice_bank.gd` plays recordings from `assets/audio/voice/` (made by `tools/voice/`, see
-its README): 1,260 lines, the aliens' own wording among them, every variation of the berth, fine, tonnes,
-crew count, problem, species and price direction, 58 speakers, one to three takes each, 2,633 OGG clips
-(mono, 22,050 Hz, 85 MB).
+its README): 1,530 lines, the aliens' own wording among them, every variation of the berth, fine, tonnes,
+crew count, problem, species and price direction, 58 speakers, one to three takes each, 2,913 OGG clips
+(mono, 22,050 Hz, 100 MB).
 
 - **Finding the line.** `Comms._line()` remembers which line of which key it picked and what it filled in
   (`_pending`); `_say()` matches the text it's given back to those (`_refs_for`), so a news item picked
@@ -141,7 +144,7 @@ crew count, problem, species and price direction, 58 speakers, one to three take
 ## Tests
 
 `tests/test_voice_bank_real.gd`: the real bank: every line in `lines.json` has clips, each species' own
-lines are said by that species, all 2,633 clips load and have sound, and each species' station clears
+lines are said by that species, all 2,913 clips load and have sound, and each species' station clears
 you in its own voice.
 `tests/test_voice_bank.gd`: ids from game arguments for all 1,260 recorded lines, a speaker per species
 and per caller, takes in turn, two lines together, the Radio bus, a recorded line's squelch, words and

@@ -16,6 +16,8 @@ func _build_env() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
 	env.sky = SpaceSky.make()
+	if _planet_here():   # on a planet with air: its own sky through the windows, by the hour
+		env.sky = PlanetScenery.make_sky(_planet())
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	env.glow_enabled = true
 	env.glow_intensity = 0.7
@@ -30,6 +32,25 @@ func _build_env() -> void:
 	sun.light_energy = 0.6 if sc.kind == "concourse" else 0.15
 	sun.set_meta("no_shadow", true)
 	sc.add_child(sun)
+	if _planet_here():
+		var sky_sun := DirectionalLight3D.new()   # only for working out the sky's colours; the room keeps its own light
+		PlanetScenery.update_sky(env, sky_sun, _planet(), _hour_of_day(), 1.0, 0.0)
+		sky_sun.free()
+		env.fog_enabled = false
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+
+
+## A downport or landing field on a planet with air, not a station or the moon.
+func _planet_here() -> bool:
+	return Session.slot >= 0 and LocalSpace.is_planet(String(Session.profile.get("port_id", "")))
+
+
+func _planet() -> Dictionary:
+	return Planets.planet(Session.system_id(), String(LocalSpace.node(String(Session.profile.get("port_id", ""))).get("kind", "world")))
+
+
+func _hour_of_day() -> float:
+	return PlanetScenery.local_hour(Session.system_id(), Session.sim.now_hour() if Session.sim != null else 12)
 
 
 func _mat(col: Color, glow := false) -> StandardMaterial3D:
@@ -151,6 +172,9 @@ func _desk(id: String, label: String, pos: Vector3, face: Vector3, col: Color, s
 ## Through the concourse window: your own ship at the end of a boarding arm, the station's trusses
 ## and lights, and the system's world hanging in space.
 func _window_view() -> void:
+	if _planet_here():
+		_planet_outside(Vector3(0, 0, -float(sc.style.depth) * 0.5), Vector3(0, 0, -1))
+		return
 	var outside := Node3D.new()
 	outside.name = "WindowView"
 	sc.add_child(outside)
@@ -468,7 +492,10 @@ func _build_hab() -> void:
 func _build_hut() -> void:
 	_room(14.0, 9.0, 3.4, _tint(Color(0.62, 0.55, 0.4), "wall", 0.6), _tint(Color(0.25, 0.22, 0.18), "floor", 0.55), 1.0)
 	StyleDressing.dress_room(self, sc.style, 14.0, 9.0, 3.4, [Vector3(-6.4, 0, -3.9), Vector3(6.4, 0, -3.9)], Vector3(-6.8, 0, 0), -1.0)
-	_moon_outside(Vector3(0, 0, 4.5), Vector3(0, 0, 1))
+	if _planet_here():
+		_planet_outside(Vector3(0, 0, 4.5), Vector3(0, 0, 1))
+	else:
+		_moon_outside(Vector3(0, 0, 4.5), Vector3(0, 0, 1))
 	var gone := bool(sc.style.get("abandoned", false))
 	if gone:
 		_desk("strip", "Strip the fittings", Vector3(0, 0, -2.9), Vector3(0, 0, 1), Color(0.55, 0.5, 0.45), false)
@@ -577,6 +604,126 @@ func _moon_outside(wall: Vector3, out: Vector3) -> void:
 	var sun := DirectionalLight3D.new()   # the moon's hard daylight, for what is outside only
 	sun.rotation_degrees = Vector3(-28, 35, 0)
 	sun.light_energy = 1.05
+	sun.light_cull_mask = 2
+	sun.set_meta("no_shadow", true)
+	sc.add_child(sun)
+
+
+## Out of a downport's or a field's window: the planet's ground (or sea) in its colours, your ship on its
+## pad, the apron's sheds, and the city on the skyline, its windows lit at night. Lit by the planet's own
+## sun at the hour (visual layer 2), while the room keeps its own light.
+func _planet_outside(wall: Vector3, out: Vector3) -> void:
+	var sys := Session.system_id()
+	var kind := String(LocalSpace.node(String(Session.profile.get("port_id", ""))).get("kind", "world"))
+	var p := _planet()
+	var outside := Node3D.new()
+	outside.name = "Outside"
+	sc.add_child(outside)
+	var across := Vector3(-out.z, 0, out.x)
+	var gm := StandardMaterial3D.new()
+	gm.albedo_color = PlanetTerrain._c(p.get("ground", [0.4, 0.4, 0.3]))
+	gm.albedo_texture = SurfaceTextures.regolith()
+	gm.uv1_triplanar = true
+	gm.uv1_world_triplanar = true
+	gm.uv1_scale = Vector3.ONE / SurfaceTextures.REGOLITH_TILE_M
+	gm.roughness = 1.0
+	var ground := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(30000, 30000)
+	pm.material = gm
+	ground.mesh = pm
+	ground.position = wall + out * 15000.0 + Vector3(0, -0.15, 0)
+	outside.add_child(ground)
+	var apron := MeshInstance3D.new()   # the concrete round the pads
+	var ap := PlaneMesh.new()
+	ap.size = Vector2(180, 120)
+	ap.material = Interiors.flat(Color(0.42, 0.42, 0.42), 0.95)
+	apron.mesh = ap
+	apron.position = wall + out * 62.0 + Vector3(0, -0.1, 0)
+	outside.add_child(apron)
+	if bool(p.get("sea", false)):   # the water beyond
+		var sea := MeshInstance3D.new()
+		var spm := PlaneMesh.new()
+		spm.size = Vector2(30000, 20000)
+		spm.material = Interiors.flat(PlanetTerrain._c(p.get("water", [0.1, 0.25, 0.3])), 0.15)
+		sea.mesh = spm
+		sea.position = wall + out * 12000.0 + across * 4000.0 + Vector3(0, -0.05, 0)
+		outside.add_child(sea)
+	var shed := Interiors.flat(Color(0.3, 0.31, 0.33), 0.8)
+	for k in (2 if kind == "field" else 5):   # hangars and sheds round the apron
+		var b := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = Vector3(26, 12, 20) if kind != "field" else Vector3(10, 5, 8)
+		bm.material = shed
+		b.mesh = bm
+		b.position = wall + out * (110.0 + (k % 2) * 30.0) + across * (-90.0 + k * 48.0) + Vector3(0, bm.size.y * 0.5, 0)
+		outside.add_child(b)
+	# The city, far off on the skyline: a band of towers, lit by night.
+	var night := PlanetScenery.night_at(_hour_of_day())
+	var st: Dictionary = PlanetScenery.STYLES.get(String(p.get("city_style", "towers")), PlanetScenery.STYLES.towers)
+	var sh := Shader.new()
+	sh.code = PlanetScenery.BUILDING_SHADER
+	var bmat := ShaderMaterial.new()
+	bmat.shader = sh
+	bmat.set_shader_parameter("wall", PlanetTerrain._c(st.wall))
+	bmat.set_shader_parameter("glass", PlanetTerrain._c(st.glass))
+	bmat.set_shader_parameter("night", night)
+	var cs := PlanetScenery.city_size(float(p.get("population", 100000)), int(sc.style.get("stage", 3)), int(sc.style.get("stage", 3)))
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	var cube := BoxMesh.new()
+	mm.mesh = cube
+	var count := clampi(int(cs.count) / 3, 12, 400)
+	mm.instance_count = count
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(sys + "|skyline")
+	var spread := clampf(float(cs.radius) * 1.6, 500.0, 4500.0)
+	var dist := 6500.0 if kind != "field" else 9000.0
+	for i in count:
+		var off := rng.randfn(0.0, 0.45) * spread
+		var depth := rng.randf_range(-0.4, 0.4) * spread
+		var k := clampf(1.0 - absf(off) / spread, 0.0, 1.0)
+		var tall := rng.randf() < float(st.tall_share) * (0.5 + 1.5 * k)
+		var hr: Array = st.tall if tall else st.h
+		var h := rng.randf_range(float(hr[0]), float(hr[1])) * (0.7 + 0.6 * k)
+		var w := rng.randf_range(float(st.w[0]), float(st.w[1]))
+		var at := wall + out * (dist + depth) + across * (off + 1800.0)
+		mm.set_instance_transform(i, Transform3D(Basis.IDENTITY.scaled(Vector3(w, h, w)), at + Vector3(0, h * 0.5, 0)))
+	var city := MultiMeshInstance3D.new()
+	city.multimesh = mm
+	city.material_override = bmat
+	city.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	outside.add_child(city)
+	# Your ship on its pad, out beyond the glass.
+	if Session.slot >= 0:
+		var loaded := Session._load_ship(SaveSlots.read(Session.slot))
+		if not loaded.is_empty():
+			var pad := MeshInstance3D.new()
+			var disc := CylinderMesh.new()
+			disc.top_radius = 18.0
+			disc.bottom_radius = 18.5
+			disc.height = 0.2
+			disc.material = Interiors.flat(Color(0.32, 0.33, 0.35), 0.9)
+			pad.mesh = disc
+			var at := wall + out * 40.0 + across * 6.0
+			pad.position = at
+			outside.add_child(pad)
+			var view := ShipView.new()
+			view.skin = true
+			outside.add_child(view)
+			view.rebuild(loaded.ship, loaded.manifest)
+			view.set_interior(false)
+			view.rotation.y = atan2(across.x, across.z)
+			var stats := ShipStats.compute(loaded.ship)
+			view.position = at + Vector3(0, float(stats.get("foot_y", -1.5)) * -1.0 + 0.1, 0) - view.basis * Vector3(stats.com.x, 0, stats.com.z)
+			sc.ship_outside = view
+			sc._ship_data = loaded.ship
+	_layer_two(outside)
+	var sun := DirectionalLight3D.new()   # the planet's daylight, for what is outside only
+	var env := Environment.new()
+	env.sky = PlanetScenery.make_sky(p)
+	PlanetScenery.update_sky(env, sun, p, _hour_of_day(), 1.0, 0.0)
+	sun.light_energy = maxf(sun.light_energy, 0.08)
 	sun.light_cull_mask = 2
 	sun.set_meta("no_shadow", true)
 	sc.add_child(sun)

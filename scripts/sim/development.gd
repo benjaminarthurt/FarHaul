@@ -49,6 +49,20 @@ static func enable(sim: EconomySim) -> void:
 	sim.dev = {"sites": sites, "systems": systems, "today": {}, "events": [], "day": sim.day()}
 
 
+## Sites the game has gained since the save was made (the planets' downports and fields, 0.19.0): each
+## starts at its canon size today.
+static func add_missing(sim: EconomySim) -> void:
+	if not on(sim):
+		return
+	for sys in Worlds.system_ids():
+		for n in LocalSpace.nodes(sys):
+			var id := String(n.id)
+			if not sim.dev.sites.has(id):
+				var c := canon_score(id)
+				sim.dev.sites[id] = {"score": c, "canon": c, "anchor": c, "luck": 0.0, "kind": String(n.kind), "system_id": sys,
+						"hist": [], "npc": 1.0, "you": 0.0, "need": 0.0, "abandoned": false, "since": sim.day()}
+
+
 static func on(sim: EconomySim) -> bool:
 	return sim != null and not sim.dev.is_empty()
 

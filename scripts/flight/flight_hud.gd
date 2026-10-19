@@ -377,11 +377,59 @@ func _walk_prompt() -> void:
 	sc.prompt.text = "   ".join(parts)
 
 
+## Coming down through a planet's air: height, speed, heat, how square the belly is, the drag, the way to
+## the pad; and a word on what to do about it.
+func _update_entry_hud() -> void:
+	var m := sc.model
+	var to_pad := Vector2(m.pos.x - m.pad.x, m.pos.z - m.pad.z).length()
+	var alt := m.altitude()
+	var body := sc._body()
+	var belly := m.belly_to_air()
+	var heat := m.skin_heat
+	var lines := PackedStringArray([
+		"ENTRY  %s  %s    %s" % [String(sc.job.get("destination", "")).to_upper(), String(body.get("name", "")).to_upper(),
+				"AUTOPILOT: %s (T)" % {"belly": "BELLY TO THE AIR", "glide": "GLIDING IN", "burn": "LANDING BURN"}.get(m.entry_state, "ON") if m.autoentry else "T: autopilot"],
+		"ALTITUDE  %.1f km    SPEED  %s m/s    V/S  %+.0f m/s" % [alt / 1000.0, ShipStats.commas(roundi(m.airspeed())), m.vel.y],
+		"ENTRY HEAT  %d%%%s    BELLY TO THE AIR  %d%%" % [roundi(heat * 100.0), "  BURNING" if heat > 1.0 else ("  HOT" if heat > 0.8 else ""), roundi(clampf(belly, -1.0, 1.0) * 100.0)],
+		"DRAG  %.1f g    AIR  %.3f kg/m³    %s" % [m.drag_g, m.air_density(), ("SHIELD %d%%" % roundi(m.shield * 100.0)) if m.shield > 0.0 else "NO HEAT SHIELD"],
+		"%s  %.1f km    LIFT  %d%%  %.1f m/s² against %.1f" % [_target_name(), to_pad / 1000.0, roundi(m.lift * 100.0), m.lift_accel(), m.gravity],
+		"FUEL  %.2f t    %s" % [m.fuel_t, Planets.describe_weather(sc.weather) if not sc.weather.is_empty() else ""],
+		_hull_line()])
+	sc.hud.text = "\n".join(lines)
+	sc.bar.value = clampf(heat, 0.0, 1.0)
+	var hint := ""
+	if heat > 1.0:
+		hint = "BURNING: belly to the air, now. Every second over the limit is hull"
+	elif heat > 0.8:
+		hint = "HOT: get the belly square to the air, and don't dive"
+	elif belly < 0.6 and m.airspeed() > 600.0:
+		hint = "Edge on to the air: that's how ships become meteors. Belly to it (arrows), or T"
+	elif m.lift_accel() < m.gravity * 1.05:
+		hint = "LIFT SHORT for this gravity: the jets can't hold her up. You'll be landing hard, or not landing"
+	elif not m.autoentry:
+		hint = "Belly to the air brakes you; tilt it to steer. Light the jets (Space) in time to stop. T: the autopilot"
+	sc.prompt.text = hint
+
+
+func _target_name() -> String:
+	match sc._target_kind:
+		"camp":
+			return "MINING CAMP"
+		"field":
+			return "LANDING FIELD"
+		"world", "mars":
+			return "DOWNPORT"
+	return "BASE PAD"
+
+
 func _update_descent_hud() -> void:
+	if sc.phase == "entry":
+		_update_entry_hud()
+		return
 	var to_pad := Vector2(sc.model.pos.x - sc.model.pad.x, sc.model.pos.z - sc.model.pad.z).length()
 	var alt := sc.model.altitude()
 	var body := sc._body()
-	var target := "MINING CAMP" if sc._target_kind == "camp" else "BASE PAD"
+	var target := _target_name()
 	var head := ""
 	if sc.phase == "ascent":
 		head = "LIFT-OFF  %s    %s" % [String(body.get("name", "Moon")).to_upper(), "AUTO LIFT ON (T)" if sc.auto_ascent else "T: lift off on auto"]
@@ -396,11 +444,23 @@ func _update_descent_hud() -> void:
 		"LIFT  %d%%    %.2f m/s² available, gravity %.2f" % [roundi(sc.model.lift * 100.0), sc.model.lift_accel(), sc.model.gravity],
 		"THROTTLE  %d%%    FUEL  %.2f t" % [roundi(sc.model.throttle * 100.0), sc.model.fuel_t],
 		_hull_line()])
+	if sc._on_planet():
+		lines.insert(2, "WIND  %s    %s" % [("%.0f m/s" % sc.model.wind.length()) if sc.model.wind.length() >= 1.0 else "still", Planets.describe_weather(sc.weather)])
+		if sc.model.skin_heat > 0.05:
+			lines.insert(3, "ENTRY HEAT  %d%%" % roundi(sc.model.skin_heat * 100.0))
 	sc.hud.text = "\n".join(lines)
 	sc.bar.value = sc.model.lift
 	if sc.pad_label != null:
 		sc.pad_label.visible = alt > 80.0 and not sc.outside   # a sc.beacon from above, not a wall of text up close
-	if sc.job.is_empty() and sc.phase == "descent":
+	if sc.job.is_empty() and sc.phase == "descent" and sc._on_planet():
+		var tp := sc.model.terrain as PlanetTerrain
+		if tp != null:
+			var near_p := PackedStringArray(["Downport %.1f km" % (Vector2(sc.model.pos.x, sc.model.pos.z).length() / 1000.0)])
+			if sc._target_kind != "mars":
+				near_p.append("Field %.1f km" % (Vector2(sc.model.pos.x - tp.field_xz.x, sc.model.pos.z - tp.field_xz.y).length() / 1000.0))
+			near_p.append("%s %.1f km" % [String(Planets.planet(sc._system_id(), sc._target_kind).get("city", "City")), Vector2(sc.model.pos.x - tp.city_xz.x, sc.model.pos.z - tp.city_xz.y).length() / 1000.0])
+			sc.hud.text += "\nSITES  " + "   ".join(near_p)
+	elif sc.job.is_empty() and sc.phase == "descent":
 		var near := PackedStringArray()
 		for st in SurfaceSites.sites(sc._system_id()):
 			near.append("%s %.1f km" % [String(st.name), Vector2(sc.model.pos.x - float(st.x), sc.model.pos.z - float(st.z)).length() / 1000.0])
@@ -420,11 +480,11 @@ func _update_descent_hud() -> void:
 		elif not sc.model.has_fuel():
 			hint = "OUT OF FUEL"
 		else:
-			hint = "Climb clear of the moon; it wants you back. W/S runs the main engine."
+			hint = ("Climb to %.0f km on the jets, then the main engine takes her to orbit." % (float(sc.model.land_cfg.get("ascent_clear_m", 3000.0)) / 1000.0)) if sc._on_planet() else "Climb clear of the moon; it wants you back. W/S runs the main engine."
 	elif sc.model.landed and sc.model.on_pad():
 		hint = ("Landed, in one piece. F: shut down and unload.   G: get up and walk outside.") if not sc.job.is_empty() else "On the pad. F: shut down.   G: get up and walk outside."
 	elif sc.model.landed:
-		hint = "Down %.0f m from the %s. Close isn't landed. Lift off (Space) and set down within %d m%s." % [to_pad, "camp's pad" if sc._target_kind == "camp" else "pad",
+		hint = "Down %.0f m from the %s. Close isn't landed. Lift off (Space) and set down within %d m%s." % [to_pad, {"camp": "camp's pad", "field": "field's pad"}.get(sc._target_kind, "pad"),
 				int(sc.model.zone_m if sc.model.zone_m > 0.0 else float(sc.model.land_cfg.get("landing_zone_m", 120.0))),
 				"" if sc.model.has_fuel() else ". Out of fuel: F calls a crawler to tow you in"]
 	elif not sc.model.has_fuel():

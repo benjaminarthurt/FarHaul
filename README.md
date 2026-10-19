@@ -3,9 +3,10 @@
 *Build your ship. Haul the freight. Push the frontier.*
 
 Far Haul is a first-person sci-fi freight, ship-building and exploration game. You build a ship from
-modules, take freight from a simulated economy, fly it by hand, walk its corridors, land on moons and
-jump between stars, all while the bank watches your balance with professional interest. The ship is
-stored as plain data, so the builder, flight, walking and the shipyard all share one ship.
+modules, take freight from a simulated economy, fly it by hand, walk its corridors, land on moons, come
+down through the air of planets and jump between stars, all while the bank watches your balance with
+professional interest. The ship is stored as plain data, so the builder, flight, walking and the
+shipyard all share one ship.
 
 Player-facing text (in the game, on the info site and in the release notes) is written in the game's
 voice: see [docs/voice.md](docs/voice.md). The rest of this README is for people working on the code,
@@ -75,7 +76,9 @@ Cargo: **cargo hold 1x2** (pressurised and walkable, containers stacked along bo
 outside, 40 t, cheap and light but exposed). Holds chain through doors, racks bolt on like any
 external part.
 
-External (bolt-on): frame, 1x2 fuel tank, radiator, engine.
+External (bolt-on): frame, 1x2 fuel tank, radiator, engine, lander legs, heavy lander legs (for planets with
+real gravity), heat shield (tiles under the hull, for coming down through air), braking and manoeuvring
+thrusters, FTL drive.
 
 ## Rules
 
@@ -176,7 +179,7 @@ early browser build has been retired and `site/play/` is no longer tracked.
 
 ## Portable Windows build
 
-`export_presets.cfg` also has a **Windows Desktop** preset: one `FarHaul.exe` (about 100 MB) with the game
+`export_presets.cfg` also has a **Windows Desktop** preset: one `FarHaul.exe` (about 230 MB) with the game
 packed inside, built to `build/windows/` (which git ignores). It needs no install. Copy it anywhere, a USB
 stick included, and run it.
 
@@ -216,7 +219,7 @@ fonts or art to license.
 
 ## Voices
 
-The radio calls and the passengers' lines are recorded, 2,633 clips in `assets/audio/voice/`, made
+The radio calls and the passengers' lines are recorded, 2,913 clips in `assets/audio/voice/`, made
 with `tools/voice/` (see [tools/voice/README.md](tools/voice/README.md): `voice.bat setup`, `download`,
 `refs`, `cast`, `run`, `review`). The game picks a clip by the line it's saying (`scripts/comms/voice_bank.gd`)
 and falls back to the generated babble for anything not recorded, or when Settings turns recorded
@@ -244,6 +247,15 @@ slow down, or let the autopilot thread them. Solar storms come and go in every s
 sometimes forecast, sometimes only on your sensors, sometimes not at all; in port you're shielded, out there
 the radiators cook, and the other haulers sit them out, so the outposts go short. Some salvage crews ignore
 your claim beacon; report them for a bounty. How it works: [docs/runtime/hazards.md](docs/runtime/hazards.md).
+
+## Planets with air
+
+Every system's main world has a downport on its surface, a few km outside its city, and a rough landing field
+nearby; Sol adds one on Mars. Getting down takes heavy lander legs (the moon's can't hold a ship up at one g)
+and some care: you come in belly first, braking on the air, with a heat gauge to watch. Nose first, you
+cook. The autopilot can fly the whole entry. A heat shield buys margin. Coming down is cheap on fuel; going up
+is not. The city lights up at night, the weather pushes you about, some worlds' air you can breathe, and the
+farms send up fresh food that won't stay fresh. How it works: [docs/runtime/planets.md](docs/runtime/planets.md).
 
 ## Docs
 

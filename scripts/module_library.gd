@@ -163,6 +163,18 @@ func _add_defaults() -> void:
 		[_mount(o, DIR_U)],
 		{"group": &"external", "pressurized": false, "shape": &"legs", "mass": 1.0, "cost": 12000,
 			"lift": 70.0, "power": -4.0, "heat": 4.0})
+	# Heavy lander legs: thicker struts and four big lift jets, for worlds with real gravity. The moon set can't hold
+	# a ship up at one g; these can, a few of them together.
+	_def(&"heavy_legs", "Heavy lander legs", one, Color(0.66, 0.5, 0.26),
+		[_mount(o, DIR_U)],
+		{"group": &"external", "pressurized": false, "shape": &"legs_heavy", "mass": 2.6, "cost": 36000,
+			"lift": 320.0, "power": -10.0, "heat": 7.0})
+	# Heat shield: ablative tiles bolted flat under a hull cell. Coming down belly first through air, the belly takes
+	# the heat; the more of it these cover, the hotter the ship can run before the hull starts to burn.
+	_def(&"heat_shield", "Heat shield", one, Color(0.2, 0.19, 0.19),
+		[_mount(o, DIR_U)],
+		{"group": &"external", "pressurized": false, "shape": &"shield", "mass": 0.5, "cost": 8000,
+			"shield": 1.0, "hug": true})
 	# Braking thrusters: a slim fairing with two small nozzles facing the bow, pushing the ship backward. A fraction of
 	# an engine, but enough to bleed off speed on a docking approach without turning round. Mounts on any
 	# bare side of the hull (or on a frame): fit it the right way round and it fires forward.

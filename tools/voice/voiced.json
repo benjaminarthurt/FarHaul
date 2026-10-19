@@ -33,6 +33,15 @@
     "comms:camp_cleared": {"role": "camp", "radio": true, "say": [
       "Freighter? Yeah. Land on the flat bit. The flatter bit. Not that bit.",
       "Pad's clear, more or less. Come down slow, the foreman's watching."]},
+    "comms:downport_cleared": {"role": "pad", "radio": true, "say": [
+      "Freighter, downport control. Pad {berth}, cleared to land. Keep your burn off the terminal glass.",
+      "Cleared for pad {berth}. Come in belly first, and leave the city where it is."]},
+    "comms:downport_gale": {"role": "pad", "radio": true, "say": [
+      "Freighter, downport control. Pad {berth}. It's blowing a gale, so crab into it and don't trust the last fifty metres.",
+      "Pad {berth}, if you insist. It's gusting hard. We've had three bounce today. Don't be the fourth."]},
+    "comms:field_cleared": {"role": "camp", "radio": true, "say": [
+      "Freighter? Field's clear. Land by the flares, upwind of the shed. The shed's had enough.",
+      "Yeah, come down. Watch the windsock. The sock's usually right."]},
     "comms:camp_fined": {"role": "camp", "radio": true, "say": [
       "Next time, call before you drop on my camp. {camp_fine} for the scare.",
       "You land on my camp without a word? {camp_fine}. And a word."]},

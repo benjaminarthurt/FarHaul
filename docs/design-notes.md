@@ -47,6 +47,8 @@ The ship builder came first because everything else reads from the ship it produ
 15. **Danger without combat**: debris fields on routes, solar storms that cook radiators, and
     claim-jumpers at derelicts. Risks to plan around rather than fights (**built** in 0.18.0, see
     below).
+16. **Planets with air**: downports near the cities of every main world, landing fields, entry through
+    the air with a heat gauge, weather, fresh food (**built** in 0.19.0, see below).
 
 ## Built: ship builder architecture
 
@@ -160,7 +162,7 @@ The builder is a small game on its own, so it can be played and judged before fl
 - A **floating origin**: shift the world back toward zero as the ship travels, because
   floating-point precision breaks down far from the origin and causes jitter.
 
-## Planned: planets
+## Planned: planets (superseded by "Planets with air (0.19.0)" below)
 
 - **Flat, not a sphere**: an effectively infinite landscape. Dramatically simpler than a
   planet-scale sphere, and fine for a first version.
@@ -265,13 +267,35 @@ Decided with Ben, 2026-10-18:
   and they run; either way, if your beacon was first, the port authority pays a bounty on what they
   took and your standing goes up.
 
+## Planets with air (0.19.0)
+
+Decided with Ben, 2026-10-18:
+
+- **Rockets, no wings.** The ship's own body is enough for an aerodynamic belly flop: it comes in belly
+  first, braking on the air, then lands on its jets. Belly first is also the way the lander legs face, so
+  the landing burn needs no flip.
+- **A heat gauge, with an optional autopilot.** Flown by hand, the pilot keeps the belly to the air;
+  nose first, the ship burns. T flies the whole entry.
+- **All main worlds, and any other world with a settlement.** That is the 15 systems with a lived-on
+  world, plus Mars in Sol. Habitat systems (Carver, Port Meridian, Waystation) have nothing to land on.
+- **Yes to all of**: rough landing fields away from the port, weather that makes landing harder (and
+  ties into 0.18's solar storms), and goods only planets make (fresh food that spoils).
+- **The port is outside, near a city, visible in the distance.**
+- **30 to 50 km of world**: 40 km round the downport.
+
+How it was built, against the earlier plan above: the world is flat (as planned), but one fixed 40 km
+area per world rather than endless chunks; a coarse mesh for all of it and a fine one that follows the
+ship, both built on worker threads. There is no fade or separate scene: the entry is flown in the flight
+scene, from 50 km up, with the planet's ground, sky and city built during the cruise. Mechanics and numbers:
+[runtime/planets.md](runtime/planets.md).
+
 ## Open questions and next ideas
 
 - Locations with limited, changing supply and prices, and freight contracts. Today the player types
   how many tonnes a location "offers".
 - Money loop (Freight, Profit, Ship): modules already carry a `cost`, but there is no economy yet.
-- Atmospheric ships versus space-only ships need extra module attributes (heat protection,
-  landing gear, structural limits).
+- Atmospheric ships versus space-only ships: heat protection and landing gear are in (0.19.0: heat
+  shield, heavy lander legs); structural limits are not.
 - Crew, life support and consumables from the concept doc are not modelled yet.
 - Damage by location: pressure loss, bulkheads sealing compartments. The door graph the builder
   already computes is the starting point.

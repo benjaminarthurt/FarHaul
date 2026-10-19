@@ -115,9 +115,21 @@ static func check(stats: Dictionary, manifest: CargoManifest, c: Dictionary) -> 
 		rows.append(_row("FTL drive", bool(stats.get("ftl", false)), "" if bool(stats.get("ftl", false)) else "needed to cross between systems"))
 	if bool(c.get("surface", false)):
 		var sys := String(c.get("origin_system_id", ""))
-		var can := LocalSpace.can_land(stats, sys, float(c.get("offer", 0.0)))
-		var g := float(LocalSpace.body(sys).get("gravity_m_s2", 1.62))
-		rows.append(_row("Lander legs", can, "" if can else ("needed to land and lift off (%.2f m/s² here)" % g if float(stats.get("lift", 0.0)) <= 0.0 else "not enough lift for this load in %.2f m/s²" % g)))
+		# the surface end with the strongest gravity decides: the moon's pad, a downport, a field
+		var kind := "pad"
+		var g := 0.0
+		for id in [String(c.get("origin_port_id", "")), String(c.get("destination_port_id", ""))]:
+			var k := String(LocalSpace.node(id).get("kind", ""))
+			if k in LocalSpace.SURFACE:
+				var gk := float(LocalSpace.body_at(sys, k).get("gravity_m_s2", 1.62))
+				if gk > g:
+					g = gk
+					kind = k
+		if g <= 0.0:
+			g = float(LocalSpace.body(sys).get("gravity_m_s2", 1.62))
+		var can := LocalSpace.can_land(stats, sys, float(c.get("offer", 0.0)), kind)
+		var name := "Lift for %.2f g" % (g / 9.81) if Planets.is_planet_kind(kind) else "Lander legs"
+		rows.append(_row(name, can, "" if can else ("needed to land and lift off (%.2f m/s² there)" % g if float(stats.get("lift", 0.0)) <= 0.0 else "not enough lift for this load in %.2f m/s²: heavy lander legs" % g if Planets.is_planet_kind(kind) else "not enough lift for this load in %.2f m/s²" % g)))
 	if String(c.get("person_kind", "")) == "passenger":
 		var spare := People.seats(stats)
 		rows.append(_row("Passenger berths", spare >= int(c.get("seats", 1)), "%d spare for %d" % [spare, int(c.get("seats", 1))]))

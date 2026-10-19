@@ -84,6 +84,23 @@ var last_touchdown := 0.0         # vertical speed of the latest touchdown, m/s
 var rocks: Array[Vector3] = []     # boulders on the ground (x, z, radius): setting down on one damages the ship
 var hazard := ""                   # what went wrong at the latest touchdown on rough ground, or ""
 var hazards_seen := 0
+# Air (planets with air, Planets): empty in space and over the moon. {density (kg/m³ at y = 0), scale_m,
+# cd_flat, cd_nose, heat_k, nose_mult, shed, damage_per_s, shield_cut}. The air presses on the ship's
+# three faces (its outline from below, the front and the side, `area`), so belly first it brakes hard and
+# nose first it barely slows; and it heats the ship by its density and the cube of the speed.
+var air: Dictionary = {}
+var wind := Vector3.ZERO           # the air's own movement, m/s (Planets.wind_at, set by the scene)
+var area := Vector3(60.0, 100.0, 40.0)   # m²: side (X), belly (Y), front (Z)
+var shield := 0.0                  # 0..1 of the belly a heat shield covers
+var skin_heat := 0.0               # entry heat, 0 cold .. 1 at the limit; past 1 the hull burns
+var skin_peak := 0.0
+var burn_s := 0.0                  # seconds spent over the limit
+var drag_g := 0.0                  # the air's braking just now, in g (the HUD)
+var heat_rate := 0.0               # the heat going into the skin just now (per second): the entry glow
+var autoentry := false             # autopilot: belly into the air, glide toward the pad, landing burn, then autoland
+var entry_state := ""              # what it's doing: "belly", "glide", "burn"
+var entry_burn := false            # the landing burn has started: it carries on until the landing autopilot has her
+var sea := false                   # the latest touchdown was in water (PlanetTerrain)
 
 
 static func load_tuning() -> Dictionary:
@@ -111,6 +128,9 @@ static func from_stats(stats: Dictionary) -> FlightModel:
 	m.retro_kn = float(stats.get("retro", 0.0))
 	m.rcs_x_kn = float(stats.get("rcs_x", 0.0))
 	m.rcs_y_kn = float(stats.get("rcs_y", 0.0))
+	if stats.has("belly_m2"):
+		m.area = Vector3(float(stats.side_m2), float(stats.belly_m2), float(stats.front_m2))
+	m.shield = float(stats.get("shield", 0.0))
 	if stats.has("foot_y") and stats.has("com"):
 		m.foot_m = float((stats["com"] as Vector3).y) - float(stats["foot_y"])
 	return m
@@ -315,6 +335,11 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 		if ch.has("throttle"):
 			throttle = ch["throttle"]
 			trimming = true
+	if autoentry and terrain != null and not air.is_empty():
+		var ae := _autoentry()
+		cmd = ae["turn"]
+		lift = ae["lift"]
+		throttle = 0.0
 	if autoland and terrain != null:
 		var al := _autoland()
 		cmd = al["turn"]
@@ -376,6 +401,8 @@ func step(dt: float, turn: Vector3 = Vector3.ZERO, throttle_cmd: float = 0.0, li
 		vel += basis.y * (lift_kn / mass_t()) * lift * scale * eff_l * dt
 		fuel_t -= burn_l
 		fuel_burned_t += burn_l
+	if not air.is_empty():
+		_aero(dt)
 	if gravity > 0.0:
 		vel.y -= gravity * dt
 	_heat(dt)
@@ -405,8 +432,23 @@ func _ground() -> void:
 	var ok_h := float(land_cfg.get("touchdown_drift_m_s", 2.0))
 	var ok_t := float(land_cfg.get("touchdown_tilt_deg", 15.0))
 	last_touchdown = maxf(down, 0.0)
+	sea = terrain.has_method("is_water") and terrain.call("is_water", pos.x, pos.z)
+	if sea:   # down in the water: it floats, more or less, and the sea gets in
+		landed = true
+		autoland = false
+		autoentry = false
+		last_touchdown = maxf(down, 0.0)
+		impacts += 1
+		last_impact = down
+		hurt(float(land_cfg.get("sea_damage", 0.25)) + maxf(down - ok_v, 0.0) * float(land_cfg.get("hard_landing_damage_per_m_s", 0.04)))
+		hazard = "Down in the sea. It floats, for now. The crawler's a boat today, and charges like one"
+		hazards_seen += 1
+		vel = Vector3.ZERO
+		ang = Vector3.ZERO
+		return
 	if down <= ok_v and drift <= ok_h and tilt <= ok_t:
 		landed = true
+		autoentry = false
 		autoland = false
 		vel = Vector3.ZERO
 		ang = Vector3.ZERO
@@ -491,6 +533,130 @@ func _autoland() -> Dictionary:
 	turn.y = -clampf(ang.y, -1.0, 1.0)
 	var need := t.dot(up_now) * mass_t() / maxf(lift_kn, 0.001)
 	return {"turn": turn, "lift": clampf(need, 0.0, 1.0)}
+
+
+## Air density where the ship is, kg/m³ (0 with no air).
+func air_density() -> float:
+	if air.is_empty():
+		return 0.0
+	return float(air.density) * exp(-maxf(pos.y, 0.0) / float(air.get("scale_m", 8500.0)))
+
+
+## How fast the ship moves through the air (not over the ground), m/s.
+func airspeed() -> float:
+	return (vel - wind).length()
+
+
+## How square the belly is to the air: 1 flat on, belly first; 0 edge on; negative with the top into it.
+func belly_to_air() -> float:
+	var va := vel - wind
+	if va.length() < 0.5:
+		return 1.0
+	return -(basis.inverse() * va.normalized()).y
+
+
+## The air pressing on the ship's faces, and the heat it puts into the skin.
+func _aero(dt: float) -> void:
+	var va := vel - wind
+	var v := va.length()
+	var rho := air_density()
+	if v < 0.01 or rho <= 0.0:
+		drag_g = 0.0
+		heat_rate = 0.0
+		skin_heat = maxf(0.0, skin_heat - float(air.get("shed", 0.012)) * skin_heat * dt)
+		return
+	var loc := basis.inverse() * va
+	var cf := float(air.get("cd_flat", 1.15))
+	var cn := float(air.get("cd_nose", 0.45))
+	var f := -0.5 * rho * Vector3(cf * area.x * loc.x * absf(loc.x), cf * area.y * loc.y * absf(loc.y), cn * area.z * loc.z * absf(loc.z))
+	var acc := basis * f / (mass_t() * 1000.0)
+	var dv := acc * dt
+	if dv.length() > v:   # never push it past standing still in the air
+		dv = dv.normalized() * v
+	vel += dv
+	drag_g = acc.length() / G0
+	if landed:
+		return
+	var s := loc / v
+	var belly := maxf(0.0, -s.y)
+	var q := float(air.get("heat_k", 5.3e-11)) * sqrt(rho) * v * v * v * (1.0 + (float(air.get("nose_mult", 1.7)) - 1.0) * s.z * s.z)
+	q *= 1.0 - float(air.get("shield_cut", 0.55)) * shield * belly * belly
+	heat_rate = q
+	skin_heat = maxf(0.0, skin_heat + (q - float(air.get("shed", 0.012)) * skin_heat) * dt)
+	skin_peak = maxf(skin_peak, skin_heat)
+	if skin_heat > 1.0:
+		burn_s += dt
+		hurt(float(air.get("damage_per_s", 0.02)) * (skin_heat - 1.0) * dt)
+
+
+## Coming down through air on autopilot: belly into the airflow to brake on the air, then, falling slowly
+## enough, tilt toward the pad so the air pushes the ship over to it; light the lift jets in time to stop
+## (belly first they push against the fall), and hand over to the landing autopilot low and slow.
+func _autoentry() -> Dictionary:
+	var va := vel - wind
+	var v := va.length()
+	var alt := altitude()
+	var to := Vector3(pad.x - pos.x, 0, pad.z - pos.z)
+	var want_up := -va.normalized() if v > 1.0 else Vector3.UP
+	entry_state = "belly"
+	var a_lift := lift_accel() * 0.85
+	var down := maxf(-vel.y, 0.0)
+	var a_net := a_lift - gravity
+	if v < 320.0 and to.length() > 60.0:   # slow enough to steer: lean the belly toward the pad
+		entry_state = "glide"
+		var tilt := deg_to_rad(28.0) * clampf(to.length() / 2500.0, 0.0, 1.0)
+		want_up = (want_up * cos(tilt) + to.normalized() * sin(tilt)).normalized()
+	var lift_cmd := 0.0
+	# The landing burn: the jets have to take the fall out by about 250 m up. The air helps: half of what
+	# it's braking by now is counted on (in thick air that is plenty, and the burn waits; in thin air it
+	# isn't, and the burn starts high). Burning, the ship leans to kill its drift toward the pad as well.
+	var v_h0 := Vector2(vel.x, vel.z).length()
+	var thin := float(air.get("density", 1.0)) < 0.2   # air too thin to brake on (Mars)
+	if not entry_burn and (burn_due(alt, down) or (thin and v > 320.0 and to.length() <= v_h0 * v_h0 / maxf(lift_accel(), 0.5) * 1.1 + 800.0)):
+		entry_burn = true   # thin air: the jets have to take the speed off over the ground too
+	if entry_burn:
+		entry_state = "burn"
+		var a_full := maxf(lift_accel(), 0.01)
+		var want_dn := gravity + down * down / (2.0 * maxf(alt - 200.0, 30.0))
+		var v_h := Vector3(vel.x, 0, vel.z)
+		var reach_v := to.normalized() * minf(sqrt(2.0 * 3.0 * to.length()) * 0.8, 120.0) if to.length() > 20.0 else Vector3.ZERO
+		var a_h := (reach_v - v_h) * 0.35
+		var room := sqrt(maxf(a_full * a_full * 0.85 * 0.85 - want_dn * want_dn, 0.0))
+		if a_h.length() > room:
+			a_h = a_h.normalized() * room
+		var a_want := Vector3(a_h.x, maxf(want_dn, 0.1), a_h.z)
+		want_up = a_want.normalized()
+		if want_up.angle_to(Vector3.UP) > deg_to_rad(50.0):
+			var hz := Vector3(want_up.x, 0, want_up.z).normalized()
+			want_up = (Vector3.UP * cos(deg_to_rad(50.0)) + hz * sin(deg_to_rad(50.0))).normalized()
+		lift_cmd = clampf(a_want.length() / a_full, 0.0, 1.0) if a_net > 0.2 else 1.0
+	if (alt < 450.0 and down < 22.0 and Vector2(vel.x, vel.z).length() < 40.0) or alt < 120.0:
+		autoentry = false
+		entry_burn = false
+		autoland = true   # low and slow: the landing autopilot has it from here
+		entry_state = ""
+	var turn := Vector3.ZERO
+	var up_now := basis.y
+	var angle := up_now.angle_to(want_up)
+	if angle > 0.002:
+		var axis_local := basis.inverse() * up_now.cross(want_up)
+		if axis_local.length() > 0.0001:
+			var rate := sqrt(2.0 * _turn_accel() * angle) / _max_turn()
+			turn = axis_local.normalized() * clampf(rate, 0.0, 1.0)
+	turn.y = -clampf(ang.y, -1.0, 1.0)
+	return {"turn": turn, "lift": lift_cmd}
+
+
+## Whether the landing burn has to start now, falling `down` m/s at `alt` m: the jets (and half the air's
+## braking) must stop the fall by about 250 m up. A ship whose jets can't hold it up burns from 2 km
+## anyway, for what that's worth.
+func burn_due(alt: float, down: float) -> bool:
+	if not air.is_empty() and float(air.get("density", 1.0)) >= 0.2 and alt > 6000.0:
+		return false   # thick air brakes the fall far better than the jets up here: wait for it
+	var a_net := lift_accel() * 0.85 - gravity
+	if a_net <= 0.2:
+		return alt < 2000.0
+	return alt <= down * down / (2.0 * (a_net + 0.5 * drag_g * G0) * 0.8) + 250.0
 
 
 ## Autopilot. Without a target: point at the retrograde marker and burn in proportion to the speed

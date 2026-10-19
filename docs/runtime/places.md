@@ -9,6 +9,8 @@ terminal all come back to it (`Session.PLACE_SCENE`).
 | Port, fuel depot, belt works, moon base station, Sol's outer stations | Concourse, 26 × 10 m to 56 × 16 m by the system's tier, with a long window | Freight office, fuel and repairs, shipyard (ports only), bar and bunks |
 | Moon base pad | Hab, 20 × 20 m, under a dome | Dispatch, survey lab, suit store, pad fuel and repairs |
 | Mining camp | Foreman's hut, 14 × 9 m | Foreman, ore and parts exchange |
+| Planet downport (since 0.19.0) | Terminal: a concourse in the system's style, its window onto the planet | As a port's concourse |
+| Planet landing field | Shed: the hut | Foreman, ore and parts exchange |
 
 Each system's places are built in its own style (architecture, tier and role): see
 [identity.md](identity.md). Since 0.17.0 a place's tier is its size now, which grows and shrinks with how
@@ -35,6 +37,10 @@ your ship.
 - **Through the hab's and the hut's windows** you can see the moon's ground in its own colours,
   boulders, the base's other domes, and your ship on its pad. The view is lit by a hard sun of its own
   (visual layer 2), so the room stays lit from inside.
+- **On a planet** (a downport's terminal or a field's shed, `PlaceBuilder._planet_outside`) the window
+  shows the planet's ground and sea, the apron and its hangars, your ship on its pad and the city on the
+  skyline, by day or lit up by night at the world's hour, under the planet's own sky. The place's info says
+  what the weather's doing outside, and the freight desk warns of a gale. See [planets.md](planets.md).
 
 ## Controls
 

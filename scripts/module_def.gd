@@ -44,6 +44,7 @@ const FACES := [
 @export var lift := 0.0  ## kN of downward-firing lift jets (push the ship along +Y): needed to land
 @export var retro := 0.0  ## kN of forward-firing braking thrusters (push the ship backward, along +Z)
 @export var rcs := 0.0  ## kN each way of manoeuvring thrusters: left, right, up and down, without turning
+@export var shield := 0.0  ## heat shield: how much of the belly cell it's bolted under it covers against entry heat (0..1)
 @export var hug := false  ## a low-profile part: the ship view slides its "Body" flat against the hull it's bolted to
 @export var seal := false  ## a door cap: the doorway its door socket faces counts as closed (ShipData.open_doors)
 @export var cargo_slots := 0  ## standard containers this module can carry
@@ -404,28 +405,49 @@ func _build_external(root: Node3D) -> void:
 			label.position = Vector3(side * 1.215, 0, mid_z)
 			label.rotation_degrees.y = 90.0 * side
 			root.add_child(label)
-	elif shape == &"legs":
-		# Lander legs under the hull: four splayed struts to footpads, lift-jet nozzles between them.
+	elif shape == &"legs" or shape == &"legs_heavy":
+		# Lander legs under the hull: four splayed struts to footpads, lift-jet nozzles between them. The heavy
+		# set has thicker struts, broader pads and bigger nozzles: it lands on planets.
+		var heavy := shape == &"legs_heavy"
 		var steel := _mat(Color(0.55, 0.57, 0.6), 1.0)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
 				var top := Vector3(sx * 0.9, h - 0.15, sz * 0.9)
-				var foot := Vector3(sx * 1.3, -h + 0.12, sz * 1.3)
-				var leg := _add_box(root, (top + foot) * 0.5, Vector3(0.16, top.distance_to(foot), 0.16), steel)
+				var foot := Vector3(sx * (1.4 if heavy else 1.3), -h + 0.12, sz * (1.4 if heavy else 1.3))
+				var leg := _add_box(root, (top + foot) * 0.5, Vector3(0.26 if heavy else 0.16, top.distance_to(foot), 0.26 if heavy else 0.16), steel)
 				leg.look_at_from_position((top + foot) * 0.5, foot, Vector3(1, 0, 0) if absf(sx) < 0.5 else Vector3(0, 0, 1))
 				leg.rotate_object_local(Vector3.RIGHT, PI * 0.5)
-				_add_box(root, foot + Vector3(0, -0.05, 0), Vector3(0.6, 0.1, 0.6), dark)
-		_add_box(root, Vector3(0, h - 0.2, 0), Vector3(2.2, 0.3, 2.2), dark)  # mounting plate
+				_add_box(root, foot + Vector3(0, -0.05, 0), Vector3(0.85, 0.14, 0.85) if heavy else Vector3(0.6, 0.1, 0.6), dark)
+		_add_box(root, Vector3(0, h - 0.2, 0), Vector3(2.4, 0.4, 2.4) if heavy else Vector3(2.2, 0.3, 2.2), dark)  # mounting plate
 		var jet_steel := Interiors.flat(Color(0.34, 0.33, 0.34), 0.45, 0.6)
 		var soot := Interiors.flat(Color(0.10, 0.09, 0.09), 0.9, 0.2)
 		for k in 4:   # lift jets between the legs, firing straight down
 			var a := k * PI * 0.5 + PI * 0.25
 			var jet := Node3D.new()
-			jet.position = Vector3(cos(a) * 0.5, h - 0.35, sin(a) * 0.5)
+			jet.position = Vector3(cos(a) * (0.62 if heavy else 0.5), h - 0.35, sin(a) * (0.62 if heavy else 0.5))
 			jet.rotation_degrees.x = 90.0   # the parts' +Z turns to -Y: down
 			root.add_child(jet)
-			EngineParts.bell(jet, 0.0, 0.45, 0.12, 0.3, jet_steel, soot, jet_steel, _glow(Color(1.0, 0.72, 0.42)), 0.03)
-			EngineParts.plume(jet, 0.45, 0.3, 2.4, "lift_flame")
+			if heavy:
+				EngineParts.bell(jet, 0.0, 0.7, 0.2, 0.46, jet_steel, soot, jet_steel, _glow(Color(1.0, 0.72, 0.42)), 0.04)
+				EngineParts.plume(jet, 0.7, 0.46, 4.2, "lift_flame")
+			else:
+				EngineParts.bell(jet, 0.0, 0.45, 0.12, 0.3, jet_steel, soot, jet_steel, _glow(Color(1.0, 0.72, 0.42)), 0.03)
+				EngineParts.plume(jet, 0.45, 0.3, 2.4, "lift_flame")
+	elif shape == &"shield":
+		# A heat shield: a slab of dark ablative tiles bolted flat under the hull, slightly bigger than the cell
+		# so neighbouring slabs overlap, with a scorched rim. It sits under a "Body" the ship view slides
+		# against the hull it's bolted to, like the other low parts.
+		var body := Node3D.new()
+		body.name = "Body"
+		root.add_child(body)
+		var tile := _mat(Color(0.13, 0.12, 0.12), 1.0)
+		var seam := _mat(Color(0.05, 0.05, 0.05), 1.0)
+		# Under a hull cell the view turns the body over (ShipView._hug), so its +Y face is the one that looks
+		# down at the ground: the seams go there.
+		_add_box(body, Vector3(0, -0.15, 0), Vector3(3.1, 0.24, 3.1), tile)
+		for i in 3:   # tile seams
+			_add_box(body, Vector3(-1.03 + i * 1.03, -0.02, 0), Vector3(0.04, 0.02, 3.1), seam)
+			_add_box(body, Vector3(0, -0.02, -1.03 + i * 1.03), Vector3(3.1, 0.02, 0.04), seam)
 	elif shape == &"retro":
 		# Braking thrusters: a slim fairing that lies flat on the hull, with two small nozzles recessed in
 		# its nose firing forward to push the ship backward. Everything sits under a "Body" node that the

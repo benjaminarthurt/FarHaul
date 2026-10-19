@@ -23,6 +23,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 LINES = {
     "kesh": {
+        "downport_cleared": [["Freighter, downport control. Pad {berth} is assigned to you. Wind {wind} from the {from}. Keep your exhaust from the terminal.", "Freighter, downport control. Pad {berth} is assigned to you. Keep your exhaust from the terminal."], ["Pad {berth} is cleared, freighter. The air is {wind} from the {from}. Belly first, and the city is not your landing zone.", "Pad {berth} is cleared, freighter. Belly first. The city is not your landing zone."]],
+        "downport_gale": [["Freighter, pad {berth}. The wind is {wind} from the {from}. Hold into it and land with care, or do not land.", "Freighter, pad {berth}. The wind is strong. Hold into it and land with care, or do not land."], ["Pad {berth}, freighter. The gusts are {wind}. Three ships have bounced today. Each was entered in the record.", "Pad {berth}, freighter. The gusts are severe. Three ships have bounced today. Each was entered in the record."]],
+        "field_cleared": ["Freighter. The field is clear. Land between the flares, upwind of the shed.", ["The ground by the flares has been tested. Wind {wind} from the {from}. Set down there.", "The ground by the flares has been tested. Mind the windsock. Set down there."]],
         "cleared": [
             "Freighter, this is traffic control. Berth {berth} is assigned to you. The collar is lit. Bring her in square.",
             "Acknowledged, freighter. Berth {berth} is yours. The collar has been inspected and signed off. Approach slowly.",
@@ -162,6 +165,9 @@ LINES = {
             "Our hold is full. The wreck is yours to care for."],
     },
     "ilyan": {
+        "downport_cleared": [["Downport control. Pad {berth}. Wind {wind}, {from}. Burn away from the glass.", "Downport control. Pad {berth}. Burn away from the glass."], ["Pad {berth}. Belly first. Wind {wind}. The city is not a pad.", "Pad {berth}. Belly first. The city is not a pad."]],
+        "downport_gale": [["Pad {berth}. Wind {wind}, {from}. Gusting. Crab into it. Land firm.", "Pad {berth}. Strong wind. Gusting. Crab into it. Land firm."], ["Pad {berth}. Gusts {wind}. Three bounces today. Inefficient.", "Pad {berth}. Hard gusts. Three bounces today. Inefficient."]],
+        "field_cleared": ["Field clear. Between the flares. Upwind of the shed.", ["Field. Wind {wind}, {from}, per the sock. Land.", "Field. Watch the sock. Land."]],
         "cleared": [
             "Freighter. Berth {berth}. Collar lit. Two metres a second, no more.",
             "Copy, freighter. Berth {berth}. Square approach. Polished yesterday.",
@@ -301,6 +307,9 @@ LINES = {
             "Hold full. Wreck yours."],
     },
     "vey": {
+        "downport_cleared": [["Freighter, downport control. Pad {berth} is yours. The air's {wind} from the {from}. Keep the burn off the windows, people are waving.", "Freighter, downport control. Pad {berth} is yours. Keep the burn off the windows, people are waving."], "Pad {berth}, freighter. Come in belly first, like a diving bird. The city's for swimming in, not landing on."],
+        "downport_gale": [["Freighter, pad {berth}. It's blowing {wind} from the {from}. Lean into it, like a current. Come down when the gust lets go.", "Freighter, pad {berth}. It's blowing hard. Lean into it, like a current. Come down when the gust lets go."], ["Pad {berth}. It's rough today, gusting {wind}. Three ships bounced. We caught them, mostly.", "Pad {berth}. It's rough today. Three ships bounced. We caught them, mostly."]],
+        "field_cleared": ["Freighter? Welcome. Land between the flares, on the windward side of the shed.", ["Come down. The sock says {wind} from the {from}. The sock's never lied to us.", "Come down. Watch the sock. The sock's never lied to us."]],
         "cleared": [
             "Freighter, welcome in. Berth {berth} is ready for you. The collar's lit. Drift in easy.",
             "Copy, friend. Berth {berth} is yours. Come in gently, like the tide.",
@@ -440,6 +449,9 @@ LINES = {
             "Our hold's full. Everything left is yours."],
     },
     "orun": {
+        "downport_cleared": [["Freighter, this is all of us at downport control. Pad {berth}. Wind {wind} from the {from}. Keep your burn off the terminal. We are all at the window.", "Freighter, this is all of us at downport control. Pad {berth}. Keep your burn off the terminal. We are all at the window."], "Pad {berth}, freighter. Belly first. Not the city. Everyone in the city is watching."],
+        "downport_gale": [["Freighter, pad {berth}. We are all having a gale, {wind} from the {from}. Hold into it. We will all hold our breath.", "Freighter, pad {berth}. We are all having a gale. Hold into it. We will all hold our breath."], ["Pad {berth}. Gusting {wind}. Three ships bounced today. We went and looked at all of them.", "Pad {berth}. Hard gusts. Three ships bounced today. We went and looked at all of them."]],
+        "field_cleared": ["Freighter? Yes. Land by the flares. We are all in the shed. Not on the shed.", ["Come down. The sock says {wind} from the {from}. We all trust the sock.", "Come down. Watch the sock. We all trust the sock."]],
         "cleared": [
             "Freighter, we see you. We are giving you berth {berth}. The collar is lit. We are all watching.",
             "Copy, freighter. Berth {berth} is ours and now yours. Come in slow. We just polished it together.",

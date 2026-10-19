@@ -43,6 +43,11 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 	var rcs_x := 0.0   # kN each way, sideways
 	var rcs_y := 0.0   # kN each way, up and down
 	var rcs_sideways := 0
+	var shield_cells := 0.0
+	var plan := {}    # the ship's outline seen from below (x, z), from the front (x, y) and from the side (y, z)
+	var front := {}
+	var side_out := {}
+	var hull_plan := {}   # the pressure hull's outline from below: what a heat shield protects
 
 	for mi in ship.modules.size():
 		var m: Dictionary = ship.modules[mi]
@@ -54,6 +59,12 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		for c in cells:
 			var p := ShipGrid.cell_to_world(c)
 			centroid += p
+			if not d.seal and d.shield <= 0.0:
+				plan[Vector2i(c.x, c.z)] = true
+				front[Vector2i(c.x, c.y)] = true
+				side_out[Vector2i(c.y, c.z)] = true
+				if d.pressurized:
+					hull_plan[Vector2i(c.x, c.z)] = true
 			if not d.seal:   # a cap doesn't make the ship any bigger
 				lo = Vector3(minf(lo.x, p.x), minf(lo.y, p.y), minf(lo.z, p.z))
 				hi = Vector3(maxf(hi.x, p.x), maxf(hi.y, p.y), maxf(hi.z, p.z))
@@ -73,6 +84,7 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		lift += d.lift
 		if d.lift > 0.0:
 			legs += 1
+		shield_cells += d.shield
 		if d.rcs > 0.0:   # side nozzles push along the module's X (which turns with it); top and bottom along Y
 			var side := absf(float(ShipGrid.rotate_cell(Vector3i(1, 0, 0), m.rot).x))
 			rcs_x += d.rcs * side
@@ -200,7 +212,13 @@ static func compute(ship: ShipData, cargo_load := 1.0, manifest: CargoManifest =
 		"rcs_x": rcs_x,    # kN each way of manoeuvring thrust, sideways
 		"rcs_y": rcs_y,    # and up and down
 		"foot_y": lo.y - ShipGrid.CELL * 0.5 if not ship.modules.is_empty() else 0.0,   # lowest point, ship coordinates
-		"lift_g": lift / maxf(loaded, 0.001),   # m/s² the lift jets can hold up at this load: must beat a world's gravity to land
+		"lift_g": lift / maxf(loaded, 0.001),
+		# Coming down through air (FlightModel.air): the areas the air presses on, and how much of the belly
+		# a heat shield covers.
+		"belly_m2": float(plan.size()) * ShipGrid.CELL * ShipGrid.CELL,
+		"front_m2": float(front.size()) * ShipGrid.CELL * ShipGrid.CELL,
+		"side_m2": float(side_out.size()) * ShipGrid.CELL * ShipGrid.CELL,
+		"shield": clampf(shield_cells / maxf(1.0, float(hull_plan.size())), 0.0, 1.0),   # m/s² the lift jets can hold up at this load: must beat a world's gravity to land
 		"warnings": warnings,
 	}
 
@@ -228,6 +246,8 @@ static func format(s: Dictionary) -> String:
 		lines.append("Passengers  %d beds: %s" % [int(s.cabins), ", ".join(bits)])
 	if float(s.get("lift", 0.0)) > 0.0:
 		lines.append("Lift  %.0f kN   lands where gravity is under %.2f g loaded" % [s.lift, float(s.lift_g) / G])
+	if float(s.get("shield", 0.0)) > 0.0:
+		lines.append("Heat shield  %d%% of the hull's belly covered" % roundi(float(s.shield) * 100.0))
 	if float(s.get("retro", 0.0)) > 0.0:
 		lines.append("Braking  %.0f kN   slows %.2f m/s² loaded, without turning round" % [s.retro, float(s.retro_a)])
 	if float(s.get("rcs_y", 0.0)) > 0.0:

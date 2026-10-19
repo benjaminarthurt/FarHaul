@@ -116,6 +116,8 @@ static func load_slot(from_slot: int) -> bool:
 	sim = SimWorld.restore(String(data["sim"])) if data.has("sim") else null
 	if sim != null and sim.dev.is_empty():   # saved before frontier growth: everywhere starts at its canon size now
 		Development.enable(sim)
+	elif sim != null:
+		Development.add_missing(sim)   # saved before the planets' downports and fields: they start at canon size
 	if sim == null:   # older save: the world starts now, around the player's current ship
 		var ship := ShipData.new(ModuleLibrary.new())
 		if ship.from_json(JSON.stringify(data)):
@@ -264,7 +266,9 @@ static func restructure() -> Dictionary:
 	var room := maxi(0, int(ShipStats.compute(fresh).get("berths", 0)) - 1)
 	if crew().size() > room:   # the bank's hauler has fewer bunks: the newest hands are let go, unpaid
 		profile["crew"] = crew().slice(0, room)
-	if LocalSpace.is_surface(String(profile.get("port_id", ""))):
+	if LocalSpace.is_planet(String(profile.get("port_id", ""))):
+		profile["port_id"] = String(Worlds.primary_port(system_id()).get("id", profile.get("port_id", "")))   # the bank's lighter takes it up to the main port
+	elif LocalSpace.is_surface(String(profile.get("port_id", ""))):
 		profile["port_id"] = system_id() + LocalSpace.SEP + "moon"   # it cannot lift off: the bank's tug brings it up to the base's station
 	profile["credits"] = left
 	_sync_sim(fresh)
@@ -400,6 +404,8 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 			accepted["due_hour"] = sim.hour + int(contract.due_in_hours)
 	if is_local:
 		accepted["pay_total"] = int(contract.fare) if person == "passenger" else roundi(loaded * float(contract.rate))
+		if bool(contract.get("fresh", false)) and sim != null:
+			accepted["loaded_hour"] = sim.hour   # fresh food: the clock starts now (Planets.fresh_left)
 		var done: Array = profile.get("local_taken", [])
 		done.append(String(contract.id))
 		profile["local_taken"] = done.slice(maxi(0, done.size() - 40))
@@ -433,9 +439,13 @@ static func local_sites() -> Array[Dictionary]:
 	for n in LocalSpace.nodes(system_id()):
 		if String(n["id"]) == String(here["id"]):
 			continue
-		if (bool(n.get("surface", false)) or bool(here.get("surface", false))) and not LocalSpace.can_land(st, system_id()):
-			continue   # landing (or lifting off) needs lander legs with the lift for this moon
-		var h := LocalSpace.hop(String(here["kind"]), String(n["kind"]))
+		if bool(n.get("surface", false)) and not LocalSpace.can_land(st, system_id(), 0.0, String(n["kind"])):
+			continue   # landing needs lander legs with the lift for that moon or planet
+		if bool(here.get("surface", false)) and not LocalSpace.can_land(st, system_id(), 0.0, String(here["kind"])):
+			continue   # and so does lifting off from here
+		var h := LocalSpace.hop(String(here["kind"]), String(n["kind"]), system_id())
+		if h.is_empty():
+			continue
 		if LocalSpace.max_cargo_t(float(st["wet"]), float(st["fuel"]), float(h["dv_kms"])) < 0.0:
 			continue   # out of reach of the tank even empty
 		var cost := local_trip_cost(st, 0.0, float(h["dv_kms"]))
@@ -624,7 +634,7 @@ static func surface_site() -> String:
 
 static func missions_here() -> Array[Dictionary]:
 	var site := surface_site()
-	if site == "" or sim == null:
+	if site == "" or sim == null or not site in LocalSpace.MOON_SURFACE:   # surface missions are the moon's
 		return []
 	return SurfaceWork.offered(system_id(), site, day(), profile.get("missions_taken", []))
 
@@ -1398,8 +1408,14 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 	payment = int(deal.payment)
 	var spoiled := roundi(float(payment) * clampf(float(c.get("cargo_hurt", 0.0)), 0.0, 1.0))
 	payment -= spoiled
+	var wilted := 0
+	var fresh_h := 0
+	if bool(c.get("fresh", false)) and c.has("loaded_hour"):   # fresh food loses its value once its time is up
+		fresh_h = sim.hour - int(c.loaded_hour)
+		wilted = roundi(float(payment) * (1.0 - Planets.fresh_left(float(fresh_h))))
+		payment -= wilted
 	var bonus := 0
-	if bool(c.get("surface", false)):   # landed straight on the moon base's pad: no lighter up from orbit
+	if bool(c.get("surface", false)) and not bool(c.get("planet", false)):   # landed straight on the moon base's pad: no lighter up from orbit (a planet run's pay already counts the landing)
 		bonus = roundi(float(payment) * float(SurfaceTerrain.config().get("surface_bonus", 0.25)))
 		payment += bonus
 	var rep_note := _add_rep(int(deal.rep) + (1 if passengers and Crew.skill(crew(), "steward") >= 3 else 0))   # a good steward's passengers speak well of you
@@ -1452,6 +1468,10 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 		note += ", after %d hours' unloading" % hours
 	if spoiled > 0:
 		note += ", less %s cr for the %d%% that arrived broken" % [ShipStats.commas(spoiled), roundi(float(c.cargo_hurt) * 100.0)]
+	if wilted > 0:
+		note += ", less %s cr because it spent %d hours in the hold and smells like it" % [ShipStats.commas(wilted), fresh_h]
+	elif bool(c.get("fresh", false)) and c.has("loaded_hour"):
+		note += ", still fresh after %d hours" % fresh_h
 	var dn := String(deal.note)
 	var deal_note := (" " + dn.substr(0, 1).to_upper() + dn.substr(1) + ".") if dn != "" else ""
 	if passengers:

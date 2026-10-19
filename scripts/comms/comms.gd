@@ -101,7 +101,7 @@ func _control(name: String) -> String:
 func _site() -> Dictionary:
 	if not sc._on_surface():
 		return {}
-	var id := String(sc.job.get("dest_id", "")) if sc.phase == "descent" and not sc.job.is_empty() else String(Session.profile.get("port_id", ""))
+	var id := String(sc.job.get("dest_id", "")) if (sc.phase == "descent" or sc.phase == "entry") and not sc.job.is_empty() else String(Session.profile.get("port_id", ""))
 	if not LocalSpace.is_surface(id):
 		id = Session.system_id() + LocalSpace.SEP + String(sc._target_kind)
 	var kind := String(LocalSpace.node(id).get("kind", sc._target_kind))
@@ -145,7 +145,7 @@ func contacts() -> Array:
 		out.append({"id": "control", "kind": "control", "name": _control(_station_name()), "dist_m": pos.length(), "options": _control_options()})
 	var site := _site()
 	if not site.is_empty():
-		out.append({"id": "pad", "kind": String(site.kind), "name": ("%s pad control" % String(site.name)) if String(site.kind) == "pad" else "%s foreman" % String(site.name),
+		out.append({"id": "pad", "kind": String(site.kind), "name": _site_contact(site),
 				"dist_m": pos.distance_to(sc.model.pad), "options": _pad_options(site)})
 	if not distress.is_empty() and not bool(distress.get("gone", false)) and is_instance_valid(distress.get("ship", null)):
 		var d: float = (distress.ship as NpcShip).global_position.distance_to(pos)
@@ -182,8 +182,19 @@ func _control_options() -> Array:
 
 func _pad_options(site: Dictionary) -> Array:
 	if clear_for == String(site.id):
-		return [_opt("clearance", ("Confirm: pad %d" % berth) if String(site.kind) == "pad" else "Confirm: the flat bit")]
+		return [_opt("clearance", ("Confirm: pad %d" % berth) if String(site.kind) in ["pad", "world", "mars"] else "Confirm: the flat bit")]
 	return [_opt("clearance", "Request clearance to land")]
+
+
+## Who answers at a surface site: pad control at the moon base, downport control on a planet, the foreman
+## at a camp or a field.
+func _site_contact(site: Dictionary) -> String:
+	match String(site.kind):
+		"pad":
+			return "%s pad control" % String(site.name)
+		"world", "mars":
+			return "%s control" % String(site.name)
+	return "%s foreman" % String(site.name)
 
 
 func _ship_options(e: Dictionary, d: float) -> Array:
@@ -295,7 +306,7 @@ func _do(c: Dictionary, option: String) -> Dictionary:
 	match kind:
 		"control":
 			return _request_dock(c)
-		"pad", "camp":
+		"pad", "camp", "world", "field", "mars":
 			return _request_land(c)
 		"tug":
 			_you_say("Port tug, %s. We're dry. Come and get us." % _you())
@@ -373,7 +384,19 @@ func _request_land(c: Dictionary) -> Dictionary:
 	var site := _site()
 	var v := _voice("pad|" + String(site.id), _species_here())
 	_you_say(_line("you_pad", {"control": String(c.name)}))
-	_grant(String(site.id), String(c.name), v, 0.3, "pad_cleared" if String(site.kind) == "pad" else "camp_cleared")
+	var key := "pad_cleared" if String(site.kind) == "pad" else "camp_cleared"
+	if String(site.kind) in ["world", "mars"]:
+		key = "downport_cleared"
+	elif String(site.kind) == "field":
+		key = "field_cleared"
+	var extra := {}
+	if Planets.is_planet_kind(String(site.kind)):
+		var wx := Planets.weather(Session.system_id(), String(site.kind), Session.sim.now_hour() if Session.sim != null else 0)
+		extra["wind"] = "%d m/s" % roundi(float(wx.get("speed", 0.0)))
+		extra["from"] = Planets._compass(-(wx.wind as Vector3)) if float(wx.get("speed", 0.0)) >= 1.0 else "nowhere"
+		if float(wx.get("speed", 0.0)) >= 17.0:
+			key = "downport_gale" if key == "downport_cleared" else key
+	_grant(String(site.id), String(c.name), v, 0.3, key, extra)
 	return {"ok": true, "message": "Cleared to land."}
 
 

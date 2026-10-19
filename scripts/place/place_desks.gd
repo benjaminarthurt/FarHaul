@@ -61,6 +61,11 @@ func _desk_freight(id: String) -> void:
 	if Session.sim != null:
 		for st in Hazards.known(Session.system_id(), Session.sim.now_hour()):
 			sc.panel_list.add_child(Brand.note("Space weather: a solar storm here, %s. In port you're shielded; out there the radiators cook. The other haulers will be sitting it out." % Hazards.describe(st, Session.sim.now_hour()), 14))
+		var here_kind := String(LocalSpace.node(String(Session.profile.get("port_id", ""))).get("kind", ""))
+		if Planets.is_planet_kind(here_kind):
+			var wx := Planets.weather(Session.system_id(), here_kind, Session.sim.now_hour())
+			if float(wx.speed) >= 17.0:
+				sc.panel_list.add_child(Brand.note("Weather: %s. The pads stay open. Coming in or lifting off, the gusts will push you about, and landing fuel goes on fighting them." % Planets.describe_weather(wx), 14))
 	if id == "freight" and Session.site_has("passengers"):
 		_passengers_section(true)
 	var c := Session.active_contract()
@@ -171,7 +176,7 @@ func _desk_freight(id: String) -> void:
 func _offer_text(c: Dictionary, stats: Dictionary) -> String:
 	var goods := Worlds.commodity(String(c.commodity))
 	if bool(c.get("local", false)):
-		var tag := "SURFACE" if bool(c.get("surface", false)) else "LOCAL"
+		var tag := "FRESH" if bool(c.get("fresh", false)) else "PLANET" if bool(c.get("planet", false)) else "SURFACE" if bool(c.get("surface", false)) else "LOCAL"
 		var dest := String(LocalSpace.node(String(c.destination_port_id)).get("name", c.destination_port_id))
 		var fuel := ""
 		if not stats.is_empty():

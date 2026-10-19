@@ -105,6 +105,8 @@ static func describe(s: Dictionary, hour: int) -> String:
 ## The debris field across a local hop between two kinds of site this month, or {}: {density 0-1,
 ## radius_m, along (fraction of the way), offset (from the route, in radii, signed), seed}.
 static func local_field(sys: String, kind_a: String, kind_b: String, day: int) -> Dictionary:
+	if Planets.is_planet_kind(kind_a) and Planets.is_planet_kind(kind_b) and Landing.body_key(kind_a) == Landing.body_key(kind_b):
+		return {}   # a hop across a planet's ground never leaves the air: no rocks up there
 	var ks := [kind_a, kind_b]
 	ks.sort()
 	return _field("local|%s|%s|%s" % [sys, ks[0], ks[1]], day, float(config().debris.local_chance))

@@ -48,6 +48,8 @@ const DESKS := {
 	"venus": ["freight", "fuel", "bar", "terminal", "gate"], "jovian": ["freight", "fuel", "bar", "terminal", "gate"],
 	"saturn": ["freight", "fuel", "bar", "terminal", "gate"],
 	"pad": ["dispatch", "lab", "store", "fuel", "terminal", "gate"], "camp": ["foreman", "exchange", "terminal", "gate"],
+	"world": ["freight", "fuel", "bar", "terminal", "gate"], "mars": ["freight", "fuel", "bar", "terminal", "gate"],
+	"field": ["foreman", "exchange", "terminal", "gate"],
 }
 var n_sites := 0
 var n_stations := 0
@@ -114,7 +116,7 @@ func _run() -> void:
 		check(not looks.has(look), "%s does not look the same as %s (%s)" % [sys, looks.get(look, ""), look])
 		looks[look] = sys
 		Session.profile["system_id"] = sys
-		for n in LocalSpace.nodes(sys):   # every site: the port, depot, moon station, belt works, pad and camp (and Sol's outer stations)
+		for n in LocalSpace.nodes(sys):   # every site: the port, depot, moon station, belt works, pad and camp (and Sol's outer stations, and the planets' downports and fields)
 			n_want += 1
 			await _site(sys, n)
 	check(n_sys >= 18, "every system was checked (%d)" % n_sys)

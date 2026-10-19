@@ -215,7 +215,10 @@
   "camp": 1.6,
   "venus": 1.2,
   "jovian": 0.9,
-  "saturn": 1.25
+  "saturn": 1.25,
+  "world": 1.05,
+  "field": 1.5,
+  "mars": 1.3
  },
  "site_repair_rate": {
   "port": 1.0,
@@ -226,7 +229,10 @@
   "camp": 1.5,
   "venus": 1.2,
   "jovian": 1.0,
-  "saturn": 1.3
+  "saturn": 1.3,
+  "world": 0.95,
+  "field": 1.4,
+  "mars": 1.2
  },
  "extra_sites": {
   "sol": [
