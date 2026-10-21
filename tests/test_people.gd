@@ -35,7 +35,7 @@ func _run() -> void:
 	Hazards.off = true   # no storms or debris: this is about the people (tests/test_hazards.gd has those)
 	Session.begin_new(2, "Pilot", "human", "normal", "roosevelt_independent_yards")
 	check(People.standing(0) == "Unknown" and People.standing(12) == "Known" and People.standing(60) == "Respected", "standings by points")
-	check(is_equal_approx(People.rep_bonus(100), 0.15), "standing's pay bonus is capped at 15%")
+	check(is_equal_approx(People.rep_bonus(100), 0.25) and is_equal_approx(People.rep_bonus(-100), -0.3), "standing moves people's pay from -30% to +25%")
 	var a := Session.people_here()
 	var b := Session.people_here()
 	check(not a.is_empty(), "people are asking at the home port (%d)" % a.size())
@@ -113,6 +113,7 @@ func _run() -> void:
 		_clear()
 	# Sealed, with standing.
 	Session.profile["rep"] = 12
+	Session.profile.erase("reputation")   # as a save from before 0.20.0: the old score becomes this port's opinion
 	Session.save_profile()
 	sealed = _find("sealed")
 	check(not sealed.is_empty() and not sealed.has("locked"), "a known captain is offered sealed crates")

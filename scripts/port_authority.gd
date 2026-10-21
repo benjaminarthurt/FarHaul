@@ -54,7 +54,7 @@ static func collect_finders() -> Dictionary:
 		return {"ok": false, "message": "Nobody reported."}
 	var fee := finder_fee() * rep.size()
 	Session._book(float(fee))
-	var note := Session._add_rep(int(cfg().get("finder_rep", 1)) * rep.size())
+	var note := Session._add_rep(int(cfg().get("finder_rep", 1)) * rep.size(), "record")   # the authorities like a captain who reports wrecks
 	Session.profile["reported"] = []
 	_count("reported", rep.size())
 	Session.save_profile()
@@ -123,7 +123,7 @@ static func hand_over(i: int) -> Dictionary:
 		return {"ok": false, "message": "Nobody to hand over."}
 	var bounty := int(cfg().get("rescue_bounty", 6000))
 	Session._book(float(bounty))
-	var rep := Session._add_rep(int(cfg().get("rescue_rep", 2)))
+	var rep := Session._add_rep(int(cfg().get("rescue_rep", 2)), "rescue", [String(res[i].get("species", "human"))])   # their own people hear who brought them home
 	res[i]["handed"] = true
 	Session.profile["rescued"] = res
 	_count("rescued", 1)

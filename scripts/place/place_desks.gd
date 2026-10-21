@@ -7,6 +7,7 @@ extends RefCounted
 var sc: PlaceScene   ## the scene this works on
 var _letting_go := ""  ## crew id asked to be let go once: a second click does it
 var _cancel_asked := false   ## cancelling the contract asked once: a second click does it
+var _standing_open := false  ## the standing section shows who thinks what
 
 
 func _init(scene: PlaceScene) -> void:
@@ -24,6 +25,7 @@ func _fill(id: String) -> void:
 					var r := TradeReport.find(sc.get_tree())
 					if r != null:
 						r.open())
+			_standing_section(id == "freight")
 		"fuel":
 			_desk_fuel()
 		"yard":
@@ -138,7 +140,9 @@ func _desk_freight(id: String) -> void:
 		_people_section()
 		sc.panel_list.add_child(Brand.heading("POSTED WORK", 15))
 	var offers := Contracts.offers_from(Session.system_id())
-	if offers.is_empty():
+	if offers.is_empty() and Session.tier_here() == "Barred":
+		sc.panel_list.add_child(Brand.note("Nothing for you. The clerk is very busy not looking up. You're Barred here: settle your record with the authorities, let it fade, or take your custom somewhere that hasn't heard yet.", 15))
+	elif offers.is_empty():
 		sc.panel_list.add_child(Brand.note("Nothing posted right now. Wait a day at the bunks, or fly empty somewhere less sleepy.", 15))
 	var stats := {}
 	var loaded := Session._load_ship(SaveSlots.read(Session.slot)) if Session.slot >= 0 else {}
@@ -180,7 +184,7 @@ func _offer_text(c: Dictionary, stats: Dictionary) -> String:
 		var dest := String(LocalSpace.node(String(c.destination_port_id)).get("name", c.destination_port_id))
 		var fuel := ""
 		if not stats.is_empty():
-			fuel = ", fuel about %s cr" % ShipStats.commas(roundi(float(Session.local_trip_cost(stats, float(c.offer), float(c.dv_kms)).total)))
+			fuel = ", fuel about %s cr" % ShipStats.commas(roundi(float(Session.local_trip_cost(stats, float(c.offer), float(c.dv_kms), String(c.destination_port_id)).total)))
 		return "%s  %s  →  %s\n%.1f t  ·  %.1f km/s  ·  %d h  ·  %s cr/t  ·  up to %s cr%s" % [tag, goods.get("name", c.commodity), dest, float(c.offer), float(c.dv_kms), int(c.hours),
 				ShipStats.commas(int(c.rate)), ShipStats.commas(roundi(float(c.offer) * float(c.rate))), fuel]
 	var port := Worlds.port(String(c.destination_port_id))
@@ -190,18 +194,18 @@ func _offer_text(c: Dictionary, stats: Dictionary) -> String:
 
 ## People asking in person (People): rush jobs, passengers and sealed crates.
 func _people_section() -> void:
-	var rep := int(Session.profile.get("rep", 0))
-	var nxt := People.next_standing(rep)
+	var rep := Session.standing_here()
 	sc.panel_list.add_child(Brand.heading("PEOPLE WITH WORK", 15))
-	sc.panel_list.add_child(Brand.note("Your standing: %s (%d%s). Standing raises what people offer, up to +15%%." % [People.standing(rep), rep,
-			", %s at %d" % [People.standing(nxt), nxt] if nxt > 0 else ""], 13))
+	sc.panel_list.add_child(Brand.note(_standing_line(rep), 13))
 	var busy := not Session.active_contract().is_empty()
 	var people := Session.people_here()
 	var st := {}
 	var ld := Session._load_ship(SaveSlots.read(Session.slot)) if Session.slot >= 0 else {}
 	if not ld.is_empty():
 		st = Session.ship_stats(ld.ship)
-	if people.is_empty():
+	if people.is_empty() and not Reputation.at_least(rep, "Doubtful"):
+		sc.panel_list.add_child(Brand.note("Nobody asks. A few people look at you, then at each other. Word has got around.", 14))
+	elif people.is_empty():
 		sc.panel_list.add_child(Brand.note("No one is asking today.", 14))
 	for j in people:
 		var job: Dictionary = j
@@ -221,6 +225,73 @@ func _people_section() -> void:
 			var r := Session.accept_contract(job)
 			sc._say(String(r.message))
 			sc._refill(), not busy and not job.has("locked"))
+
+
+## Who thinks what of you (Reputation), and, at a port's freight office, settling your record with the
+## system's authorities.
+func _standing_section(authority_desk: bool) -> void:
+	if Session.slot < 0:
+		return
+	var p := Session.standing_parts()
+	var tier := Reputation.tier(float(p.total))
+	sc.panel_list.add_child(Brand.heading("YOUR STANDING", 15))
+	sc.panel_list.add_child(Brand.note("%s here (%d). %s Fees and fuel %s." % [tier, roundi(float(p.total)), Reputation.tier_note(tier),
+			_pct(Reputation.fee_mult(float(p.total)))], 14))
+	sc._action(("HIDE WHO THINKS WHAT" if _standing_open else "SEE WHO THINKS WHAT"), func() -> void:
+		_standing_open = not _standing_open
+		sc._refill())
+	if _standing_open:
+		var sys := Session.system_id()
+		var st := Reputation.state(Session.profile)
+		var now := Session._now_h()
+		var who := PackedStringArray()
+		for sp in Reputation.peoples(sys):
+			who.append(Session._species_plural(String(sp)))
+		var lines := PackedStringArray([
+			"This place: %+d, for the work you've done here." % roundi(float(p.place)),
+			"Its people (%s): %+d, as word has reached them." % [", ".join(who), roundi(float(p.species))],
+			"The %s authorities: %+d, fines and rescues on the record." % [String(Worlds.system(sys).get("name", sys)), roundi(float(p.authority))]])
+		var views := PackedStringArray()
+		for sp in ["human", "kesh", "ilyan", "vey", "orun"]:
+			views.append("%s %+d" % [String(Worlds.species(sp).get("name", sp)), roundi(Reputation.species_view(st, sp, sys, now, Session.sim))])
+		lines.append("What each people thinks, as heard here: %s." % ", ".join(views))
+		var travelling: int = (st.log as Array).size()   # deeds not yet heard everywhere
+		if travelling > 0:
+			lines.append("%d thing%s you did %s still on the way to other systems." % [travelling, "" if travelling == 1 else "s", "is" if travelling == 1 else "are"])
+		var known := []
+		for site in (st.places as Dictionary).keys():
+			if String(site) != String(Session.profile.get("port_id", "")) and absf(float(st.places[site])) >= 1.0:
+				known.append(String(site))
+		known.sort_custom(func(a: String, b: String) -> bool: return absf(float(st.places[a])) > absf(float(st.places[b])))
+		var elsewhere := PackedStringArray()
+		for site in known.slice(0, 6):
+			elsewhere.append("%s: %s" % [String(LocalSpace.node(site).get("name", site)), Session.tier_here(site)])
+		if not elsewhere.is_empty():
+			lines.append("Elsewhere: %s." % "; ".join(elsewhere))
+		sc.panel_list.add_child(Brand.note("\n".join(lines), 13))
+	var cost := Session.settle_record_cost()
+	if cost > 0:
+		if authority_desk:
+			sc._action("SETTLE YOUR RECORD WITH THE AUTHORITIES  %s cr" % ShipStats.commas(cost), func() -> void:
+				var r := Session.settle_record()
+				sc._say(String(r.message))
+				sc._refill(), int(Session.profile.get("credits", 0)) >= cost)
+		else:
+			sc.panel_list.add_child(Brand.note("The authorities have you on record. Settling it is done at the port's freight office, for %s cr." % ShipStats.commas(cost), 13))
+
+
+static func _pct(mult: float) -> String:
+	var d := roundi((mult - 1.0) * 100.0)
+	return "at the usual price" if d == 0 else "%+d%%" % d
+
+
+## One line on where you stand here and what it does to the pay.
+static func _standing_line(rep: float) -> String:
+	var nxt := Reputation.next_tier(rep)
+	var pay := roundi((Reputation.pay_mult(rep) - 1.0) * 100.0)
+	return "Your standing here: %s (%d%s). %s" % [Reputation.tier(rep), roundi(rep),
+			", %s at %d" % [String(nxt.name), ceili(float(nxt.points))] if not nxt.is_empty() else "",
+			"Pay is the usual." if pay == 0 else ("Pay %+d%% for it." % pay)]
 
 
 ## Passengers (Passengers): who's aboard and where they're going, the way to take them there when
@@ -332,11 +403,11 @@ func _crew_section() -> void:
 		var fee := roundi(float(cand.wage) * float(Crew.cfg().get("hire_fee_days", 1)) * mult)
 		var txt := "%s  ·  %s, skill %d  ·  %s, %s cr/day, %s cr to sign\n\"%s\" %s" % [String(cand.name), Crew.role_name(String(cand.role)), int(cand.skill),
 				Worlds.species(String(cand.species)).name, ShipStats.commas(roundi(float(cand.wage) * mult)), ShipStats.commas(fee), String(cand.line),
-				String(Crew.role(String(cand.role)).get("does", ""))]
+				String(cand.refuses) + "." if cand.has("refuses") else String(Crew.role(String(cand.role)).get("does", ""))]
 		sc._action(txt, func() -> void:
 			var r := Session.hire(String(cand.id))
 			sc._say(String(r.message))
-			sc._refill(), free > 0 and int(Session.profile.get("credits", 0)) >= fee)
+			sc._refill(), free > 0 and int(Session.profile.get("credits", 0)) >= fee and not cand.has("refuses"))
 
 
 func _desk_fuel() -> void:

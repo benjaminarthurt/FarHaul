@@ -1,0 +1,41 @@
+{
+  "description": "Reputation (0.20.0): what each place, each species and each system's authorities think of you, and how word of it travels. See docs/runtime/reputation.md. Code: scripts/reputation.gd.",
+  "tiers": [
+    [-50, "Barred"],
+    [-25, "Unwelcome"],
+    [-10, "Doubtful"],
+    [0, "Unknown"],
+    [10, "Known"],
+    [25, "Trusted"],
+    [50, "Respected"]
+  ],
+  "tier_notes": {
+    "Barred": "Traffic control won't clear you, nobody here will give you work, and everything costs more. The tug still comes if you're stranded, with a lecture and a bill.",
+    "Unwelcome": "Freight off the board and nothing else: nobody asks you in person, and crew won't sign on. Steep fees.",
+    "Doubtful": "Fewer jobs, lower pay and higher fees. People are watching.",
+    "Unknown": "Nobody has an opinion yet. Enjoy it.",
+    "Known": "Sealed crates are offered, and pay is a little better.",
+    "Trusted": "Priority berths (traffic control won't make you hold), lower fees, better pay.",
+    "Respected": "Private contracts, the best rates and the lowest fees."
+  },
+  "pay_mult": [[-50, 0.7], [-25, 0.75], [-10, 0.88], [0, 1.0], [10, 1.05], [25, 1.12], [50, 1.25]],
+  "fee_mult": [[-50, 1.6], [-25, 1.35], [-10, 1.15], [0, 1.0], [10, 0.98], [25, 0.93], [50, 0.88]],
+  "limit": 100,
+  "species_share": 0.5,
+  "authority_share_elsewhere": 0.75,
+  "news_lag_hours": 6,
+  "news_ly_per_day": 1.5,
+  "unreachable_lag_days": 30,
+  "bad_fade_per_week": 0.1,
+  "settle_cr_per_point": 400,
+  "doubtful_people_per_site": 2,
+  "doubtful_board_keep": 0.67,
+  "crew_refuse_below": -10,
+  "deeds": {
+    "_doc": "Where a deed's points go. place: the site you're at. species: the people there (or the ones you helped), at species_share. authority: the system's traffic control and port authority, in full, and other systems' at authority_share_elsewhere once word reaches them.",
+    "work": ["place", "species"],
+    "radio": ["species", "authority"],
+    "record": ["authority"],
+    "rescue": ["species", "authority"]
+  }
+}

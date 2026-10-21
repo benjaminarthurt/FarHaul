@@ -355,10 +355,16 @@ func _request_dock(c: Dictionary) -> Dictionary:
 	if clear_for == sid:
 		_say(name, _line("already", {"berth": str(berth)}), v, dist)
 		return {"ok": true, "message": "Cleared: berth %d." % berth}
+	var tier := Session.tier_here(sid)
+	if tier == "Barred":   # traffic control won't have you: dock anyway and it's a fine, and more on the record
+		_say(name, _line("standing_refused"), v, dist)
+		_lamps("hold")
+		return {"ok": false, "message": "Clearance refused: you're Barred here."}
 	if sc.hazard_c != null and not sc.hazard_c.storm_now.is_empty():   # a solar storm on: control wants everyone inside
 		_say(name, _line("storm_advice"), v, dist)
 	var mover := _free_mover()
-	if hold.is_empty() and not mover.is_empty() and rng.randf() < float(k.get("hold_chance", 0.3)):
+	var priority := Reputation.at_least(Session.standing_here(sid), "Trusted")   # a priority berth: nobody makes you wait
+	if hold.is_empty() and not mover.is_empty() and not priority and rng.randf() < float(k.get("hold_chance", 0.3)):
 		mover.rest = 0.0
 		mover.out = true
 		mover.t = 0.0
@@ -367,7 +373,18 @@ func _request_dock(c: Dictionary) -> Dictionary:
 		_lamps("hold")
 		return {"ok": true, "message": "Told to hold for the %s." % String(hold.other)}
 	_grant(sid, name, v, dist, "cleared")
+	_standing_word("standing", tier, name, v, dist)
 	return {"ok": true, "message": "Cleared: berth %d." % berth}
+
+
+## After a clearance: what control thinks of you, when they think anything. `prefix` picks the speaker's
+## lines (standing: traffic control; pad: pad and downport control; camp: a camp).
+func _standing_word(prefix: String, tier: String, name: String, v: Dictionary, dist: float) -> void:
+	var r := Reputation.rank(tier)
+	if r >= Reputation.rank("Respected") or (r >= Reputation.rank("Trusted") and rng.randf() < 0.5):
+		_say(name, _line(prefix + "_warm"), v, dist)
+	elif r <= Reputation.rank("Doubtful"):
+		_say(name, _line(prefix + "_cold"), v, dist)
 
 
 func _grant(sid: String, name: String, v: Dictionary, dist: float, key: String, extra := {}) -> void:
@@ -384,6 +401,11 @@ func _request_land(c: Dictionary) -> Dictionary:
 	var site := _site()
 	var v := _voice("pad|" + String(site.id), _species_here())
 	_you_say(_line("you_pad", {"control": String(c.name)}))
+	var prefix := "camp" if String(site.kind) == "camp" else "pad"
+	var tier := Session.tier_here(String(site.id))
+	if tier == "Barred":
+		_say(String(c.name), _line(prefix + "_refused"), v, 0.3)
+		return {"ok": false, "message": "Landing refused: you're Barred here."}
 	var key := "pad_cleared" if String(site.kind) == "pad" else "camp_cleared"
 	if String(site.kind) in ["world", "mars"]:
 		key = "downport_cleared"
@@ -397,6 +419,7 @@ func _request_land(c: Dictionary) -> Dictionary:
 		if float(wx.get("speed", 0.0)) >= 17.0:
 			key = "downport_gale" if key == "downport_cleared" else key
 	_grant(String(site.id), String(c.name), v, 0.3, key, extra)
+	_standing_word(prefix, tier, String(c.name), v, 0.3)
 	return {"ok": true, "message": "Cleared to land."}
 
 
@@ -733,6 +756,7 @@ func _hold_step(dt: float) -> void:
 		var h := hold
 		hold = {}
 		_grant(String(h.site), String(h.name), h.voice, 0.2, "after_hold", {"other": String(h.other)})
+		_standing_word("standing", Session.tier_here(String(h.site)), String(h.name), h.voice, 0.2)
 
 
 func _fuel_step(dt: float) -> void:

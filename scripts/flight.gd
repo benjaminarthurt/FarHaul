@@ -888,7 +888,7 @@ func rescue_hint() -> String:
 ## What the tug would cost, for the prompt.
 static func tow_fee() -> int:
 	var lv := SimShip.level(String(Session.profile.get("difficulty", "normal")))
-	return roundi(float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)))
+	return roundi(float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) * Session.rep_fee_mult())   # Barred or not, the tug comes: and bills accordingly
 
 
 ## What the braking autopilot is doing, for the prompt, or "" when it is off.

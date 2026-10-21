@@ -283,7 +283,10 @@ static func long_haul() -> Array[Dictionary]:
 	var per_day: Array = k.get("per_day", [2, 4])
 	var n := r.randi_range(int(per_day[0]), int(per_day[1]))
 	var lines: Dictionary = cfg().get("lines", {})
-	var bonus := 1.0 + People.rep_bonus(int(Session.profile.get("rep", 0)))
+	var here_rep := Session.standing_here(port)
+	if not Reputation.at_least(here_rep, "Doubtful"):
+		return out   # Unwelcome: nobody wants to travel with you
+	var bonus := Reputation.pay_mult(here_rep)
 	for i in n:
 		var d: Dictionary = dests[r.randi() % mini(dests.size(), 5)]
 		var id := "pax-%s-%d-%d" % [port, Session.day(), i]

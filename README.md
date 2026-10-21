@@ -179,7 +179,7 @@ early browser build has been retired and `site/play/` is no longer tracked.
 
 ## Portable Windows build
 
-`export_presets.cfg` also has a **Windows Desktop** preset: one `FarHaul.exe` (about 230 MB) with the game
+`export_presets.cfg` also has a **Windows Desktop** preset: one `FarHaul.exe` (about 240 MB) with the game
 packed inside, built to `build/windows/` (which git ignores). It needs no install. Copy it anywhere, a USB
 stick included, and run it.
 
@@ -219,7 +219,7 @@ fonts or art to license.
 
 ## Voices
 
-The radio calls and the passengers' lines are recorded, 2,913 clips in `assets/audio/voice/`, made
+The radio calls and the passengers' lines are recorded, 3,153 clips in `assets/audio/voice/`, made
 with `tools/voice/` (see [tools/voice/README.md](tools/voice/README.md): `voice.bat setup`, `download`,
 `refs`, `cast`, `run`, `review`). The game picks a clip by the line it's saying (`scripts/comms/voice_bank.gd`)
 and falls back to the generated babble for anything not recorded, or when Settings turns recorded
@@ -257,6 +257,15 @@ cook. The autopilot can fly the whole entry. A heat shield buys margin. Coming d
 is not. The city lights up at night, the weather pushes you about, some worlds' air you can breathe, and the
 farms send up fresh food that won't stay fresh. How it works: [docs/runtime/planets.md](docs/runtime/planets.md).
 
+## Reputation
+
+People keep score. Every port, base, camp and downport has its own opinion of you, each species has a view,
+and each system's authorities keep a record, and word travels along the routes as fast as the traffic. Be
+Respected somewhere and it pays a quarter more, costs less, gets you priority berths and private contracts;
+be Barred and traffic control won't even clear you. Crew ask their own people about you before they sign.
+Settle your record at a port's freight office; bad marks fade, good ones don't. How it works:
+[docs/runtime/reputation.md](docs/runtime/reputation.md).
+
 ## Docs
 
 - [docs/far-haul-concept.md](docs/far-haul-concept.md): the full game concept (Far Haul).
@@ -264,7 +273,6 @@ farms send up fresh food that won't stay fresh. How it works: [docs/runtime/plan
 
 ## Next steps
 
-1. Walk-through mode: spawn a character in the built ship, parented to the ship node.
-2. Add collision to modules (floor and walls) so walking has something to stand on.
-3. Real locations with limited, changing supply and prices (the Load button's Tonnes box stands in
-   for that), then flight with a floating origin.
+After a full playthrough and a polish release, in an order still to be decided: rovers and boats on the
+planets, going into the cities, work on the ground on planets, and fuel skimmed from gas giants. The build
+order and what's been decided so far: [docs/design-notes.md](docs/design-notes.md).

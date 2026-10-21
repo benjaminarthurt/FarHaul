@@ -45,6 +45,33 @@
     "comms:camp_fined": {"role": "camp", "radio": true, "say": [
       "Next time, call before you drop on my camp. {camp_fine} for the scare.",
       "You land on my camp without a word? {camp_fine}. And a word."]},
+    "comms:standing_warm": {"role": "control", "radio": true, "say": [
+      "Good to have you back, freighter. Your paperwork's always in order. It's unsettling.",
+      "Freighter, welcome back. People here speak well of you. Don't let it go to your head."]},
+    "comms:standing_cold": {"role": "control", "radio": true, "say": [
+      "Freighter, we've heard about you. Keep it tidy and keep it short.",
+      "Noted, freighter. We'll be watching the collar. And you."]},
+    "comms:standing_refused": {"role": "control", "radio": true, "say": [
+      "Negative, freighter. You're not cleared here. Take it up with the port authority, from somewhere else.",
+      "Freighter, clearance refused. Dock anyway and it goes on the record. Again."]},
+    "comms:pad_warm": {"role": "pad", "radio": true, "say": [
+      "Nice to see you again, freighter. Same pad as always. We kept it clean.",
+      "Freighter, welcome back down. The ground crew asked for you by name."]},
+    "comms:pad_cold": {"role": "pad", "radio": true, "say": [
+      "Freighter, we know your record. Land it straight and don't touch anything.",
+      "Copy, freighter. Ground crew's been told to count the crates twice."]},
+    "comms:pad_refused": {"role": "pad", "radio": true, "say": [
+      "Negative, freighter. You're not cleared to land here. Come down anyway and you'll pay for it.",
+      "Freighter, landing refused. Your name's on a list, and it's not the good list."]},
+    "comms:camp_warm": {"role": "camp", "radio": true, "say": [
+      "Oh, it's you. Good. Foreman says land wherever you like. Within reason.",
+      "Hey, freighter. Glad it's you and not the other lot. Come on down."]},
+    "comms:camp_cold": {"role": "camp", "radio": true, "say": [
+      "It's you, is it. Land on the flat bit and don't wander about.",
+      "Foreman says land, unload, leave. Her words. Fewer of them, actually."]},
+    "comms:camp_refused": {"role": "camp", "radio": true, "say": [
+      "No. Foreman says no. Go away, freighter.",
+      "We're not taking you, freighter. Not after last time. Turn round."]},
     "comms:speed": {"role": "control", "radio": true, "say": [
       "Freighter, you're coming in hot inside two kilometres. Bleed it off or we start writing.",
       "Freighter on approach, you're hot. Slow down. The station doesn't move out of the way."]},

@@ -1,10 +1,43 @@
 class_name Contracts
 extends RefCounted
 ## Data-driven freight opportunities generated from market supply/demand and known routes.
-## These are deterministic offers for now: dynamic stock, deadlines and reputation can layer on later.
+## In a saved game the board answers to your standing here (Reputation): pay moves with it, a Doubtful
+## captain sees fewer offers, a Barred one none.
 
 
 static func offers_from(system_id: String, limit: int = 8) -> Array[Dictionary]:
+	if Session.slot < 0:
+		return _offers(system_id, limit)
+	return shaped(_offers(system_id, limit), Session.standing_here())
+
+
+## The board as your standing at the place sees it: rates times Reputation.pay_mult, a third of it kept
+## from a Doubtful captain, nothing for a Barred one. Each offer remembers `rep_mult`.
+static func shaped(list: Array[Dictionary], points: float) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if Reputation.tier(points) == "Barred":
+		return out
+	var mult := Reputation.pay_mult(points)
+	var drop := {}
+	if not Reputation.at_least(points, "Unknown") and list.size() > 1:   # Doubtful or worse: some shippers go to someone else
+		var keep := float(Reputation.cfg().get("doubtful_board_keep", 0.67))
+		var order := range(list.size())
+		order.sort_custom(func(a: int, b: int) -> bool: return hash(String(list[a].get("id", ""))) < hash(String(list[b].get("id", ""))))
+		for i in maxi(1, list.size() - roundi(float(list.size()) * keep)):
+			drop[order[i]] = true
+	for n in list.size():
+		if drop.has(n):
+			continue
+		var o: Dictionary = list[n]
+		var j: Dictionary = o.duplicate()
+		j["rep_mult"] = mult
+		if j.has("rate"):
+			j["rate"] = roundi(float(j.rate) * mult)
+		out.append(j)
+	return out
+
+
+static func _offers(system_id: String, limit: int = 8) -> Array[Dictionary]:
 	# In a saved game the board is the live economy: real stock moving between real facilities.
 	var local_extra: Array[Dictionary] = []
 	if Session.sim != null:

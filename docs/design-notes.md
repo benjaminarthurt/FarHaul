@@ -49,6 +49,10 @@ The ship builder came first because everything else reads from the ship it produ
     below).
 16. **Planets with air**: downports near the cities of every main world, landing fields, entry through
     the air with a heat gauge, weather, fresh food (**built** in 0.19.0, see below).
+17. **Reputation**: places, species and authorities each remember you; word travels along the routes;
+    standing moves pay, fees, access, crew and what traffic control says (**built** in 0.20.0, see below).
+18. Next, after Ben's full playthrough and a polish release: rovers and boats on the planets, going into
+    the cities, work on the ground on planets, fuel from gas giants (**planned**, order to be decided).
 
 ## Built: ship builder architecture
 
@@ -288,6 +292,39 @@ area per world rather than endless chunks; a coarse mesh for all of it and a fin
 ship, both built on worker threads. There is no fade or separate scene: the entry is flown in the flight
 scene, from 50 km up, with the planet's ground, sky and city built during the cruise. Mechanics and numbers:
 [runtime/planets.md](runtime/planets.md).
+
+## Reputation (0.20.0)
+
+Decided with Ben, 2026-10-20:
+
+- **Who remembers you: each place, each species and the authorities.** A port, base, camp, downport or
+  field keeps its own opinion, from the work you did there. The Kesh, Ilyan, Vey, Orun and humans each
+  hold a view, from what you did for their people. Each system's traffic control and port authority
+  keeps a record: fines, unannounced landings and ignored maydays against you; rescues and reported
+  wrecks for you. Standing at a place is the sum of the three. The old single score (`profile.rep`) is
+  kept as the total other captains have heard of you, and an old save's score becomes the opinion of
+  the port it was earned at.
+- **What it changes: pay, fees, access and the radio.** Pay from 0.7 (Barred) to 1.25 (Respected) of the
+  usual, on the board and in person; fees, fuel, repairs and tows from 1.6 to 0.88 of the usual. Access:
+  Known gets sealed crates, Trusted priority berths (no holding for the collar), Respected private
+  contracts; crew check how their own species sees you before signing. Traffic control greets you warmly
+  or coldly, in recorded lines (a new kind of line, so Ben listens to them).
+- **It can go bad, with real teeth.** Doubtful (-10): fewer offers, fewer people asking. Unwelcome
+  (-25): board freight only, nobody signs on. Barred (-50): no work at all, clearance refused (dock
+  anyway and it's a fine and another mark). The tug still comes for a stranded ship, with a lecture and
+  a bill.
+- **The way back.** Settle your record with a system's authorities at its port's freight office (400 cr
+  a point, at the fee level). Take the work a place will still give you. Bad marks fade about a tenth a
+  week; good ones don't.
+- **Word travels along the routes**, as long as traffic takes between the systems (the economy's own
+  route graph and speed), plus a few hours of gossip. Other systems' authorities hear three quarters of
+  a mark; a species' view is the same everywhere once it's heard.
+
+Against the canon (`data/world/reputation.json`): it agrees there is no universal score and that word
+travels by channel with different strengths (public record 0.75 is used for authorities), but it has
+five dimensions (reliability, care, compliance, credit, discretion), different tier names and fades over
+years. The game keeps one number per relationship and fades bad marks in weeks, as agreed with Ben; the
+dimensions are a later refinement. Mechanics and numbers: [runtime/reputation.md](runtime/reputation.md).
 
 ## Open questions and next ideas
 

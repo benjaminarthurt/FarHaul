@@ -1,28 +1,9 @@
 {
-  "description": "People with work: rush deliveries, passengers and sealed cargo offered in person at the bar, the hab's dispatch desk and the camp foreman, and the standing (reputation) they build. See docs/runtime/people.md.",
+  "description": "People with work: rush deliveries, passengers, sealed cargo and (for the Respected) private contracts, offered in person at the bar, the hab's dispatch desk and the camp foreman. What they pay moves with your standing there (reputation.json). See docs/runtime/people.md.",
   "per_site": 3,
   "refresh_days": 1,
   "rep_freight": 1,
-  "rep_pay_bonus_per_point": 0.003,
-  "rep_pay_bonus_max": 0.15,
-  "standings": [
-    [
-      0,
-      "Unknown"
-    ],
-    [
-      10,
-      "Known"
-    ],
-    [
-      25,
-      "Trusted"
-    ],
-    [
-      50,
-      "Respected"
-    ]
-  ],
+  "rep_freight_hurt": -2,
   "rush": {
     "tonnes_frac": [
       0.25,
@@ -51,7 +32,6 @@
     ]
   },
   "sealed": {
-    "min_rep": 10,
     "tonnes_frac": [
       0.3,
       0.6
@@ -60,7 +40,20 @@
     "broken_pay": 0.4,
     "rep_ok": 4,
     "rep_broken": -6,
-    "pays_trip_cost_x": 1.7
+    "pays_trip_cost_x": 1.7,
+    "min_tier": "Known"
+  },
+  "private": {
+    "min_tier": "Respected",
+    "tonnes_frac": [
+      0.3,
+      0.6
+    ],
+    "rate_mult": 2.8,
+    "broken_pay": 0.5,
+    "rep_ok": 5,
+    "rep_broken": -8,
+    "pays_trip_cost_x": 2.4
   },
   "cancel_fee_share": 0.1,
   "cancel_rep": 2

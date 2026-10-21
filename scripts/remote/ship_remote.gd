@@ -396,7 +396,7 @@ static func _offer_row(o: Dictionary, stats: Dictionary) -> Dictionary:
 			"person": String(o.get("person", "")), "line": String(o.get("line", "")),
 			"locked": String(o.get("locked", "")) if not pax or o.has("locked") or stats.is_empty() else Passengers.why_not(o, stats)}
 	if local and not stats.is_empty() and not pax:
-		row["fuel"] = roundi(float(Session.local_trip_cost(stats, float(o.get("offer", 0.0)), float(o.get("dv_kms", 0.0))).total))
+		row["fuel"] = roundi(float(Session.local_trip_cost(stats, float(o.get("offer", 0.0)), float(o.get("dv_kms", 0.0)), String(o.get("destination_port_id", ""))).total))
 	return row
 
 

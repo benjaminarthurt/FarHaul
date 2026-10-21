@@ -17,7 +17,8 @@ is done right.
 |---|---|---|---|---|
 | Rush | A small load, due in 75% of the usual trip time | 1.9 × the trip cost | It arrives after the due hour | Half pay, standing −4 |
 | Passenger | 1 to 3 people, a bed each, riding along with anything else | (0.25 + 0.35 per seat) × the trip cost, empty, in spare bunks; more in cabins | The hull takes damage on the way (a hard landing), or they're more than 2 days aboard | Half the fare, standing −3 (−2 late) |
-| Sealed crate | A crate you do not open. Needs Known standing | 1.7 × the trip cost | The hull takes damage on the way | 40% of the pay, standing −6 |
+| Sealed crate | A crate you do not open. Needs Known standing here | 1.7 × the trip cost | The hull takes damage on the way | 40% of the pay, standing −6 |
+| Private contract | Offered only to captains Respected here (most sealed crates become these) | 2.4 × the trip cost | The hull takes damage on the way | Half the pay, standing −8 |
 
 - **Rush jobs** are due sooner than the usual burn gets there. Fly it yourself (a hand-flown run counts
   as flat out, 65% of the usual time), or take the **hard burn** on autopilot: 65% of the time for 130%
@@ -30,18 +31,14 @@ is done right.
 
 ## Standing
 
-`profile.rep`, shown on the HUD while you walk.
+Standing is per place since 0.20.0: see [reputation.md](reputation.md). What it does here:
 
-| Points | Standing |
-|---|---|
-| 0 | Unknown |
-| 10 | Known: sealed crates are offered |
-| 25 | Trusted |
-| 50 | Respected |
-
-- Points: +1 for any freight delivered, +3 for a rush on time, +2 for a smooth passenger run, +4 for a
-  sealed crate delivered intact. Late or rough work costs points (above).
-- Each point adds 0.3% to what people offer, up to 15%.
+- People's pay is multiplied by `Reputation.pay_mult` at the place (0.7 Barred to 1.25 Respected).
+- Doubtful: two people ask instead of three. Unwelcome or worse: nobody does.
+- Sealed crates need Known; private contracts need Respected (`min_tier` in people.json).
+- Points per job: +1 for freight delivered (−2 if it arrived broken), +3 for a rush on time, +2 for a
+  smooth passenger run, +4 for a sealed crate and +5 for a private contract delivered intact. Late or
+  rough work costs points (above). They count with the place and, at half, with its people.
 
 ## Tests
 

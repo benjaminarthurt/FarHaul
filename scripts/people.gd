@@ -7,14 +7,17 @@ class_name People
 ##   run is a hard burn) or pay for a hard burn on autopilot.
 ## - **passenger:** people riding along to another site (Passengers: a booking, not a contract, so they
 ##   ride with freight). A bed each; cabins pay more. A hard landing on the way halves the fare.
-## - **sealed:** a crate you do not open, for captains with some standing. Pays well; if the hull takes
+## - **sealed:** a crate you do not open, for captains Known here. Pays well; if the hull takes
 ##   damage on the way the seal breaks and most of the pay goes with it.
+## - **private:** a private contract, offered only to captains Respected here. Pays best; same seal.
 ##
-## Delivering any freight builds standing (`profile.rep`), and standing raises what people offer.
+## Your standing at the place (Reputation) sets what they offer: Doubtful, fewer of them ask; Unwelcome
+## or worse, nobody does. Pay moves with it (Reputation.pay_mult).
 ## Tuning: data/runtime/people.json. See docs/runtime/people.md.
 
 const PATH := "res://data/runtime/people.json"
 const KINDS := ["rush", "passenger", "sealed"]
+const LOCKED := {"sealed": "Known", "private": "Respected"}   ## the standing a kind needs here
 
 static var _cfg: Dictionary = {}
 
@@ -29,6 +32,8 @@ const LINES := {
 			"Going to %s. I hear you fly steady."],
 	"sealed": ["Sealed crate for %s. Don't open it, don't ask, land it gently.", "This goes to %s as it is. Seal on. Ignore the humming.",
 			"A private consignment for %s. Good pay for a smooth ride."],
+	"private": ["I only use captains people speak well of. A private contract to %s; my name stays off the manifest.",
+			"Word is you're careful. This goes to %s, privately, and pays like it.", "A quiet run to %s for someone who doesn't like quiet runs going wrong."],
 }
 
 
@@ -48,26 +53,14 @@ static func config() -> Dictionary:
 	return _cfg
 
 
-## The name of a standing ("Unknown", "Known", "Trusted", "Respected").
-static func standing(rep: int) -> String:
-	var name := "Unknown"
-	for s in config().get("standings", []):
-		if rep >= int(s[0]):
-			name = String(s[1])
-	return name
+## The name of a standing (Reputation.tier: Barred to Respected).
+static func standing(rep: float) -> String:
+	return Reputation.tier(rep)
 
 
-## The standing you need for the next tier, or -1 at the top.
-static func next_standing(rep: int) -> int:
-	for s in config().get("standings", []):
-		if rep < int(s[0]):
-			return int(s[0])
-	return -1
-
-
-## The extra pay standing earns on people's work (0.0 to 0.15).
-static func rep_bonus(rep: int) -> float:
-	return clampf(float(rep) * float(config().get("rep_pay_bonus_per_point", 0.003)), 0.0, float(config().get("rep_pay_bonus_max", 0.15)))
+## What standing does to people's pay, as a share over the usual (-0.3 Barred to +0.25 Respected).
+static func rep_bonus(rep: float) -> float:
+	return Reputation.pay_mult(rep) - 1.0
 
 
 ## Spare berths: what passengers can use.
@@ -79,20 +72,28 @@ static func seats(stats: Dictionary) -> int:
 ## `line` (what they say) and, for sealed work you lack the standing for, `locked`.
 ## `trip_cost` (cargo_t, dv_kms) -> credits is what the hop costs this ship: people pay a multiple of it,
 ## so their work always covers the fuel when done right.
-static func posted(node_id: String, day: int, stats: Dictionary, level: Dictionary, taken: Array, rep: int, trip_cost: Callable) -> Array[Dictionary]:
+static func posted(node_id: String, day: int, stats: Dictionary, level: Dictionary, taken: Array, rep: float, trip_cost: Callable) -> Array[Dictionary]:
 	var cfg := config()
 	var out: Array[Dictionary] = []
-	var base := LocalSpace.board(node_id, day, stats, level, taken, "people", int(cfg.get("refresh_days", 1)), int(cfg.get("per_site", 3)))
-	var bonus := 1.0 + rep_bonus(rep)
+	if not Reputation.at_least(rep, "Doubtful"):
+		return out   # Unwelcome or worse: nobody here asks you for anything
+	var per := int(cfg.get("per_site", 3))
+	if not Reputation.at_least(rep, "Unknown"):
+		per = int(Reputation.cfg().get("doubtful_people_per_site", 2))
+	var base := LocalSpace.board(node_id, day, stats, level, taken, "people", int(cfg.get("refresh_days", 1)), per)
+	var bonus := Reputation.pay_mult(rep)
+	var respected := Reputation.at_least(rep, String(LOCKED.private))
 	for j in base:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = hash(String(j.id))
 		var kind: String = KINDS[rng.randi() % KINDS.size()]
+		if respected and kind == "sealed" and rng.randf() < 0.6:
+			kind = "private"   # people who only deal with captains everyone speaks well of
 		if kind == "rush":   # only if the tank can take the hard burn with the load
 			var rk: Dictionary = cfg.get("rush", {})
 			var t := maxf(1.0, snappedf(float(j.offer) * float(rk.tonnes_frac[0]), 0.5))
 			if LocalSpace.burn_t(float(stats.get("wet", 0.0)) + t, float(j.dv_kms)) * float(rk.get("hard_burn_fuel", 1.3)) > float(stats.get("fuel", 0.0)):
-				kind = "passenger" if rng.randf() < 0.5 else "sealed"
+				kind = "passenger" if rng.randf() < 0.5 else ("private" if respected else "sealed")
 		var k: Dictionary = cfg.get(kind, {})
 		var dest := String(LocalSpace.node(String(j.destination_port_id)).get("name", "there"))
 		j["person"] = "%s %s" % [FIRST[rng.randi() % FIRST.size()], LAST[rng.randi() % LAST.size()]]
@@ -121,14 +122,16 @@ static func posted(node_id: String, day: int, stats: Dictionary, level: Dictiona
 				j["rate"] = 0
 				j["title"] = "%d passenger%s to %s" % [n, "" if n == 1 else "s", dest]
 				j["blurb"] = "%s. They ride along with whatever else you're doing. A hard landing halves the fare. They notice." % ("Wants a cabin" if int(j.wants) > 0 else "Any bed will do")
-			"sealed":
+			"sealed", "private":
 				var frac := rng.randf_range(float(k.tonnes_frac[0]), float(k.tonnes_frac[1]))
 				j["offer"] = maxf(1.0, snappedf(float(j.offer) * frac, 0.5))
 				j["rate"] = roundi(maxf(float(j.rate) * float(k.rate_mult), float(trip_cost.call(float(j.offer), float(j.dv_kms))) * float(k.pays_trip_cost_x) / float(j.offer)) * bonus)
-				j["title"] = "Sealed crate to %s" % dest
-				j["blurb"] = "Any hull damage on the way breaks the seal, and most of the pay goes with it."
-				if rep < int(k.min_rep):
-					j["locked"] = "Needs %s standing (%d)" % [standing(int(k.min_rep)), int(k.min_rep)]
+				j["title"] = ("Sealed crate to %s" if kind == "sealed" else "Private contract to %s") % dest
+				j["blurb"] = "Any hull damage on the way breaks the seal, and most of the pay goes with it." if kind == "sealed" \
+						else "A private client: any hull damage breaks the seal, half the pay goes, and so does their good opinion."
+				var need := String(k.get("min_tier", LOCKED[kind]))
+				if not Reputation.at_least(rep, need):
+					j["locked"] = "Needs %s standing here" % need
 		out.append(j)
 	return out
 
@@ -149,7 +152,7 @@ static func settle(c: Dictionary, payment: int, now_hour: int, damage: float) ->
 			if hurt:
 				return {"payment": roundi(payment * float(k.rough_pay)), "rep": int(k.rep_rough), "note": "a rough ride: %s paid half the fare, shakily" % String(c.person)}
 			return {"payment": payment, "rep": int(k.rep_ok), "note": "a smooth ride for %s" % String(c.person)}
-		"sealed":
+		"sealed", "private":
 			if hurt:
 				return {"payment": roundi(payment * float(k.broken_pay)), "rep": int(k.rep_broken), "note": "the seal broke in the knocks: %s paid a fraction" % String(c.person)}
 			return {"payment": payment, "rep": int(k.rep_ok), "note": "seal intact"}

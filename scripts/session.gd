@@ -152,13 +152,14 @@ static func local_board() -> Array[Dictionary]:
 	return LocalSpace.board(id, day(), st, SimShip.level(String(profile.get("difficulty", "normal"))), profile.get("local_taken", []))
 
 
-## Propellant and berth fee for one local hop with `cargo_t` aboard, in credits.
-static func local_trip_cost(stats: Dictionary, cargo_t: float, dv_kms: float) -> Dictionary:
+## Propellant and berth fee for one local hop with `cargo_t` aboard, in credits. Fuel is bought here; the
+## berth is at `dest` (here when not given), at what they think of you there.
+static func local_trip_cost(stats: Dictionary, cargo_t: float, dv_kms: float, dest := "") -> Dictionary:
 	var burn := LocalSpace.burn_t(float(stats["wet"]) + cargo_t, dv_kms) * Crew.fuel_mult(crew())   # a pilot aboard burns less
 	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
 	var units := burn * float(SimShip.config()["fuel"]["units_per_tonne"])
 	var fuel_cost: float = units * float(sim.p["fuel_cr_per_unit"]) * float(sim.fuel_factor.get(system_id(), 1.0)) * float(lv.get("fuel_price_mult", 1.0)) * site_fuel_mult()
-	var fee: float = float(LocalSpace.config()["board"]["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+	var fee: float = float(LocalSpace.config()["board"]["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) * rep_fee_mult(dest)
 	return {"burn_t": burn, "fuel_cost": fuel_cost, "fee": fee, "total": fuel_cost + fee}
 
 
@@ -230,7 +231,7 @@ static func finish_flight(fuel_burned_t: float, seconds: float, damage: float) -
 	var tow := 0.0
 	if rescued:
 		var lv := SimShip.level(String(profile.get("difficulty", "normal")))
-		tow = float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+		tow = float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) * rep_fee_mult()
 		sim._pay(SimWorld.PLAYER, "world", tow)
 	var hull_note := _settle_hull(data, active_contract(), float(ship_cost(loaded.ship, loaded.ship.library)))
 	_commit_sim(data, loaded.ship)
@@ -383,7 +384,8 @@ static func accept_contract(contract: Dictionary) -> Dictionary:
 		tonnes = float(k.mass_kg) / 1000.0
 		accepted["sim_taken"] = String(k.id)
 		accepted["offer"] = tonnes
-		accepted["pay_total"] = roundi(sim.pay_for(SimWorld.PLAYER, k))
+		accepted["pay_base"] = roundi(sim.pay_for(SimWorld.PLAYER, k))   # what the consignee pays the sim's way
+		accepted["pay_total"] = roundi(float(accepted.pay_base) * float(contract.get("rep_mult", 1.0)))   # and what your standing makes of it
 		accepted["rate"] = float(accepted.pay_total) / maxf(tonnes, 0.001)
 	var person := String(contract.get("person_kind", ""))
 	if contract.has("locked"):
@@ -448,7 +450,7 @@ static func local_sites() -> Array[Dictionary]:
 			continue
 		if LocalSpace.max_cargo_t(float(st["wet"]), float(st["fuel"]), float(h["dv_kms"])) < 0.0:
 			continue   # out of reach of the tank even empty
-		var cost := local_trip_cost(st, 0.0, float(h["dv_kms"]))
+		var cost := local_trip_cost(st, 0.0, float(h["dv_kms"]), String(n["id"]))
 		var jobs := LocalSpace.board(String(n["id"]), day() + int(h["hours"]) / 24, st, lv, profile.get("local_taken", []))
 		out.append({"id": n["id"], "name": n["name"], "dv_kms": h["dv_kms"], "hours": h["hours"], "cost": cost["total"], "jobs": jobs.size()})
 	return out
@@ -734,13 +736,13 @@ static func crate_carried() -> Dictionary:
 static func site_fuel_mult(site_id: String = "") -> float:
 	var id := site_id if site_id != "" else String(profile.get("port_id", ""))
 	var kind := String(LocalSpace.node(id).get("kind", "port"))
-	return float(LocalSpace.config().get("site_fuel_price", {}).get(kind, 1.0)) * Development.price_mult(sim, id)   # dearer on the edge, cheaper as it grows
+	return float(LocalSpace.config().get("site_fuel_price", {}).get(kind, 1.0)) * Development.price_mult(sim, id) * rep_fee_mult(id)   # dearer on the edge, cheaper as it grows; and with what they think of you
 
 
 static func site_repair_mult() -> float:
 	var id := String(profile.get("port_id", ""))
 	var kind := String(LocalSpace.node(id).get("kind", "port"))
-	return float(LocalSpace.config().get("site_repair_rate", {}).get(kind, 1.0)) * Development.price_mult(sim, id)
+	return float(LocalSpace.config().get("site_repair_rate", {}).get(kind, 1.0)) * Development.price_mult(sim, id) * rep_fee_mult(id)
 
 
 ## Whether the site you're at has a service at its size (frontier growth): freight, repairs,
@@ -880,7 +882,7 @@ static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> 
 	var adrift_note := ""
 	if bool(ex.get("adrift", false)):   # the captain drifted off on a space walk: a tug fished them out
 		var lvd := SimShip.level(String(profile.get("difficulty", "normal")))
-		var fish := float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lvd.get("port_fee_mult", 1.0))
+		var fish := float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lvd.get("port_fee_mult", 1.0)) * rep_fee_mult()
 		sim._pay(SimWorld.PLAYER, "world", fish)
 		adrift_note = " A tug fished you out of the dark and towed the ship in: %s cr, and a story nobody believes." % ShipStats.commas(roundi(fish))
 	var hurt := clampf(float(ex.get("cargo_hurt", 0.0)), 0.0, 1.0) * Crew.cargo_hurt_mult(crew())   # a loadmaster's lashings hold
@@ -900,7 +902,7 @@ static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> 
 	var parts := PackedStringArray()
 	if rescue:
 		parts.append(" The salvage crew added %s cr for the privilege." % ShipStats.commas(salvage))
-	parts.append(_settle_comms(ex.get("comms", {})))
+	parts.append(_settle_comms(ex.get("comms", {}), ex.get("comms_before_jump", {})))
 	if lost > 0.005:
 		parts.append(" About %d%% of the load is %s; the consignee will notice." % [roundi(lost * 100.0), "over the side or in pieces" if rescue else "dented"])
 	return adrift_note + "".join(parts)
@@ -909,7 +911,7 @@ static func _settle_hull(data: Dictionary, c: Dictionary, ship_price: float) -> 
 ## What the radio came to on a flight (Comms.settlement): fuel bought from a hauler and sold to a ship in
 ## distress, a hauler's tow against the port tug's fee, fines for docking or landing unannounced, and
 ## the standing that went with it. Returns a note for the flight's message.
-static func _settle_comms(c: Dictionary) -> String:
+static func _settle_comms(c: Dictionary, before: Dictionary = {}) -> String:
 	if c.is_empty() or sim == null:
 		return ""
 	var bits := PackedStringArray()
@@ -938,9 +940,19 @@ static func _settle_comms(c: Dictionary) -> String:
 		sim._pay("world", SimWorld.PLAYER, float(bounty))
 	for n in c.get("notes", []):
 		bits.append(String(n))
-	var rep := int(c.get("rep", 0)) + int(c.get("fine_rep", 0))
 	var note := (" " + " ".join(bits)) if not bits.is_empty() else ""
-	return note + _add_rep(rep)
+	var pre_rep := int(before.get("rep", 0))   # what was said before a jump: the system you left heard it
+	var pre_fine := int(before.get("fine_rep", 0))
+	var left := String(before.get("site", ""))
+	var gone := ""
+	if left != "":
+		gone = _add_rep(pre_rep, "radio", [], left) + _add_rep(pre_fine, "record", [], left)
+	else:
+		pre_rep = 0
+		pre_fine = 0
+	var rep := _add_rep(int(c.get("rep", 0)) - pre_rep, "radio")   # what traffic heard you do on the radio
+	var fined := _add_rep(int(c.get("fine_rep", 0)) - pre_fine, "record")   # what traffic control wrote down
+	return note + gone + rep + fined
 
 
 ## Wear and tear (Wear) ------------------------------------------------------------------------------
@@ -1249,7 +1261,7 @@ static func finish_jump_flight(fuel_burned_t: float, seconds: float, damage: flo
 	profile["hull_damage"] = clampf(damage, 0.0, 1.0)   # carried until repaired at a fuel and repair desk
 	var tow := 0.0
 	if stranded:
-		tow = float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0))
+		tow = float(LocalSpace.config()["board"]["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) * rep_fee_mult()
 		sim._pay(SimWorld.PLAYER, "world", tow)
 	var hull_note := _settle_hull(data, c, float(ship_cost(loaded.ship, loaded.ship.library)))
 	var msg := ""
@@ -1291,8 +1303,9 @@ static func finish_local_flight(fuel_burned_t: float, seconds: float, damage: fl
 		clock = ceilf(float(int(job.hours)) * float(People.hard_burn().time)) * 3600.0   # flown by hand, flat out
 	var r := SimWorld.settle_flight(sim, fuel_burned_t, clock, 0.0, float(ship_cost(loaded.ship, loaded.ship.library)), site_fuel_mult())
 	profile["hull_damage"] = clampf(damage, 0.0, 1.0)   # carried until repaired at a fuel and repair desk
-	var berth := float(cfg["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) if arrived else 0.0
-	var tow := float(cfg["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) if stranded else 0.0
+	var berth_at := String(job.get("dest_id", "")) if ferry else String(c.get("destination_port_id", ""))
+	var berth := float(cfg["dock_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) * rep_fee_mult(berth_at) if arrived else 0.0
+	var tow := float(cfg["tow_fee_cr"]) * float(lv.get("port_fee_mult", 1.0)) * rep_fee_mult() if stranded else 0.0
 	var extra := berth + tow
 	sim._pay(SimWorld.PLAYER, "world", extra)
 	var rescued := bool(flight_extra.get("rescue", false))
@@ -1361,7 +1374,7 @@ static func _depart_local(c: Dictionary, hard := false) -> Dictionary:
 	if unfit != "":
 		return {"ok": false, "message": unfit}
 	var cargo := float(c.get("accepted_tonnes", c.offer))
-	var cost := local_trip_cost(stats, cargo, float(c.dv_kms))
+	var cost := local_trip_cost(stats, cargo, float(c.dv_kms), String(c.destination_port_id))
 	var hours := maxi(1, ceili(float(c.hours) * Crew.time_mult(crew())))
 	if hard:
 		var hb := People.hard_burn()
@@ -1418,7 +1431,8 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 	if bool(c.get("surface", false)) and not bool(c.get("planet", false)):   # landed straight on the moon base's pad: no lighter up from orbit (a planet run's pay already counts the landing)
 		bonus = roundi(float(payment) * float(SurfaceTerrain.config().get("surface_bonus", 0.25)))
 		payment += bonus
-	var rep_note := _add_rep(int(deal.rep) + (1 if passengers and Crew.skill(crew(), "steward") >= 3 else 0))   # a good steward's passengers speak well of you
+	var deal_rep := int(People.config().get("rep_freight_hurt", -2)) if spoiled > 0 and String(c.get("person_kind", "")) == "" else int(deal.rep)   # the consignee remembers the broken share
+	var rep_note := _add_rep(deal_rep + (1 if passengers and Crew.skill(crew(), "steward") >= 3 else 0))   # a good steward's passengers speak well of you
 	var uc := SurfaceWork.unload_cfg()
 	var roster := crew()
 	var hours := int(LocalSpace.config()["board"]["unload_hours"])
@@ -1479,17 +1493,77 @@ static func _deliver_local(c: Dictionary, manual := false) -> Dictionary:
 	return {"ok": true, "message": "Delivered %.1f t. Freight paid: %s cr%s.%s%s" % [delivered, ShipStats.commas(payment), note, deal_note, rep_note], "payment": payment}
 
 
-## Standing: what people think of you (People). Returns a note for the delivery message.
-static func _add_rep(delta: int) -> String:
+## Standing: what people think of you (Reputation). A deed worth `delta` here: `kind` is where it counts
+## (work: this place and its people; radio: the people and the authorities; record: the authorities;
+## rescue: the people you saved and the authorities), `species` who you helped when it isn't the
+## people of the place. Returns a note for the message. `profile.rep` stays the running total of
+## everything you've done (what other captains have heard of you).
+static func _add_rep(delta: int, kind := "work", species: Array = [], site := "") -> String:
 	if delta == 0:
 		return ""
-	var before := int(profile.get("rep", 0))
-	var after := maxi(0, before + delta)
-	profile["rep"] = after
+	var at := site if site != "" else String(profile.get("port_id", ""))
+	var before := standing_here(at)
+	var sys := Reputation.system_of(at)
+	if sys == "":
+		sys = system_id()
+	Reputation.record(Reputation.state(profile), _now_h(), sys, at, float(delta), kind, species, sim)
+	profile["rep"] = maxi(0, int(profile.get("rep", 0)) + delta)
+	var after := standing_here(at)
 	var note := " Standing %+d." % delta
-	if People.standing(after) != People.standing(before):
-		note += " You are now %s." % People.standing(after)
+	if Reputation.tier(after) != Reputation.tier(before):
+		note += " You are now %s here." % Reputation.tier(after)
 	return note
+
+
+static func _now_h() -> int:
+	return sim.hour if sim != null else 0
+
+
+## Your standing at `site` (the site you're at by default): points, -100 to 100.
+static func standing_here(site := "") -> float:
+	var at := site if site != "" else String(profile.get("port_id", ""))
+	if at == "":
+		return 0.0
+	return Reputation.standing(Reputation.state(profile), at, _now_h(), sim)
+
+
+static func standing_parts(site := "") -> Dictionary:
+	var at := site if site != "" else String(profile.get("port_id", ""))
+	return Reputation.parts(Reputation.state(profile), at, _now_h(), sim)
+
+
+static func tier_here(site := "") -> String:
+	return Reputation.tier(standing_here(site))
+
+
+## Fees, fuel and repairs at `site` against the usual, for what they think of you there.
+static func rep_fee_mult(site := "") -> float:
+	return Reputation.fee_mult(standing_here(site))
+
+
+## What work offered at `site` pays against the usual.
+static func rep_pay_mult(site := "") -> float:
+	return Reputation.pay_mult(standing_here(site))
+
+
+## What settling your record with this system's authorities costs, at the difficulty's fee level.
+static func settle_record_cost() -> int:
+	var lv := SimShip.level(String(profile.get("difficulty", "normal")))
+	return roundi(float(Reputation.settle_cost(Reputation.state(profile), system_id(), _now_h(), sim)) * float(lv.get("port_fee_mult", 1.0)))
+
+
+static func settle_record() -> Dictionary:
+	var cost := settle_record_cost()
+	if cost <= 0:
+		return {"ok": false, "message": "Your record here is clean. They checked twice."}
+	var before := tier_here()
+	if not _book(-float(cost)):
+		return {"ok": false, "message": "Clearing your record costs %s cr; you have %s cr. The authority doesn't do instalments." % [ShipStats.commas(cost), ShipStats.commas(int(profile.get("credits", 0)))]}
+	Reputation.settle(Reputation.state(profile), system_id(), _now_h(), sim)
+	save_profile()
+	var after := tier_here()
+	return {"ok": true, "message": "Paid %s cr. Your record with the %s authorities is clean%s. Word that already left the system is another matter." % [
+			ShipStats.commas(cost), String(Worlds.system(system_id()).get("name", system_id())), "; you are now %s here" % after if after != before else ""]}
 
 
 ## People asking for work in person here today (People.posted).
@@ -1505,7 +1579,7 @@ static func people_here() -> Array[Dictionary]:
 	if Development.abandoned(sim, id):
 		return []
 	var st := ship_stats(loaded.ship)
-	var out := People.posted(id, day(), st, SimShip.level(String(profile.get("difficulty", "normal"))), profile.get("local_taken", []), int(profile.get("rep", 0)),
+	var out := People.posted(id, day(), st, SimShip.level(String(profile.get("difficulty", "normal"))), profile.get("local_taken", []), standing_here(id),
 			func(cargo_t: float, dv: float) -> float: return float(local_trip_cost(st, cargo_t, dv).total))
 	if site_has("passengers"):
 		return out
@@ -1652,6 +1726,14 @@ static func deliver_active_contract(manual := false) -> Dictionary:
 		_sync_sim(loaded_ship.ship)
 		sim.run_player_until(SimWorld.PLAYER, "done")   # unloading takes hours; the consignee pays the moment it is done
 		payment = int(c.get("pay_total", payment))
+		var standing_cr := payment - int(c.get("pay_base", payment))   # the shipper's bonus for a captain they trust, or their cut for one they don't
+		if standing_cr > 0:
+			sim._pay("world", SimWorld.PLAYER, float(standing_cr))
+		elif standing_cr < 0:
+			sim._pay(SimWorld.PLAYER, "world", float(-standing_cr))
+		if standing_cr != 0:
+			var sc: Dictionary = sim.carriers[SimWorld.PLAYER]
+			sc["revenue"] = float(sc["revenue"]) + float(standing_cr)
 		spoiled = roundi(float(payment) * hurt)
 		if spoiled > 0:   # the consignee docks the broken share: paid back out of what the sim paid in
 			sim._pay(SimWorld.PLAYER, "world", float(spoiled))
@@ -1668,7 +1750,7 @@ static func deliver_active_contract(manual := false) -> Dictionary:
 	data.erase("active_contract")
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
-	var rep_note := _add_rep(int(People.config().get("rep_freight", 1)))
+	var rep_note := _add_rep(int(People.config().get("rep_freight", 1)) if spoiled <= 0 else int(People.config().get("rep_freight_hurt", -2)))   # the consignee remembers the broken share
 	data["profile"] = profile
 	SaveSlots.write(slot, data)
 	var broke := ", less %s cr for the %d%% that arrived broken" % [ShipStats.commas(spoiled), roundi(hurt * 100.0)] if spoiled > 0 else ""
@@ -1698,7 +1780,20 @@ static func free_berths(stats: Dictionary) -> int:
 static func crew_candidates() -> Array[Dictionary]:
 	if slot < 0 or sim == null:
 		return []
-	return Crew.candidates(String(profile.get("port_id", "")), day(), SimShip.wage_index(system_id()), profile.get("crew_seen", []))
+	var out := Crew.candidates(String(profile.get("port_id", "")), day(), SimShip.wage_index(system_id()), profile.get("crew_seen", []))
+	var here := standing_here()
+	var st := Reputation.state(profile)
+	var below := float(Reputation.cfg().get("crew_refuse_below", -10))
+	for p in out:   # crew check what their own people say about you before they sign
+		if not Reputation.at_least(here, "Doubtful"):
+			p["refuses"] = "Won't sign on: nobody here will be seen working for you"
+		elif Reputation.species_view(st, String(p.get("species", "human")), system_id(), _now_h(), sim) <= below:
+			p["refuses"] = "Won't sign on: %s say things about you" % _species_plural(String(p.get("species", "human")))
+	return out
+
+
+static func _species_plural(sp: String) -> String:
+	return {"human": "humans", "kesh": "the Kesh", "ilyan": "the Ilyan", "vey": "the Vey", "orun": "the Orun"}.get(sp, sp)
 
 
 static func _seen(id: String) -> void:
@@ -1716,6 +1811,8 @@ static func hire(id: String) -> Dictionary:
 			who = p
 	if who.is_empty():
 		return {"ok": false, "message": "They've already gone. People at bars do that."}
+	if who.has("refuses"):
+		return {"ok": false, "message": "%s: \"I've heard about you.\" %s." % [Crew.short(who), String(who.refuses)]}
 	var loaded := _load_ship(SaveSlots.read(slot))
 	if loaded.is_empty():
 		return {"ok": false, "message": "Couldn't load the ship from the save."}

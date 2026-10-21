@@ -37,7 +37,7 @@ func _run() -> void:
 	place.queue_free()
 	await process_frame
 	check(Session.repair_cost() == 0 and Session.gear_owned().is_empty() and int(Session.finds_aboard().value) == 0, "repairs, kit and finds read as none")
-	check(People.standing(int(Session.profile.get("rep", 0))) == "Unknown", "standing starts at Unknown")
+	check(Session.tier_here() == "Unknown", "standing starts at Unknown")
 	# The moon, in the suit.
 	var d2 := SaveSlots.read(1)
 	var ship := ShipData.new(ModuleLibrary.new())

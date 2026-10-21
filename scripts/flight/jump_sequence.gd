@@ -155,6 +155,9 @@ func _jump_step(delta: float) -> void:
 ## At the height of the flash the sim runs the trip and the world changes: the destination's station is
 ## named, and the sun sits somewhere else.
 func _arrive_in_system() -> void:
+	if sc.comms_c != null:   # what the radio heard before the jump stays with the system you left (Reputation)
+		var pre: Dictionary = sc.comms_c.settlement()
+		Session.flight_extra["comms_before_jump"] = {"rep": int(pre.get("rep", 0)), "fine_rep": int(pre.get("fine_rep", 0)), "site": String(Session.profile.get("port_id", ""))}
 	sc._jump_result = Session.commit_jump()
 	if bool(sc._jump_result.get("ok", false)) and sc.crew_c != null:
 		sc.crew_c.after_jump(float(sc._jump_result.get("hours", 0.0)))   # the drive's wear, and the crew's work on the way

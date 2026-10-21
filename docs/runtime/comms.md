@@ -41,11 +41,16 @@ Your own lines are amber, distress calls red. The last 30 lines are kept in the 
   `downport_gale` when it's blowing 17 m/s or more); a landing field's foreman points at the flares
   (`field_cleared`). The wind is shown, not spoken: the recordings leave it out.
 - Coming in at more than 40 m/s within 2 km of the collar, traffic control tells you so (every 90 s).
+- **Standing** (0.20.0, [reputation.md](reputation.md)): a Barred captain is refused (`standing_refused`,
+  `pad_refused`, `camp_refused`) and docking anyway is the fine. Trusted or better is never told to hold.
+  After clearing you, control may say what it thinks of you: warm when you're Respected (always) or
+  Trusted (half the time), cold when Doubtful or worse (`*_warm`, `*_cold`). The fine and the radio's
+  standing go on the authorities' record (`fine_rep` as `record`, the rest as `radio`).
 
 ## Ships
 
 - **Fuel**: a parked hauler sells 2 to 8 t (fixed for the day) at 1.6 × the port's price, 0.4% off per
-  point of standing up to 20%. It comes alongside at 30 m/s, matches you, and pumps 0.5 t/s while you
+  point of `profile.rep` (what other captains have heard of you) up to 20%. It comes alongside at 30 m/s, matches you, and pumps 0.5 t/s while you
   aren't burning or turning; it nags if you do. What you buy comes off `fuel_burned_t` so the port
   doesn't sell it to you again.
 - **News** (`Comms._news`): something from the economy (a facility short of goods, TradeData.tight; a
@@ -106,9 +111,9 @@ Traffic control speaks for the system's home species. Also: the two-tone hail ch
 ## Recorded voices (`VoiceBank`, 0.16.2)
 
 `scripts/comms/voice_bank.gd` plays recordings from `assets/audio/voice/` (made by `tools/voice/`, see
-its README): 1,530 lines, the aliens' own wording among them, every variation of the berth, fine, tonnes,
-crew count, problem, species and price direction, 58 speakers, one to three takes each, 2,913 OGG clips
-(mono, 22,050 Hz, 100 MB).
+its README): 1,620 lines, the aliens' own wording among them, every variation of the berth, fine, tonnes,
+crew count, problem, species and price direction, 58 speakers, one to three takes each, 3,153 OGG clips
+(mono, 22,050 Hz, 109 MB).
 
 - **Finding the line.** `Comms._line()` remembers which line of which key it picked and what it filled in
   (`_pending`); `_say()` matches the text it's given back to those (`_refs_for`), so a news item picked
@@ -144,7 +149,7 @@ crew count, problem, species and price direction, 58 speakers, one to three take
 ## Tests
 
 `tests/test_voice_bank_real.gd`: the real bank: every line in `lines.json` has clips, each species' own
-lines are said by that species, all 2,913 clips load and have sound, and each species' station clears
+lines are said by that species, all 3,153 clips load and have sound, and each species' station clears
 you in its own voice.
 `tests/test_voice_bank.gd`: ids from game arguments for all 1,260 recorded lines, a speaker per species
 and per caller, takes in turn, two lines together, the Radio bus, a recorded line's squelch, words and
